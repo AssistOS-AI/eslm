@@ -18,7 +18,7 @@ Path lookup tries the current working directory and then the repository root der
 
 ### Interactive mode
 
-The prompt is `eslm>`. User text is answered by the promoted model. `/trace` prints provenance, `/profile` prints the latest opt-in execution profile, `/help` describes supported scope, and `/quit` or `/exit` terminates. Corrections are shown when tolerant normalization altered input.
+The prompt is `eslm>`. Interactive mode starts with `quick`, `oewn-2025`, and `atomic-2020` loaded when their generated artifacts are installed. `/help` prints the complete command guide; `/kbs` reports ready and loaded modules with their roles and counts; `/load ID[,ID]` and `/unload ID[,ID]|all` rebuild the active runtime without discarding session context; `/model` reports active modules; `/examples [ID]` prints tested positive, unknown, and unsupported examples; `/trace`, `/profile`, `/clear`, `/quit`, and `/exit` provide diagnostics and session control. Corrections are shown when tolerant normalization altered input.
 
 Interactive state is explicit and bounded. The CLI passes the context returned by the prior answer, including last entity and temporary session entities/facts. Supported English assertions can therefore be queried in the same input or later turns. The CLI does not edit the promoted model, write conversation logs, or use network services by default.
 
@@ -40,7 +40,7 @@ There is no CLI command that invokes a coding agent. Agent choice, credentials, 
 
 `corpus catalog` lists persistent public knowledge sources in priority order and their semantic roles. `corpus status` reports source cache, probe, prepared, and generated artifact presence. `corpus probe --corpus oewn-2025 --archive FILE` is the only implemented source probe; it analyzes a local official archive, profiles the scan, publishes the report, and emits no model. Fetch, prepare, and build actions are added source by source only after DS018 and DS019 gates are implemented; the CLI must not offer a generic command that begins an unbounded dump download.
 
-`kb list` reports independently loadable module inventories and tested examples. `kb show ID` displays one module. `kb build ID|all` deterministically compiles reviewed sources into ESM graphs. `kb validate ID|all` checks each graph. The global `--kb` option accepts one ID, comma-separated IDs, or `all` and applies to interactive, one-shot, batch, evaluation, and benchmark engine construction.
+`kb list` reports QUICK, its inspectable components, and installed public KB inventories. `kb show ID` displays one source. `kb build ID|all` regenerates QUICK or invokes the deterministic WordNet/ATOMIC Node compiler. `kb validate ID|all` checks v1 graphs or source-specific public indexes and smoke proofs. The global `--kb` option accepts one ID, comma-separated IDs, or `all` and applies to interactive, one-shot, batch, evaluation, and benchmark construction. Noninteractive commands remain base-model-only unless `--kb` is explicit, which prevents hidden source exposure in benchmark runs.
 
 ### Evaluation and benchmarks
 

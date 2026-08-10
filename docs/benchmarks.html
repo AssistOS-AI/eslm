@@ -9,8 +9,28 @@
   <div data-include="partials/header.html"></div>
   <main>
     <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Benchmarks</p>
-    <h1>Public benchmarks and comparable evidence</h1>
-    <p class="lead">One public synthesis and evaluation run is complete: bAbI v1.2 Task 15 English 10k. Tasks 2, 3, and 16 have cached, prepared train/test splits but no synthesis candidate or score. Other suites remain portfolio entries, not implemented results. Every score names its split, active KB selection, evidence regime, and machine-recorded source identity.</p>
+    <h1>Public benchmarks: what was actually run</h1>
+    <p class="lead">The project currently has one completed public benchmark result: bAbI v1.2 Task 15, English 10k. Three more bAbI tasks are locally prepared but have not been learned or scored. BLiMP, CLUTRR, EWoK, SimpleQA, Entity Tracking, and Story Cloze are documented future experiments, not current results.</p>
+
+    <h2>Evidence ledger</h2>
+    <table><thead><tr><th>Public suite</th><th>What ESLM used</th><th>Current evidence</th><th>What may be claimed</th></tr></thead><tbody>
+      <tr class="cap-row--yes"><td>bAbI v1.2 Task 15, English 10k</td><td>10,000 official train cases for coding-agent synthesis; 1,000 isolated official test cases for final scoring</td><td>Completed local run: 1,000/1,000 semantic answers correct, with no optional KB loaded</td><td>A narrow result for controlled one-step class deduction</td></tr>
+      <tr class="cap-row--partial"><td>bAbI v1.2 Tasks 2, 3, and 16, English 10k</td><td>Official train and test files were downloaded and converted to the neutral Node.js format</td><td>Prepared only; worker ledgers remain pending; no generated model and no score</td><td>Dataset ingestion works; reasoning competence is not established</td></tr>
+      <tr class="cap-row--no"><td>BLiMP, CLUTRR, EWoK, SimpleQA, Entity Tracking, Story Cloze</td><td>No locally frozen adapter input</td><td>Not run</td><td>Only their intended diagnostic role may be discussed</td></tr>
+    </tbody></table>
+    <p>Open English WordNet 2025 and ATOMIC 2020 do not appear in this ledger because they are knowledge sources, not benchmark suites. The 700-case randomized source-KB check is also not a public benchmark: its questions are generated from already compiled source records and therefore measure import, indexing, lookup, and proof plumbing rather than unseen knowledge.</p>
+
+    <h2>Public artifacts named by this project</h2>
+    <table><thead><tr><th>Suite</th><th>Official source</th><th>Local status</th><th>Role</th></tr></thead><tbody>
+      <tr><td>bAbI v1.2</td><td><a href="https://github.com/facebookarchive/bAbI-tasks">Facebook bAbI tasks archive</a></td><td>Tasks 2, 3, 15, and 16 prepared; only Task 15 synthesized and scored</td><td>Controlled world-state and reasoning traces</td></tr>
+      <tr><td>BLiMP</td><td><a href="https://github.com/alexwarstadt/blimp">official repository</a> and <a href="https://aclanthology.org/2020.tacl-1.25/">TACL paper</a></td><td>Not acquired or run</td><td>English grammatical minimal-pair preference</td></tr>
+      <tr><td>CLUTRR</td><td><a href="https://github.com/facebookresearch/clutrr">official repository</a></td><td>Not acquired or run</td><td>Held-out relation-composition length</td></tr>
+      <tr><td>EWoK</td><td><a href="https://arxiv.org/abs/2405.09605">paper and dataset description</a></td><td>Not acquired or run</td><td>World-knowledge preference by domain</td></tr>
+      <tr><td>SimpleQA</td><td><a href="https://github.com/openai/simple-evals">official evaluation repository</a></td><td>Not acquired or run</td><td>Short factual QA and abstention</td></tr>
+      <tr><td>Entity Tracking</td><td><a href="https://aclanthology.org/2023.acl-long.213/">ACL paper and artifacts</a></td><td>Not acquired or run</td><td>Ordered state transitions</td></tr>
+      <tr><td>Story Cloze</td><td><a href="https://aclanthology.org/N16-1098/">official paper</a></td><td>Not acquired or run</td><td>Narrative ending consistency</td></tr>
+    </tbody></table>
+    <p>This table documents the public portfolio without implying implementation. Acquisition must still freeze a version, record applicable terms, preserve official splits, and add a native Node.js adapter before a suite can move from “named” to “prepared.”</p>
 
     <h2>English language and factual knowledge</h2>
     <figure class="diagram"><pre class="mermaid">flowchart LR
@@ -35,7 +55,7 @@
   E --> F</pre><figcaption>Both endings must be executed against the same compiled story world before their verified states are compared.</figcaption></figure>
     <p><strong>Purpose.</strong> Story Cloze and future narrative suites require event and world-state modules that are not implemented in version 0.1. The adapter should report parse coverage, state consistency, schema support, and ending selection separately so a stylistic preference is not mistaken for narrative execution.</p>
 
-    <h2>Local benchmark execution</h2>
+    <h2>How a public case becomes a result</h2>
     <figure class="diagram"><pre class="mermaid">flowchart TD
   A[Neutral JSONL] --> B{Case kind}
   B -->|QA| C[Semantic answer]
@@ -44,14 +64,15 @@
   D --> E
   E --> F[JSON report]
   E --> G[HTML report]</pre><figcaption>The neutral protocol branches by task kind and publishes synchronized machine-readable and human-readable results.</figcaption></figure>
-    <p><strong>Purpose.</strong> The implemented neutral protocol accepts canonical QA cases and good/bad sentence pairs. Reports include a protocol identifier and dataset hash. Public adapters will convert official formats into this protocol while retaining source metadata, split, phenomenon, and license information.</p>
+    <p>The native adapter converts an official record into a stable case containing its visible context, question, expected semantic value, split, support annotations, and dataset identity. Training commands expose only the authorized train split to the coding agent. The evaluator loads the isolated test split only after a candidate has been promoted, executes the same offline runtime used by the CLI, and compares canonical semantic values rather than relying on wording.</p>
+    <p>The machine-readable report preserves source identity and per-case outcomes for audit. This explanatory page deliberately omits integrity hashes; they are implementation evidence, not useful introductory documentation.</p>
     <table><thead><tr><th>Capability</th><th>Status</th><th>Concrete interface</th></tr></thead><tbody>
       <tr><td>Neutral QA and preference scoring</td><td>implemented</td><td><code>benchmark run --suite FILE</code></td></tr>
       <tr><td>Label-free external export</td><td>implemented</td><td><code>benchmark export --suite FILE --output FILE</code></td></tr>
       <tr><td>External prediction scoring</td><td>implemented</td><td><code>benchmark score-predictions</code></td></tr>
       <tr><td>BLiMP official-format adapter</td><td>planned</td><td>must preserve phenomenon and official record IDs</td></tr>
       <tr><td>bAbI Task 15 adapter</td><td>implemented and run</td><td><code>dataset fetch/prepare/analyze</code>; 10,000 train and 1,000 test cases</td></tr>
-      <tr><td>bAbI Tasks 2, 3, and 16 ingestion</td><td>cached and prepared</td><td>10,000 train and 1,000 test cases each; all synthesis ledgers pending, with no candidate or evaluation</td></tr>
+      <tr><td>bAbI Tasks 2, 3, and 16 ingestion</td><td>cached and prepared, not learned</td><td>10,000 train and 1,000 test cases each; all synthesis ledgers pending, with no candidate or evaluation</td></tr>
       <tr><td>CLUTRR parser</td><td>planned</td><td>requires relation compilation, license handling, and length-held-out splits</td></tr>
       <tr><td>Entity Tracking adapter</td><td>planned</td><td>requires explicit state-transition execution</td></tr>
     </tbody></table>
@@ -77,8 +98,14 @@
     </tbody></table>
     <p><code>benchmark references</code> prints the machine-readable source URLs and the reason for each classification. A shared headline number does not establish equality of protocol. The cleanest direct LLM comparison is still to export the exact 1,000 local cases, record model and prompt metadata, and score returned values through <code>score-predictions</code>.</p>
 
+    <h2>Reproduce the completed public run</h2>
+    <pre><code>node src/cli.mjs dataset status --dataset babi-15-en-10k-v1.2
+npm run benchmark
+node src/cli.mjs benchmark references</code></pre>
+    <p><code>npm run benchmark</code> evaluates the promoted symbolic core on the prepared Task 15 test split and refreshes both <a href="results/latest-benchmark.html">the readable report</a> and <a href="results/latest-benchmark.json">the detailed JSON report</a>. It does not download data, run a coding agent, retrain the model, or load QUICK, WordNet, or ATOMIC.</p>
+
     <h2>Knowledge modules and benchmarks</h2>
-    <p>Optional educational KBs are never loaded into the default Task 15 command. If <code>--kb</code> is supplied to a benchmark, the report records those IDs and marks the model non-comparable. A future benchmark-specific KB may be synthesized only from that benchmark's authorized train split; hidden test answers remain excluded. This allows modular experiments without concealing additional knowledge.</p>
+    <p>Optional KBs are never loaded into the default Task 15 command. If <code>--kb</code> is supplied to a benchmark, the report records those IDs and marks the run non-comparable with the clean result. A benchmark-specific module may be synthesized only from that benchmark's authorized train split; hidden test answers remain excluded. This allows modular experiments without concealing additional knowledge.</p>
     <p class="related"><strong>Continue with:</strong> <a href="evaluation.html">Evaluation</a> for metric semantics, <a href="cli.html">CLI Tutorial</a> for export and scoring commands, and <a href="theory.html">Theory</a> for falsification criteria. Dataset and comparison contracts are <a href="specsLoader.html?spec=DS012-public-benchmark-adapters.md">DS012</a> and <a href="specsLoader.html?spec=DS013-external-model-comparison.md">DS013</a>.</p>
   </main>
 </body>

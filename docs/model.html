@@ -9,8 +9,8 @@
   <div data-include="partials/header.html"></div>
   <main>
     <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Generated Model</p>
-    <h1>The promoted model and optional KB graph</h1>
-    <p class="lead">The default model is the static ESM graph rooted at <code>training/model/manifest.mjs</code>. It was generated from 10,000 bAbI Task 15 training episodes and contains reusable language and reasoning policy, not the people, rules, or answers of those episodes. Optional domain graphs under <code>training/KBs/QUICK/model/</code> can be selected independently.</p>
+    <h1>The promoted core and generated knowledge modules</h1>
+    <p class="lead">The default graph rooted at <code>training/model/manifest.mjs</code> was generated from 10,000 bAbI Task 15 train episodes and contains reusable language and reasoning policy, not story answers. QUICK adds a small v1 fact/rule graph. WordNet and ATOMIC add source-specific generated providers that preserve lexical senses and defeasible event relations.</p>
 
     <h2>Why the persistent fact tables are empty</h2>
     <p>Each bAbI case defines a new world. A name such as Gertrude may have a different class in another episode, and a class such as mice may fear a different class. Promoting any of those story facts globally would leak train worlds into unrelated test worlds. The correct compiled representation is therefore a small episode compiler: it recognizes the recurring constructions, creates temporary entities, facts, and rules from the supplied story, answers the question, and discards the world.</p>
@@ -55,7 +55,7 @@
   G -->|absent| I[UNKNOWN]</pre><figcaption>The promoted model supplies schemas and limits; optional KBs supply persistent domain claims; the current episode supplies temporary world state.</figcaption></figure>
 
     <h2>Optional generated knowledge graphs</h2>
-    <p>The directories <code>kbs/child-basic</code>, <code>kbs/animals</code>, and <code>kbs/space-geography</code> each contain the same seven-module contract as a complete model. Their reviewed sources live in <code>training/KBs/QUICK/source/</code> and are compiled by <code>kb build</code>. The loader merges selected entities by stable ID, deduplicates facts and rules by semantic signature, combines constructions and lexical variants, rebuilds all postings, and validates the result before engine construction.</p>
+    <p>The directories <code>child-basic</code>, <code>animals</code>, and <code>space-geography</code> under <code>training/KBs/QUICK/model/</code> each contain the seven-module v1 contract. Their reviewed sources live in <code>training/KBs/QUICK/source/</code>. The generated top-level QUICK manifest contains their merged graph. WordNet instead contains lemma and synset shards; ATOMIC contains event shards. Their providers run before the v1 parser only for declared source-specific question families.</p>
     <table><thead><tr><th>Configuration</th><th>Persistent entities</th><th>Direct facts</th><th>Rules</th><th>Closure facts</th></tr></thead><tbody>
       <tr><td>Promoted model only</td><td>0</td><td>0</td><td>0</td><td>0 before an episode</td></tr>
       <tr><td><code>child-basic</code></td><td>8</td><td>12</td><td>9</td><td>18</td></tr>

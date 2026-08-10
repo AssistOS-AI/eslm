@@ -22,16 +22,18 @@ test('CLI emits JSONL for plain-text batch input', async () => {
   assert.equal(stdout.trim().split('\n').length, 4);
 });
 
-test('CLI exposes corpus state without claiming planned sources are trained', async () => {
+test('CLI exposes the compiled WordNet corpus state accurately', async () => {
   const { stdout } = await run(process.execPath, [
     'src/cli.mjs', 'corpus', 'status', '--corpus', 'oewn-2025',
   ], { cwd: PROJECT_ROOT });
   const [status] = JSON.parse(stdout);
   assert.equal(status.id, 'oewn-2025');
-  assert.equal(status.sourceCached, false);
+  assert.equal(status.sourceCached, true);
   assert.equal(status.probeComplete, true);
   assert.equal(status.prepared, false);
-  assert.equal(status.generatedModel, false);
+  assert.equal(status.generatedModel, true);
+  assert.equal(status.buildStatus, 'complete');
+  assert.equal(status.architectureGate, 'experimental-build-query-directed-gate-open');
 });
 
 test('CLI rejects an unsupported corpus probe before invoking an adapter', async () => {
@@ -57,4 +59,20 @@ test('CLI answers disclose active knowledge modules and comparability', async ()
   const result = JSON.parse(stdout);
   assert.deepEqual(result.model.knowledgeBases, ['animals']);
   assert.equal(result.model.benchmarkComparable, false);
+});
+
+test('CLI can query compiled public KBs explicitly', async () => {
+  const { stdout: wordnetOutput } = await run(process.execPath, [
+    'src/cli.mjs', 'ask', 'Is a dog an animal?', '--kb', 'oewn-2025',
+  ], { cwd: PROJECT_ROOT });
+  const wordnet = JSON.parse(wordnetOutput);
+  assert.equal(wordnet.status, 'ANSWERED');
+  assert.match(wordnet.answer, /WordNet path/u);
+
+  const { stdout: atomicOutput } = await run(process.execPath, [
+    'src/cli.mjs', 'ask', 'Why might apologize?', '--kb', 'atomic-2020',
+  ], { cwd: PROJECT_ROOT });
+  const atomic = JSON.parse(atomicOutput);
+  assert.equal(atomic.status, 'ANSWERED');
+  assert.match(atomic.answer, /possibilit/u);
 });

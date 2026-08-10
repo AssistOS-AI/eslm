@@ -9,8 +9,8 @@
   <div data-include="partials/header.html"></div>
   <main>
     <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Scalability and context</p>
-    <h1>Architecture gate before large-corpus training</h1>
-    <p class="lead">The current runtime is a correct small-model reference, not a million-edge architecture. Real training is deliberately blocked until ingestion streams data, generated modules load selectively, reasoning follows the question instead of closing the entire graph, and facts are scoped by time, space, domain, world, and perspective.</p>
+    <h1>Measured scale boundary after the first real KB builds</h1>
+    <p class="lead">WordNet and ATOMIC now compile and answer real source-backed questions, but their combined test expands to roughly 0.6 GB additional RSS. The next architecture gate is concrete: generated shards must load selectively, reasoning must follow the question, and later factual claims must be scoped by time, space, domain, world, and perspective before a larger source enters.</p>
 
     <h2>Review verdict</h2>
     <table><thead><tr><th>Current mechanism</th><th>Why it fails at scale</th><th>Required replacement</th></tr></thead><tbody>
@@ -18,7 +18,7 @@
       <tr class="cap-row--no"><td>Full bounded closure during engine construction</td><td>It derives unrelated consequences, delays startup, multiplies memory, and repeats when session facts are added.</td><td>Head-indexed rule planning plus memoized top-down or semi-naive evaluation over a bounded relevant subgraph.</td></tr>
       <tr class="cap-row--no"><td>Whole-file training preparation</td><td>JSONL arrays, canonical strings, synchronous archive decompression, and complete split buffers scale with corpus size.</td><td>Streaming parse, incremental digest and counts, bounded samples, partitioned emission, and external spill/sort where necessary.</td></tr>
       <tr class="cap-row--partial"><td>Posting-list indexes</td><td>The old implementation copied a posting list at every insertion and rules scanned all facts for each premise.</td><td>Amortized append and bound-term candidate selection are implemented; sorted integer postings and shard-level intersection remain pending.</td></tr>
-      <tr class="cap-row--no"><td>Globally unique normalized aliases</td><td>Polysemous words such as “bank” cannot represent multiple WordNet senses.</td><td>Alias-to-candidate indexes followed by contextual sense and entity resolution.</td></tr>
+      <tr class="cap-row--partial"><td>Globally unique normalized aliases</td><td>The v1 graph cannot represent several WordNet senses.</td><td>The WordNet provider now maps one lemma to many synsets; contextual sense selection remains pending.</td></tr>
       <tr class="cap-row--no"><td>Unscoped triples</td><td>Historical, hypothetical, believed, and fictional claims can collide with current real-world claims.</td><td>Claim identity includes world, valid time, perspective, modality, polarity, domain, and source scope.</td></tr>
     </tbody></table>
     <p>The first reproducible corrective profile used simple synthetic <code>is_a</code> data after the posting and premise-index changes. In the <a href="results/latest-core-scale.json">latest local report</a>, index construction took about 0.7 ms for 1,000 facts, 4.9 ms for 10,000, and 41.0 ms for 100,000; a one-premise rule closed 10,000 direct facts into 15,000 facts in about 38.2 ms. Run <code>npm run profile:scale</code> to replace the report. These numbers show only that the corrected primitive no longer has the obvious posting-copy bottleneck. They are not a release benchmark: real relation density, multi-premise joins, provenance, ESM parsing, and scope indexes remain unmeasured.</p>
@@ -56,7 +56,10 @@ node src/cli.mjs train prepare \
     <p>The probe report must identify unknown relations and datatypes, malformed and oversized values, alias collisions, negative assertions, cycles, conflicts, source mixtures, license mixtures, qualifiers, time intervals, coordinates, units, and estimated output/index size. For WordNet's moderate archive the probe may scan the complete source while retaining only bounded examples. ATOMIC, ConceptNet, and GeoNames require bounded memory and stable per-stratum sampling. Any future thematic Wikidata probe has the same requirement and a separately approved domain boundary.</p>
     <h3>What the WordNet probe actually found</h3>
     <p>The first <a href="results/latest-oewn-probe.json">complete WordNet probe</a> scanned 107,519 synsets and 185,129 lexical senses in under three seconds on the recorded machine. Its principal stages were archive inventory and hashing, synset inventory, lexical-entry inventory, and a second reference-validation pass. The latest report records the exact run-dependent deltas; RSS grew by more than 200 MB and heap by roughly 150 MB. These are not sampled peaks, but they already show that retaining global ID and ambiguity sets dominates the tiny compressed archive and must not become the design for ATOMIC, ConceptNet, or GeoNames.</p>
-    <p>The probe found 25,805 ambiguous normalized members, including 75 synsets for “break” and 70 for “cut”. It also found homograph-suffixed part-of-speech keys and external Wikidata IDs shaped like string arrays. Those observations invalidate two tempting shortcuts: aliases cannot be unique, and a string array cannot be classified as an internal edge without field semantics. No full KB was emitted; the gate moved only from “probe missing” to “sense-aware shard prototype required”.</p>
+    <p>The probe found 25,805 ambiguous normalized members, including 75 synsets for “break” and 70 for “cut”. It also found homograph-suffixed part-of-speech keys and external Wikidata IDs shaped like string arrays. Those observations invalidated unique aliases and shape-only relation inference. The later full compiler emitted a sense-aware KB; the remaining gate is selective import and contextual sense choice.</p>
+
+    <h3>What the complete builds measured</h3>
+    <p>WordNet generated 38 modules and 23,771,871 bytes in about 1.34 seconds, with about 281 MB RSS growth during compilation. ATOMIC streamed 1,076,880 train rows, generated 17 modules and about 32.96 MB in about 4.66 seconds, with about 491 MB RSS growth. The 700-case combined test passed every sampled query but uses roughly 0.6 GB additional RSS. The build throughput is healthy; eager object allocation at import is the limiting stage.</p>
 
     <h2>Generated storage and query planning</h2>
     <p>The scalable model uses integer dictionaries for source IDs, entities or senses, predicates, scalar types, worlds, domains, and repeated strings. Facts are immutable rows in relation-and-scope shards. Postings contain sorted integer claim IDs. Provenance uses compact claim-to-source tables and separate derivation records rather than repeating source strings in every object.</p>
@@ -78,11 +81,11 @@ node src/cli.mjs train prepare \
     <p>Every contextual claim belongs to a world. Actual-world sources use <code>world:actual</code>. Each fictional universe, work, canon, or edition has a distinct world. A benchmark story and a user's thought experiment create ephemeral worlds. Beliefs and reports add perspective, so a character may believe something false without changing the fictional world's state.</p>
     <p>A hypothetical question creates an immutable branch from a named base world, adds assumptions, and runs scoped reasoning. Contradicting the base does not rewrite it. The answer states whether it is deductive under assumptions, defeasible, abductive, or unknown. Real background knowledge enters a fictional or hypothetical world only through a declared bridge policy.</p>
 
-    <h2>Gate required before WordNet and larger sources</h2>
+    <h2>Gate required before ConceptNet and later sources</h2>
     <table><thead><tr><th>Gate evidence</th><th>Required outcome</th></tr></thead><tbody>
-      <tr class="cap-row--yes"><td>WordNet source probe</td><td>Complete scan and profile recorded; observed source shapes and the first representation surprises are inventoried.</td></tr>
-      <tr><td>Streaming path</td><td>Source read, validation, digest, normalization, and shard emission do not retain the complete decoded corpus.</td></tr>
-      <tr><td>Model v2 prototype</td><td>Sense-aware candidate aliases, intern dictionaries, relation/scope shards, compact provenance, and static manifest inventory.</td></tr>
+      <tr class="cap-row--yes"><td>WordNet and ATOMIC source builds</td><td>Complete inventories, generated shards, validators, random tests and resource reports exist.</td></tr>
+      <tr class="cap-row--partial"><td>Streaming path</td><td>ATOMIC source reading is streaming; WordNet parses one archive member at a time. Compiler dictionaries still retain complete normalized output before emission.</td></tr>
+      <tr class="cap-row--partial"><td>Source-specific model format</td><td>Sense candidates and event relations exist, but strings are not interned into compact integer dictionaries.</td></tr>
       <tr><td>Query-directed execution</td><td>No full-profile closure at startup and no full rebuild for one session or hypothetical assertion.</td></tr>
       <tr><td>Scale curve</td><td>Increasing-size runs report throughput, peak memory, bytes, cold import, p50/p95 queries, postings, rules, and proof equivalence.</td></tr>
       <tr><td>Context isolation</td><td>Time, actual/fictional worlds, perspectives, and hypothetical branches cannot contaminate one another.</td></tr>

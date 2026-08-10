@@ -14,11 +14,11 @@ summary: Separates stable linguistic algorithms, training-time program synthesis
 
 The stable runtime under `src/` owns input normalization, construction parsing, query contracts, entity resolution algorithms, indexed retrieval, bounded inference, trace production, realization, CLI adaptation, and report computation. These algorithms must remain useful when the promoted corpus changes.
 
-`training/input/` owns authorized source evidence, reviewed generated-KB sources, and locally obtained public datasets. `training/work/` owns prepared packets, chunk ledgers, and transient products. `training/candidates/` may hold isolated generated candidates. `training/model/` contains the promoted executable model imported by default; `training/KBs/QUICK/model/` contains independently selectable generated domain graphs.
+`training/KBs/` owns each knowledge source, its source manifest, probe or build report, and generated executable model. `training/KBs/QUICK/` owns the small authored development fixtures. `training/datasets/` owns prepared benchmark datasets, while downloaded archives live only under ignored `training/.cache/`. `training/work/` owns packets and ledgers, `training/candidates/` owns isolated candidates, and `training/model/` remains the promoted narrow bAbI-derived core.
 
 Persistent public knowledge lives under `training/KBs/SOURCE_ID/`, separately from evaluation data under `training/datasets/DATASET_ID/`. The source registry is `src/corpora.mjs`. Corpus acquisition and compilation may be added only after the immutable release, license, probe, scope mapping, and profiling budget required by DS018 and DS019 exist.
 
-`training/.agents/skills/synthesize-eslm-model/` owns the self-contained instructions and validator used by a coding agent. The skill may generate a candidate but cannot promote it or inspect hidden evaluation.
+`training/.agents/skills/synthesize-eslm-model/` owns self-contained frozen-source compilation instructions and validators. `training/.agents/skills/benchmark-guided-symbolic-learning/` owns the checkpointed benchmark-feedback loop and KB-versus-core acceptance gate. Both are Node-only and portable inside their folders. Neither authorizes hidden-label inspection or automatic promotion.
 
 `tests/` owns deterministic code contracts and small demonstration fixtures. `docs/results/` owns latest evaluation and benchmark evidence. These outputs are not inputs to synthesis.
 
@@ -68,7 +68,7 @@ Model format, runtime protocol, benchmark protocol, dataset hashes, and evidence
 
 `src/datasets.mjs` owns the frozen public evaluation-dataset catalog, archive verification, safe TAR extraction, official split preservation, JSONL adaptation, chunk manifests, train-only analysis, and local status. bAbI Task 15 is implemented and complete. Tasks 2, 3, and 16 reuse the archive and have prepared splits but no promoted model or held-out result.
 
-`src/corpora.mjs` owns the real knowledge-source registry and local source/probe/prepared/model state. The priority queue is Open English WordNet, ATOMIC, filtered ConceptNet, and bounded GeoNames. Wikidata is future and thematic only; DBpedia and Wikipedia are deferred. The complete WordNet probe exists, but no real source is currently retained in the corpus cache and no source-derived KB has been prepared or generated.
+`src/corpora.mjs` owns the real knowledge-source registry and local source/probe/model state. Open English WordNet 2025 and the ATOMIC 2020 train split are cached, compiled, validated, and queryable through source-specific providers. QUICK remains an authored fixture bundle. ConceptNet and bounded GeoNames are next; Wikidata is future and thematic only, while DBpedia and Wikipedia remain deferred.
 
 `src/kbs.mjs` owns the KB catalog, selection parsing, independent loading, merge semantics, and inventory reporting. `src/kb-training.mjs` compiles reviewed JSON sources into fixed ESM module graphs. The base model is always loaded first. Only requested KBs are imported. Merge rejects incompatible entity kinds, deduplicates identical fact/rule signatures, rebuilds canonical postings, validates the active graph, and records selected IDs in the merged manifest.
 

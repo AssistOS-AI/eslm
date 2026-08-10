@@ -1,101 +1,44 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ESLM Documentation — Real Knowledge Sources</title>
-  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
-</head>
-<body>
-  <div data-include="partials/header.html"></div>
-  <main>
-    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Real knowledge sources</p>
-    <h1>From public knowledge graphs to executable modules</h1>
-    <p class="lead">Benchmark stories can reveal whether a rule engine works, but they cannot supply the breadth required for a useful assistant. ESLM therefore separates evaluation datasets from knowledge corpora. A knowledge corpus contributes persistent language, facts, relations, defaults, or event schemas. An evaluation suite contributes questions and oracles and remains isolated unless an experiment explicitly declares source exposure.</p>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESLM — Knowledge Sources</title><link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script></head>
+<body><div data-include="partials/header.html"></div><main>
+  <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Knowledge sources</p>
+  <h1>Real sources, generated modules, and future queue</h1>
+  <p class="lead">Knowledge corpora supply persistent lexical, factual or commonsense evidence. Benchmark datasets supply questions and oracles. ESLM stores them in different directories, records source exposure in results, and never converts a catalog entry into a claim that training occurred.</p>
 
-    <h2>The first build: Open English WordNet 2025</h2>
-    <p><a href="https://github.com/globalwordnet/english-wordnet/releases">Open English WordNet 2025</a> is the best first source because it is current, moderate in size, explicitly licensed, and structurally close to the missing linguistic layer. Its concepts are senses rather than untyped strings. The word “bank” can therefore refer to a financial institution or the side of a river without merging both into one entity. Synsets group compatible lemmas, definitions explain each sense, and typed links connect senses through hypernymy, meronymy, antonymy, similarity, entailment, and causation.</p>
-    <p>The first diagnostic probe has now scanned all 73 JSON members in the 9,986,555-byte archive. It found 107,519 synsets, 185,129 distinct sense IDs, 128,009 lexical-entry keys, 127,311 normalized synset members, 107,524 definitions, and 49,596 examples. Of the normalized members, 25,805 point to more than one synset: “break” alone has 75 senses in the source. The <a href="results/latest-oewn-probe.json">machine-readable probe report</a> contains the relation, field-shape, ambiguity, reference-integrity, and per-stage performance inventories.</p>
-    <p>The probe exposed representation details that would have been lost in the v1 model. Adjective satellites use the separate <code>s</code> code; lexical entries can use homograph keys such as <code>n-1</code> and <code>n-2</code>; sense records contain lexical relations distinct from synset relations; and Wikidata values are external identifiers rather than synset targets. Definitions and examples are text, not automatic universal rules. The archive has no hypernym cycle after topological reduction and no unresolved internal synset target in the fields classified as synset relations, but this structural integrity does not make every relation safe for deduction.</p>
-    <p>The future adapter will preserve the frozen 2025 release and attribution, then create two profiles. <code>core-senses</code> will contain a reproducibly selected lexical core for rapid iteration; <code>full-lexicon</code> will compile the complete release. Full compilation remains blocked until aliases become lemma-to-sense candidate postings, dictionaries and relation shards are implemented, and queries can load only relevant shards.</p>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[2025 JSON release] --> B{Schema validation}
-  B -->|invalid record| X[Quarantine + diagnostic]
-  B -->|valid sense| S[Synsets + lemmas]
-  B -->|valid link| R[Typed lexical relations]
-  S --> I[Alias and sense indexes]
-  R --> I
-  I --> M[core-senses / full-lexicon]</pre><figcaption>The adapter preserves sense identity before building aliases. This prevents a spelling match from silently collapsing distinct meanings.</figcaption></figure>
-    <p>Taxonomic closure is deductive only after a sense has been resolved: if the selected poodle sense is a dog sense and that dog sense is an animal sense, the executor may conclude that the poodle sense is an animal. Meronymy does not receive blanket transitivity, antonymy does not turn absence into negation, and a textual gloss remains evidence text rather than executable code.</p>
+  <h2>Current source state</h2>
+  <div class="table-wrap"><table><thead><tr><th>Priority</th><th>Source</th><th>Actual local state</th><th>What the runtime learned</th><th>Open work</th></tr></thead><tbody>
+    <tr class="cap-row--yes"><td>1</td><td><a href="kb-oewn-2025.html">Open English WordNet 2025</a></td><td>Official archive cached; full probe, compiler, model, validation and random tests run.</td><td>Sense-preserving definitions, synonyms, lemma ambiguity and bounded hypernym paths.</td><td>Contextual sense selection and lazy shard imports.</td></tr>
+    <tr class="cap-row--yes"><td>2</td><td><a href="kb-atomic-2020.html">ATOMIC 2020</a></td><td>Official archive cached; complete train split compiled and validated; dev/test held out.</td><td>Relation-specific possible intentions, needs, effects, reactions, wants, obstacles and event links.</td><td>General participant binding, calibration, held-out evaluation and lazy shards.</td></tr>
+    <tr class="cap-row--partial"><td>3</td><td>ConceptNet 5.7 English</td><td>Official source identified; no local adapter or generated KB.</td><td>Nothing yet.</td><td>Streaming English filter, license/source policy, defaults/exceptions, query-directed import.</td></tr>
+    <tr class="cap-row--partial"><td>4</td><td>GeoNames snapshot</td><td>Official source identified; no local adapter or generated KB.</td><td>Nothing yet.</td><td>Bounded countries/capitals profile, coordinates, alternate names and administrative containment.</td></tr>
+    <tr class="cap-row--no"><td>future</td><td>Wikidata thematic packs</td><td>No full-dump build planned.</td><td>Nothing.</td><td>Only a concrete dated domain pack with typed values, qualifiers and revisions may be authorized later.</td></tr>
+  </tbody></table></div>
 
-    <h2>The second build: ATOMIC event knowledge</h2>
-    <p><a href="https://github.com/allenai/comet-atomic-2020">ATOMIC 2020</a> contains approximately 1.33 million tuples about intentions, prerequisites, effects, reactions, wants, causes, and event order. Its subjects and objects are often open phrases involving placeholders such as PersonX. These records cannot be imported as unconditional world facts. They require event templates, participant binding, modality, direction, and confidence.</p>
-    <p>The independently loadable <code>social-core</code> KB will cover actor intentions, prerequisites, effects, reactions, and wants. <code>event-causality</code> will add causes, event order, subevents, and obstacles. For example, an <code>xIntent</code> continuation is a possible intention of the actor, while an <code>xEffect</code> continuation is a typical effect on that actor. These become ranked hypotheses that can answer “why might” and “what could happen”, never categorical statements that an event always occurred.</p>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  E[Event phrase + PersonX/Y] --> B[Participant binding]
-  B --> R{ATOMIC relation}
-  R -->|intent / need| H[Pre-event hypotheses]
-  R -->|effect / reaction / want| O[Post-event hypotheses]
-  R -->|before / after / subevent| T[Event-order shard]
-  H --> P[Ranked scoped answer]
-  O --> P
-  T --> P</pre><figcaption>ATOMIC becomes event templates and explicitly defeasible hypotheses. It is not flattened into timeless subject–predicate–object facts.</figcaption></figure>
+  <figure class="diagram"><pre class="mermaid">flowchart LR
+    O[official release] --> C[ignored local cache]
+    C --> P{source-specific probe}
+    P -->|schema / anomaly inventory| D[coding-agent semantic design]
+    D --> N[deterministic Node compiler]
+    N --> M[generated executable shards]
+    N --> R[source + build reports]
+    M --> V[validation + random/fresh tests]
+    V -->|accepted capability| L[selectable runtime KB]
+    V -->|failure cluster| D</pre><figcaption>The coding agent designs the representation and responds to failure clusters. Deterministic Node code performs the exhaustive transformation so every source row is processed reproducibly.</figcaption></figure>
 
-    <h2>The third build: filtered English ConceptNet</h2>
-    <p><a href="https://conceptnet.io/">ConceptNet</a> supplies ordinary relations missing from a lexical taxonomy: a knife is used for cutting, ice has the property cold, a bird may be capable of flying, and food can be found at a restaurant. The bulk 5.7 assertion archive is about 498 MB compressed and multilingual. ESLM will retain only records whose usable endpoints are English, then apply a documented relation allowlist and source-quality policy.</p>
-    <p>Its independently selectable KBs are <code>english-core</code>, <code>english-physical</code>, and <code>english-everyday-actions</code>. <code>IsA</code> may participate in bounded taxonomic closure. Purpose, location, material, and part relations remain typed retrieval. Capabilities and properties become defeasible defaults only under explicit exception handling. Causes support hypotheses, not certainty. Each assertion retains weight, contributor/source provenance, license, polarity, and overlap with WordNet or DBpedia.</p>
+  <h2>Why the two built sources use different semantics</h2>
+  <p>WordNet records lexical senses and typed lexical relations. A lemma may map to many synsets, and a hypernym path can license a bounded taxonomic proof. A definition remains cited text. ATOMIC records event-centered continuations with PersonX/PersonY placeholders. An <code>xIntent</code> continuation is a possible actor intention; an <code>xEffect</code> is a possible actor effect; <code>HinderedBy</code> is a possible obstacle. Flattening both sources into untyped triples would lose ambiguity, direction and epistemic status.</p>
 
-    <h2>The fourth build: GeoNames geography</h2>
-    <p><a href="https://www.geonames.org/export/">GeoNames</a> is a bounded, purpose-specific route to useful geography before Wikidata. The first <code>countries-and-capitals</code> KB will contain countries, capitals, alternate names, feature types, coordinates, and administrative containment. A later <code>global-places</code> profile may extend this coverage only after the streaming and spatial indexes remain within budget.</p>
-    <p>GeoNames records do not justify arbitrary geographic inference. Administrative containment, named-place identity, coordinates, feature class, and alternate names remain separate fields. Spatial composition states its relation type and coordinate assumptions, and disputed or approximate locations retain source and precision.</p>
+  <h2>Source exposure and evaluation</h2>
+  <p>The 700-case random suite samples generated WordNet and ATOMIC structures and verifies their execution. It is a source-exposed self-consistency/regression test, not an independent comparison with an LLM. A future WordNet- or ATOMIC-derived benchmark must label source exposure. ATOMIC dev/test are deliberately uncompiled and may support held-out tests once the question adapter and protocol are frozen.</p>
 
-    <h2>Wikidata is future and thematic only</h2>
-    <p><a href="https://www.wikidata.org/wiki/Wikidata:Database_download/en">Wikidata</a> remains valuable for named entities, dates, organizations, scientific objects, and cross-source identifiers, but the full truthy dump is more than 43 GB compressed and omits statement qualifiers and references. It is removed from the near-term build queue.</p>
-    <p>If introduced later, it will only produce bounded dated KBs such as <code>science-core</code>, <code>geography-crosscheck</code>, or <code>history-core</code>. Each pack starts from reviewed domain seeds and property allowlists, retrieves complete revisioned entities where qualifiers matter, and records traversal boundaries. There will be no generic “load Wikidata” command and no full-dump KB.</p>
+  <h2>Why ConceptNet waits</h2>
+  <p>The next source is much larger and combines multiple contributors, languages, weights, relations and licenses. Current public models are split into generated files but imported eagerly. Their roughly 0.6 GB combined RSS growth shows that adding ConceptNet with the same approach would be careless. Before ingestion, runtime planning must select a profile and shard from the question without assembling unrelated source records.</p>
 
-    <h2>What the coding agent does at this scale</h2>
-    <p>A coding agent does not manually rewrite millions of rows as JavaScript. It receives source documentation, a frozen train-only sample, relation inventories, frequency summaries, conflicts, and counterexamples. It proposes the mapping from source semantics to ESLM types, selects safe inference rules, designs sharding and indexes, and generates or revises the Node adapter and model templates. Deterministic Node code then streams the entire artifact and emits reproducible modules.</p>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Official frozen artifact] --> N[Node streaming parser]
-  N --> O[Counts, samples, conflicts]
-  O --> G[Coding-agent semantic design]
-  G --> V{Human + validator review}
-  V -->|revise| G
-  V -->|approved mapping| C[Deterministic full compiler]
-  C --> S[Dictionary + relation shards]
-  C --> P[Provenance + conflict index]
-  S --> M[Selectable KB profiles]
-  P --> M</pre><figcaption>The agent operates on semantics and counterexamples; the deterministic compiler performs exhaustive transformation. This boundary makes large runs reproducible and parallelizable.</figcaption></figure>
-
-    <h2>Module and inference contract</h2>
-    <p>Every built profile will have a manifest, interned dictionaries, entity or sense tables, relation-specific fact shards, source metadata, alias indexes, predicate postings, and a conflict index. Rules remain separate from source facts. Query execution loads only named profiles and activates only predicates relevant to the compiled question.</p>
-    <table><thead><tr><th>Inference</th><th>Valid use</th><th>Required guard</th></tr></thead><tbody>
-      <tr><td>Deduction</td><td>Typed taxonomic and relational consequences licensed by explicit rules.</td><td>Resolved senses, relation-specific transitivity, bounded depth, complete proof.</td></tr>
-      <tr><td>Defeasible inheritance</td><td>Typical class properties or capabilities applied to an instance.</td><td>Specific exceptions outrank defaults; answer is labeled unless evidence is categorical.</td></tr>
-      <tr><td>Induction</td><td>A repeated source pattern proposes a general rule or class tendency.</td><td>Support, counterexamples, source diversity, held-out validation, confidence threshold.</td></tr>
-      <tr><td>Abduction</td><td>Known effects or situations rank plausible causes, intentions, or missing events.</td><td>Hypothesis status, alternatives, directionality, depth budget, no conversion to fact.</td></tr>
-      <tr><td>Temporal reasoning</td><td>Dates, intervals, event order, and scoped real-world statements.</td><td>Explicit time types and qualifiers; no timeless overwrite.</td></tr>
-      <tr><td>Conflict handling</td><td>Retain incompatible claims and select only under a declared source/time policy.</td><td>Both sources remain traceable; absence is never treated as falsehood.</td></tr>
-    </tbody></table>
-
-    <h2>Milestones and stop conditions</h2>
-    <table><thead><tr><th>Milestone</th><th>Deliverable</th><th>Exit evidence</th></tr></thead><tbody>
-      <tr><td>K1 — lexical core</td><td>Open English WordNet adapter, two profiles, sense-aware parser integration, taxonomy and lexical queries.</td><td>Exact source/model counts, integrity validation, sense ambiguity tests, held-out relation queries, latency and memory report.</td></tr>
-      <tr><td>K2 — event hypotheses</td><td>ATOMIC <code>social-core</code> and <code>event-causality</code> KBs with participant-bound event templates.</td><td>Participant-binding accuracy, calibrated hypothesis ranking, explicit alternatives, no categorical leakage.</td></tr>
-      <tr><td>K3 — commonsense core</td><td>Filtered ConceptNet profiles, relation-specific shards, default/exception policy, cross-source identity links.</td><td>Coverage by relation and source, contradiction audit, unseen paraphrase questions, exception and irrelevant-fact tests.</td></tr>
-      <tr><td>K4 — bounded geography</td><td>GeoNames <code>countries-and-capitals</code>, then an optional selectively loaded <code>global-places</code> KB.</td><td>Alternate-name resolution, containment and coordinate tests, exact counts, cold-load and query-memory budgets.</td></tr>
-      <tr><td>K5 — future thematic facts</td><td>Optional dated Wikidata domain packs; never the complete dump.</td><td>Only after a concrete domain need, bounded source manifest, qualifier support, and independent value over prior KBs.</td></tr>
-    </tbody></table>
-    <p>The experiment stops or revises its representation when module growth follows individual records rather than relation families, when source provenance cannot reconstruct answers, when selective loading offers no benefit, when false inheritance remains common after exception handling, or when source-derived evaluations cannot be separated from independent tests.</p>
-
-    <h2>Inspecting status from the CLI</h2>
-    <pre><code>node src/cli.mjs corpus catalog
-node src/cli.mjs corpus status
-node src/cli.mjs corpus status --corpus oewn-2025,atomic-2020
-node src/cli.mjs corpus probe \
-  --corpus oewn-2025 \
-  --archive /path/to/english-wordnet-2025-json.zip</code></pre>
-    <p>For WordNet, status now reports <code>probeComplete: true</code> and names the sense-aware shard prototype as the next artifact. It still reports <code>sourceCached: false</code>, <code>prepared: false</code>, and <code>generatedModel: false</code>: the diagnostic download was temporary and no result is being misreported as a trained KB. <code>corpus probe</code> accepts only the implemented WordNet probe and a local archive path; it writes the training report and its published documentation copy but generates no model. Fetch, prepare, and build commands will be exposed source by source only after the corresponding adapter validates the official artifact.</p>
-    <p class="related"><strong>Continue with:</strong> <a href="scalability.html">Scale and Context</a> for the mandatory pre-ingestion gate, <a href="training.html">Training</a> for the agent/compiler boundary, <a href="reasoning.html">Reasoning</a> for proof semantics, and <a href="datasets.html">Evaluation datasets</a> for the non-training role of bAbI and BLiMP. Authoritative contracts are <a href="specsLoader.html?spec=DS018-real-knowledge-corpora.md">DS018</a> and <a href="specsLoader.html?spec=DS019-scalability-profiling-and-contextual-worlds.md">DS019</a>.</p>
-  </main>
-</body>
-</html>
+  <h2>Where artifacts live</h2>
+  <pre><code>training/.cache/corpora/              downloaded archives; ignored
+training/KBs/oewn-2025/              source manifest, probe, build report, model
+training/KBs/atomic-2020/            source manifest, build report, model
+training/KBs/QUICK/                  authored fixture sources and generated model
+training/datasets/                   benchmark raw/prepared data; ignored</code></pre>
+  <p class="related"><strong>Continue with:</strong> <a href="training.html">how coding-agent training works</a>, <a href="knowledge-bases.html">loadable KB inventory</a>, <a href="scalability.html">resource architecture</a>, and <a href="benchmarks.html">comparison boundaries</a>.</p>
+</main></body></html>

@@ -21,15 +21,15 @@ test('corpus selection rejects unknown sources and reports honest local state', 
   assert.throws(() => selectedCorpusIds('not-a-corpus'), /Unknown knowledge corpus/u);
   const statuses = await corpusStatuses('oewn-2025');
   assert.equal(statuses.length, 1);
-  assert.equal(statuses[0].sourceCached, false);
+  assert.equal(statuses[0].sourceCached, true);
   assert.equal(statuses[0].prepared, false);
-  assert.equal(statuses[0].generatedModel, false);
+  assert.equal(statuses[0].generatedModel, true);
   assert.equal(statuses[0].probeComplete, true);
-  assert.equal(statuses[0].architectureGate, 'blocked-before-full-synthesis');
-  assert.equal(statuses[0].nextArtifact, 'sense-aware-shard-prototype');
+  assert.equal(statuses[0].architectureGate, 'experimental-build-query-directed-gate-open');
+  assert.equal(statuses[0].nextArtifact, 'lazy-shard-loader-and-held-out-evaluation');
 });
 
-test('published WordNet probe records complete source shape without claiming a model build', async () => {
+test('published WordNet probe remains the source-shape evidence preceding the build', async () => {
   const report = JSON.parse(await readFile(`${PROJECT_ROOT}/docs/results/latest-oewn-probe.json`, 'utf8'));
   assert.equal(report.status, 'probe-complete-architecture-gate-still-blocked');
   assert.equal(report.synsets.count, 107519);

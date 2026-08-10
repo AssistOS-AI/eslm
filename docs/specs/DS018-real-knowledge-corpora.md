@@ -44,25 +44,25 @@ Cross-source identity is an evidence-bearing relation, not a string merge. A Wor
 
 ### Open English WordNet 2025
 
-The first adapter must use the official 2025 JSON release and preserve both Open English WordNet and underlying Princeton WordNet attribution. It must report exact archive, file, synset, sense, lemma, definition, example, part-of-speech, and relation counts after parsing.
+The implemented adapter uses the official 2025 JSON release and preserves both Open English WordNet and underlying Princeton WordNet attribution. The complete build contains 107,519 synsets, 127,311 unique normalized lemmas, 185,129 member occurrences, 107,524 definitions, and 49,596 examples in 38 generated modules totaling 23,771,871 bytes.
 
-The first complete probe scanned the 9,986,555-byte archive's 73 JSON members and recorded 107,519 synsets, 185,129 unique sense IDs, 128,009 lexical-entry keys, 127,311 normalized synset members, 107,524 definitions, and 49,596 examples. It found 25,805 normalized members linked to multiple synsets. The scan is source analysis, not a generated model or completed K1 build.
+The complete probe scanned the 9,986,555-byte archive's 73 JSON members and recorded 107,519 synsets, 185,129 sense/member occurrences, 128,009 lexical-entry keys, 127,311 normalized synset members, 107,524 definitions, and 49,596 examples. It found 25,805 normalized members linked to multiple synsets. The later compiler run produced the source-derived model; the probe remains separate source-shape evidence.
 
 The probe also found adjective-satellite `s` records, homograph-suffixed lexical-entry keys such as `n-1`, lexical relations nested inside sense entries, and external Wikidata identifiers represented as string arrays. The adapter must interpret fields semantically rather than infer edge type from JSON shape. No internal synset target was unresolved after external identifiers were classified separately, and combined hypernym edges left zero cyclic nodes after topological reduction.
 
 The model must preserve synset and sense identity. Identically spelled lemmas must not merge different senses. Definitions and examples remain cited text used for explanation or disambiguation, not executable rules.
 
-The initial profiles are `core-senses` and `full-lexicon`. The core profile must use a reproducible salience rule. Both profiles expose lemma, spelling, part-of-speech, synset, and relation indexes.
+The implemented `oewn-2025` profile compiles the complete release and exposes lemma-to-many-synset and synset indexes. A smaller `core-senses` profile remains optional future work; it must use a reproducible salience rule rather than manual selection.
 
 Hypernym and instance-hypernym paths may support bounded deductive taxonomy after sense resolution. Synonymy may support answers within a synset. Meronymy and holonymy do not receive blanket transitivity. Antonymy supplies lexical contrast, not universal logical negation. Verb entailment and causation preserve direction. Derivational links aid language analysis without asserting entity identity.
 
 ### ATOMIC 2020 event knowledge
 
-ATOMIC 2020 is the second source target, but compilation may begin only after event templates, participant binding, modality, and hypothesis statuses are executable. Its approximately 1.33 million tuples are event-centered continuations and are not unconditional facts about named entities.
+ATOMIC 2020 is the second implemented source. Its official train split contains 1,076,880 rows; the compiler retains 940,427 unique non-`none` tuples under 36,940 normalized events. It streams the archive, repairs and records one quoted tail containing a literal tab, and leaves dev/test uncompiled. The tuples are event-centered continuations and are not unconditional facts about named entities.
 
 `xIntent`, `xNeed`, `xEffect`, `xReact`, `xWant`, `oEffect`, `oReact`, `oWant`, `HinderedBy`, `Causes`, `isBefore`, `isAfter`, and `HasSubEvent` must preserve actor role and direction. Typical intentions, reactions, and effects produce labeled hypotheses or defeasible expectations. Abductive reversal retains alternatives and never asserts that a proposed cause occurred.
 
-Initial independently loadable profiles are `social-core` for actor intentions, needs, effects, reactions, and wants, and `event-causality` for causes, hindrances, temporal order, and subevents. The first probe must inventory placeholder forms, empty or generic continuations, relation balance, duplicated templates, phrase lengths, and participant-role anomalies. Candidate KBs require participant-binding tests, relation-direction tests, unknown-event tests, and calibration reports.
+The current unified `atomic-2020` profile covers actor intentions, needs, effects, reactions, wants, causes, hindrances, temporal order, subevents, object use, properties, and location. PersonX and PersonY remain explicit source placeholders. Exact normalized event lookup is preferred; bounded lexical fallback reports its selected event. Every answer is labeled as possible/defeasible and retains train-line provenance. General participant binding, calibrated ranking, unknown-event evaluation, and dev/test evaluation remain incomplete.
 
 The CC BY dataset artifact must be frozen separately from the Apache-licensed reference codebase. ESLM consumes the data through a native Node adapter and does not add its Python modeling stack.
 
@@ -108,9 +108,9 @@ A benchmark derived from an ingested source must declare exposure. ConceptNet-de
 
 Every generated profile is independently loadable, lists dependencies, and reports source version, direct claims, indexed values, import time, memory, and comparability. Query execution should load and activate only relevant profiles and predicates.
 
-K1 completes when the WordNet adapter, frozen source manifest, two profiles, validators, inventories, query integration, ambiguity tests, held-out relation tests, and performance report exist. K2 produces the two ATOMIC profiles and requires participant binding, relation direction, hypothesis calibration, and categorical-leakage tests. K3 applies the source-build standard to three ConceptNet profiles and adds default/exception and source-overlap audits. K4 produces the bounded GeoNames countries-and-capitals profile with spatial-type and resource tests. K5 is optional: a Wikidata domain pack exists only after a concrete experiment demonstrates value not supplied by the prior KBs.
+K1 source compilation is complete: WordNet has a frozen manifest, complete generated shards, query integration, validation, inventories, ambiguity-preserving lookup, hypernym tests, randomized checks, and performance measurements. K1 remains open on contextual word-sense disambiguation and query-directed lazy import. K2 source compilation and relation-specific realization are complete for ATOMIC train data; K2 remains open on general participant binding, calibrated ranking, dev/test evaluation, and query-directed lazy import. K3 applies the source-build standard to ConceptNet only after those scale gaps close. K4 is bounded GeoNames. K5 remains optional thematic Wikidata.
 
-The current `child-basic`, `animals`, and `space-geography` modules are regression fixtures. They may remain during K1, but they must not appear as public-corpus training evidence or broad knowledge coverage.
+The current `child-basic`, `animals`, and `space-geography` modules are grouped as QUICK regression fixtures. They remain useful for transparent proofs but never appear as public-corpus training evidence or broad knowledge coverage.
 
 ## Decisions & Questions
 

@@ -13,7 +13,7 @@
   <main>
     <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Architecture</p>
     <h1>Runtime and model architecture</h1>
-    <p class="lead">The architecture separates transferable algorithms in <code>src/</code> from corpus-conditioned executable data in <code>training/model/</code>. This boundary allows the coding agent to change learned knowledge without rewriting the language and inference engine.</p>
+    <p class="lead">The architecture separates transferable algorithms in <code>src/</code> from corpus-conditioned executable data. The promoted bAbI-derived core lives in <code>training/model/</code>; independently loadable QUICK, WordNet, and ATOMIC modules live below <code>training/KBs/</code>. This boundary lets a coding agent change learned knowledge while preserving the reviewed language and inference engine.</p>
 
     <h2>Language compilation</h2>
     <figure class="diagram"><pre class="mermaid">flowchart TD
@@ -74,7 +74,7 @@
       <tr><td><code>language.mjs</code></td><td>provides accepted English variants and declared constructions</td></tr>
       <tr><td><code>indexes.mjs</code></td><td>stores generated direct-fact postings checked by validation</td></tr>
     </tbody></table>
-    <p>Generated KB directories use the same module contract. When several are selected, entity declarations with matching IDs and kinds are combined, semantically identical facts and rules are deduplicated, and indexes are rebuilt from the merged fact positions. This prevents stale postings and makes module composition deterministic. The merged manifest lists its KB IDs and disables direct comparability with the clean benchmark configuration.</p>
+    <p>QUICK and its three components use the seven-module graph contract shown in the table. When those graph modules are selected, matching entities are combined, semantically identical facts and rules are deduplicated, and indexes are rebuilt from the merged fact positions. WordNet and ATOMIC deliberately do not force their data through that graph: WordNet uses lemma-to-many-synset postings plus hypernym adjacency, while ATOMIC uses normalized-event postings grouped by relation. <code>runtime.mjs</code> asks the declared public providers first, then delegates other supported constructions to the v1 graph engine. Every response lists the selected KB IDs and disables direct comparability with the clean benchmark configuration.</p>
 
     <h2>Candidate trust boundary</h2>
     <figure class="diagram"><pre class="mermaid">flowchart TD
@@ -88,8 +88,8 @@
     <p><code>validateGeneratedModel</code> reads every candidate <code>.mjs</code> source and applies the forbidden-pattern policy. It then imports only <code>manifest.mjs</code> and calls <code>validateModel</code>. The validator recomputes subject, predicate, and object postings from <code>facts.mjs</code> and compares them with <code>indexes.mjs</code>. A stale position fails validation.</p>
 
     <h2>Scaling boundary</h2>
-    <p>The current engine builds complete bounded closure and posting lists in memory. Posting insertion and bound-premise selection have been improved, but the model still imports all arrays, rejects polysemous aliases, validates whole indexes, and rebuilds closure for session overlays. These are explicit blockers, not future optimizations hidden behind a scale claim.</p>
-    <p>The <a href="scalability.html">Scale and Context review</a> defines the replacement: streaming probes and compilation, interned dictionaries, relation-and-scope shards, query-directed rule activation, profiling, and explicit time, space, domain, actual/fictional world, perspective, and hypothetical branch semantics. WordNet training cannot proceed to promotion before that gate passes.</p>
+    <p>The v1 fact/rule engine builds complete bounded closure and posting lists in memory, requires aliases to resolve uniquely, validates whole indexes, and rebuilds closure for session overlays. The source-specific providers avoid the alias restriction—WordNet can map one lemma to many senses—but their manifests still import all shards. These are explicit blockers, not optimizations hidden behind a scale claim.</p>
+    <p>The <a href="scalability.html">Scale and Context review</a> now has real measurements from complete WordNet and ATOMIC builds. Source-specific providers preserve polysemy and defeasible event relations, but their static manifests still assemble all shards eagerly. ConceptNet and GeoNames cannot proceed until query-directed import, interned dictionaries, scope-aware shards, and bounded reasoning replace this whole-profile allocation.</p>
     <p class="related"><strong>Continue with:</strong> <a href="scalability.html">Scale and Context</a> for the architecture gate, <a href="model.html">Generated Model</a> for every current v1 module, <a href="reasoning.html">Reasoning Trace</a> for one derivation, and <a href="cli.html">CLI Tutorial</a> to run the paths. Authoritative contracts are <a href="specsLoader.html?spec=DS003-system-architecture.md">DS003</a>, <a href="specsLoader.html?spec=DS005-code-model-and-indexes.md">DS005</a>, <a href="specsLoader.html?spec=DS008-runtime-query-pipeline.md">DS008</a>, and <a href="specsLoader.html?spec=DS019-scalability-profiling-and-contextual-worlds.md">DS019</a>.</p>
   </main>
 </body>

@@ -36,7 +36,7 @@ This specification prevents planned theory from being mistaken for implemented b
 | Task Calculus base execution | operations, THEN, ALL, and CHOOSE in `src/task-calculus.mjs` | typed circuit test | remaining declared controls have no executor |
 | Evaluation and reports | Node test, evaluation, benchmark, and HTML publishing modules | generated latest reports | committed suites are smoke-sized |
 | External prediction exchange | label-free export and local prediction scoring | workflow test | no external runner or credential handling by design |
-| Real-corpus registry and first probe | `src/corpora.mjs`, `corpus catalog`, `corpus status`, and WordNet-only `corpus probe` | registry, CLI, and published-probe tests | the complete WordNet source probe exists, but no source-derived KB, prepared model, or generated profile exists |
+| Real-corpus registry and source modules | `src/corpora.mjs`, `src/public-kbs.mjs`, WordNet/ATOMIC Node compilers, generated shards, `kb build`, `kb validate`, and source-KB random test | catalog/status, smoke validation, semantic queries, and 700 seeded source-exposed cases | WordNet contextual sense choice, ATOMIC general participant binding, calibrated ranking, held-out evaluation, and lazy shard import remain incomplete |
 | Opt-in execution profiling | `src/profiling.mjs`, engine stage instrumentation, and training preparation sidecars | profiling tests and `ask --profile` | current stages expose time, CPU, memory deltas, and basic counts; peak streaming metrics await corpus adapters |
 | Indexed rule premise selection | posting lists and bound-term candidate selection in `src/reasoner.mjs` | reasoning tests and synthetic scale probe | full startup closure and session-wide rebuild remain blockers |
 

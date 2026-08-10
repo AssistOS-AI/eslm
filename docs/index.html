@@ -46,7 +46,7 @@
     </tbody></table></div>
 
     <h2>Independent randomized check</h2>
-    <p>The latest reproducible source-KB run used seed <code>20260810</code> and tested 700 cases: 100 WordNet definitions, 100 synonym checks, 100 hypernym proofs, and 100 cases for each of four ATOMIC relation families. All 700 passed. The combined import and run used roughly 592 MB additional RSS on the recorded machine; this is acceptable for the present experiment but confirms that future work must make shard loading query-directed rather than eager. See the <a href="results/latest-kb-random-tests.json">machine-readable report</a>.</p>
+    <p>The latest reproducible source-KB run used seed <code>20260810</code> and tested 700 cases: 100 WordNet definitions, 100 synonym checks, 100 hypernym proofs, and 100 cases for each of four ATOMIC relation families. All 700 passed. The combined import and run uses roughly 0.6 GB additional RSS on the recorded machine; this is acceptable for the present experiment but confirms that future work must make shard loading query-directed rather than eager. This is a source-exposed integration test, not a public benchmark result. See the <a href="results/latest-kb-random-tests.json">machine-readable report</a> for the exact latest measurement.</p>
 
     <h2>Start here</h2>
     <div class="nav-grid" aria-label="Documentation paths">

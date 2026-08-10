@@ -13,11 +13,11 @@ async function page(name) {
 test('documentation lists every selectable KB and its actual evidence boundary', async () => {
   const [cli, catalog] = await Promise.all([page('cli.html'), page('knowledge-bases.html')]);
   for (const [id, definition] of Object.entries(KB_CATALOG)) {
-    assert.match(cli, new RegExp(id, 'u'));
+    if (!definition.internal) assert.match(cli, new RegExp(id, 'u'));
     assert.match(catalog, new RegExp(id, 'u'));
     assert.equal(await page(definition.documentation).then(() => true), true);
   }
-  assert.match(cli, /hand-authored regression fixtures/u);
+  assert.match(catalog, /hand-authored regression fixtures/u);
   assert.match(catalog, /not evidence of broad world knowledge/u);
 });
 
@@ -29,16 +29,21 @@ test('knowledge-source pages follow the machine priority and artifact state', as
   assert.deepEqual(priorities, [
     'oewn-2025', 'atomic-2020', 'conceptnet-5.7.0-en', 'geonames-snapshot', 'wikidata-thematic',
   ]);
+  for (const label of ['Open English WordNet 2025', 'ATOMIC 2020']) assert.match(home, new RegExp(label, 'u'));
   for (const label of ['Open English WordNet 2025', 'ATOMIC 2020', 'ConceptNet', 'GeoNames', 'Wikidata']) {
-    assert.match(home, new RegExp(label, 'u'));
     assert.match(sources, new RegExp(label, 'u'));
   }
   const wordnet = statuses.find((status) => status.id === 'oewn-2025');
   assert.equal(wordnet.probeComplete, true);
-  assert.equal(wordnet.generatedModel, false);
-  assert.match(cli, /WordNet probe is complete/u);
-  assert.match(home, /none of the planned WordNet, ATOMIC, ConceptNet, or GeoNames KBs has been built/u);
-  assert.match(sources, /Wikidata is future and thematic only/u);
+  assert.equal(wordnet.generatedModel, true);
+  const atomic = statuses.find((status) => status.id === 'atomic-2020');
+  assert.equal(atomic.generatedModel, true);
+  assert.match(cli, /Open English WordNet 2025/u);
+  assert.match(cli, /ATOMIC 2020/u);
+  assert.match(home, /107,519 synsets/u);
+  assert.match(home, /940,427 unique non-/u);
+  assert.match(home, /All 700 passed/u);
+  assert.match(sources, /Wikidata thematic packs/u);
 });
 
 test('documentation does not resurrect disproven chunk or Task 16 status claims', async () => {
@@ -47,6 +52,15 @@ test('documentation does not resurrect disproven chunk or Task 16 status claims'
   ]);
   assert.doesNotMatch(model, /20\/20 chunk analysis/u);
   assert.match(model, /every ledger entry remains <code>pending<\/code>/u);
-  assert.match(benchmarks, /Tasks 2, 3, and 16 have cached, prepared train\/test splits/u);
-  assert.match(training, /does not yet implement atomic worker claims/u);
+  assert.match(benchmarks, /Tasks 2, 3, and 16 ingestion/u);
+  assert.match(training, /No accepted synthesis or promoted capability/u);
+});
+
+test('public benchmark documentation separates completed, prepared, and source-exposed evidence', async () => {
+  const benchmarks = await page('benchmarks.html');
+  assert.match(benchmarks, /one completed public benchmark result/u);
+  assert.match(benchmarks, /1,000\/1,000 semantic answers correct/u);
+  assert.match(benchmarks, /prepared but have not been learned or scored/u);
+  assert.match(benchmarks, /not a public benchmark/u);
+  assert.match(benchmarks, /latest-benchmark\.html/u);
 });

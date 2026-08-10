@@ -32,9 +32,9 @@ bAbI's 20 task families cover single and multiple supporting facts, relations, y
 
 The Node adapter parses numbered story lines, resets worlds at story boundaries, compiles statements into events/facts, executes state transitions, and answers tab-separated questions. Report per-task accuracy, exact support recovery, chain length, and out-of-distribution length. Dataset generator and release must be named because separately generated releases need not contain identical examples.
 
-Task 15 English 10k v1.2 is implemented and has run. The frozen archive is 11,745,123 bytes with SHA-256 `84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c`. The selected raw train and test files contain 10,000 and 1,000 episodes. Preparation emits 20 train chunks of 500, preserves support IDs, and keeps test agent-hidden. The current default model scores 1,000/1,000 semantic answers.
+Task 15 English 10k v1.2 is implemented and has run. The frozen archive identity is preserved in the acquisition manifest rather than repeated in explanatory prose. The selected raw train and test files contain 10,000 and 1,000 episodes. Preparation emits 20 train chunks of 500, preserves support IDs, and keeps test agent-hidden. The current default model scores 1,000/1,000 semantic answers.
 
-Task 16 English 10k v1.2 is a separate catalog entry that reuses the same archive path. Its 10,000 train and 1,000 test cases are fetched and generically prepared. All 20 synthesis-ledger entries remain pending; task-specific induction analysis, synthesis, candidate validation, promotion, and evaluation have not run. The CLI rejects Task 15-specific analysis on Task 16 rather than emitting misleading counts.
+Tasks 2, 3, and 16 English 10k v1.2 are separate catalog entries that reuse the same archive cache. Each has 10,000 fetched and prepared train cases, 1,000 isolated test cases, and 20 train chunks of 500. Every synthesis-ledger entry remains pending. Task-specific state tracking, temporal history, or induction analysis; worker execution; reduction; candidate validation; promotion; and evaluation have not run. The CLI rejects Task 15-specific analysis on these tasks rather than emitting misleading counts.
 
 Official source: [Facebook bAbI tasks archive](https://github.com/facebookarchive/bAbI-tasks).
 

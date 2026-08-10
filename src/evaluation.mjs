@@ -10,14 +10,15 @@ function equalValues(actual = [], expected = []) {
 export async function evaluate(engine, suitePath, publishPath) {
   const cases = await readJsonLines(suitePath);
   const started = performance.now();
-  const outcomes = cases.map((testCase) => {
+  const outcomes = [];
+  for (const testCase of cases) {
     const input = testCase.context ? `${testCase.context} ${testCase.text}` : testCase.text;
-    const result = engine.ask(input);
+    const result = await engine.ask(input);
     const pass = testCase.status
       ? result.status === testCase.status
       : equalValues(result.values, testCase.values);
-    return { id: testCase.id, pass, expected: testCase.values ?? testCase.status, actual: result.values ?? result.status, answer: result.answer };
-  });
+    outcomes.push({ id: testCase.id, pass, expected: testCase.values ?? testCase.status, actual: result.values ?? result.status, answer: result.answer });
+  }
   const report = {
     format: 'eslm-evaluation-report-v1',
     createdAt: new Date().toISOString(),

@@ -1,143 +1,90 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ESLM Documentation — Training</title>
-  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
-</head>
-<body>
-  <div data-include="partials/header.html"></div>
-  <main>
-    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Training</p>
-    <h1>Program synthesis over benchmarks and real knowledge</h1>
-    <p class="lead">Training is program synthesis. A coding agent designs executable semantics, schemas, rules, sharding, and indexes from authorized evidence. Deterministic Node.js adapters then validate and compile complete sources into reviewable ESM modules. The runtime uses only the promoted code and never calls the agent.</p>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESLM — Training</title><link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script></head>
+<body><div data-include="partials/header.html"></div><main>
+  <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Training</p>
+  <h1>Training means generating and improving executable symbolic code</h1>
+  <p class="lead">ESLM does not optimize tensors. A coding agent studies authorized training evidence, designs semantic representations and executable mechanisms, and writes or revises Node.js compilers and model modules. Deterministic Node code then processes the complete source. Candidates are accepted only after validation, fresh tests, proof checks and regression gates.</p>
 
-    <h2>Two inputs with different jobs</h2>
-    <p>Evaluation datasets and knowledge corpora must not share one ambiguous pipeline. A benchmark such as bAbI supplies controlled episodes and a hidden oracle; its generated model should retain reusable language and execution patterns but not episode answers. A knowledge corpus such as WordNet or ConceptNet supplies persistent senses, facts, typed relations, defaults, and provenance; its generated profiles are the evidence used to answer later user questions.</p>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  B[Benchmark train split] --> BC[Task compiler]
-  BT[Hidden benchmark test] --> E[Evaluator]
-  BC --> E
-  K[Public knowledge corpus] --> KC[Source-specific KB compiler]
-  KC --> M[Selectable persistent modules]
-  M --> Q[Runtime questions]
-  BT -. never exposed to synthesis .-> BC</pre><figcaption>The benchmark branch measures transfer to hidden cases. The knowledge branch builds persistent evidence. Reports name the branch and every loaded module.</figcaption></figure>
+  <h2>Training directory</h2>
+  <pre><code>training/
+  .agents/skills/
+    synthesize-eslm-model/                 frozen-source → candidate code
+    benchmark-guided-symbolic-learning/    failures → gated KB/core improvements
+  .cache/                                  downloaded archives; gitignored
+    corpora/
+    datasets/
+  KBs/
+    QUICK/                                 authored fixture sources + generated bundle
+    oewn-2025/                             source manifest, probe, report, generated model
+    atomic-2020/                           source manifest, report, generated model
+  datasets/                                raw/prepared benchmark material; gitignored
+  candidates/                              unpromoted generated candidates; gitignored
+  model/                                   promoted narrow bAbI-derived core
+  work/                                    packets, ledgers and transient runs; gitignored</code></pre>
+  <p>This layout keeps four things separate: download cache, knowledge sources, evaluation datasets and the promoted core. A public archive is not executable knowledge until its compiler, model, report and validation exist. A benchmark dataset is not a KB merely because the project can download it.</p>
 
-    <h2>Large-corpus architecture gate</h2>
-    <p>No WordNet, ConceptNet, Wikidata, ATOMIC, GeoNames, DBpedia, or Wikipedia run may begin by feeding the full dump to an agent. The repository first creates a deterministic stratified probe, accounts for schema surprises, maps time/space/domain/world/perspective scope, measures projected resources, and reviews a streaming shard design. The synthesis skill now refuses full work above the large-corpus threshold when those artifacts are absent.</p>
-    <p>The current small runtime still imports complete arrays and computes closure at startup. Posting insertion and premise selection have been improved, and opt-in profiling is implemented, but query-directed shard loading and overlay-local reasoning remain mandatory before K1 promotion. The <a href="scalability.html">scalability review</a> lists the exact gate and failure conditions.</p>
-    <pre><code>node src/cli.mjs ask "What is Gertrude afraid of?" --profile
-node src/cli.mjs train prepare \
-  --input training/input/example.jsonl \
-  --output training/work/example-packet.json \
-  --profile</code></pre>
-    <p>Query profiles report engine initialization and semantic stages. Training preparation writes a <code>.profile.json</code> sidecar. Source adapters must extend this with decompression, parsing throughput, accepted and rejected records, dictionaries, deduplication, shards, postings, provenance, generated bytes, validation, import, cache use, and peak memory.</p>
+  <figure class="diagram"><pre class="mermaid">flowchart LR
+    S[official source or train pool] --> B{learning mode}
+    B -->|new corpus| P[probe + semantic map]
+    P --> C[Node source compiler]
+    C --> K[candidate KB shards]
+    B -->|benchmark failures| F[trace clusters]
+    F --> D{KB or generic core?}
+    D -->|KB| K
+    D -->|core| G[small core candidate]
+    K --> V[focused + fresh + metamorphic + regression]
+    G --> V
+    V -->|accept| A[new checkpoint]
+    V -->|reject| R[return to accepted checkpoint]</pre><figcaption>Corpus synthesis creates executable evidence; benchmark-guided learning decides which reusable change deserves acceptance. Both paths meet at the same multidimensional gate.</figcaption></figure>
 
-    <h2>Acquisition and cache</h2>
-    <p><code>dataset fetch</code> downloads the frozen bAbI v1.2 archive into the shared local cache. Its integrity digest is stored in <code>src/datasets.mjs</code>; a matching archive is reused and a mismatch is rejected. Each dataset command extracts only the selected task's train and test files. Tasks 2, 3, 15, and 16 are currently cached and prepared. Public data paths are ignored by Git, so running the experiment does not silently redistribute the dataset.</p>
-    <pre><code>npm run dataset:fetch
-node src/cli.mjs dataset status --dataset babi-15-en-10k-v1.2</code></pre>
-    <p>The current archive is 11,745,123 bytes. The extracted Task 15 train and test files are 877,358 and 87,769 bytes. The cache manifest records the source URL, archive digest, extracted-file paths, byte counts, and digests.</p>
+  <h2>Two repository-owned agent skills</h2>
+  <h3>Source synthesis</h3>
+  <p><code>training/.agents/skills/synthesize-eslm-model/</code> defines train-only evidence access, large-corpus probing, semantic mapping, modular ESM output, provenance, validation and promotion boundaries. A coding agent may design schemas, mappings, rules, query forms, sharding and validators. It may not inspect hidden evaluation, encode test answers or promote its own candidate.</p>
+  <h3>Benchmark-guided symbolic learning</h3>
+  <p><code>training/.agents/skills/benchmark-guided-symbolic-learning/</code> defines the iterative competence loop requested for later datasets. It requires an accepted checkpoint, capability map, baseline, four evaluation pools, trace-based failure clusters, an explicit KB/core decision, structurally varied and metamorphic tests, regressions, fresh samples and a research note. Its two self-contained Node utilities initialize a learning cycle and compare normalized baseline/candidate reports.</p>
+  <pre><code>node training/.agents/skills/benchmark-guided-symbolic-learning/scripts/init-learning-cycle.mjs \
+  --output training/work/cycles/example-001 \
+  --dataset DATASET_ID \
+  --checkpoint ACCEPTED_ID \
+  --hypothesis "reusable hypothesis" \
+  --classification kb \
+  --cluster lexical-mapping \
+  --working WORKING.jsonl \
+  --regression REGRESSION.jsonl \
+  --fresh FRESH.jsonl
 
-    <h2>Split isolation and chunk preparation</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Verified archive] --> B[Extract Task 15]
-  B --> C{Official split}
-  C -->|train| D[10,000 cases]
-  C -->|test| E[1,000 cases]
-  D --> F[20 chunks × 500]
-  F --> G[Agent-visible manifest]
-  E --> H[Agent-hidden evaluation]
-  G --> I[Coding agent]
-  H -. unavailable during synthesis .-> I</pre><figcaption>Chunking happens only after the official split is preserved. The synthesis agent receives train chunk references and hashes but must not open the test file.</figcaption></figure>
-    <pre><code>npm run dataset:prepare</code></pre>
-    <p>The adapter parses numbered bAbI lines into independent cases containing context, question, semantic answer, supporting line IDs, and supporting sentences. Train records are additionally wrapped as <code>document</code> records for coding-agent analysis. Each chunk has a SHA-256 digest. Repreparing with the same archive, adapter, and chunk size yields the same semantic files and hashes.</p>
+node training/.agents/skills/benchmark-guided-symbolic-learning/scripts/compare-learning-cycle.mjs \
+  BASELINE.json CANDIDATE.json COMPARISON.json</code></pre>
 
-    <h2>Train-only analysis</h2>
-    <pre><code>node src/cli.mjs dataset analyze --dataset babi-15-en-10k-v1.2</code></pre>
-    <p>This command reads only the prepared train split. It counts names, classes, universal rule signatures, membership statements, answer distribution, support depth, and unsupported sentences. It proposes the reusable structures that the coding agent should verify. In the completed run, every one of the 80,000 context statements matched either a class assertion or a universal fear rule.</p>
-    <p>Deterministic analysis does not replace the coding agent. It provides auditable observations and reduces repeated scanning. The agent decides module boundaries, distinguishes stable runtime algorithms from corpus-conditioned tables, reviews counterexamples, and produces the candidate source.</p>
+  <h2>What the coding agent learns versus what the compiler does</h2>
+  <div class="table-wrap"><table><thead><tr><th>Coding-agent responsibility</th><th>Deterministic Node responsibility</th></tr></thead><tbody>
+    <tr><td>Inspect a stratified authorized sample, field inventory, anomalies and counterexamples.</td><td>Read every authorized source record with a reproducible adapter.</td></tr>
+    <tr><td>Decide whether source relations are exact, defeasible, lexical, temporal, scoped, conflicting or unsupported.</td><td>Apply the frozen mapping to every record, preserving rejection and repair counts.</td></tr>
+    <tr><td>Design types, event frames, aliases, rules, profile boundaries, shard keys, query contracts and validation probes.</td><td>Normalize, deduplicate, group, index, emit ESM, write manifests and measure resources.</td></tr>
+    <tr><td>Cluster benchmark failures and decide whether the reusable correction belongs in a KB or generic core.</td><td>Run fixed focused, fresh, metamorphic, regression, proof and performance evaluators.</td></tr>
+    <tr><td>Explain why a candidate should be accepted.</td><td>Produce comparison evidence; never auto-promote solely from aggregate accuracy.</td></tr>
+  </tbody></table></div>
 
-    <h2>Resumable chunk ledger</h2>
-    <pre><code>node training/.agents/skills/synthesize-eslm-model/scripts/prepare-chunk-ledger.mjs \
-  training/datasets/babi-15-en-10k-v1.2/prepared/manifest.json \
-  training/work/babi-15/chunk-ledger.json</code></pre>
-    <p>The repository-owned synthesis skill is self-contained. Its v1 ledger generator resolves and verifies every train chunk without reading the test split and creates entries with status, observations, emitted symbol IDs, unresolved records, and timing fields. It does not yet implement atomic worker claims, leases, or result submission. The newer parallel protocol therefore uses immutable worker assignments and private result files followed by one deterministic reducer; the shared ledger is not treated as a concurrency coordinator.</p>
-    <p><strong>Recorded Task 15 limitation.</strong> The promoted model was produced by one primary coding agent over the full prepared train split. The v1 ledger verified the 20 chunk hashes but was not updated as a completion journal; its entries remain pending. Therefore the run record cites full-train analysis and candidate validation, not nonexistent per-worker receipts. This is now explicit in <code>training-run.json</code>.</p>
-    <p>Evidence is aggregated by semantic signature across chunks. A pattern cannot become a rule merely because it dominated one chunk. For episodic benchmarks, the skill explicitly prohibits promoting story facts and answers. It generates parsers, construction metadata, morphology, rule schemas, state transitions, and indexes that can operate on new episodes.</p>
+  <h2>Runs completed</h2>
+  <div class="table-wrap"><table><thead><tr><th>Run</th><th>Visible training evidence</th><th>Generated result</th><th>Evaluation state</th></tr></thead><tbody>
+    <tr class="cap-row--yes"><td>bAbI Task 15</td><td>10,000 train episodes.</td><td>Promoted core construction, morphology and deduction behavior; no story-answer table.</td><td>1,000/1,000 isolated test cases.</td></tr>
+    <tr class="cap-row--yes"><td>Open English WordNet 2025</td><td>Complete official release; no benchmark labels.</td><td>38 modules, 107,519 synsets and 127,311 lemmas.</td><td>Validator, smoke proof and 300 random lexical/taxonomic cases passed.</td></tr>
+    <tr class="cap-row--yes"><td>ATOMIC 2020</td><td>Complete train.tsv only; dev/test excluded.</td><td>17 modules, 940,427 tuples and 36,940 events.</td><td>Validator, smoke query and 400 random relation-family cases passed.</td></tr>
+    <tr class="cap-row--partial"><td>bAbI Tasks 2, 3, 16</td><td>Cached and prepared train/test splits.</td><td>No accepted synthesis or promoted capability.</td><td>Not run against a candidate.</td></tr>
+    <tr class="cap-row--no"><td>ConceptNet / GeoNames</td><td>No cached source and no adapter.</td><td>Nothing generated.</td><td>Blocked until lazy query-directed public-KB loading.</td></tr>
+  </tbody></table></div>
 
-    <h2>Sequential or parallel coding agents</h2>
-    <p>The same skill now defines both modes. In sequential mode, one coding agent processes the immutable chunk inventory and performs global aggregation. In parallel mode, a coordinator creates disjoint assignments, forks or invokes workers, and gives each worker only its assignment and train chunks. Workers write independent JSON analyses; they never edit the shared ledger, candidate, promoted model, or another worker's result.</p>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Verified incomplete chunks] --> B[Deterministic partition]
-  B --> W1[Worker 1: private result]
-  B --> W2[Worker 2: private result]
-  B --> W3[Worker 3: private result]
-  B --> W4[Worker 4: private result]
-  W1 --> R{Coordinator reducer}
-  W2 --> R
-  W3 --> R
-  W4 --> R
-  R -->|missing or mismatched| X[Reject / rerun assignment]
-  R -->|complete| G[Global signatures + counterexamples]
-  G --> C[One serialized candidate generator]
-  C --> V[Validation and review]</pre><figcaption>Parallelism applies only to evidence observation. Global IDs, induction decisions, candidate generation, validation, and promotion remain serialized so scheduling order cannot change the model.</figcaption></figure>
-    <pre><code>node training/.agents/skills/synthesize-eslm-model/scripts/prepare-parallel-assignments.mjs \
-  training/work/babi-15/chunk-ledger.json \
-  training/work/babi-15/parallel-plan \
-  4
-
-# Fork one coding agent for each assignments/worker-NNN.json.
-# Each writes results/worker-NNN.json using the skill's worker schema.
-
-node training/.agents/skills/synthesize-eslm-model/scripts/reduce-parallel-results.mjs \
-  training/work/babi-15/parallel-plan/plan.json \
-  training/work/babi-15/parallel-plan/results \
-  training/work/babi-15/parallel-plan/reduced.json</code></pre>
-    <p>A demonstration plan now partitions the 20 Task 15 chunks across four workers, five chunks each, with plan digest <code>e1623bc6…2c95</code>. It has zero worker results and no reduction because it was created after the promoted single-agent run. A future Task 16 run can use this protocol from the start.</p>
-    <p>Static disjoint assignments avoid shared-file races and clock-dependent leases. The reducer rejects missing, duplicate, unassigned, hash-mismatched, or hidden-test-referencing output and sorts evidence canonically. Because forked agents in this workspace still share filesystem visibility, test isolation remains a procedural constraint here. A stronger experiment can run external workers with one read-only train assignment and one write-only result directory.</p>
-
-    <h2>Candidate generation and validation</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart LR
-  A[Completed chunk ledger] --> B[Aggregate signatures]
-  B --> C{Reusable across episodes?}
-  C -->|yes| D[Generated schema modules]
-  C -->|no| E[Keep episode-local]
-  D --> F[Candidate directory]
-  F --> G{Skill validator}
-  G -->|fail| H[Revise candidate]
-  G -->|pass| I{Project validator}
-  I -->|fail| H
-  I -->|pass| J[Review and promotion]</pre><figcaption>Two validators precede promotion. Passing visible checks is necessary but does not authorize the coding agent to promote its own output.</figcaption></figure>
-    <p>The completed Task 15 candidate contains seven modules totaling 1,743 bytes. It promotes three constructions and four irregular class forms. Its entity, fact, and rule arrays are empty because those values vary per episode. Both the skill-local and project validator passed before the candidate was recorded as promoted.</p>
-
-    <h2>Rebuilding after a capability change</h2>
-    <p>A runtime change can invalidate assumptions made by an older generated model. Every model therefore records a format, train digest, evidence regime, and synthesis report. When new constructions, epistemic fields, rule forms, event semantics, or index contracts are introduced, the workflow creates a new candidate from the frozen train chunks, reruns both validators, runs train-only probes, and only then evaluates the untouched test split.</p>
-    <p><code>training/model/training-run.json</code> is the durable run registry for the promoted model. It distinguishes source acquisition, preparation, coding-agent synthesis, validation, promotion, held-out evaluation, external comparison, prepared diagnostic datasets, and the next knowledge milestone. The homepage reads these facts conceptually and must be updated with every promoted run.</p>
-
-    <h2>Adding the first real knowledge source</h2>
-    <p>A new corpus receives a catalog entry with a fixed release or dated snapshot, official source, license and attribution requirements, source size, adapter version, relation inventory, profile definitions, and local artifact state. <code>corpus status</code> reports those stages independently from <code>dataset status</code>.</p>
-    <p>The Open English WordNet 2025 probe has parsed the complete official archive and published exact source-shape counts, but it has deliberately emitted no model. Its next artifact is a sense-aware dictionary and a small <code>noun.animal</code> plus <code>noun.Tops</code> shard prototype with ambiguity, taxonomy, negative-query, cold-import, and memory tests. ATOMIC follows after participant-bound event semantics work, then filtered ConceptNet and bounded GeoNames. Wikidata is future and thematic only. Task 16 remains a useful induction diagnostic, not the main path toward a useful world model.</p>
-
-    <h2>Current hand-authored modules are regression fixtures</h2>
-    <p>Files under <code>training/KBs/QUICK/source/</code> currently exercise modular loading, merge conflicts, rule closure, exceptions, and CLI selection. They are authored fixtures rather than learned public knowledge and are excluded from research-training claims. They remain temporarily useful while the WordNet adapter establishes the source-derived model format.</p>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Reviewed domain JSON] --> B[KB compiler]
-  B --> C[Entities + facts]
-  B --> D[Rules + constructions]
-  B --> E[Canonical indexes]
-  C --> F[Domain manifest]
-  D --> F
-  E --> F
-  F --> G{Validation}
-  G -->|pass| H[Selectable with --kb]
-  G -->|fail| I[Reject and diagnose]
-  H -. excluded by default .-> J[Public benchmark]</pre><figcaption>Educational KB generation is deterministic and modular. Passing validation makes a module selectable, not part of the default public experiment.</figcaption></figure>
-    <p>The current sources generate 12 direct facts and 9 rules for <code>child-basic</code>, 21 facts and 5 rules for <code>animals</code>, and 35 facts for <code>space-geography</code>. They are marked <code>benchmarkEligible: false</code>. Their role is software regression only; future public-corpus modules use source-record provenance and their own profile manifests.</p>
-    <pre><code>node src/cli.mjs kb build all
+  <h2>Build and verification commands</h2>
+  <pre><code>node src/cli.mjs kb build quick
+node src/cli.mjs kb build oewn-2025
+node src/cli.mjs kb build atomic-2020
 node src/cli.mjs kb validate all
-node src/cli.mjs kb list</code></pre>
-    <p class="related"><strong>Continue with:</strong> <a href="knowledge-sources.html">Real Knowledge Sources</a> for the new ingestion order, <a href="knowledge-bases.html">Knowledge Bases</a> for selectable modules, <a href="evaluation.html">Evaluation</a> for held-out evidence, and <a href="specsLoader.html?spec=DS007-training-program-synthesis.md">DS007</a> for the authoritative synthesis contract.</p>
-  </main>
-</body>
-</html>
+npm run test:kbs:random
+npm test
+npm run docs:check</code></pre>
+  <p>Build reports include source and generated byte counts, accepted/repaired/rejected records, throughput, elapsed time, RSS and heap deltas. Runtime random tests record seed, exact dataset inventories, pass/fail outcomes and slowest cases. Generated source KBs are explicitly non-benchmark-eligible because their test questions sample exposed knowledge.</p>
+
+  <h2>Scale boundary before another source</h2>
+  <p>The WordNet and ATOMIC models are split into static modules but imported eagerly. The combined source-KB random run uses roughly 0.6 GB additional RSS; the exact latest value remains in its report because normal process noise changes it slightly between runs. This is a measured warning, not a theoretical concern. Before ConceptNet or GeoNames, the question compiler must select a profile and a small set of allowlisted shards without constructing unrelated dictionaries and events in memory.</p>
+  <p class="related"><strong>Continue with:</strong> <a href="knowledge-sources.html">source semantics</a>, <a href="scalability.html">architecture gate</a>, <a href="benchmarks.html">evaluation interpretation</a>, and <a href="specsLoader.html?spec=DS020-benchmark-guided-symbolic-learning.md">DS020 learning contract</a>.</p>
+</main></body></html>

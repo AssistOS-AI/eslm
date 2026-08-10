@@ -26,9 +26,9 @@ function sample(values, count, next) {
   return copy.slice(0, Math.min(count, copy.length));
 }
 
-function runCase(results, kb, kind, input, check, provider) {
+async function runCase(results, kb, kind, input, check, provider) {
   const started = performance.now();
-  const answer = provider.ask(input);
+  const answer = await provider.ask(input);
   const passed = Boolean(answer && check(answer));
   results.push({ kb, kind, input, passed, status: answer?.status ?? 'NO_MATCH', answer: answer?.answer, milliseconds: performance.now() - started });
 }
@@ -47,14 +47,14 @@ const results = [];
 
 const definable = Object.entries(wordnet.lemmas).filter(([, ids]) => ids.some((id) => wordnet.synsets[id]?.d?.length));
 for (const [lemma] of sample(definable, cases, next)) {
-  runCase(results, 'oewn-2025', 'definition', `Define ${lemma}`, (answer) => answer.status === 'ANSWERED' && answer.values.length > 0, wordnet);
+  await runCase(results, 'oewn-2025', 'definition', `Define ${lemma}`, (answer) => answer.status === 'ANSWERED' && answer.values.length > 0, wordnet);
 }
 const synonymPairs = [];
 for (const synset of Object.values(wordnet.synsets)) {
   if (synset.m.length > 1) synonymPairs.push([synset.m[0], synset.m[1]]);
 }
 for (const [lemma, synonym] of sample(synonymPairs, cases, next)) {
-  runCase(results, 'oewn-2025', 'synonym', `What are synonyms of ${lemma}?`, (answer) => answer.values.some((value) => value.toLocaleLowerCase('en-US') === synonym.toLocaleLowerCase('en-US')), wordnet);
+  await runCase(results, 'oewn-2025', 'synonym', `What are synonyms of ${lemma}?`, (answer) => answer.values.some((value) => value.toLocaleLowerCase('en-US') === synonym.toLocaleLowerCase('en-US')), wordnet);
 }
 const hypernymPairs = [];
 for (const synset of Object.values(wordnet.synsets)) {
@@ -62,7 +62,7 @@ for (const synset of Object.values(wordnet.synsets)) {
   if (synset.m[0] && parent?.m?.[0]) hypernymPairs.push([synset.m[0], parent.m[0]]);
 }
 for (const [child, parent] of sample(hypernymPairs, cases, next)) {
-  runCase(results, 'oewn-2025', 'hypernym', `Is a ${child} a ${parent}?`, (answer) => answer.values[0] === true, wordnet);
+  await runCase(results, 'oewn-2025', 'hypernym', `Is a ${child} a ${parent}?`, (answer) => answer.values[0] === true, wordnet);
 }
 
 const atomicCases = [
@@ -75,7 +75,7 @@ for (const definition of atomicCases) {
   const events = Object.values(atomic.events).filter((event) => definition.relations.some((relation) => event.r[relation]?.length));
   for (const event of sample(events, cases, next)) {
     const expected = new Set(definition.relations.flatMap((relation) => (event.r[relation] ?? []).map(([tail]) => tail)));
-    runCase(results, 'atomic-2020', definition.kind, definition.question(event), (answer) => answer.status === 'ANSWERED' && answer.values.some((value) => expected.has(value)), atomic);
+    await runCase(results, 'atomic-2020', definition.kind, definition.question(event), (answer) => answer.status === 'ANSWERED' && answer.values.some((value) => expected.has(value)), atomic);
   }
 }
 

@@ -81,7 +81,7 @@ The first completed public-data run is bAbI v1.2 Task 15 English 10k. The coding
 
 Three locally generated educational KBs are separate opt-in artifacts. Their source declarations contain 40 entities and 68 direct facts; consistent overlap yields 36 unique entities and 62 unique direct facts when all are loaded. Fourteen rules produce 116 total facts after combined bounded closure. These counts demonstrate modular loading and composition, not public-corpus learning or open-domain knowledge.
 
-The next empirical phase builds independently loadable profiles from Open English WordNet 2025, ATOMIC 2020, filtered English ConceptNet, and a bounded GeoNames countries-and-capitals pack, in that order. ATOMIC compilation begins only after event templates and defeasible inference are executable. Wikidata is deferred to optional dated thematic packs and is not a near-term full-dump target. Until source-derived artifacts exist, the repository must state that real-corpus knowledge training has not run. The three hand-authored KBs are regression fixtures and must not be counted as learned public knowledge.
+The current empirical phase has built independently loadable Open English WordNet 2025 and ATOMIC 2020 source modules. They demonstrate sense-aware lexical queries and defeasible event retrieval, but their source-exposed random tests are not public benchmark comparisons. Filtered English ConceptNet and bounded GeoNames remain next after lazy/query-directed loading. Wikidata is optional thematic work only. QUICK's three authored components remain regression fixtures and never count as learned public knowledge.
 
 ## Decisions & Questions
 

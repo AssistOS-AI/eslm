@@ -22,7 +22,7 @@ Entity ids are stable across local rebuilds whenever identity is unchanged. Each
 
 Aliases normalize to at most one promoted entity in v1. If the corpus contains homonyms, the model must represent mention candidates and disambiguation context in a future format rather than violate uniqueness. Sequential numeric ids are acceptable for large models only when an intern dictionary and stable mapping digest are frozen.
 
-The v1 uniqueness rule cannot represent WordNet polysemy and is prohibited for source-derived K1 profiles. The next format must index an alias to one or more sense/entity candidates and preserve source identity until context selects a candidate.
+The v1 uniqueness rule cannot represent WordNet polysemy. Source-derived providers therefore use `eslm-public-kb-v1`: a lemma maps to multiple synset IDs and source identity remains intact. This format currently supports source-specific lexical and event query contracts without forcing those records through the globally unique v1 entity graph.
 
 ### Facts and epistemic scope
 
@@ -74,7 +74,7 @@ Validation scans for forbidden capabilities, imports the model, checks format, u
 
 The initial six modules may split into `events`, `discourse`, `narrative`, `realization`, and fact shards. The manifest stays the only entry point. Runtime loaders select only declared format versions and known module keys. Format evolution uses migrations and retains old report readers.
 
-`eslm-code-model-v1` remains a correctness reference for the current small model. It is not approved for full WordNet or larger corpus promotion. The next format must satisfy DS019 rather than merely divide the same full arrays into more files.
+`eslm-code-model-v1` remains the promoted core and QUICK graph format. Open English WordNet and ATOMIC use generated static shards plus `eslm-public-kb-v1` manifests. Their first complete builds prove source compilation and runtime semantics, but manifests currently import and merge all shards eagerly; dividing data into files alone does not satisfy the DS019 query-directed scale target.
 
 ### Promoted artifact and optional KB artifacts
 
@@ -91,6 +91,8 @@ The current exact inventory is:
 | `space-geography` | 20 | 35 | 0 | 35 |
 
 Loading all modules yields 36 unique entities, 62 direct facts, 14 rules, and 116 facts after combined closure. The difference from the source totals is explicit deduplication of four shared entities and six shared astronomy facts. The additional cross-module closure arises because animal classification consequences can satisfy living-being rules in `child-basic`.
+
+The top-level `quick` bundle generates the same merged graph under `training/KBs/QUICK/model/manifest.mjs`. It is the default interactive fixture and declares `benchmarkEligible: false`. `oewn-2025` generates 10 synset shards, 27 lemma shards, and one manifest. `atomic-2020` generates 16 event shards and one manifest. Both preserve source inventories and expose source-specific runtime providers rather than pretending that lexical senses and defeasible event continuations are ordinary v1 facts.
 
 ## Decisions & Questions
 

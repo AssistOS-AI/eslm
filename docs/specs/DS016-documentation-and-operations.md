@@ -14,7 +14,7 @@ summary: Defines authoritative DS maintenance, detailed HTML navigation, generat
 
 DS files under `docs/specs/` are the detailed source of truth. `matrix.md` indexes every contiguous DS. HTML pages explain concepts, current theory, architecture, generated model structure, reasoning traces, CLI use, training, evaluation, and benchmarks and link to relevant DS contracts. Generated report HTML displays the latest evaluation and benchmark executions with timestamps and protocol ids.
 
-`README.md` is an executable orientation, not the complete architecture. `AGENTS.md` defines working rules and skill catalog. Repository-owned training skill documentation remains inside its skill folder and is referenced, not duplicated as an imported-skill page.
+`README.md` is an executable orientation, not the complete architecture. `AGENTS.md` defines working rules and the skill catalog. Repository-owned `synthesize-eslm-model` and `benchmark-guided-symbolic-learning` documentation remains inside each portable skill folder and is referenced from training documentation rather than duplicated as an imported-skill page.
 
 ### HTML requirements
 
@@ -22,7 +22,7 @@ Every principal page contains several compact diagrams where they materially cla
 
 Page titles and introductory headings must fit normal reading layouts without artificial narrow widths or oversized display typography. Explanatory pages use continuous chapters rather than decorative card grids. The DS loader presents breadcrumb and metadata in compact lines and must not duplicate the specification title in a large metadata panel.
 
-`docs/index.html` is the current capability disclosure. It first explains the experiment, then separates controlled benchmark evidence, real-corpus status, and regression fixtures. It names verified source scales and local artifact state without presenting catalog entries as completed training. Every model promotion, corpus stage, profiling contract, or runtime capability change updates this page in the same change set. Examples shared with the CLI tutorial remain executable through tests.
+`docs/index.html` is the current capability disclosure. It first explains the experiment, then separates controlled benchmark evidence, QUICK fixtures, and source-derived WordNet/ATOMIC knowledge. It reports generated counts, load state, randomized verification, scale costs, and unsupported boundaries. Every model promotion, corpus build, profiling contract, runtime capability, or skill change updates this page in the same change set. Examples shared with the CLI tutorial remain executable through tests.
 
 `knowledge-sources.html` explains real-corpus order, semantics, licenses, source roles, and milestones. `scalability.html` explains current bottlenecks, the architecture gate, profiling, probing, sharding, and contextual scope. Benchmark details remain on `datasets.html` and must not be mistaken for the KB source inventory.
 
@@ -46,7 +46,7 @@ Use `npm test`, `npm run evaluate`, `npm run benchmark`, `npm run docs:check`, a
 
 The full check validates source behavior, current model, report generation, and required documentation files. It does not download public datasets or contact external models.
 
-Operational diagnostics include `corpus catalog`, `corpus status`, `ask --profile`, interactive `/profile`, and `train prepare --profile`. Profiling reports contain variable durations and memory deltas, while semantic results and model artifacts remain deterministic.
+Operational diagnostics include `corpus catalog`, `corpus status`, `kb list`, `kb validate`, `ask --profile`, interactive `/kbs`, `/model`, `/trace`, `/profile`, and `train prepare --profile`. `npm run test:kbs:random` publishes the seeded WordNet/ATOMIC source-query report. Profiling reports contain variable durations and memory deltas, while semantic results and model artifacts remain deterministic.
 
 ### Change review checklist
 

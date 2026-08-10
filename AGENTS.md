@@ -33,8 +33,8 @@ This repository develops an Executable Symbolic Language Model (ESLM). Training-
 - Never modify `original_specs/` or imported `.agents/skills/` for product implementation.
 - Runtime source under `src/` must not access networks, invoke an LLM, invoke a coding agent, execute corpus strings, use `eval`, or dynamically import corpus-provided paths.
 - Treat all training and benchmark input as untrusted. Validate schemas, freeze hashes, and generate only allowlisted module shapes.
-- Do not start full synthesis for a large public corpus until DS018 and DS019 requirements are met: frozen source, stratified probe, scope mapping, profiling budget, streaming adapter, compact shards, and query-directed execution.
-- Generated modules under `training/model/` are executable data: deterministic, side-effect free, statically importable, and reviewable.
+- Do not start the next larger public corpus until DS018 and DS019 requirements are met: frozen source, stratified probe, scope mapping, profiling budget, streaming adapter, compact shards, and query-directed execution. WordNet and ATOMIC establish the measured baseline but still load eagerly.
+- Generated modules under `training/model/` and `training/KBs/*/model/` are executable data: deterministic, side-effect free, statically importable, and reviewable.
 - Training may use a coding agent, but promotion requires local validation and evaluation. Test and benchmark splits must not be exposed in synthesis packets.
 - Changes to behavior, interfaces, evaluation, or claims require synchronized DS, HTML documentation, and tests.
 
@@ -62,7 +62,7 @@ This repository develops an Executable Symbolic Language Model (ESLM). Training-
 
 - Runtime and language core: `src/`
 - Tests and immutable fixtures: `tests/`
-- Training corpus, agent skill, and generated model: `training/`
+- Training cache, repository-owned agent skills, KB builds, datasets, work, and generated model: `training/`
 - Human and generated documentation: `docs/`
 - Detailed specifications: `docs/specs/`
 - Archived source material, not current authority: `original_specs/storycircuit_tinystories/`

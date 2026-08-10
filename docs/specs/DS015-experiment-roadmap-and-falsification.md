@@ -96,7 +96,7 @@ Every experiment archives configuration, packet/source hashes, candidate digest,
 
 ### Q1. What is the next implementation priority after v0.1?
 
-Response: First pass the DS019 architecture gate, then build Open English WordNet 2025. ATOMIC follows once event binding is executable, then filtered ConceptNet and bounded GeoNames. Wikidata is optional and thematic only. bAbI, CLUTRR, Entity Tracking, and BLiMP continue in parallel as controlled diagnostics rather than the principal source of persistent knowledge.
+Response: Complete WordNet and ATOMIC source builds now exist and establish their semantic/query prototypes. The next gate is lazy query-directed import, contextual sense selection, participant binding, and held-out source-aware evaluation. Filtered ConceptNet and bounded GeoNames follow only after that gate. Wikidata remains optional and thematic. bAbI, CLUTRR, Entity Tracking, and BLiMP remain controlled diagnostics rather than persistent world knowledge.
 
 ### Q2. When is the experiment allowed to change the eight operators?
 

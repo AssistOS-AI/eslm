@@ -1,60 +1,51 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ESLM Documentation — Knowledge Bases</title>
-  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
-</head>
-<body>
-  <div data-include="partials/header.html"></div>
-  <main>
-    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Knowledge Bases</p>
-    <h1>Selectable executable knowledge modules</h1>
-    <p class="lead">A knowledge module is an independently versioned graph of senses, entities, facts, rules, aliases, and indexes loaded with <code>--kb</code>. The three modules currently present are small hand-authored regression fixtures. The source-derived queue is WordNet, ATOMIC, filtered ConceptNet, and bounded GeoNames; Wikidata is optional and thematic only.</p>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESLM — Knowledge Bases</title><link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script></head>
+<body><div data-include="partials/header.html"></div><main>
+  <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Knowledge bases</p>
+  <h1>Installed knowledge bases and their boundaries</h1>
+  <p class="lead">A KB is an independently selectable executable evidence module. The CLI distinguishes <em>ready</em> from <em>loaded</em>: a generated model can be installed on disk without participating in the current answer. Every response identifies the active KBs, and any selected KB makes a clean public benchmark run non-comparable unless the protocol explicitly declares the exposure.</p>
 
-    <h2>Current evidence boundary</h2>
-    <p>No current module contains public WordNet, ConceptNet, Wikidata, ATOMIC, DBpedia, GeoNames, or Wikipedia knowledge. The fixture counts below prove that loading, semantic deduplication, cross-module rule composition, and validation work. They do not measure factual coverage or knowledge learned from a realistic source.</p>
+  <h2>Top-level modules</h2>
+  <div class="table-wrap"><table><thead><tr><th>ID</th><th>Evidence</th><th>Exact inventory</th><th>Question families</th><th>Default chat</th></tr></thead><tbody>
+    <tr class="cap-row--yes"><td><a href="kb-quick.html"><code>quick</code></a></td><td>Authored development fixtures; not public training.</td><td>36 entities, 62 direct facts, 14 rules, 116 closure facts.</td><td>Session facts, categories, capabilities, location, color, direction, mortality, controlled induction/abduction.</td><td>loaded</td></tr>
+    <tr class="cap-row--yes"><td><a href="kb-oewn-2025.html"><code>oewn-2025</code></a></td><td>Complete official Open English WordNet 2025 JSON release.</td><td>107,519 synsets, 127,311 lemmas, 107,524 definitions, 49,596 examples.</td><td>Define, synonyms, sense count, bounded “is-a” hypernym proof.</td><td>loaded</td></tr>
+    <tr class="cap-row--yes"><td><a href="kb-atomic-2020.html"><code>atomic-2020</code></a></td><td>Complete official ATOMIC 2020 train split; dev/test held out.</td><td>940,427 unique non-<code>none</code> tuples under 36,940 events.</td><td>Possible intent, prerequisite, effect, reaction, desire, obstacle, cause, order, use and location.</td><td>loaded</td></tr>
+  </tbody></table></div>
+  <p><code>child-basic</code>, <code>animals</code>, and <code>space-geography</code> remain directly selectable components for focused tests, but normal users should load the combined <code>quick</code> bundle. Their hand-authored regression fixtures are not evidence of broad world knowledge.</p>
 
-    <h2>Why the modules are not loaded automatically</h2>
-    <p>A small application may need animal facts but no astronomy. A benchmark must often execute with exactly the model synthesized from its train split. Loading every available fact would increase memory, introduce irrelevant candidates, and make an experimental score difficult to interpret. ESLM therefore starts with no educational KB and accepts an explicit selection through <code>--kb</code>.</p>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Promoted bAbI compiler] --> E[Active model]
-  B{CLI selection} -->|child-basic| C[Life and mortality module]
-  B -->|animals| D[Animal module]
-  B -->|space-geography| F[Space and geography module]
-  C --> E
-  D --> E
-  F --> E
-  E --> G[Rebuild canonical postings]
-  G --> H[Bounded closure]
-  H --> I[Answer + proof]
-  B -->|no --kb| J[Benchmark-clean default]</pre><figcaption>The selection branches before execution. Selected modules are merged by semantic identity, their postings are rebuilt, and their rules may compose; an omitted selection preserves the benchmark-clean default.</figcaption></figure>
-    <p>Entity IDs shared by two modules are merged only when their declared kinds agree. Identical facts and rules are deduplicated by semantic signature. Conflicting entity declarations fail model loading. The combined artifact is marked <code>benchmarkComparable: false</code>, so a result cannot silently masquerade as the clean bAbI run.</p>
+  <figure class="diagram"><pre class="mermaid">flowchart TD
+    C[CLI selection] --> B{Evidence regime}
+    B -->|quick| Q[small v1 fact/rule graph]
+    B -->|oewn-2025| W[sense + taxonomy provider]
+    B -->|atomic-2020| A[event continuation provider]
+    Q --> X[exact retrieval / deduction]
+    W --> X
+    A --> H[defeasible retrieval]
+    X --> P[answer + proof provenance]
+    H --> P
+    B -->|nothing selected| N[promoted bAbI-derived core only]</pre><figcaption>Modules share one CLI but not one unsafe data model. QUICK uses ordinary facts and rules, WordNet preserves polysemy, and ATOMIC preserves defeasible event relation direction.</figcaption></figure>
 
-    <h2>Exact regression-fixture inventory</h2>
-    <table><thead><tr><th>Module</th><th>Entities</th><th>Direct facts</th><th>Rules</th><th>Facts after its own closure</th><th>Use</th></tr></thead><tbody>
-      <tr><td><a href="kb-child-basic.html"><code>child-basic</code></a></td><td>8</td><td>12</td><td>9</td><td>18</td><td>Elementary categories, locations, color, growth, and a three-step mortality chain.</td></tr>
-      <tr><td><a href="kb-animals.html"><code>animals</code></a></td><td>12</td><td>21</td><td>5</td><td>45</td><td>Species classes, explicit capabilities, and class inheritance without an unsafe “all birds fly” rule.</td></tr>
-      <tr><td><a href="kb-space-geography.html"><code>space-geography</code></a></td><td>20</td><td>35</td><td>0</td><td>35</td><td>Solar System membership, planet categories, colors, continents, oceans, and coarse north-of relations.</td></tr>
-      <tr><td><code>--kb all</code></td><td>36 unique</td><td>62 unique</td><td>14</td><td>116</td><td>All modules together. Six duplicate basic astronomy facts and four shared entities are merged.</td></tr>
-    </tbody></table>
-    <p>The individual source totals are 40 entity declarations and 68 direct facts. Loading all modules yields 36 entities and 62 direct facts because <code>child-basic</code> and <code>space-geography</code> intentionally agree on Earth, Sun, Moon, the Solar System, and six corresponding category/location facts. Rule closure then adds 54 supported consequences. This is more than the 30 consequences obtained by closing the modules separately: animal classifications can enter the <code>living-being</code> rules supplied by <code>child-basic</code>. That cross-module composition is useful, visible in provenance, and one reason selection must be explicit.</p>
+  <h2>Inspect and change the active set</h2>
+  <pre><code>node src/cli.mjs kb list
+node src/cli.mjs kb show quick
+node src/cli.mjs kb show oewn-2025
+node src/cli.mjs kb show atomic-2020
 
-    <h2>List, select, rebuild, and validate</h2>
-    <pre><code>node src/cli.mjs kb list
-node src/cli.mjs kb show child-basic
-node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?" --kb child-basic
-node src/cli.mjs --kb all
-node src/cli.mjs kb build all
-node src/cli.mjs kb validate all</code></pre>
-    <p><code>kb list</code> reports exact direct, derived, and executable fact counts plus tested examples. <code>kb build</code> compiles the declarative files in <code>training/KBs/QUICK/source/</code> into domain directories under <code>training/KBs/QUICK/model/</code>. Each directory contains seven auditable ESM modules. <code>kb validate</code> checks imports, forbidden capabilities, referential integrity, rule shape, and index equality.</p>
+# one-shot execution is explicit
+node src/cli.mjs ask "Define dog" --kb oewn-2025
+node src/cli.mjs ask "Why might apologize?" --kb atomic-2020
+node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?" --kb quick</code></pre>
+  <p>Interactive chat starts with all three top-level modules. Inside it, use <code>/kbs</code>, <code>/load</code>, <code>/unload</code>, and <code>/model</code>. One-shot, batch, evaluation, and benchmark commands load no optional KB unless <code>--kb</code> is present, preventing an evaluation from silently acquiring source knowledge.</p>
 
-    <h2>From fixtures to source-derived profiles</h2>
-    <p>The first public module will be <code>oewn-2025/core-senses</code>. Unlike the fixture graphs, it must preserve lexical sense identity, definitions, relation type, source attribution, and corpus statistics. ATOMIC will then add participant-bound event hypotheses, ConceptNet will add relation-specific commonsense, and GeoNames will add bounded geography. Any later Wikidata pack must be justified by a concrete domain experiment. The <a href="knowledge-sources.html">real knowledge sources page</a> defines these stages in detail.</p>
+  <h2>Rebuild and validate</h2>
+  <pre><code>node src/cli.mjs kb build quick
+node src/cli.mjs kb build oewn-2025
+node src/cli.mjs kb build atomic-2020
+node src/cli.mjs kb validate all
+npm run test:kbs:random</code></pre>
+  <p>QUICK build compiles reviewed JSON to the v1 graph contract. WordNet build parses every synset file and emits lemma/synset shards. ATOMIC build streams every train row and emits event shards. Validation imports generated data, verifies inventory and runs semantic smoke proofs. The seeded random suite then runs 700 source-backed queries across seven capability families.</p>
 
-    <h2>Evidence and experimental use</h2>
-    <p>These three KBs were generated by the coding agent for this repository, not learned from bAbI and not copied from a public benchmark. Every fact has <code>generated-kb:</code> provenance and every module declares <code>benchmarkEligible: false</code>. They are useful for development, demonstrations, modularity experiments, and testing deeper rule composition. They are not evidence of broad world knowledge and must not be mixed into a public benchmark score unless the experimental condition names the modules and is reported separately.</p>
-    <p class="related"><strong>Continue with:</strong> <a href="knowledge-sources.html">Real Knowledge Sources</a> for the public-corpus plan; the fixture pages for <a href="kb-child-basic.html">child-basic</a>, <a href="kb-animals.html">animals</a>, and <a href="kb-space-geography.html">space-geography</a>; and the <a href="cli.html">CLI tutorial</a> for selection commands.</p>
-  </main>
-</body>
-</html>
+  <h2>Cost and next boundary</h2>
+  <p>Both public KBs are modest on disk—about 23.77 MB generated WordNet code and 32.96 MB generated ATOMIC code—but JavaScript objects expand in memory. Their combined random run uses roughly 0.6 GB additional RSS. Static sharding improves review and generation locality, yet the current manifest eagerly assembles every shard. Query-directed lazy import is required before adding filtered ConceptNet or GeoNames.</p>
+  <p class="related"><strong>Continue with:</strong> <a href="cli.html">CLI tutorial</a>, <a href="training.html">training and generated-code workflow</a>, <a href="knowledge-sources.html">source policy</a>, and <a href="scalability.html">scale gate</a>.</p>
+</main></body></html>

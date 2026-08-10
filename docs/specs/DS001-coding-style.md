@@ -22,7 +22,7 @@ The visible product directories are limited to `src/`, `tests/`, `training/`, `d
 
 Stable algorithms belong in `src/`. Tests and fixed small fixtures belong in `tests/`. Training source, candidate work, repository-owned synthesis skills, and the promoted code model belong under `training/`. Human documentation, specifications, and latest generated reports belong under `docs/`.
 
-Do not recreate root-level `scripts`, `data`, `benchmarks`, `results`, `artifacts`, or `configs` directories. Place command implementation in `src/`, training data in `training/input/`, promoted generated code in `training/model/`, and reports in `docs/results/`.
+Do not create root-level `data`, `benchmarks`, `results`, `artifacts`, or `configs` directories. Place command implementation in `src/`, build/profile utilities in root `scripts/`, knowledge sources and generated source models under `training/KBs/`, public benchmark material under ignored `training/datasets/`, downloaded archives under ignored `training/.cache/`, promoted generated core code in `training/model/`, and reports in `docs/results/`.
 
 ### Module boundaries
 

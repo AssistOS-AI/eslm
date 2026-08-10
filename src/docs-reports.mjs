@@ -39,8 +39,10 @@ export async function checkDocumentation() {
   const required = [
     'index.html', 'concepts.html', 'theory.html', 'architecture.html', 'scalability.html', 'model.html', 'reasoning.html',
     'cli.html', 'datasets.html', 'knowledge-sources.html', 'training.html', 'evaluation.html', 'benchmarks.html', 'knowledge-bases.html',
+    'kb-quick.html', 'kb-oewn-2025.html', 'kb-atomic-2020.html',
     'kb-child-basic.html', 'kb-animals.html', 'kb-space-geography.html', 'specsLoader.html', 'assets/site.css',
     'partials/header.html', 'partials-loader.js', 'results/latest-oewn-probe.json', 'results/latest-core-scale.json',
+    'results/latest-kb-random-tests.json',
   ];
   const missing = [];
   for (const path of required) {

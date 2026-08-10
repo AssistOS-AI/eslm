@@ -42,14 +42,14 @@ function normalizeAnswer(value) {
   return String(value ?? '').normalize('NFKC').toLocaleLowerCase('en-US').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 }
 
-function scoreCase(engine, item) {
+async function scoreCase(engine, item) {
   if (item.kind === 'preference') {
     const left = engine.score(item.good);
     const right = engine.score(item.bad);
     return { pass: left.score > right.score, actual: [left.score, right.score] };
   }
   const input = item.context ? `${item.context} ${item.text}` : item.text;
-  const result = engine.ask(input);
+  const result = await engine.ask(input);
   if (item.values) return { pass: JSON.stringify([...result.values ?? []].sort()) === JSON.stringify([...item.values].sort()), actual: result.values };
   const aliases = [item.answer, ...(item.aliases ?? [])].map(normalizeAnswer);
   return { pass: aliases.includes(normalizeAnswer(result.answer)), actual: result.answer };
@@ -57,7 +57,10 @@ function scoreCase(engine, item) {
 
 export async function runBenchmark(engine, suitePath, publishPath) {
   const suite = await readJsonLines(suitePath);
-  const results = suite.map((item, index) => ({ id: item.id ?? String(index + 1), ...scoreCase(engine, item) }));
+  const results = [];
+  for (let index = 0; index < suite.length; index += 1) {
+    results.push({ id: suite[index].id ?? String(index + 1), ...await scoreCase(engine, suite[index]) });
+  }
   const report = {
     format: 'eslm-benchmark-report-v1',
     protocol: 'eslm-native-v1',

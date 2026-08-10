@@ -36,7 +36,7 @@ The coding agent analyzes linguistic layers, identities, claims, relations, even
 
 The agent distinguishes direct assertions, normalized paraphrases, deterministic consequences, supported induction, and low-confidence hypotheses. Only the first three are promoted automatically. Induced rules require support and counterexample reporting. Hypotheses remain in `synthesis-report.json` pending review.
 
-The agent must use `training/.agents/skills/synthesize-eslm-model`. That skill is self-contained, Node-only, and contains the generated-module and linguistic induction contracts. It cannot modify stable core code while synthesizing a candidate.
+The agent must use `training/.agents/skills/synthesize-eslm-model` for frozen-source compilation. That skill is self-contained, Node-only, and contains generated-module and linguistic induction contracts. It cannot modify stable core code while synthesizing a candidate. Benchmark-driven adaptation additionally uses `training/.agents/skills/benchmark-guided-symbolic-learning`, which establishes baselines, clusters failures, distinguishes KB knowledge from generic core mechanisms, and accepts candidates only after fresh, metamorphic, proof, and regression gates.
 
 ### Candidate lifecycle
 
@@ -89,7 +89,7 @@ At corpus scale, the coding agent designs semantic mappings, profile boundaries,
 
 Every corpus build produces a source manifest, probe report, prepared manifest, profiling sidecar, synthesis report, generated profile manifests, and validation report. Mutable sources resolve to a release, dated snapshot, or fixed entity revisions. Full ingestion is prohibited until the probe accounts for every observed stratum and profiling estimates the resource envelope.
 
-Open English WordNet is the next target. ATOMIC follows after participant-bound event semantics exist, then filtered English ConceptNet and a bounded GeoNames countries-and-capitals profile. Wikidata is deferred to optional thematic packs justified by later domain experiments; no complete-dump synthesis is planned.
+Open English WordNet 2025 and ATOMIC 2020 are the first completed source transformations. The WordNet compiler processed all 107,519 synsets into sense-aware lemma and synset shards. The ATOMIC compiler streamed all 1,076,880 train rows and retained 940,427 unique non-`none` tuples under 36,940 events; dev and test were not compiled. These are experimental source-derived modules rather than public benchmark generalization claims. Filtered English ConceptNet and bounded GeoNames remain next, but are blocked on the DS019 lazy/query-directed import step. Wikidata remains optional and thematic only.
 
 ## Decisions & Questions
 

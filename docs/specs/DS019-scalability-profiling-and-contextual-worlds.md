@@ -10,7 +10,7 @@ summary: Establishes the pre-ingestion architecture gate for streaming compilati
 
 ## Introduction
 
-The v0.1 runtime proves a small executable path but is not a valid architecture for million-edge corpora. It imports complete JavaScript arrays, validates complete indexes by serialization, computes full rule closure at engine initialization, and rebuilds full closure and indexes when a session adds facts. Corpus ingestion also contains whole-file operations. Large-source training is prohibited until the architecture gate in this specification is satisfied.
+The v0.1 graph runtime proves a small executable path but is not the final architecture for million-edge corpora. The first complete WordNet and ATOMIC experimental builds now demonstrate deterministic source compilation and source-specific queries, while measuring the remaining scale problem: generated files are sharded statically, but their manifests eagerly import and merge every shard. Larger-source work is prohibited until query-directed import and bounded working sets replace that behavior.
 
 ## Core Content
 
@@ -44,9 +44,11 @@ The probe report contains complete streamed counts where feasible, sampled recor
 
 The coding agent receives the probe, source documentation, and approved samples. It must answer how every observed stratum maps, abstains, or is quarantined. Full ingestion cannot start until the probe report, semantic mapping table, resource estimate, and failure policy are reviewed.
 
-The first Open English WordNet probe is complete. It scanned all 73 JSON members, 107,519 synsets, and 185,129 senses in under three seconds on the recorded machine. Repeated local runs report more than 200 MB RSS growth and roughly 150 MB heap growth while retaining global identifier and lemma-ambiguity sets; the published JSON contains the exact latest values. These deltas are not peak-memory samples, but they prove that probe convenience structures cannot be copied into the larger-corpus compiler.
+The Open English WordNet probe and complete compiler run are complete. The 38-module build produced 23,771,871 bytes in about 1.34 seconds with about 281 MB RSS growth during the recorded run. An isolated cold import took about 0.80 seconds and added about 349 MB RSS.
 
-The probe found 25,805 ambiguous normalized synset members, homograph-suffixed lexical-entry part-of-speech keys, adjective satellites, lexical relations nested at sense level, and external Wikidata IDs that share the JSON shape of internal edge lists. Consequently, the WordNet gate has advanced from missing probe to blocked on the sense-aware dictionary and shard prototype. No full profile compilation is authorized by the probe alone.
+The probe found 25,805 ambiguous normalized synset members, homograph-suffixed lexical-entry part-of-speech keys, adjective satellites, lexical relations nested at sense level, and external Wikidata IDs that share the JSON shape of internal edge lists. The provider now preserves lemma-to-many-synset postings and supports definitions, synonyms, sense counts, and bounded hypernym proofs. Contextual sense selection and lazy shard loading remain open.
+
+The ATOMIC compiler streamed 1,076,880 train rows, retained 940,427 unique non-`none` tuples, and emitted 17 modules totaling about 32.96 MB. The recorded build took about 4.5 seconds and about 493 MB RSS growth. Isolated cold import took about 0.76 seconds and added about 284 MB RSS. The combined seeded 700-case WordNet/ATOMIC test passes every case and uses roughly 0.6 GB additional RSS; the report retains the run-specific value. This confirms that eager full-profile import is the next bottleneck.
 
 ### Scalable generated model
 
@@ -86,9 +88,9 @@ A hypothetical question creates an immutable branch from a named base world and 
 
 ### Architecture gate and budgets
 
-Before K1 full WordNet compilation, the repository must have a probe report, streaming source reader, profiling sidecars, dictionary and shard prototype, sense-aware aliases, query-directed retrieval prototype, and scale tests at increasing synthetic or source-probe sizes. WordNet may be scanned fully for the probe because its archive is moderate, but generated model import and query budgets still apply.
+The experimental K1 build has a probe, deterministic source reader, profiling report, sense-aware lemma postings, generated shards, validation, and random tests. It does not yet have query-directed shard import. This is sufficient to test semantics and establish measured costs, but not to authorize a larger eager corpus or call the architecture scale-complete.
 
-Before ATOMIC, participant-bound event templates, perspective, modality, and hypothesis statuses must exist. Before ConceptNet, full-file decompression and CSV parsing must be streaming, memory must remain under a declared fixed budget independent of edge count except for bounded dictionaries or spill indexes, and relation shards must be emitted incrementally. Before GeoNames, typed coordinates, feature classes, alternate names, and administrative-containment indexes must exist. A future Wikidata thematic pack additionally requires external sort or partitioning, typed values, qualifiers, and revisioned scope; the full dump is not a build target.
+The experimental ATOMIC provider preserves PersonX/PersonY text, relation direction, and defeasible answer status, but general participant binding and calibrated ranking remain open. Before ConceptNet, query-directed loading must be implemented, decompression and CSV parsing must be streaming, memory must remain within a declared fixed working-set budget, and relation shards must be emitted incrementally. GeoNames additionally requires typed coordinates and administrative containment. A future thematic Wikidata pack requires external partitioning, typed values, qualifiers, and revisioned scope; the full dump is not a build target.
 
 A gate fails when throughput collapses superlinearly without an explained relation-density cause, peak memory scales with complete source size, one query loads unrelated domains, a session fact triggers whole-model closure, alias ambiguity is rejected at build time, profiling cannot attribute a hotspot, or a probe finds an unrepresented source stratum.
 
@@ -116,4 +118,4 @@ Response: A reviewed probe report must account for all observed strata, unknowns
 
 ## Conclusion
 
-Large-corpus ESLM requires streaming compilation, compact scoped shards, query-directed reasoning, and evidence-backed profiling. Time, space, domain, world, perspective, and hypothetical branch are part of claim semantics rather than optional labels. The first real training run is blocked until this architecture gate is demonstrated on a source probe and increasing scale tests.
+Large-corpus ESLM requires streaming compilation, compact scoped shards, query-directed reasoning, and evidence-backed profiling. WordNet and ATOMIC now provide real measured source builds and queries, not plans. Their eager combined memory cost keeps the scale gate open and blocks larger ConceptNet or GeoNames ingestion until lazy selection exists. Time, space, domain, world, perspective, and hypothetical branches remain required semantics for later scoped corpora.

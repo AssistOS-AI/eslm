@@ -1,163 +1,105 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ESLM Documentation — CLI Tutorial</title>
-  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
-</head>
-<body>
-  <div data-include="partials/header.html"></div>
-  <main>
-    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / CLI Tutorial</p>
-    <h1>Using the ESLM command line</h1>
-    <p class="lead">One Node.js command exposes interactive conversation, one-shot and file input, knowledge-corpus status, public-dataset preparation, candidate validation, evaluation, and external prediction scoring. The conversation examples below use the promoted bAbI Task 15 compiler or explicitly named regression fixtures and are executed by the test suite.</p>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESLM — CLI Tutorial</title><link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script></head>
+<body><div data-include="partials/header.html"></div><main>
+  <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / CLI tutorial</p>
+  <h1>Use ESLM interactively or from automation</h1>
+  <p class="lead">The same <code>eslm</code> executable supports a conversation prompt, one JSON answer, JSONL batch processing, KB management, source builds, evaluation and reports. Runtime questions remain offline and deterministic. Commands work from the repository root and from the <code>training/</code> directory.</p>
 
-    <h2>Install nothing beyond Node.js</h2>
-    <p>ESLM requires Node.js 22 or newer and has no runtime dependency. From the repository root, verify the environment and implementation:</p>
-    <pre><code>node --version
+  <h2>Start an interactive conversation</h2>
+  <pre><code>npm exec -- eslm
+# equivalent:
+node src/cli.mjs</code></pre>
+  <p>Interactive mode loads <code>quick</code>, <code>oewn-2025</code>, and <code>atomic-2020</code> when their generated artifacts are installed. Startup reports the active IDs. Type <code>/help</code> at any time.</p>
+  <pre><code>ESLM ready with quick, oewn-2025, atomic-2020.
+eslm&gt; /help
+eslm&gt; /kbs
+eslm&gt; /examples
+eslm&gt; Define dog
+dog has 8 compiled senses: ...
+eslm&gt; Socrates is a man. Is Socrates a man?
+Yes.
+eslm&gt; /trace</code></pre>
+
+  <h2>Interactive commands</h2>
+  <p>The three normal load targets are <code>quick</code> (the small authored development fixture), <code>oewn-2025</code> (Open English WordNet 2025), and <code>atomic-2020</code> (ATOMIC 2020 train-derived defeasible event knowledge). The <code>/kbs</code> command prints these names, readiness, loaded state, counts, and evidence boundaries from the current installation.</p>
+  <div class="table-wrap"><table><thead><tr><th>Command</th><th>Effect</th></tr></thead><tbody>
+    <tr><td><code>/help</code></td><td>Prints every interactive command and examples of session facts.</td></tr>
+    <tr><td><code>/kbs</code></td><td>Shows whether QUICK, WordNet and ATOMIC are ready or loaded, their exact counts and their evidence role.</td></tr>
+    <tr><td><code>/load ID[,ID]</code></td><td>Adds a top-level KB or focused QUICK component and rebuilds the runtime while retaining conversation context.</td></tr>
+    <tr><td><code>/unload ID[,ID]</code> or <code>/unload all</code></td><td>Removes knowledge modules without deleting session facts. Use <code>/load all</code> to restore top-level modules.</td></tr>
+    <tr><td><code>/model</code></td><td>Prints the promoted core ID, loaded KB IDs and current session-fact count.</td></tr>
+    <tr><td><code>/examples [ID]</code></td><td>Shows tested working, deliberately unknown and unsupported questions; use <code>quick</code>, <code>oewn-2025</code>, or <code>atomic-2020</code> as a filter.</td></tr>
+    <tr><td><code>/trace</code> / <code>/profile</code></td><td>Prints the latest provenance or optional execution profile.</td></tr>
+    <tr><td><code>/clear</code></td><td>Clears session entities, facts, rules and discourse state.</td></tr>
+    <tr><td><code>/quit</code> / <code>/exit</code></td><td>Ends the session.</td></tr>
+  </tbody></table></div>
+
+  <figure class="diagram"><pre class="mermaid">flowchart TD
+    I[interactive input] --> X{slash command?}
+    X -->|/kbs /examples /help| O[inspect without changing knowledge]
+    X -->|/load /unload| L[rebuild selected providers]
+    X -->|ordinary English| Q{question family}
+    L --> Q
+    Q --> C[core + QUICK]
+    Q --> W[WordNet]
+    Q --> A[ATOMIC]
+    C --> R[answer + trace]
+    W --> R
+    A --> R
+    R --> S[session context retained]</pre><figcaption>Slash commands manage the session and active providers. Ordinary English follows a source-specific executable path and returns to the same persistent session context.</figcaption></figure>
+
+  <h2>Load and unload examples</h2>
+  <pre><code>eslm&gt; /unload all
+Loaded: (base model only).
+eslm&gt; Define dog
+I cannot map that input to a supported symbolic question.
+eslm&gt; /load oewn-2025
+Loaded: oewn-2025.
+eslm&gt; Define dog
+dog has 8 compiled senses: ...
+eslm&gt; /load quick,atomic-2020
+Loaded: oewn-2025, quick, atomic-2020.</code></pre>
+  <p><code>ready</code> means generated code exists locally. <code>loaded</code> means its evidence is active in the current engine. This distinction is also visible in every JSON answer through <code>model.knowledgeBases</code>.</p>
+
+  <h2>Ask one question and receive JSON</h2>
+  <pre><code>node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?" --kb quick
+node src/cli.mjs ask "Define dog" --kb oewn-2025
+node src/cli.mjs ask "Is a dog an animal?" --kb oewn-2025
+node src/cli.mjs ask "Why might apologize?" --kb atomic-2020
+node src/cli.mjs ask "What might happen after PersonX apologizes profusely?" --kb atomic-2020</code></pre>
+  <p>Noninteractive commands do not load optional KBs by default. This makes automation and benchmarks explicit. The JSON includes status, answer, semantic query, values, provenance, reasoning method, learned session items, context and active model metadata.</p>
+
+  <h2>Process a file</h2>
+  <pre><code>node src/cli.mjs run --input tests/fixtures/questions.txt
+node src/cli.mjs run --input questions.jsonl --output answers.jsonl --kb quick,oewn-2025</code></pre>
+  <p>Plain text uses one question per non-empty line. JSONL accepts <code>text</code> or <code>input</code> plus an optional <code>id</code>. Output is always one JSON record per input, which is suitable for shell pipelines and deterministic evaluators.</p>
+
+  <h2>Inspect, build and validate knowledge</h2>
+  <pre><code>node src/cli.mjs kb list
+node src/cli.mjs kb show quick
+node src/cli.mjs kb show oewn-2025
+node src/cli.mjs kb show atomic-2020
+node src/cli.mjs kb build oewn-2025
+node src/cli.mjs kb build atomic-2020
+node src/cli.mjs kb validate all
+npm run test:kbs:random</code></pre>
+  <p>Downloaded archives are reused from ignored <code>training/.cache/</code>. Builds write source manifests, reports and generated ESM under <code>training/KBs/</code>. The random command runs 700 reproducible source-backed cases and publishes <code>docs/results/latest-kb-random-tests.json</code>.</p>
+
+  <h2>Datasets, evaluation and benchmarks</h2>
+  <pre><code>node src/cli.mjs dataset catalog
+node src/cli.mjs dataset status --dataset babi-15-en-10k-v1.2
+node src/cli.mjs dataset fetch --dataset babi-15-en-10k-v1.2
+node src/cli.mjs dataset prepare --dataset babi-15-en-10k-v1.2
+
+node src/cli.mjs evaluate --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl --publish
+node src/cli.mjs benchmark run --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl --publish</code></pre>
+  <p>bAbI and other benchmark inputs live under ignored <code>training/datasets/</code>; shared archives live under <code>training/.cache/datasets/</code>. Evaluation is separate from public-corpus KB testing. Adding <code>--kb</code> changes the evidence regime and must be recorded in the report.</p>
+
+  <h2>Diagnose failures and performance</h2>
+  <pre><code>node src/cli.mjs ask "QUESTION" --profile
+npm run profile:scale
+npm run docs:check
 npm test</code></pre>
-    <p>The package exposes <code>eslm</code> through <code>npm exec -- eslm</code>, but every example also shows the direct entry point so the executed file remains obvious.</p>
-
-    <h2>Start an interactive session</h2>
-    <pre><code>node src/cli.mjs</code></pre>
-    <p>A complete bAbI-style episode may be entered on one line. The first sentence compiles to a temporary universal rule, the second to a temporary class fact, and the final sentence to a query:</p>
-    <pre><code>ESLM ready. Ask a question; use /trace, /profile, /help, or /quit.
-eslm&gt; Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?
-Gertrude is afraid of wolf.</code></pre>
-    <p>The same information can be taught across turns because the CLI passes the explicit returned session context into the next call:</p>
-    <pre><code>eslm&gt; Cats are afraid of sheep.
-I learned 1 session item.
-eslm&gt; Jessica is a cat.
-I learned 1 session item.
-eslm&gt; What is Jessica afraid of?
-Jessica is afraid of sheep.</code></pre>
-    <p>Session items disappear at <code>/quit</code>. They never alter files under <code>training/model/</code>. Use <code>/trace</code> after an answer to display the rule ID, supporting fact, source identifiers, and reasoning method.</p>
-
-    <h2>Run one request for automation</h2>
-    <pre><code>node src/cli.mjs ask \
-  "Sheep are afraid of mice. Emily is a sheep. What is Emily afraid of?"</code></pre>
-    <p>The command emits JSON rather than terminal-only prose. Important fields include <code>status</code>, <code>answer</code>, <code>query</code>, <code>values</code>, <code>reasoning</code>, <code>provenance</code>, <code>learned</code>, <code>learnedRules</code>, and the updated <code>context</code>. For this example, <code>values</code> is <code>["mouse"]</code>, the method is deduction at depth 1, and provenance refers to the temporary rule and Emily's classification.</p>
-
-    <h2>Distinguish unknown knowledge from unsupported language</h2>
-    <pre><code>node src/cli.mjs ask "Dana is a sparrow. Can Dana fly?"
-node src/cli.mjs ask "Write a poem about mice."</code></pre>
-    <p>The first request compiles successfully but has no flight evidence, so its status is <code>UNKNOWN</code>. The second request has no supported construction or text-generation executor, so its status is <code>UNSUPPORTED</code>. Automation should inspect these statuses rather than infer failure from English wording.</p>
-
-    <h2>Load a knowledge module</h2>
-    <pre><code>node src/cli.mjs kb list
-node src/cli.mjs kb show child-basic
-
-node src/cli.mjs ask \
-  "Jhon is a man. Is Jhon going to die?" \
-  --kb child-basic
-
-node src/cli.mjs ask "Can Penguin swim?" --kb animals
-node src/cli.mjs ask "What color is Mars?" --kb space-geography
-node src/cli.mjs chat --kb all</code></pre>
-    <p><code>--kb</code> accepts one ID, a comma-separated list, or <code>all</code>. The option works with interactive chat, <code>ask</code>, <code>run</code>, evaluation, and benchmark commands. Every answer includes <code>model.id</code>, <code>model.knowledgeBases</code>, and <code>model.benchmarkComparable</code>; selecting a fixture sets the last field to <code>false</code>. Evaluation and benchmark reports carry the same evidence boundary. The current three KBs are hand-authored regression fixtures, not evidence of public-corpus training.</p>
-    <p><code>kb list</code> reports exact entities, direct facts, derived facts, rules, constructions, and examples. The current all-module configuration has 36 unique entities, 62 direct facts, 14 rules, and 116 executable facts after closure. Read <a href="knowledge-bases.html">Knowledge Bases</a> before combining modules, because their rules can compose.</p>
-
-    <h2>Rebuild generated KB code</h2>
-    <pre><code>node src/cli.mjs kb build child-basic
-node src/cli.mjs kb validate child-basic
-node src/cli.mjs kb build all
-node src/cli.mjs kb validate all</code></pre>
-    <p>The build command reads the reviewed sources in <code>training/KBs/QUICK/source/</code> and regenerates seven ESM files per domain under <code>training/KBs/QUICK/model/</code>. Validation imports each artifact, rejects ambient capabilities, checks every entity reference and rule, and recomputes every posting list. These commands are deterministic Node.js program synthesis; no LLM is called at runtime.</p>
-
-    <h2>Run from the training directory</h2>
-    <pre><code>cd training
-node ../src/cli.mjs ask \
-  "Wolves are afraid of cats. Winona is a wolf. What is Winona afraid of?"
-cd ..</code></pre>
-    <p>Model and project paths are resolved from the repository location, not the current shell directory. <code>tests/cli.test.mjs</code> executes this path.</p>
-
-    <h2>Inspect the real knowledge-training queue</h2>
-    <pre><code>node src/cli.mjs corpus catalog
-node src/cli.mjs corpus status
-node src/cli.mjs corpus status \
-  --corpus oewn-2025,atomic-2020
-node src/cli.mjs corpus probe \
-  --corpus oewn-2025 \
-  --archive /path/to/english-wordnet-2025-json.zip</code></pre>
-    <p><code>corpus catalog</code> describes persistent knowledge sources in implementation priority order, including official artifacts, observed scale, license, semantic role, relation inventory, planned profiles, and implementation stage. <code>corpus status</code> separately checks whether the source, probe, prepared manifest, and generated model actually exist locally. The WordNet probe is complete; its source cache, prepared model, and generated KB remain false.</p>
-    <p><code>corpus probe</code> currently accepts only <code>oewn-2025</code>. It parses and profiles a local official archive, updates the training probe artifact and documentation report, and emits no KB. Fetch and build actions are not exposed yet. Each source receives those actions only after its format, frozen release, attribution, validation, and inference contract have an implemented Node adapter. See <a href="knowledge-sources.html">Real Knowledge Sources</a> for the staged plan.</p>
-
-    <h2>Profile a query or training preparation</h2>
-    <pre><code>node src/cli.mjs ask \
-  "Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?" \
-  --profile
-
-node src/cli.mjs train prepare \
-  --input INPUT.jsonl \
-  --output training/work/profiled-packet.json \
-  --profile</code></pre>
-    <p>The one-shot response gains an <code>eslm-profile-v1</code> object containing engine initialization and query stages. It records wall time, CPU, RSS, heap and external-memory deltas, stage status, and basic work counts. Interactive chat started with <code>--profile</code> exposes the last report through <code>/profile</code>. Training preparation persists the same information beside the packet as <code>OUTPUT.profile.json</code>.</p>
-    <p>Profiling is a diagnosis surface and does not change semantic values or provenance. Individual memory deltas may be negative after garbage collection; corpus builds will additionally sample peak memory. Read <a href="scalability.html">Scale and Context</a> for the complete training and query counter contract.</p>
-    <pre><code>npm run profile:scale</code></pre>
-    <p>This reproducible synthetic profile measures current index construction at 1,000, 10,000, and 100,000 facts and a simple closure through 10,000 facts. It writes <code>docs/results/latest-core-scale.json</code>. The report identifies itself as a primitive profile, not a corpus benchmark.</p>
-
-    <h2>Process a text or JSON Lines file</h2>
-    <pre><code>node src/cli.mjs run \
-  --input tests/fixtures/questions.txt \
-  --output training/work/answers.jsonl</code></pre>
-    <p>A plain-text input treats each nonempty line as one independent episode. A JSON Lines input may supply <code>id</code> and <code>text</code>. Each output line contains the input ID plus the complete engine response. Batch cases do not share conversation context unless a future explicit episode protocol requests it.</p>
-
-    <h2>Cache and prepare bAbI Task 15</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart LR
-  A[dataset fetch] --> B{Archive hash valid?}
-  B -->|no| X[Reject]
-  B -->|yes| C[Extract Task 15]
-  C --> D[dataset prepare]
-  D --> E[20 train chunks]
-  D --> F[Hidden test JSONL]
-  E --> G[dataset analyze]
-  G --> H[Train-only synthesis evidence]</pre><figcaption>The archive cache is reusable. Preparation separates agent-visible train chunks from the test split before any coding-agent synthesis begins.</figcaption></figure>
-    <pre><code>npm run dataset:fetch
-npm run dataset:prepare
-node src/cli.mjs dataset analyze --dataset babi-15-en-10k-v1.2
-node src/cli.mjs dataset status --dataset babi-15-en-10k-v1.2</code></pre>
-    <p><code>fetch</code> downloads only when the verified archive is absent, checks its recorded integrity digest, and extracts the selected task's two raw files. <code>prepare</code> creates 20 train chunks of 500 cases and one test file. <code>analyze</code> reads only the train split and reports construction, morphology, rule-signature, answer-distribution, and unsupported-statement statistics. Public files live under the ignored <code>training/datasets/</code> cache.</p>
-    <p>Use <code>node src/cli.mjs dataset catalog</code> to see exact ingestible IDs and stage fields. Tasks 2, 3, and 16 are cached and generically prepared, but their candidate synthesis, promotion, and held-out evaluation have not occurred. These remain controlled executor diagnostics rather than the main knowledge-training queue.</p>
-
-    <h2>Prepare resumable coding-agent synthesis</h2>
-    <pre><code>node training/.agents/skills/synthesize-eslm-model/scripts/prepare-chunk-ledger.mjs \
-  training/datasets/babi-15-en-10k-v1.2/prepared/manifest.json \
-  training/work/babi-15/chunk-ledger.json</code></pre>
-    <p>The v1 command verifies each train chunk and writes a ledger whose entries start <code>pending</code>. It does not claim work, lease chunks, accept worker submissions, or prove completion. Parallel synthesis instead uses immutable disjoint assignment files, one private result per worker, and a deterministic reducer. The promoted Task 15 run used one coding agent over the complete train split; its ledger entries still remain pending. The test path remains forbidden and episode-specific answers must not enter the persistent model.</p>
-
-    <h2>Validate a candidate and the promoted model</h2>
-    <pre><code>node training/.agents/skills/synthesize-eslm-model/scripts/validate-candidate.mjs \
-  training/candidates/babi-15-en-10k-v1.2
-
-node src/cli.mjs train validate \
-  --model training/candidates/babi-15-en-10k-v1.2
-
-node src/cli.mjs train validate</code></pre>
-    <p>The first validator is carried entirely by the portable skill. The second applies repository model invariants. The final command validates the promoted default. Promotion remains a reviewed effect rather than an automatic consequence of passing visible checks.</p>
-
-    <h2>Reproduce the public evaluation</h2>
-    <pre><code>npm run evaluate
-npm run benchmark</code></pre>
-    <p>Both commands currently use the 1,000 prepared bAbI Task 15 test cases. Evaluation writes <code>docs/results/latest-evaluation.json</code> and HTML; benchmark execution writes the corresponding benchmark files with protocol and machine-recorded split identity. The latest recorded result is 1,000/1,000. The duplication is temporary: evaluation exposes detailed engine outcomes, while benchmark reporting is the comparison contract.</p>
-
-    <h2>Export the exact cases for an external LLM</h2>
-    <pre><code>node src/cli.mjs benchmark export \
-  --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl \
-  --output training/work/babi-15/external-input.json
-
-node src/cli.mjs benchmark score-predictions \
-  --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl \
-  --input training/work/babi-15/external-predictions.jsonl \
-  --model-name MODEL_NAME</code></pre>
-    <p>Export removes oracle answers but preserves context and question. A separate runner may call an external model and write predictions. ESLM's scorer evaluates those predictions against the same local cases and records their exact machine identity. No external comparison has been run yet.</p>
-
-    <h2>Inspect published reference results</h2>
-    <pre><code>node src/cli.mjs benchmark references</code></pre>
-    <p>This prints curated paper-reported results with their primary source and comparability classification. These are contextual baselines, not locally reproduced predictions. They become a direct comparison only if the dataset hash, split, preprocessing, evidence regime, and oracle match or the original prediction file can be rescored locally.</p>
-
-    <h2>Run the complete repository check</h2>
-    <pre><code>npm run check</code></pre>
-    <p>After the public dataset has been fetched and prepared, this command runs unit and CLI tests, the 1,000-case evaluation, the 1,000-case benchmark, DS matrix generation, documentation checks, and promoted-model validation. The <a href="training.html">training page</a> explains the synthesis boundary, while <a href="evaluation.html">evaluation</a> explains what the perfect Task 15 result does and does not demonstrate.</p>
-  </main>
-</body>
-</html>
+  <p><code>UNKNOWN</code> means the question was represented but no supporting evidence was found. <code>UNSUPPORTED</code> means no compiled construction/provider handled it. <code>AMBIGUOUS</code> preserves multiple analyses. ATOMIC answers explicitly state that candidates are defeasible. These are semantic outcomes, not generic error messages.</p>
+  <p class="related"><strong>Continue with:</strong> <a href="kb-quick.html">QUICK examples</a>, <a href="kb-oewn-2025.html">WordNet queries</a>, <a href="kb-atomic-2020.html">ATOMIC queries</a>, and <a href="training.html">training workflows</a>.</p>
+</main></body></html>

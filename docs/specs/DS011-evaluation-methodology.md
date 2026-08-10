@@ -67,7 +67,7 @@ Unknown and unsupported are scored according to suite policy. A system must not 
 
 ### Current public result and module-conditioned runs
 
-The completed public evaluation uses the prepared bAbI v1.2 Task 15 English 10k test file with SHA-256 `92a836137c8a4cdbf2844ca1abf049b41c4a9b8a958411be82fa4188bc5a29fb`. It contains 1,000 cases. The default promoted artifact produces 1,000 correct semantic values. The corresponding synthesis used 10,000 train cases and promoted zero story-specific facts or answers.
+The completed public evaluation uses the prepared bAbI v1.2 Task 15 English 10k test file. It contains 1,000 cases. The default promoted artifact produces 1,000 correct semantic values. The corresponding synthesis used 10,000 train cases and promoted zero story-specific facts or answers. Integrity hashes remain in machine-readable manifests and reports instead of explanatory prose.
 
 This result estimates coverage only for the controlled Task 15 grammar and one-step class-rule deduction. It does not establish broad English, deep deduction, induction, abduction, world knowledge, negation, or narrative competence. Unit fixtures remain the evidence for deeper deduction, induction, and abduction until suitable public suites run.
 

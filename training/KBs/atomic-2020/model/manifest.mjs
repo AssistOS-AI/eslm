@@ -30,16 +30,17 @@ export const manifest = Object.freeze({
   "benchmarkEligible": false,
   "counts": {
     "sourceTrainRows": 1076880,
-    "retainedUniqueNonNoneTuples": 940426,
+    "retainedUniqueNonNoneTuples": 940427,
     "ignoredNoneRows": 120282,
-    "malformedRows": 1,
+    "repairedRows": 1,
+    "malformedRows": 0,
     "uniqueEvents": 36940
   },
   "relations": {
     "oReact": 27534,
     "oWant": 47116,
     "xAttr": 113096,
-    "xEffect": 83711,
+    "xEffect": 83712,
     "xIntent": 49699,
     "xNeed": 91161,
     "xReact": 62424,

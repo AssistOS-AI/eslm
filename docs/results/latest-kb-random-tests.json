@@ -12,9 +12,10 @@
     },
     "atomic-2020": {
       "sourceTrainRows": 1076880,
-      "retainedUniqueNonNoneTuples": 940426,
+      "retainedUniqueNonNoneTuples": 940427,
       "ignoredNoneRows": 120282,
-      "malformedRows": 1,
+      "repairedRows": 1,
+      "malformedRows": 0,
       "uniqueEvents": 36940
     }
   },
@@ -25,36 +26,18 @@
     "passRate": 1
   },
   "profile": {
-    "elapsedMilliseconds": 1979.097319,
-    "rssDeltaBytes": 591851520,
-    "heapUsedDeltaBytes": 400558912,
+    "elapsedMilliseconds": 2090.7733980000003,
+    "rssDeltaBytes": 601812992,
+    "heapUsedDeltaBytes": 416803072,
     "slowest": [
       {
-        "kb": "atomic-2020",
-        "kind": "effect",
-        "input": "What might happen after PersonX buys the jacket?",
-        "passed": true,
-        "status": "ANSWERED",
-        "answer": "possible effect candidates for “PersonX buys the jacket”: pays for the jacket; puts the jacket on; gets scammed; gets receipt; gets new jacket; loses money on jacket. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 3.571228000000019
-      },
-      {
         "kb": "oewn-2025",
-        "kind": "definition",
-        "input": "Define northern shrike",
+        "kind": "hypernym",
+        "input": "Is a whoremaster a pimp?",
         "passed": true,
         "status": "ANSWERED",
-        "answer": "northern shrike has 1 compiled sense:\n1. (n) a butcherbird of northern North America",
-        "milliseconds": 0.9588759999999183
-      },
-      {
-        "kb": "atomic-2020",
-        "kind": "effect",
-        "input": "What might happen after PersonX loves every minute of it?",
-        "passed": true,
-        "status": "ANSWERED",
-        "answer": "possible effect candidates for “PersonX loves every minute of it”: Laughs; Rejoices; Smiles; PersonX goes on a roller coaster; PersonX is water skiing. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.8063549999999395
+        "answer": "Yes. At least one sense of whoremaster reaches pimp through a 1-edge WordNet path.",
+        "milliseconds": 3.9217949999997472
       },
       {
         "kb": "oewn-2025",
@@ -63,16 +46,25 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "Yes. At least one sense of environmentalism reaches preservation through a 1-edge WordNet path.",
-        "milliseconds": 0.6213950000001205
+        "milliseconds": 0.9733949999999822
+      },
+      {
+        "kb": "oewn-2025",
+        "kind": "definition",
+        "input": "Define northern shrike",
+        "passed": true,
+        "status": "ANSWERED",
+        "answer": "northern shrike has 1 compiled sense:\n1. (n) a butcherbird of northern North America",
+        "milliseconds": 0.7997779999998329
       },
       {
         "kb": "atomic-2020",
-        "kind": "obstacle",
-        "input": "What could prevent PersonX quickly turned around?",
+        "kind": "effect",
+        "input": "What might happen after PersonX loves every minute of it?",
         "passed": true,
         "status": "ANSWERED",
-        "answer": "possible obstacle candidates for “PersonX quickly turned around”: PersonX's friend is blocking them in.; The doctor has PersonX bound in a body cast.; They are driving on a one-way street.; PersonX is in a wheelchair.; PersonX has too big of a car.; The light at the intersection is red.; PersonX has a cast on their leg.; PersonX has too slow of reflexes.. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.3805059999999685
+        "answer": "possible effect candidates for “PersonX loves every minute of it”: Laughs; Rejoices; Smiles; PersonX goes on a roller coaster; PersonX is water skiing. These are defeasible possibilities, not certain facts.",
+        "milliseconds": 0.7427550000002157
       },
       {
         "kb": "oewn-2025",
@@ -81,25 +73,16 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "Possible synonyms across the compiled senses are: bare, stripped-down.",
-        "milliseconds": 0.33600400000000263
+        "milliseconds": 0.3863129999999728
       },
       {
         "kb": "atomic-2020",
-        "kind": "intent",
-        "input": "Why might PersonX reads every ___?",
+        "kind": "obstacle",
+        "input": "What could prevent PersonX quickly turned around?",
         "passed": true,
         "status": "ANSWERED",
-        "answer": "possible intention or reason candidates for “PersonX reads every ___”: to be informed; x likes to read; x doesn't want to miss anything while reading; to keep himself updated. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.28786600000012186
-      },
-      {
-        "kb": "atomic-2020",
-        "kind": "reaction",
-        "input": "How might PersonX feel after PersonX brings it inside?",
-        "passed": true,
-        "status": "ANSWERED",
-        "answer": "possible reaction candidates for “PersonX brings it inside”: less worried; accomplished. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.2664680000000317
+        "answer": "possible obstacle candidates for “PersonX quickly turned around”: PersonX's friend is blocking them in.; The doctor has PersonX bound in a body cast.; They are driving on a one-way street.; PersonX is in a wheelchair.; PersonX has too big of a car.; The light at the intersection is red.; PersonX has a cast on their leg.; PersonX has too slow of reflexes.. These are defeasible possibilities, not certain facts.",
+        "milliseconds": 0.35944800000015675
       },
       {
         "kb": "oewn-2025",
@@ -108,16 +91,34 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "Yes. At least one sense of columbus day reaches legal holiday through a 1-edge WordNet path.",
-        "milliseconds": 0.2642049999999472
+        "milliseconds": 0.31120899999996254
       },
       {
         "kb": "atomic-2020",
-        "kind": "obstacle",
-        "input": "What could prevent PersonX goes to the store one day?",
+        "kind": "intent",
+        "input": "Why might PersonX reads every ___?",
         "passed": true,
         "status": "ANSWERED",
-        "answer": "possible obstacle candidates for “PersonX goes to the store one day”: The shopkeeper banned PersonX from coming to the store; PersonX's mom took away his car; PersonX is very ill.; They have bad social anxiety.; the store has closed.; PersonX has no money.; They have a disorder and live in a bubble.; the store is too exclusive.. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.2378880000001118
+        "answer": "possible intention or reason candidates for “PersonX reads every ___”: to be informed; x likes to read; x doesn't want to miss anything while reading; to keep himself updated. These are defeasible possibilities, not certain facts.",
+        "milliseconds": 0.29677399999991394
+      },
+      {
+        "kb": "atomic-2020",
+        "kind": "reaction",
+        "input": "How might PersonX feel after PersonX brings it inside?",
+        "passed": true,
+        "status": "ANSWERED",
+        "answer": "possible reaction candidates for “PersonX brings it inside”: less worried; accomplished. These are defeasible possibilities, not certain facts.",
+        "milliseconds": 0.28714799999988827
+      },
+      {
+        "kb": "atomic-2020",
+        "kind": "effect",
+        "input": "What might happen after PersonX wants PersonY to go?",
+        "passed": true,
+        "status": "ANSWERED",
+        "answer": "possible effect candidates for “PersonX wants PersonY to go”: becomes disappointed in PersonY; gets angry with PersonY; hopes they can go; thinks about the event; Becomes anxious and shaky; Glances repeatedly at door/way out; gets confused; moves away from PersonX. These are defeasible possibilities, not certain facts.",
+        "milliseconds": 0.2445279999997183
       }
     ]
   },
