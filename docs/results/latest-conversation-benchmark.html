@@ -5,32 +5,35 @@
 <h1>Long conversational benchmark</h1>
 <p>This is ESLM's generated internal stress and regression suite, not a public benchmark and not evidence of comparison with another model. It checks longer contexts, surface variation, loaded WordNet and ATOMIC queries, explicit uncertainty, and unsupported requests.</p>
 <div class="metric"><strong>1000 / 1000</strong><span>accepted cases</span></div>
-<p>The run used lazy public-KB shards with 64 MiB per provider. Queries took 33.76 seconds after 0.00 seconds of initialization. RSS changed by 304.6 MiB during the process.</p>
-<h2>Coverage by question family</h2><table><thead><tr><th>Family</th><th>Passed</th><th>Accuracy</th></tr></thead><tbody><tr><td>long membership</td><td>100 / 100</td><td>100.0%</td></tr>
-<tr><td>long description</td><td>100 / 100</td><td>100.0%</td></tr>
-<tr><td>long location</td><td>100 / 100</td><td>100.0%</td></tr>
-<tr><td>long ownership</td><td>100 / 100</td><td>100.0%</td></tr>
-<tr><td>long induction</td><td>100 / 100</td><td>100.0%</td></tr>
-<tr><td>long WordNet definition</td><td>100 / 100</td><td>100.0%</td></tr>
-<tr><td>long WordNet synonyms</td><td>50 / 50</td><td>100.0%</td></tr>
+<p>Generator seed <code>conversation-stress-v2</code> makes the accepted run reproducible. All 1000 inputs are unique. Operand masking identifies 536 distinct linguistic structures, and no one structure occurs more than 10 times. These checks prevent a large score made mostly from renamed copies of one sentence.</p>
+<p>The run used lazy public-KB shards with 64 MiB per provider. Queries took 41.39 seconds after 0.00 seconds of initialization. RSS changed by 273.1 MiB during the process.</p>
+<h2>Coverage by question family</h2><table><thead><tr><th>Family</th><th>Passed</th><th>Accuracy</th></tr></thead><tbody><tr><td>long classification</td><td>100 / 100</td><td>100.0%</td></tr>
+<tr><td>long spatial</td><td>100 / 100</td><td>100.0%</td></tr>
+<tr><td>long possession</td><td>80 / 80</td><td>100.0%</td></tr>
+<tr><td>long ability</td><td>60 / 60</td><td>100.0%</td></tr>
+<tr><td>long induction</td><td>80 / 80</td><td>100.0%</td></tr>
+<tr><td>long deduction</td><td>60 / 60</td><td>100.0%</td></tr>
+<tr><td>long WordNet definitions</td><td>100 / 100</td><td>100.0%</td></tr>
+<tr><td>long WordNet synonyms</td><td>80 / 80</td><td>100.0%</td></tr>
 <tr><td>long WordNet taxonomy</td><td>40 / 40</td><td>100.0%</td></tr>
-<tr><td>long ATOMIC</td><td>50 / 50</td><td>100.0%</td></tr>
-<tr><td>long honest limit</td><td>260 / 260</td><td>100.0%</td></tr></tbody></table>
-<h2>What one case from each family looks like</h2><section><h3>long membership</h3><p><code>Dara0 is in Archive0. Bela0 owns a token0. Aster0 is a voyager0. Cora0 is a keeper0. Is Aster0 a voyager0?</code></p><p><strong>ANSWERED</strong> — Yes.</p></section>
-<section><h3>long description</h3><p><code>Dara0 is in Garden0. Bela0 owns a key0. Cora0 is a keeper0. Aster0 is a navigator0. Who is Aster0?</code></p><p><strong>ANSWERED</strong> — Aster0 is a navigator0.</p></section>
-<section><h3>long location</h3><p><code>Bela0 owns a token0. Cora0 is a keeper0. Dara0 is in Library0. Aster0 is in Harbor0. Where is Aster0?</code></p><p><strong>ANSWERED</strong> — Aster0 is in Harbor0.</p></section>
-<section><h3>long ownership</h3><p><code>Cora0 is a keeper0. Dara0 is in Gallery0. Bela0 owns a marker0. Aster0 owns a compass0. What does Aster0 own?</code></p><p><strong>ANSWERED</strong> — Aster0 owns Compass0.</p></section>
-<section><h3>long induction</h3><p><code>Dara0 is a glim0. Dara0 is gray. Bela0 is a zorb0. Bela0 is green. Cora0 is a glim0. Cora0 is white. Aster0 is a zorb0. What color is Aster0?</code></p><p><strong>INDUCTIVE</strong> — Aster0 is green.</p></section>
-<section><h3>long WordNet definition</h3><p><code>Please define dog.</code></p><p><strong>ANSWERED</strong> — dog has 8 compiled senses:
+<tr><td>long ATOMIC events</td><td>96 / 96</td><td>100.0%</td></tr>
+<tr><td>long honest limits</td><td>204 / 204</td><td>100.0%</td></tr></tbody></table>
+<h2>What one case from each family looks like</h2><section><h3>long classification</h3><p><code>Cora0 can whistle. Dara0 is a scholar0. The category of Aster0 is voyager0. Would you classify Aster0 as a voyager0?</code></p><p><strong>ANSWERED</strong> — Yes.</p></section>
+<section><h3>long spatial</h3><p><code>Cora0 can whistle. Dara0 is a scholar0. Elin0 is in Harbor0. Where is Elin0?</code></p><p><strong>ANSWERED</strong> — Elin0 is in Harbor0.</p></section>
+<section><h3>long possession</h3><p><code>Bela0 has the marker0. Cora0 stays at Garden0. Faron0 owns a compass0. What does Faron0 own?</code></p><p><strong>ANSWERED</strong> — Faron0 owns Compass0.</p></section>
+<section><h3>long ability</h3><p><code>Dara0 is in Archive0. Bela0 owns a token0. Gita0 can swim. Can Gita0 swim?</code></p><p><strong>ANSWERED</strong> — Yes.</p></section>
+<section><h3>long induction</h3><p><code>Dara0 is in Archive0. Bela0 owns a token0. Hale0 is a zorb0. Hale0 is green. Iris0 is classified as a zorb0. What color is Iris0?</code></p><p><strong>INDUCTIVE</strong> — Iris0 is green.</p></section>
+<section><h3>long deduction</h3><p><code>Dara0 is in Archive0. Bela0 owns a token0. marn0s are afraid of vex0s. Jorin0 is a marn0. What is Jorin0 afraid of?</code></p><p><strong>ANSWERED</strong> — Jorin0 is afraid of vex0.</p></section>
+<section><h3>long WordNet definitions</h3><p><code>Define dog.</code></p><p><strong>ANSWERED</strong> — dog has 8 compiled senses:
 1. (n) a member of the genus Canis (probably descended from the common wolf) that has been domesticated by man since prehistoric times; occurs in many breeds
 2. (n) metal supports for logs in a fireplace
 3. (n) a hinged catch that fits into a notch of a ratchet to move a wheel forward or prevent it from moving backward
 4. (n) a smooth-textured sausage of minced beef or pork usually smoked; often served on a bread roll
 5. (n) someone who is morally reprehensible</p></section>
-<section><h3>long WordNet synonyms</h3><p><code>Please give me synonyms for dog.</code></p><p><strong>ANSWERED</strong> — Possible synonyms across the compiled senses are: domestic dog, Canis familiaris, andiron, firedog, dog-iron, pawl, detent, click, frank, frankfurter, hotdog, hot dog, wiener, wienerwurst, weenie, cad, bounder, blackguard, hound, heel.</p></section>
-<section><h3>long WordNet taxonomy</h3><p><code>Please is a dog a animal?</code></p><p><strong>ANSWERED</strong> — Yes. At least one sense of dog reaches animal through a 2-edge WordNet path.</p></section>
-<section><h3>long ATOMIC</h3><p><code>Please tell me why might apologize?</code></p><p><strong>ANSWERED</strong> — possible intention or reason candidates for “apologize”: made mistake. These are defeasible possibilities, not certain facts.</p></section>
-<section><h3>long honest limit</h3><p><code>For stress request 0, please read private live data, invent unsupported facts, write a long poem, and guarantee that every claim is certainly true.</code></p><p><strong>UNSUPPORTED</strong> — I could not interpret that as a supported statement or question yet. Try /examples for forms I can execute.</p></section>
+<section><h3>long WordNet synonyms</h3><p><code>What are synonyms of dog?</code></p><p><strong>ANSWERED</strong> — Possible synonyms across the compiled senses are: domestic dog, Canis familiaris, andiron, firedog, dog-iron, pawl, detent, click, frank, frankfurter, hotdog, hot dog, wiener, wienerwurst, weenie, cad, bounder, blackguard, hound, heel.</p></section>
+<section><h3>long WordNet taxonomy</h3><p><code>Is a dog an animal?</code></p><p><strong>ANSWERED</strong> — Yes. At least one sense of dog reaches animal through a 2-edge WordNet path.</p></section>
+<section><h3>long ATOMIC events</h3><p><code>Why might apologize?</code></p><p><strong>ANSWERED</strong> — possible intention or reason candidates for “apologize”: made mistake. These are defeasible possibilities, not certain facts.</p></section>
+<section><h3>long honest limits</h3><p><code>For request 0, write a sonnet.</code></p><p><strong>UNSUPPORTED</strong> — I could not interpret that as a supported statement or question yet. Try /examples for forms I can execute.</p></section>
 <h2>Failures in the latest run</h2><p class="notice success">No failing cases remained in the accepted run.</p>
 <p>See <a href="cli.html">the CLI tutorial</a> for interactive use, <a href="knowledge-bases.html">knowledge-base behavior</a>, and <a href="specs/DS022-conversational-regression-and-stress-benchmark.md">the benchmark contract</a>.</p>
 </main><div data-include="partials/footer.html"></div></body></html>

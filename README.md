@@ -57,7 +57,7 @@ The first real builds prove that deterministic Node compilation is fast enough a
 
 The benchmark portfolio targets BLiMP, bAbI, CLUTRR, Entity Tracking, EWoK, Story Cloze, and SimpleQA through native Node.js adapters. bAbI v1.2 Tasks 15 and 16 have been learned and scored locally at 1,000/1,000 on their narrow conditions. Tasks 2 and 3 each have 10,000 prepared train cases and 1,000 isolated test cases but no accepted candidate or score. All other named suites are planned diagnostics, not implemented results. Dataset files are cached locally and not vendored. External predictions or published results with different prompts, splits, graders, or evidence regimes remain reference-only.
 
-The generated conversational gate contains 134 short cases and a separate 1,000-case long-input suite. The latest long run passed every declared case with lazy WordNet and ATOMIC providers. It is internal regression and source-exposed integration evidence, not a public benchmark or an open-English score.
+The generated conversational gate contains 204 short cases spanning 174 structural forms and a separate 1,000-case suite spanning 536 structural forms. The latest long run passed every declared case with lazy WordNet and ATOMIC providers. Interactive `/examples` varies representative examples by a reproducible seed, and `/smoke` executes a fast sample. This is internal regression and source-exposed integration evidence, not a public benchmark or an open-English score.
 
 Use `benchmark export` to create a label-free input manifest for an external LLM runner, then `benchmark score-predictions` to score its JSONL predictions with the local oracle. ESLM never needs that runner's SDK or credentials.
 

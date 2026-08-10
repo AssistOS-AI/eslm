@@ -1,7 +1,7 @@
 {
   "format": "eslm-benchmark-report-v1",
   "protocol": "eslm-native-v1",
-  "createdAt": "2026-08-10T15:32:18.054Z",
+  "createdAt": "2026-08-10T19:05:28.453Z",
   "dataset": {
     "path": "training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl",
     "sha256": "92a836137c8a4cdbf2844ca1abf049b41c4a9b8a958411be82fa4188bc5a29fb"

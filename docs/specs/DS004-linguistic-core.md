@@ -34,7 +34,7 @@ English is the only supported language. The parser, lexicon, spelling tolerance,
 
 ### Constructions and approximate syntax
 
-The parser recognizes typed constructions such as `where is ENTITY`, `who owns ENTITY`, `what color is ENTITY`, `what is ENTITY afraid of`, `what is north of ENTITY`, `is ENTITY in ENTITY`, `is ENTITY a CLASS`, `can ENTITY VERB`, `is ENTITY going to die`, `is ENTITY likely to VERB`, and `what could explain why ENTITY is PROPERTY`. A construction compiles into a query contract containing intent, predicate, known arguments, requested slot, evidence scope, answer type, language, and uncertainty policy.
+The parser recognizes typed constructions rather than one canonical sentence per relation. Classification questions include `is ENTITY a CLASS`, `does ENTITY belong to the CLASS class`, `is ENTITY classified as a CLASS`, `would you classify ENTITY as a CLASS`, and the inverse `does the CLASS category include ENTITY`. Description, location, possession, ability, color, fear, eventual-mortality, relation, likelihood, and abductive questions each have several slot-preserving surfaces. For example, `where can I find ENTITY`, `which place contains ENTITY`, and `where is ENTITY located` all request the object of `located_in`; `what does ENTITY own`, `what does ENTITY have`, and `which object belongs to ENTITY` all request the object of `owns`. A construction compiles into a query contract containing intent, predicate, known arguments, requested slot, evidence scope, answer type, language, and uncertainty policy.
 
 Implemented conversational constructions also include `who is ENTITY`, bounded system identity questions, user identity questions, and requests for the system's supported capabilities. `Who is ENTITY?` queries known class membership. When the construction matches but the entity is absent, the result is `UNKNOWN`; it is not mislabeled as an unsupported syntax. ESLM answers what it is, does not guess who the user is, and describes only capabilities backed by executable paths.
 
@@ -52,7 +52,7 @@ Negation and absence are separate. Failure to find `located_in(mira,garden)` is 
 
 Conversation state contains bounded, explicit referents rather than hidden chat memory. V0.1 keeps the last resolved entity for simple pronouns. A complete discourse model must track salience, grammatical features, topic, competing candidates, corrections, ellipsis, and episode revisions.
 
-User corrections replace or refine a query contract; they are not automatically promoted knowledge. The v0.1 chat interface accepts classification (`X is a Y`), location (`X is in Y` or `X is at Y`), ownership (`X owns Y`), capability (`X can VERB`), and bAbI-style universal fear rules (`CLASS are afraid of CLASS`) into an explicit temporary overlay. The overlay creates session-scoped entities, facts, and rules with `session:*` provenance, is returned in conversation context, and disappears when the session ends. It never mutates `training/model/` or a selected KB.
+User corrections replace or refine a query contract; they are not automatically promoted knowledge. The v0.1 chat interface accepts several English realizations of classification (`X is a Y`, `X belongs to the Y class`, `X is classified as a Y`, `X is one of the Ys`, `the category of X is Y`), location (`in/at`, `located`, `can be found`, `stays`, `occupies`), ownership (`owns`, `has`, `carries`, inverse `OBJECT belongs to X`), capability (`can`, `is able to`, `has the ability to`), color properties, and universal fear rules (`CLASS are afraid of CLASS`, `every CLASS fears CLASS`, `all CLASSes fear CLASSes`). They compile into the same small predicate inventory and explicit temporary overlay. The overlay creates session-scoped entities, facts, and rules with `session:*` provenance, is returned in conversation context, and disappears when the session ends. It never mutates `training/model/` or a selected KB.
 
 ### Grammar preference
 
@@ -70,22 +70,26 @@ Unknown and unsupported responses are written for interactive users as well as e
 
 ## Decisions & Questions
 
-### Q1. Should the core “guess the most probable question”?
+### Question #1: Should the core “guess the most probable question”?
 
 Response: It should rank bounded supported analyses using correction, construction, entity, and semantic evidence. It must abstain when the margin is insufficient; tolerance cannot become arbitrary intent invention.
 
-### Q2. Why is the language contract English-only?
+### Question #2: Why is the language contract English-only?
 
 Response: A language requires coherent corpus evidence, constructions, morphology, ambiguity controls, benchmarks, and realization. A few translated templates would create a misleading capability claim and make failures harder to attribute.
 
-### Q3. When does a construction move from generated model to core?
+### Question #3: When does a construction move from generated model to core?
 
 Response: Only when it recurs across independent corpora and its algorithmic behavior is demonstrably domain-independent. The move requires cross-corpus tests.
 
-### Q4. Does the generated construction list implement parsing by itself?
+### Question #4: Does the generated construction list implement parsing by itself?
 
 Response: No. In v0.1 the stable parser implements the executable construction algorithms, while generated lists disclose corpus-conditioned coverage and morphology. This duplication is an acknowledged intermediate architecture. A future typed construction interpreter must make generated slot bindings executable before the core can stop carrying those patterns.
 
-### Q5. Why is an unknown entity different from an unsupported question?
+### Question #5: Why is an unknown entity different from an unsupported question?
 
 Response: `Who is Jhon?` matches an executable entity-description contract even when no active entity is named Jhon, so the correct outcome is `UNKNOWN`. A poem request has no executable contract and is `UNSUPPORTED`. Keeping the distinction makes coverage and abstention metrics meaningful.
+
+### Question #6: Why are WordNet and ATOMIC paraphrases not all placed in the generic parser?
+
+Response: Their surface forms refer to source-specific semantics: WordNet senses, synonyms, and hypernym paths, or ATOMIC's defeasible event relations. Shared entity, relation, and question-slot syntax belongs in the core. Phrasing that selects a source relation remains in that provider so loading a KB does not silently redefine general English reasoning.

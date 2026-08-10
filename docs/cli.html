@@ -14,12 +14,14 @@ node src/cli.mjs</code></pre>
 eslm&gt; /help
 eslm&gt; /kbs
 eslm&gt; /examples
+eslm&gt; /smoke
 eslm&gt; Define dog
 dog has 8 compiled senses: ...
 eslm&gt; Socrates is a man. Is Socrates a man?
 Yes.
 eslm&gt; /trace</code></pre>
-  <p><code>/examples</code> prints the complete generated short catalog rather than requiring hidden example IDs. The current catalog has 134 cases. Entries that depend on QUICK say <code>works with quick</code>; they will not falsely appear available after QUICK has been unloaded.</p>
+  <p><code>/examples</code> selects up to four varied representatives from every capability group. It prints a seed rather than hidden example IDs; reuse it with <code>/examples SEED</code> to reconstruct the same selection. The underlying fixed regression catalog has 204 unique cases and 174 operand-masked structures. <code>/smoke</code> runs a smaller generated sample against the KBs currently loaded and prints each pass, failure or skipped requirement. Reuse its seed with <code>/smoke SEED</code> when diagnosing a failure.</p>
+  <p>The examples page inside the CLI also labels evidence correctly: bAbI v1.2 Tasks 15 and 16 are the public benchmarks actually run; WordNet and ATOMIC are source-exposed integration checks; bAbI Tasks 2 and 3 are prepared but not learned; the remaining named suites are catalogued or planned.</p>
 
   <h2>Interactive commands</h2>
   <p>The two normal load targets are Open English WordNet 2025 and ATOMIC 2020. QUICK remains visible and explicitly loadable as a fixture. You do not need to memorize canonical IDs: commands match a full name, a distinctive title or role word, a wildcard such as <code>*net*</code>, or a conservative close spelling such as <code>wordnt</code>. Ambiguous words produce a useful diagnostic instead of loading an arbitrary source.</p>
@@ -30,7 +32,8 @@ eslm&gt; /trace</code></pre>
     <tr><td><code>/unload WORDS</code> or <code>/unload all</code></td><td>Removes matching modules without deleting session facts.</td></tr>
     <tr><td><code>/model</code></td><td>Explains the active generated core, source-derived KBs, fixture KBs, session facts, benchmark comparability, and current memory strategy in readable text.</td></tr>
     <tr><td><code>/memory</code> or <code>/memory N|auto|eager|lazy</code></td><td>Shows cache use or rebuilds public providers with a soft MiB target or explicit loading strategy.</td></tr>
-    <tr><td><code>/examples</code></td><td>Shows every tested working, deliberately unknown, and unsupported group. No hidden ID or filter is required.</td></tr>
+    <tr><td><code>/examples [SEED]</code></td><td>Generates representative working, deliberately unknown, and unsupported examples for every group and discloses benchmark status.</td></tr>
+    <tr><td><code>/smoke [SEED]</code></td><td>Executes two representatives per group against the active runtime and prints readable results, totals, elapsed time and the replay seed.</td></tr>
     <tr><td><code>/trace</code> / <code>/profile</code></td><td>Explains the latest provenance or optional stage measurements in readable text rather than dumping JSON.</td></tr>
     <tr><td><code>/clear</code></td><td>Clears session entities, facts, rules and discourse state.</td></tr>
     <tr><td><code>/quit</code> / <code>/exit</code></td><td>Ends the session.</td></tr>
@@ -39,6 +42,7 @@ eslm&gt; /trace</code></pre>
   <figure class="diagram"><pre class="mermaid">flowchart TD
     I[interactive input] --> X{slash command?}
     X -->|/kbs /examples /help| O[inspect without changing knowledge]
+    X -->|/smoke| T[execute seeded sample]
     X -->|/load /unload /memory| L[rebuild selected providers]
     X -->|ordinary English| Q{question family}
     L --> Q
@@ -48,6 +52,7 @@ eslm&gt; /trace</code></pre>
     C --> R[answer + trace]
     W --> R
     A --> R
+    T --> R
     R --> S[session context retained]</pre><figcaption>Slash commands manage the session and active providers. Ordinary English follows a source-specific executable path and returns to the same persistent session context.</figcaption></figure>
 
   <h2>Load and unload examples</h2>

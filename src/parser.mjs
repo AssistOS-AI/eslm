@@ -36,51 +36,75 @@ function predicateQuery(intent, subject, predicate, object, target = 'object') {
   return { intent, subject, predicate, object, target };
 }
 
+function resolvedEntityQuery(resolved, build) {
+  if (resolved.id) return build(resolved.id);
+  if (resolved.ambiguous) return { status: 'AMBIGUOUS', candidates: resolved.ambiguous };
+  return {
+    status: 'UNKNOWN', missingEntity: resolved.missing,
+    diagnostic: 'The question construction is supported, but the referenced entity is not known in the active session or knowledge bases.',
+  };
+}
+
+function singularClass(value, model) {
+  const normalized = value.replace(/^(?:the|a|an) /u, '').trim();
+  return model.reasoning?.classes?.singular?.[normalized]
+    ?? (normalized.endsWith('ies') ? `${normalized.slice(0, -3)}y`
+      : normalized.endsWith('s') ? normalized.slice(0, -1) : normalized);
+}
+
 export function parseQuestion(normalized, model, context = {}) {
   const words = normalized.tokens.filter((token) => !/^[?.!,;:]$/u.test(token));
   const joined = words.join(' ');
   let match;
-  let entity;
 
   if (/^(?:who are you|what are you|tell me who you are)$/u.test(joined)) return { intent: 'system-identity', target: 'meta' };
   if (/^(?:who am i|do you know who i am)$/u.test(joined)) return { intent: 'user-identity', target: 'meta' };
   if (/^(?:what can you do|what do you do|show me what you can do)$/u.test(joined)) return { intent: 'system-capabilities', target: 'meta' };
 
-  if ((match = joined.match(/^(?:where is|where can i find) (.+)$/u))) {
-    entity = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (entity.id) return predicateQuery('location', entity.id, 'located_in', undefined, 'object');
+  if ((match = joined.match(/^(?:where is|where can i find|in which place is) (.+?)(?: located)?$/u))) {
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('location', id, 'located_in', undefined, 'object'));
+  }
+  if ((match = joined.match(/^which place contains (.+)$/u))) {
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('location', id, 'located_in', undefined, 'object'));
   }
   if ((match = joined.match(/^who owns (.+)$/u))) {
-    entity = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (entity.id) return predicateQuery('owner', undefined, 'owns', entity.id, 'subject');
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('owner', undefined, 'owns', id, 'subject'));
   }
-  if ((match = joined.match(/^who is (.+)$/u))) {
-    entity = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (entity.id) return predicateQuery('entity-description', entity.id, 'is_a', undefined, 'value');
-  }
-  if ((match = joined.match(/^what color is (.+)$/u))) {
-    entity = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (entity.id) return {
-      ...predicateQuery('color', entity.id, 'color', undefined, 'value'),
+  if ((match = joined.match(/^(?:what color is|which color is|what is the color of|tell me the color of) (.+)$/u))) {
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) => ({
+      ...predicateQuery('color', id, 'color', undefined, 'value'),
       ...(model.reasoning?.induction?.implicitPredicates?.includes('color') ? { reasoning: 'induction' } : {}),
-    };
+    }));
   }
-  if ((match = joined.match(/^what is (.+?) afraid of$/u))) {
-    entity = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (entity.id) return predicateQuery('fear-object', entity.id, 'afraid_of', undefined, 'value');
+  if ((match = joined.match(/^(?:what is (.+?) afraid of|what does (.+?) fear|who does (.+?) fear)$/u))) {
+    const phrase = match[1] ?? match[2] ?? match[3];
+    return resolvedEntityQuery(resolveEntityPhrase(phrase.split(' '), model, context), (id) =>
+      predicateQuery('fear-object', id, 'afraid_of', undefined, 'value'));
   }
-  if ((match = joined.match(/^what does (.+?) own$/u))) {
-    entity = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (entity.id) return predicateQuery('possessions', entity.id, 'owns', undefined, 'object');
+  if ((match = joined.match(/^(?:what does (.+?) (?:own|have)|which object belongs to (.+)|what is (.+?) carrying)$/u))) {
+    const phrase = match[1] ?? match[2] ?? match[3];
+    return resolvedEntityQuery(resolveEntityPhrase(phrase.split(' '), model, context), (id) =>
+      predicateQuery('possessions', id, 'owns', undefined, 'object'));
   }
   if ((match = joined.match(/^can (.+?) ([a-z][a-z0-9_-]*)$/u))) {
-    const subject = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (subject.id) return predicateQuery('yes-no', subject.id, 'can', match[2], 'boolean');
-    entity = subject;
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('yes-no', id, 'can', match[2], 'boolean'));
+  }
+  if ((match = joined.match(/^is (.+?) able to ([a-z][a-z0-9_-]*)$/u))
+    || (match = joined.match(/^does (.+?) have the ability to ([a-z][a-z0-9_-]*)$/u))) {
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('yes-no', id, 'can', match[2], 'boolean'));
+  }
+  if ((match = joined.match(/^is ([a-z][a-z0-9_-]*) something (.+?) can do$/u))) {
+    return resolvedEntityQuery(resolveEntityPhrase(match[2].split(' '), model, context), (id) =>
+      predicateQuery('yes-no', id, 'can', match[1], 'boolean'));
   }
   if ((match = joined.match(/^what is north of (.+)$/u))) {
-    entity = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (entity.id) return predicateQuery('relation', undefined, 'north_of', entity.id, 'subject');
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('relation', undefined, 'north_of', id, 'subject'));
   }
   if ((match = joined.match(/^what could explain why (.+?) is (.+)$/u))) {
     const subject = resolveEntityPhrase(match[1].split(' '), model, context);
@@ -90,27 +114,27 @@ export function parseQuestion(normalized, model, context = {}) {
         reasoning: 'abduction',
       };
     }
-    entity = subject;
+    return resolvedEntityQuery(subject, () => undefined);
   }
   if ((match = joined.match(/^(?:who|what) is (?:in|at) (.+)$/u))) {
-    entity = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (entity.id) return predicateQuery('contents', undefined, 'located_in', entity.id, 'subject');
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('contents', undefined, 'located_in', id, 'subject'));
   }
   if ((match = joined.match(/^is (.+?) (?:in|at) (.+)$/u))) {
     const left = resolveEntityPhrase(match[1].split(' '), model, context);
     const right = resolveEntityPhrase(match[2].split(' '), model, context);
-    if (left.id && right.id) return predicateQuery('yes-no', left.id, 'located_in', right.id, 'boolean');
-    entity = left.id ? right : left;
+    if (!left.id) return resolvedEntityQuery(left, () => undefined);
+    return resolvedEntityQuery(right, (rightId) => predicateQuery('yes-no', left.id, 'located_in', rightId, 'boolean'));
   }
-  if ((match = joined.match(/^is (.+?) going to die$/u))) {
-    const subject = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (subject.id) return predicateQuery('yes-no', subject.id, 'will_die', 'eventually', 'boolean');
-    entity = subject;
+  if ((match = joined.match(/^(?:is (.+?) going to die|will (.+?) eventually die)$/u))) {
+    const phrase = match[1] ?? match[2];
+    return resolvedEntityQuery(resolveEntityPhrase(phrase.split(' '), model, context), (id) =>
+      predicateQuery('yes-no', id, 'will_die', 'eventually', 'boolean'));
   }
   if ((match = joined.match(/^why is (.+?) going to die$/u))) {
     const subject = resolveEntityPhrase(match[1].split(' '), model, context);
     if (subject.id) return predicateQuery('explanation', subject.id, 'will_die', 'eventually', 'boolean');
-    entity = subject;
+    return resolvedEntityQuery(subject, () => undefined);
   }
   if ((match = joined.match(/^is (.+?) likely to ([a-z][a-z0-9_-]*)$/u))) {
     const subject = resolveEntityPhrase(match[1].split(' '), model, context);
@@ -120,30 +144,39 @@ export function parseQuestion(normalized, model, context = {}) {
         reasoning: 'induction',
       };
     }
-    entity = subject;
+    return resolvedEntityQuery(subject, () => undefined);
+  }
+  if ((match = joined.match(/^does (.+?) belong to the (.+?) class$/u))
+    || (match = joined.match(/^is (.+?) classified as (?:a|an) (.+)$/u))
+    || (match = joined.match(/^would you classify (.+?) as (?:a|an) (.+)$/u))) {
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('yes-no', id, 'is_a', singularClass(match[2], model), 'boolean'));
+  }
+  if ((match = joined.match(/^does the (.+?) category include (.+)$/u))) {
+    return resolvedEntityQuery(resolveEntityPhrase(match[2].split(' '), model, context), (id) =>
+      predicateQuery('yes-no', id, 'is_a', singularClass(match[1], model), 'boolean'));
   }
   if ((match = joined.match(/^is (.+?) (?:a|an) (.+)$/u))) {
-    const left = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (left.id) return predicateQuery('yes-no', left.id, 'is_a', match[2], 'boolean');
-    entity = left;
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('yes-no', id, 'is_a', singularClass(match[2], model), 'boolean'));
+  }
+  if ((match = joined.match(/^(?:who is|what is|what kind of thing is) (.+)$/u))
+    || (match = joined.match(/^which class does (.+?) belong to$/u))
+    || (match = joined.match(/^how is (.+?) classified$/u))) {
+    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+      predicateQuery('entity-description', id, 'is_a', undefined, 'value'));
   }
   if ((match = joined.match(/^is (.+?) ([a-z][a-z0-9_-]*)$/u))) {
     const subject = resolveEntityPhrase(match[1].split(' '), model, context);
     if (subject.id) return predicateQuery('yes-no', subject.id, 'is_a', match[2], 'boolean');
-    entity = subject;
+    return resolvedEntityQuery(subject, () => undefined);
   }
   if ((match = joined.match(/^why is (.+?) (?:in|at) (.+)$/u))) {
     const left = resolveEntityPhrase(match[1].split(' '), model, context);
     const right = resolveEntityPhrase(match[2].split(' '), model, context);
-    if (left.id && right.id) return predicateQuery('explanation', left.id, 'located_in', right.id, 'boolean');
-    entity = left.id ? right : left;
+    if (!left.id) return resolvedEntityQuery(left, () => undefined);
+    return resolvedEntityQuery(right, (rightId) => predicateQuery('explanation', left.id, 'located_in', rightId, 'boolean'));
   }
-  if (entity?.ambiguous) return { status: 'AMBIGUOUS', candidates: entity.ambiguous };
-  if (entity?.missing) return {
-    status: 'UNKNOWN',
-    missingEntity: entity.missing,
-    diagnostic: 'The question construction is supported, but the referenced entity is not known in the active session or knowledge bases.',
-  };
   return {
     status: 'UNSUPPORTED',
     diagnostic: 'No supported question construction matched the normalized input.',

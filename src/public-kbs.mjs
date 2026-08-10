@@ -33,13 +33,14 @@ function normalizedEvent(value) {
 function eventTokens(value) {
   return normalizedEvent(value).split(/[^a-z0-9']+/u).filter(Boolean)
     .filter((token) => !['personx', 'persony', 'someone', 'the', 'a', 'an', 'to'].includes(token))
-    .map((token) => token.length > 4 && token.endsWith('s') ? token.slice(0, -1) : token);
+    .map((token) => token.endsWith('izing') ? `${token.slice(0, -3)}e`
+      : token.length > 4 && token.endsWith('s') ? token.slice(0, -1) : token);
 }
 
 function conversationalQuestion(text) {
   return text.trim()
-    .replace(/^(?:please tell me|could you tell me|can you tell me|please|could you|can you|using the loaded knowledge,|based on the loaded source,)\s+/iu, '')
-    .replace(/\s*,?\s*(?:please|for me|using the loaded knowledge|according to the compiled source)([?.!]*)$/iu, '$1')
+    .replace(/^(?:please tell me|could you tell me|can you tell me|please|could you|can you|using the loaded (?:knowledge|lexical knowledge),|based on the loaded (?:source|event source),)\s+/iu, '')
+    .replace(/\s*,?\s*(?:please|for me|using the loaded knowledge|according to the compiled source|if the source has evidence)([?.!]*)$/iu, '$1')
     .replace(/^tell me what (.+?) means([?.!]*)$/iu, 'what does $1 mean$2')
     .replace(/^explain what (.+?) means([?.!]*)$/iu, 'what does $1 mean$2')
     .replace(/^give me (?:the )?synonyms for /iu, 'give me synonyms for ')
@@ -149,32 +150,35 @@ class WordNetProvider {
 
   async ask(text) {
     const clean = conversationalQuestion(text);
-    let match = clean.match(/^(?:what does (.+?) mean|define (.+?))\??$/iu);
+    let match = clean.match(/^(?:what does (.+?) mean|define (.+?)|what is the definition of (.+?)|give me a definition of (.+?)|what is meant by (.+?)|describe the word (.+?))\??$/iu);
     if (match) {
-      const lemma = match[1] ?? match[2];
+      const lemma = match.slice(1).find(Boolean);
       const senses = await this.senses(lemma);
       if (senses.length === 0) return response(this, `Open English WordNet 2025 has no compiled sense for “${lemma}”.`, [], normalizedLemma(lemma), 'oewn-2025');
       const descriptions = senses.slice(0, 5).map((sense, index) => `${index + 1}. (${sense.p}) ${sense.d[0] ?? 'definition unavailable'}`);
       return response(this, `${normalizedLemma(lemma)} has ${senses.length} compiled sense${senses.length === 1 ? '' : 's'}:\n${descriptions.join('\n')}`, senses.map((sense) => sense.id), senses[0].id, `oewn-2025:${senses[0].l}`);
     }
-    match = clean.match(/^(?:what are (?:the )?synonyms (?:of|for)|give me synonyms (?:of|for)) (.+?)\??$/iu);
+    match = clean.match(/^(?:what are (?:the )?synonyms (?:of|for)|give me synonyms (?:of|for)|list synonyms (?:of|for)|which words are similar to|what other words can mean|list alternative words for|tell me some synonyms for|what words share a meaning with) (.+?)\??$/iu);
     if (match) {
       const senses = await this.senses(match[1]);
       if (senses.length === 0) return response(this, `Open English WordNet 2025 has no compiled sense for “${match[1]}”.`, [], normalizedLemma(match[1]), 'oewn-2025');
       const synonyms = [...new Set(senses.flatMap((sense) => sense.m).filter((word) => normalizedLemma(word) !== normalizedLemma(match[1])))];
       return response(this, synonyms.length > 0 ? `Possible synonyms across the compiled senses are: ${synonyms.slice(0, 20).join(', ')}.` : 'No distinct synonyms are recorded for that lemma.', synonyms, senses[0].id, `oewn-2025:${senses[0].l}`);
     }
-    match = clean.match(/^how many senses does (.+?) have\??$/iu);
+    match = clean.match(/^(?:how many (?:senses|meanings) does (.+?) have|count the senses of (.+?))\??$/iu);
     if (match) {
-      const senses = await this.senses(match[1]);
-      return response(this, `${normalizedLemma(match[1])} has ${senses.length} compiled sense${senses.length === 1 ? '' : 's'} in Open English WordNet 2025.`, senses.length > 0 ? [senses.length] : [], normalizedLemma(match[1]), 'oewn-2025');
+      const lemma = match[1] ?? match[2];
+      const senses = await this.senses(lemma);
+      return response(this, `${normalizedLemma(lemma)} has ${senses.length} compiled sense${senses.length === 1 ? '' : 's'} in Open English WordNet 2025.`, senses.length > 0 ? [senses.length] : [], normalizedLemma(lemma), 'oewn-2025');
     }
-    match = clean.match(/^is (?:a |an )?(.+?) (?:a|an) (.+?)\??$/iu);
+    match = clean.match(/^(?:is (?:a |an )?(.+?) (?:a kind of|a type of|an|a) (.+?)|does (.+?) belong to the (.+?) category|can (.+?) be classified as (?:a|an) (.+?))\??$/iu);
     if (match) {
-      if ((await this.senses(match[1])).length === 0 || (await this.senses(match[2])).length === 0) return undefined;
-      const proof = await this.hypernymProof(match[1], match[2]);
-      if (!proof) return response(this, `I found no WordNet hypernym path proving that ${normalizedLemma(match[1])} is ${normalizedLemma(match[2])}. This is unknown, not proven false.`, [], normalizedLemma(match[1]), 'oewn-2025', 'bounded-deduction');
-      return response(this, `Yes. At least one sense of ${normalizedLemma(match[1])} reaches ${normalizedLemma(match[2])} through a ${proof.length - 1}-edge WordNet path.`, [true], proof.at(-1), `oewn-2025:path:${proof.join('>')}`, 'bounded-deduction');
+      const left = match[1] ?? match[3] ?? match[5];
+      const right = match[2] ?? match[4] ?? match[6];
+      if ((await this.senses(left)).length === 0 || (await this.senses(right)).length === 0) return undefined;
+      const proof = await this.hypernymProof(left, right);
+      if (!proof) return response(this, `I found no WordNet hypernym path proving that ${normalizedLemma(left)} is ${normalizedLemma(right)}. This is unknown, not proven false.`, [], normalizedLemma(left), 'oewn-2025', 'bounded-deduction');
+      return response(this, `Yes. At least one sense of ${normalizedLemma(left)} reaches ${normalizedLemma(right)} through a ${proof.length - 1}-edge WordNet path.`, [true], proof.at(-1), `oewn-2025:path:${proof.join('>')}`, 'bounded-deduction');
     }
     return undefined;
   }
@@ -246,17 +250,21 @@ class AtomicProvider {
 
   async ask(text) {
     const clean = conversationalQuestion(text);
-    let match = clean.match(/^what might happen after (.+?)\??$/iu);
+    let match = clean.match(/^what are possible effects of (.+?)\??$/iu)
+      ?? clean.match(/^what could (.+?) lead to\??$/iu)
+      ?? clean.match(/^after (.+?), what may occur\??$/iu);
     if (match) return this.answerFor(match[1], ['xEffect', 'oEffect', 'isAfter', 'Causes'], 'possible effect');
-    match = clean.match(/^what might happen before (.+?)\??$/iu);
+    match = clean.match(/^what might happen after (.+?)\??$/iu);
+    if (match) return this.answerFor(match[1], ['xEffect', 'oEffect', 'isAfter', 'Causes'], 'possible effect');
+    match = clean.match(/^(?:what might happen before|what might be required before) (.+?)\??$/iu);
     if (match) return this.answerFor(match[1], ['xNeed', 'isBefore'], 'possible prerequisite');
-    match = clean.match(/^why might (.+?)\??$/iu);
+    match = clean.match(/^(?:why (?:might|someone might)|what intention might motivate|what reason could there be for) (.+?)\??$/iu);
     if (match) return this.answerFor(match[1], ['xIntent', 'xReason'], 'possible intention or reason');
-    match = clean.match(/^how might (?:personx|someone|they) feel after (.+?)\??$/iu);
+    match = clean.match(/^(?:how might (?:personx|someone|they) feel after|how could (?:personx|someone|they) react after) (.+?)\??$/iu);
     if (match) return this.answerFor(match[1], ['xReact'], 'possible reaction');
-    match = clean.match(/^what might (?:personx|someone|they) want after (.+?)\??$/iu);
+    match = clean.match(/^what might (?:personx|someone|they) want(?: next)? after (.+?)\??$/iu);
     if (match) return this.answerFor(match[1], ['xWant'], 'possible next desire');
-    match = clean.match(/^what could prevent (.+?)\??$/iu);
+    match = clean.match(/^(?:what could prevent|what might stop) (.+?)\??$/iu);
     if (match) return this.answerFor(match[1], ['HinderedBy'], 'possible obstacle');
     match = clean.match(/^what (?:is|are) (.+?) used for\??$/iu);
     if (match) return this.answerFor(match[1], ['ObjectUse'], 'possible use');

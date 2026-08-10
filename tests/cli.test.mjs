@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { execFile } from 'node:child_process';
+import { execFile, spawnSync } from 'node:child_process';
 import { promisify } from 'node:util';
 import { PROJECT_ROOT } from '../src/paths.mjs';
 
@@ -86,4 +86,29 @@ test('CLI structured output remains ANSI-free and reports lazy memory policy', a
   const result = JSON.parse(stdout);
   assert.equal(result.model.memory.effectivePolicy, 'lazy');
   assert.equal(result.model.memory.providers[0].mode, 'lazy');
+});
+
+test('interactive examples disclose evidence and smoke executes a reproducible sample', () => {
+  const examples = spawnSync(process.execPath, [
+    'src/cli.mjs', 'chat', '--kb', 'quick', '--color', 'never',
+  ], {
+    cwd: PROJECT_ROOT,
+    input: '/examples cli-test-seed\n',
+    encoding: 'utf8',
+    timeout: 30_000,
+  });
+  assert.equal(examples.status, 0, examples.stderr);
+  assert.match(examples.stdout, /Public benchmarks actually run: bAbI v1\.2 Tasks 15 and 16/u);
+  const smoke = spawnSync(process.execPath, [
+    'src/cli.mjs', 'chat', '--kb', 'quick', '--color', 'never',
+  ], {
+    cwd: PROJECT_ROOT,
+    input: '/smoke cli-test-seed\n',
+    encoding: 'utf8',
+    timeout: 30_000,
+  });
+  assert.equal(smoke.status, 0, smoke.stderr);
+  assert.match(smoke.stdout, /Generated smoke run — seed cli-test-seed/u);
+  assert.match(smoke.stdout, /0 failed/u);
+  assert.match(smoke.stdout, /skipped/u);
 });

@@ -7,7 +7,7 @@ const BASE_VARIANTS = Object.freeze({
 
 const QUESTION_WORDS = new Set([
   'where', 'what', 'who', 'which', 'why', 'how', 'is', 'does', 'can',
-  'tell', 'show',
+  'will', 'would', 'in', 'tell', 'show',
 ]);
 
 export function tokenize(text) {
@@ -20,8 +20,10 @@ export function tokenize(text) {
 
 function correctionVocabulary(model) {
   const words = new Set([
-    ...QUESTION_WORDS, 'in', 'at', 'of', 'color', 'own', 'owns', 'located', 'going', 'to', 'die',
-    'likely', 'fly', 'could', 'explain', 'mortal', 'eventually',
+    ...QUESTION_WORDS, 'in', 'at', 'of', 'color', 'own', 'owns', 'have', 'has', 'located', 'place',
+    'going', 'to', 'die', 'likely', 'fly', 'could', 'explain', 'mortal', 'eventually',
+    'belong', 'belongs', 'class', 'classified', 'category', 'include', 'kind', 'thing',
+    'able', 'ability', 'do', 'fear', 'afraid', 'carrying', 'contains', 'find',
   ]);
   for (const entity of model.entities) {
     for (const name of entity.names) tokenize(name).forEach((word) => words.add(word));

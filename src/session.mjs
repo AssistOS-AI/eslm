@@ -41,29 +41,60 @@ function singularClass(value, model) {
 function assertionFrom(text, model, entities, ruleNumber) {
   const normalized = normalizedPhrase(text);
   let match;
-  if ((match = normalized.match(/^(.+?) are afraid of (.+)$/u))) {
-    const className = singularClass(match[1], model);
-    const fearedClass = singularClass(match[2], model);
+  if ((match = normalized.match(/^(?:every (.+?) fears|all (.+?) fear|(.+?) are afraid of) (.+)$/u))) {
+    const sourceClass = match[1] ?? match[2] ?? match[3];
+    const fearedClass = singularClass(match[4], model);
     return {
       kind: 'rule',
       id: `session:r${ruleNumber}`,
-      when: [['?entity', 'is_a', className]],
+      when: [['?entity', 'is_a', singularClass(sourceClass, model)]],
       then: ['?entity', 'afraid_of', fearedClass],
       source: `session:rule:${ruleNumber + 1}`,
       sourceText: text,
       session: true,
     };
   }
-  if ((match = normalized.match(/^(.+?) is (?:in|at) (.+)$/u))) {
+  if ((match = normalized.match(/^(.+?) (?:is (?:located )?(?:in|at)|can be found (?:in|at)|stays (?:in|at)|occupies) (.+)$/u))) {
     return {
       subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'located_in',
       object: ensureEntity(match[2], 'place', model, entities), sourceText: text,
     };
   }
-  if ((match = normalized.match(/^(.+?) owns (?:a |an |the )?(.+)$/u))) {
+  if ((match = normalized.match(/^(.+?) (?:belongs to the (.+?) class|is classified as (?:a|an) (.+)|is one of the (.+))$/u))) {
+    return {
+      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'is_a',
+      value: singularClass(match[2] ?? match[3] ?? match[4], model), sourceText: text,
+    };
+  }
+  if ((match = normalized.match(/^the category of (.+?) is (.+)$/u))) {
+    return {
+      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'is_a',
+      value: singularClass(match[2], model), sourceText: text,
+    };
+  }
+  if ((match = normalized.match(/^(.+?) (?:is able|has the ability) to ([a-z][a-z0-9_-]*)$/u))) {
+    return {
+      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'can',
+      value: match[2], sourceText: text,
+    };
+  }
+  if ((match = normalized.match(/^(?:the )?color of (.+?) is ([a-z][a-z0-9_-]*)$/u))
+    || (match = normalized.match(/^(.+?) (?:has color|is colored) ([a-z][a-z0-9_-]*)$/u))) {
+    return {
+      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'color',
+      value: match[2], sourceText: text,
+    };
+  }
+  if ((match = normalized.match(/^(.+?) (?:owns|has|carries) (?:a |an |the )?(.+)$/u))) {
     return {
       subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'owns',
       object: ensureEntity(match[2], 'object', model, entities), sourceText: text,
+    };
+  }
+  if ((match = normalized.match(/^(?:the )?(.+?) belongs to (.+)$/u))) {
+    return {
+      subject: ensureEntity(match[2], 'entity', model, entities), predicate: 'owns',
+      object: ensureEntity(match[1], 'object', model, entities), sourceText: text,
     };
   }
   if ((match = normalized.match(/^(.+?) can ([a-z][a-z0-9_-]*)$/u))) {
@@ -105,7 +136,7 @@ export function compileSessionEpisode(text, model, context = {}) {
   const segments = splitEpisode(text);
   const final = segments.at(-1) ?? '';
   const finalWords = normalizedPhrase(final).split(' ');
-  const questionStarters = new Set(['where', 'what', 'who', 'which', 'why', 'how', 'is', 'does', 'can', 'tell', 'show']);
+  const questionStarters = new Set(['where', 'what', 'who', 'which', 'why', 'how', 'is', 'does', 'can', 'will', 'would', 'in', 'tell', 'show']);
   const hasQuestion = final.endsWith('?') || questionStarters.has(finalWords[0]);
   const statementSegments = hasQuestion ? segments.slice(0, -1) : segments;
   const learned = [];

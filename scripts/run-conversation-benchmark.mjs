@@ -1,6 +1,6 @@
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { longConversationStressCases } from '../src/conversation-smoke.mjs';
+import { LONG_STRESS_SEED, longConversationStressCases } from '../src/conversation-smoke.mjs';
 import { runConversationBenchmark } from '../src/conversation-benchmark.mjs';
 import { writeJson } from '../src/io.mjs';
 import { PROJECT_ROOT } from '../src/paths.mjs';
@@ -24,6 +24,7 @@ function htmlReport(report) {
 <h1>Long conversational benchmark</h1>
 <p>This is ESLM's generated internal stress and regression suite, not a public benchmark and not evidence of comparison with another model. It checks longer contexts, surface variation, loaded WordNet and ATOMIC queries, explicit uncertainty, and unsupported requests.</p>
 <div class="metric"><strong>${report.passed} / ${report.total}</strong><span>accepted cases</span></div>
+<p>Generator seed <code>${escapeHtml(report.configuration.generatorSeed)}</code> makes the accepted run reproducible. All ${report.diversity.uniqueInputs} inputs are unique. Operand masking identifies ${report.diversity.structuralShapes} distinct linguistic structures, and no one structure occurs more than ${report.diversity.largestRepeatedShape} times. These checks prevent a large score made mostly from renamed copies of one sentence.</p>
 <p>The run used lazy public-KB shards with ${(report.configuration.cacheBytesPerPublicKnowledgeBase / 1024 / 1024).toFixed(0)} MiB per provider. Queries took ${(report.durationMs / 1000).toFixed(2)} seconds after ${(report.initializationMs / 1000).toFixed(2)} seconds of initialization. RSS changed by ${mib(report.memory.rssDeltaBytes)} MiB during the process.</p>
 <h2>Coverage by question family</h2><table><thead><tr><th>Family</th><th>Passed</th><th>Accuracy</th></tr></thead><tbody>${rows}</tbody></table>
 <h2>What one case from each family looks like</h2>${examples}
@@ -34,7 +35,7 @@ function htmlReport(report) {
 
 const jsonPath = resolve(PROJECT_ROOT, 'docs/results/latest-conversation-benchmark.json');
 const htmlPath = resolve(PROJECT_ROOT, 'docs/results/latest-conversation-benchmark.html');
-const report = await runConversationBenchmark(longConversationStressCases(1000));
+const report = await runConversationBenchmark(longConversationStressCases(1000, { seed: LONG_STRESS_SEED }), { seed: LONG_STRESS_SEED });
 await writeJson(jsonPath, report);
 await writeFile(htmlPath, htmlReport(report));
 console.log(`Long conversational benchmark: ${report.passed}/${report.total} in ${(report.durationMs / 1000).toFixed(2)}s.`);

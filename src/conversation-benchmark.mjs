@@ -4,6 +4,7 @@ import { loadKnowledgeBase, mergeModels } from './kbs.mjs';
 import { loadModel } from './model-loader.mjs';
 import { loadPublicKnowledgeBase } from './public-kbs.mjs';
 import { EslmRuntime } from './runtime.mjs';
+import { conversationShape } from './conversation-smoke.mjs';
 
 function equalValues(actual, expected) {
   return expected === undefined || JSON.stringify(actual ?? []) === JSON.stringify(expected);
@@ -35,6 +36,7 @@ export async function runConversationBenchmark(cases, options = {}) {
     profile: Boolean(options.profile),
   };
   const memoryBefore = process.memoryUsage();
+  const shapeGroups = Map.groupBy(cases, (item) => conversationShape(item.input));
   const initializedAt = performance.now();
   const { base, runtimes } = await createRuntimes(cases, settings);
   const initializationMs = performance.now() - initializedAt;
@@ -70,8 +72,17 @@ export async function runConversationBenchmark(cases, options = {}) {
     benchmarkClass: 'internal generated regression and stress suite',
     createdAt: new Date().toISOString(),
     model: { id: base.manifest.modelId, evidenceRegime: base.manifest.evidenceRegime },
-    configuration: { publicKnowledgeMode: settings.mode, cacheBytesPerPublicKnowledgeBase: settings.cacheBytes },
+    configuration: {
+      publicKnowledgeMode: settings.mode,
+      cacheBytesPerPublicKnowledgeBase: settings.cacheBytes,
+      ...(options.seed ? { generatorSeed: String(options.seed) } : {}),
+    },
     total: cases.length,
+    diversity: {
+      uniqueInputs: new Set(cases.map((item) => item.input)).size,
+      structuralShapes: shapeGroups.size,
+      largestRepeatedShape: Math.max(0, ...[...shapeGroups.values()].map((items) => items.length)),
+    },
     passed,
     accuracy: cases.length === 0 ? 0 : passed / cases.length,
     durationMs: performance.now() - startedAt,

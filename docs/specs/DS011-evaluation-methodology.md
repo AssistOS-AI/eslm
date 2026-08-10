@@ -71,7 +71,7 @@ The completed Task 15 public evaluation uses the prepared bAbI v1.2 English 10k 
 
 The completed Task 16 learning cycle used 10,000 official train episodes, with 200 working and 1,000 fresh train cases, and kept the 1,000 official test cases aggregate-only during adaptation. Its accepted checkpoint produced 1,000/1,000 on that shadow aggregate after proof, metamorphic, and regression gates. This result estimates only the dataset's controlled class-property induction convention. It does not establish broad English, unrestricted induction, abduction, world knowledge, negation, or narrative competence.
 
-The internal conversational suite under DS022 is reported separately. Its 1,000/1,000 accepted run verifies generated variations of ten declared question families, including source-exposed WordNet and ATOMIC queries. It is regression and stress evidence, not an additional public benchmark result.
+The internal conversational suite under DS022 is reported separately. Its 1,000/1,000 accepted run contains 1,000 unique inputs, 536 operand-masked linguistic structures, and no structure repeated more than ten times. It verifies eleven generated groups, including source-exposed WordNet and ATOMIC queries. It is regression and stress evidence, not an additional public benchmark result.
 
 Evaluation and benchmark reports include active model ID, selected KB IDs, and a comparability boolean. A report produced with any educational KB selected is a module-conditioned regression experiment and is not directly comparable with the clean public result. Tests verify that the default does not answer KB-only knowledge and that an explicitly selected KB does.
 
@@ -83,19 +83,19 @@ Intrinsic adapter checks and source-held-out edges measure ingestion and executi
 
 ## Decisions & Questions
 
-### Q1. Why not train a local LLM baseline?
+### Question #1: Why not train a local LLM baseline?
 
 Response: The main comparison uses public benchmarks and externally produced predictions/results. A matched local neural training project would add cost and confound the core code-synthesis experiment; it may be a later independent track.
 
-### Q2. What is the role of the committed evaluation fixture?
+### Question #2: What is the role of the committed evaluation fixture?
 
 Response: It proves that direct facts, English typo tolerance, English paraphrase compilation, rule derivation, and abstention are wired correctly. It is not evidence of broad competence.
 
-### Q3. Can development accuracy be published?
+### Question #3: Can development accuracy be published?
 
 Response: Yes, labeled development and accompanied by iteration count. Hidden-test claims require a frozen candidate and separate evaluator.
 
-### Q4. Is a published 100% result from another bAbI paper a tie with ESLM?
+### Question #4: Is a published 100% result from another bAbI paper a tie with ESLM?
 
 Response: It is a useful reference but not automatically a direct tie. The exact release, test hash, preprocessing, training condition, model selection, normalization, and predictions must match or be replayable through the local oracle. Otherwise the shared percentage is labeled reference-only.
 
@@ -106,3 +106,7 @@ Response: No. It is a valid compiler-fidelity or relation-completion test, but s
 ### Question #6: How is the 1,000-case conversational score classified?
 
 Response: It is an internal generated regression and stress result. Its WordNet and ATOMIC cases are source-exposed, and its core cases are generated from declared constructions. It verifies executable coverage and robustness for named families but is not added to the public benchmark ledger.
+
+### Question #7: Can a large generated score be accepted without measuring generator diversity?
+
+Response: No. Unique text alone can conceal thousands of renamed copies of one template. Generated suites report operand-masked structural-shape count and maximum repetition, while fixed and fresh seeds check both reproducibility and variation. These metrics do not prove natural-language representativeness, but they reject the most obvious template inflation.

@@ -119,7 +119,8 @@ function interactiveHelp(style) {
   ${command('/memory')}Show eager/lazy strategy and current shard-cache use.
   ${command('/memory N')}Set a soft memory target in MiB and rebuild KB providers.
   ${command('/memory auto|eager|lazy')}Select adaptive, full, or shard-based loading.
-  ${command('/examples')}Show all tested working, unknown, and unsupported examples.
+  ${command('/examples [SEED]')}Generate a varied, representative example set; reuse its seed to reproduce it.
+  ${command('/smoke [SEED]')}Run a fast generated check against the currently loaded knowledge and show each result.
   ${command('/trace')}Explain the sources and symbolic steps behind the last answer.
   ${command('/profile')}Show readable timing and memory measurements for the last answer.
   ${command('/clear')}Forget temporary conversation facts and references.
@@ -131,10 +132,10 @@ You can teach bounded session facts before a question, for example:
   Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?`;
 }
 
-function interactiveExamples(style) {
+function interactiveExamples(style, seed) {
   const groups = new Map();
-  for (const example of smokeExamples()) groups.set(example.group, [...(groups.get(example.group) ?? []), example]);
-  return [...groups].map(([group, examples]) => {
+  for (const example of smokeExamples({ seed, maxPerGroup: 4 })) groups.set(example.group, [...(groups.get(example.group) ?? []), example]);
+  const catalog = [...groups].map(([group, examples]) => {
     const rendered = examples.map((example) => {
       const marker = `[${example.label}]`;
       const colored = example.label === 'unsupported' ? style.red(marker)
@@ -143,6 +144,43 @@ function interactiveExamples(style) {
     });
     return `${style.bold(group)} (${examples.length})\n  ${rendered.join('\n  ')}`;
   }).join('\n\n');
+  return `${style.bold('What this evidence means')}
+Seed: ${style.blue(seed)} — use ${style.blue(`/examples ${seed}`)} or ${style.blue(`/smoke ${seed}`)} to reproduce these selections.
+Public benchmarks actually run: ${style.green('bAbI v1.2 Tasks 15 and 16')} (1,000/1,000 test cases each).
+Knowledge-source integration checks: Open English WordNet 2025 and ATOMIC 2020. These are source-exposed tests, ${style.yellow('not public benchmark scores')}.
+Prepared but not learned: bAbI Tasks 2 and 3. Catalogued but not run: BLiMP, CLUTRR, EWoK, SimpleQA, Entity Tracking, and Story Cloze.
+
+${catalog}`;
+}
+
+function sameExpectedValues(actual, expected) {
+  return expected === undefined || JSON.stringify(actual ?? []) === JSON.stringify(expected);
+}
+
+async function interactiveSmoke(engine, selected, style, seed) {
+  const cases = smokeExamples({ seed, maxPerGroup: 2 });
+  const started = performance.now();
+  const lines = [style.bold(`Generated smoke run — seed ${seed}`)];
+  let passed = 0;
+  let failed = 0;
+  let skipped = 0;
+  for (const item of cases) {
+    if (item.kb !== 'base' && !selected.includes(item.kb)) {
+      skipped += 1;
+      lines.push(`${style.yellow('SKIP')} ${item.input} — requires ${item.kb}`);
+      continue;
+    }
+    const result = await engine.ask(item.input, {});
+    const pass = result.status === item.expectedStatus && sameExpectedValues(result.values, item.expectedValues);
+    if (pass) passed += 1; else failed += 1;
+    const marker = pass ? style.green('PASS') : style.red('FAIL');
+    const answer = String(result.answer ?? '').replace(/\s+/gu, ' ').slice(0, 120);
+    lines.push(`${marker} ${item.input}\n     ${style.status(result.status, result.status)} — ${answer}${answer.length === 120 ? '…' : ''}`);
+  }
+  const elapsed = performance.now() - started;
+  lines.push('', `${style.bold('Summary')}: ${style.green(`${passed} passed`)}, ${failed ? style.red(`${failed} failed`) : style.green('0 failed')}, ${style.yellow(`${skipped} skipped`)} in ${elapsed.toFixed(1)} ms.`);
+  lines.push(style.dim('This is an internal generated regression check, not a public benchmark score. A failure includes its reproducible seed above.'));
+  return lines.join('\n');
 }
 
 function globExpression(value) {
@@ -244,9 +282,15 @@ async function chat(options) {
   const terminal = createInterface({ input: stdin, output: stdout });
   let context = {};
   let last;
-  stdout.write(`${style.bold(style.blue('ESLM'))} is ready. Public knowledge: ${style.green(selected.join(', ') || 'none')}.\nUse ${style.blue('/help')} for an explanation or ${style.blue('/examples')} for every tested example.\n`);
+  stdout.write(`${style.bold(style.blue('ESLM'))} is ready. Public knowledge: ${style.green(selected.join(', ') || 'none')}.\nUse ${style.blue('/help')} for an explanation, ${style.blue('/examples')} for varied examples, or ${style.blue('/smoke')} to execute a quick check.\n`);
   while (true) {
-    const line = (await terminal.question(style.blue('eslm> '))).trim();
+    let answer;
+    try { answer = await terminal.question(style.blue('eslm> ')); }
+    catch (error) {
+      if (error.code === 'ERR_USE_AFTER_CLOSE') break;
+      throw error;
+    }
+    const line = answer.trim();
     if (!line) continue;
     if (['/quit', '/exit'].includes(line)) break;
     if (line === '/help') { stdout.write(`${interactiveHelp(style)}\n`); continue; }
@@ -266,7 +310,16 @@ async function chat(options) {
       continue;
     }
     if (line === '/clear') { context = {}; last = undefined; stdout.write(`${style.green('Session context cleared.')}\n`); continue; }
-    if (line === '/examples') { stdout.write(`${interactiveExamples(style)}\n`); continue; }
+    if (line === '/examples' || line.startsWith('/examples ')) {
+      const seed = line.slice('/examples'.length).trim() || `${Date.now().toString(36)}-examples`;
+      stdout.write(`${interactiveExamples(style, seed)}\n`);
+      continue;
+    }
+    if (line === '/smoke' || line.startsWith('/smoke ')) {
+      const seed = line.slice('/smoke'.length).trim() || `${Date.now().toString(36)}-smoke`;
+      stdout.write(`${await interactiveSmoke(engine, selected, style, seed)}\n`);
+      continue;
+    }
     if (line.startsWith('/load ')) {
       try {
         const requested = matchInteractiveKnowledgeBases(line.slice('/load '.length));
