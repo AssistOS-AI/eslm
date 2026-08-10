@@ -57,6 +57,7 @@ This repository develops an Executable Symbolic Language Model (ESLM). Training-
 - Tests: `npm test`
 - Evaluation: `npm run evaluate`
 - Benchmark: `npm run benchmark`
+- Conversational stress benchmark: `npm run benchmark:conversation`
 - Full verification: `npm run check`
 
 # Key Paths

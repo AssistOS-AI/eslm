@@ -67,9 +67,11 @@ Unknown and unsupported are scored according to suite policy. A system must not 
 
 ### Current public result and module-conditioned runs
 
-The completed public evaluation uses the prepared bAbI v1.2 Task 15 English 10k test file. It contains 1,000 cases. The default promoted artifact produces 1,000 correct semantic values. The corresponding synthesis used 10,000 train cases and promoted zero story-specific facts or answers. Integrity hashes remain in machine-readable manifests and reports instead of explanatory prose.
+The completed Task 15 public evaluation uses the prepared bAbI v1.2 English 10k test file. It contains 1,000 cases. The default promoted artifact produces 1,000 correct semantic values. The corresponding synthesis used 10,000 train cases and promoted zero story-specific facts or answers. Integrity hashes remain in machine-readable manifests and reports instead of explanatory prose.
 
-This result estimates coverage only for the controlled Task 15 grammar and one-step class-rule deduction. It does not establish broad English, deep deduction, induction, abduction, world knowledge, negation, or narrative competence. Unit fixtures remain the evidence for deeper deduction, induction, and abduction until suitable public suites run.
+The completed Task 16 learning cycle used 10,000 official train episodes, with 200 working and 1,000 fresh train cases, and kept the 1,000 official test cases aggregate-only during adaptation. Its accepted checkpoint produced 1,000/1,000 on that shadow aggregate after proof, metamorphic, and regression gates. This result estimates only the dataset's controlled class-property induction convention. It does not establish broad English, unrestricted induction, abduction, world knowledge, negation, or narrative competence.
+
+The internal conversational suite under DS022 is reported separately. Its 1,000/1,000 accepted run verifies generated variations of ten declared question families, including source-exposed WordNet and ATOMIC queries. It is regression and stress evidence, not an additional public benchmark result.
 
 Evaluation and benchmark reports include active model ID, selected KB IDs, and a comparability boolean. A report produced with any educational KB selected is a module-conditioned regression experiment and is not directly comparable with the clean public result. Tests verify that the default does not answer KB-only knowledge and that an explicitly selected KB does.
 
@@ -100,3 +102,7 @@ Response: It is a useful reference but not automatically a direct tie. The exact
 ### Question #5: Can a held-out subset of an ingested graph be called independent?
 
 Response: No. It is a valid compiler-fidelity or relation-completion test, but source schema, vocabulary, and neighboring structure are exposed. Independent claims require separately sourced evidence.
+
+### Question #6: How is the 1,000-case conversational score classified?
+
+Response: It is an internal generated regression and stress result. Its WordNet and ATOMIC cases are source-exposed, and its core cases are generated from declared constructions. It verifies executable coverage and robustness for named families but is not added to the public benchmark ledger.

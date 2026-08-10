@@ -1,16 +1,16 @@
 {
   "format": "eslm-evaluation-report-v1",
-  "createdAt": "2026-08-10T14:34:07.089Z",
+  "createdAt": "2026-08-10T15:32:17.611Z",
   "suite": "training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl",
   "model": {
-    "id": "babi-15-en-10k-v1.2",
+    "id": "babi-15+16-en-10k-v1.2",
     "knowledgeBases": [],
     "comparable": true
   },
   "total": 1000,
   "passed": 1000,
   "accuracy": 1,
-  "durationMs": 159.943444,
+  "durationMs": 173.483027,
   "outcomes": [
     {
       "id": "babi-15-en-10k-v1.2:test:1",

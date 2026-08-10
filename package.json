@@ -18,9 +18,10 @@
     "kb:build": "node src/cli.mjs kb build all",
     "kb:validate": "node src/cli.mjs kb validate all",
     "test:kbs:random": "node scripts/test-source-kbs.mjs --cases 100 --output docs/results/latest-kb-random-tests.json",
+    "benchmark:conversation": "node scripts/run-conversation-benchmark.mjs",
     "docs:matrix": "node src/spec-matrix.mjs",
     "docs:check": "node src/cli.mjs docs check",
-    "check": "npm test && npm run profile:scale && npm run evaluate && npm run benchmark && npm run docs:matrix && npm run docs:check && node src/cli.mjs train validate"
+    "check": "npm test && npm run benchmark:conversation && npm run profile:scale && npm run evaluate && npm run benchmark && npm run docs:matrix && npm run docs:check && node src/cli.mjs train validate"
   },
   "engines": {
     "node": ">=22"

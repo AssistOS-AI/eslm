@@ -1,3 +1,5 @@
+import { damerauDistance } from './util.mjs';
+
 function resolveEntityPhrase(words, model, context) {
   const phrase = words.join(' ').replace(/^(the|a|an) /u, '').trim();
   if (['it', 'he', 'she', 'they', 'el', 'ea'].includes(phrase) && context.lastEntity) {
@@ -13,6 +15,20 @@ function resolveEntityPhrase(words, model, context) {
   const unique = [...new Set(candidates)];
   if (unique.length === 1) return { id: unique[0], confidence: 1, source: 'alias' };
   if (unique.length > 1) return { ambiguous: unique };
+  const fuzzy = [];
+  for (const candidate of model.entities) {
+    for (const name of candidate.names) {
+      const alias = name.toLocaleLowerCase('en-US').replace(/^(the|a|an) /u, '');
+      if (alias.split(' ').length !== phrase.split(' ').length) continue;
+      const distance = damerauDistance(phrase, alias);
+      const limit = alias.length >= 7 ? 3 : alias.length >= 5 ? 2 : 1;
+      if (distance <= limit) fuzzy.push({ id: candidate.id, distance });
+    }
+  }
+  const bestDistance = Math.min(...fuzzy.map((item) => item.distance));
+  const best = [...new Set(fuzzy.filter((item) => item.distance === bestDistance).map((item) => item.id))];
+  if (best.length === 1) return { id: best[0], confidence: 0.7, source: 'bounded-name-similarity' };
+  if (best.length > 1) return { ambiguous: best };
   return { missing: phrase };
 }
 
@@ -26,6 +42,10 @@ export function parseQuestion(normalized, model, context = {}) {
   let match;
   let entity;
 
+  if (/^(?:who are you|what are you|tell me who you are)$/u.test(joined)) return { intent: 'system-identity', target: 'meta' };
+  if (/^(?:who am i|do you know who i am)$/u.test(joined)) return { intent: 'user-identity', target: 'meta' };
+  if (/^(?:what can you do|what do you do|show me what you can do)$/u.test(joined)) return { intent: 'system-capabilities', target: 'meta' };
+
   if ((match = joined.match(/^(?:where is|where can i find) (.+)$/u))) {
     entity = resolveEntityPhrase(match[1].split(' '), model, context);
     if (entity.id) return predicateQuery('location', entity.id, 'located_in', undefined, 'object');
@@ -34,9 +54,16 @@ export function parseQuestion(normalized, model, context = {}) {
     entity = resolveEntityPhrase(match[1].split(' '), model, context);
     if (entity.id) return predicateQuery('owner', undefined, 'owns', entity.id, 'subject');
   }
+  if ((match = joined.match(/^who is (.+)$/u))) {
+    entity = resolveEntityPhrase(match[1].split(' '), model, context);
+    if (entity.id) return predicateQuery('entity-description', entity.id, 'is_a', undefined, 'value');
+  }
   if ((match = joined.match(/^what color is (.+)$/u))) {
     entity = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (entity.id) return predicateQuery('color', entity.id, 'color', undefined, 'value');
+    if (entity.id) return {
+      ...predicateQuery('color', entity.id, 'color', undefined, 'value'),
+      ...(model.reasoning?.induction?.implicitPredicates?.includes('color') ? { reasoning: 'induction' } : {}),
+    };
   }
   if ((match = joined.match(/^what is (.+?) afraid of$/u))) {
     entity = resolveEntityPhrase(match[1].split(' '), model, context);
@@ -112,6 +139,11 @@ export function parseQuestion(normalized, model, context = {}) {
     entity = left.id ? right : left;
   }
   if (entity?.ambiguous) return { status: 'AMBIGUOUS', candidates: entity.ambiguous };
+  if (entity?.missing) return {
+    status: 'UNKNOWN',
+    missingEntity: entity.missing,
+    diagnostic: 'The question construction is supported, but the referenced entity is not known in the active session or knowledge bases.',
+  };
   return {
     status: 'UNSUPPORTED',
     diagnostic: 'No supported question construction matched the normalized input.',

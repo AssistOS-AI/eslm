@@ -53,9 +53,9 @@ export const DATASET_CATALOG = Object.freeze({
     source: 'https://s3.amazonaws.com/text-datasets/babi_tasks_1-20_v1-2.tar.gz',
     expectedSha256: '84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c',
     licenseStatus: 'research dataset; cached locally and not redistributed',
-    adapterStatus: 'prepared-not-synthesized',
-    trainingStatus: 'not-started',
-    evaluationStatus: 'not-run',
+    adapterStatus: 'implemented-and-run',
+    trainingStatus: 'benchmark-guided-single-agent-cycle-accepted',
+    evaluationStatus: '1000-of-1000-correct',
     archiveCache: 'training/.cache/datasets/babi-v1.2/babi_tasks_1-20_v1-2.tar.gz',
     files: Object.freeze({
       train: 'qa16_basic-induction_train.txt',

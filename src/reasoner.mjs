@@ -114,10 +114,13 @@ export function deriveInductiveFacts(model, facts) {
   if (!policy?.enabled) return [];
   const allowed = new Set(policy.predicates ?? []);
   const membersByClass = new Map();
+  const membershipByClass = new Map();
   for (const fact of facts) {
     if (fact.predicate !== 'is_a') continue;
     const className = valueOf(fact);
     membersByClass.set(className, new Set([...(membersByClass.get(className) ?? []), fact.subject]));
+    if (!membershipByClass.has(className)) membershipByClass.set(className, new Map());
+    membershipByClass.get(className).set(fact.subject, fact);
   }
   const candidates = new Map();
   for (const [className, members] of membersByClass) {
@@ -125,29 +128,62 @@ export function deriveInductiveFacts(model, facts) {
       if (!members.has(fact.subject) || !allowed.has(fact.predicate)) continue;
       const key = `${className}\u0000${fact.predicate}\u0000${valueOf(fact)}`;
       const current = candidates.get(key) ?? {
-        className, predicate: fact.predicate, value: valueOf(fact), members, supports: [],
+        className, predicate: fact.predicate, value: valueOf(fact), members,
+        membershipFacts: membershipByClass.get(className), supports: [],
       };
       current.supports.push(fact);
       candidates.set(key, current);
     }
   }
+  const factOrder = new Map(facts.map((fact, index) => [fact.id, index]));
+  const accepted = [];
+  for (const candidate of candidates.values()) {
+    const predicatePolicy = policy.byPredicate?.[candidate.predicate] ?? policy;
+    const supportCount = new Set(candidate.supports.map((fact) => fact.subject)).size;
+    const confidence = supportCount / candidate.members.size;
+    if (supportCount < predicatePolicy.minSupport || confidence < predicatePolicy.minCoverage) continue;
+    accepted.push({ ...candidate, supportCount, confidence, selection: predicatePolicy.selection ?? 'all' });
+  }
+  const selected = [];
+  const groups = new Map();
+  for (const candidate of accepted) {
+    const key = `${candidate.className}\u0000${candidate.predicate}`;
+    groups.set(key, [...(groups.get(key) ?? []), candidate]);
+  }
+  for (const group of groups.values()) {
+    if (group.some((candidate) => ['latest-support', 'latest-member'].includes(candidate.selection))) {
+      selected.push(group.toSorted((left, right) => {
+        const order = (candidate) => Math.max(...candidate.supports.map((fact) => {
+          const selectedFact = candidate.selection === 'latest-member'
+            ? candidate.membershipFacts.get(fact.subject) : fact;
+          return factOrder.get(selectedFact?.id) ?? -1;
+        }));
+        const leftOrder = order(left);
+        const rightOrder = order(right);
+        return rightOrder - leftOrder;
+      })[0]);
+    } else selected.push(...group);
+  }
   const existing = new Set(facts.map(signature));
   const induced = [];
-  for (const candidate of candidates.values()) {
-    const supportSubjects = new Set(candidate.supports.map((fact) => fact.subject));
-    const supportCount = supportSubjects.size;
+  for (const candidate of selected) {
+    const supportCount = candidate.supportCount;
     const populationCount = candidate.members.size;
-    const confidence = supportCount / populationCount;
-    if (supportCount < policy.minSupport || confidence < policy.minCoverage) continue;
+    const confidence = candidate.confidence;
     for (const subject of candidate.members) {
       const triple = [subject, candidate.predicate, candidate.value];
       const proposed = factFromTriple(triple);
       if (existing.has(signature(proposed))) continue;
+      const membershipSupports = [
+        candidate.membershipFacts.get(subject),
+        ...candidate.supports.map((fact) => candidate.membershipFacts.get(fact.subject)),
+      ].filter(Boolean);
+      const allSupports = [...new Map([...membershipSupports, ...candidate.supports].map((fact) => [fact.id, fact])).values()];
       induced.push({
         id: `induced:${candidate.className}:${candidate.predicate}:${candidate.value}:${subject}`,
         ...proposed,
-        provenance: [...new Set(candidate.supports.flatMap((fact) => fact.provenance))],
-        support: candidate.supports.map((fact) => fact.id),
+        provenance: [...new Set(allSupports.flatMap((fact) => fact.provenance))],
+        support: allSupports.map((fact) => fact.id),
         reasoning: 'induction',
         derived: true,
         confidence,
@@ -155,7 +191,9 @@ export function deriveInductiveFacts(model, facts) {
           className: candidate.className,
           supportCount,
           populationCount,
-          counterexampleCount: 0,
+          counterexampleCount: [...candidate.members].filter((subject) => facts.some((fact) =>
+            fact.subject === subject && fact.predicate === candidate.predicate && valueOf(fact) !== candidate.value)).length,
+          selection: candidate.selection,
         },
       });
     }

@@ -34,9 +34,7 @@ test('lazy WordNet and ATOMIC providers preserve representative eager semantics'
   assert.equal(taxonomy.reasoning.method, 'bounded-deduction');
 
   const atomic = await loadPublicKnowledgeBase('atomic-2020', { mode: 'lazy', cacheBytes: 32 * 1024 * 1024 });
-  atomic.beginQuery();
   const intention = await atomic.ask('Why might apologize?');
-  atomic.endQuery();
   assert.equal(intention.status, 'ANSWERED');
   assert.equal(intention.reasoning.method, 'defeasible-retrieval');
 });

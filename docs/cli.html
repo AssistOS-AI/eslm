@@ -19,6 +19,7 @@ dog has 8 compiled senses: ...
 eslm&gt; Socrates is a man. Is Socrates a man?
 Yes.
 eslm&gt; /trace</code></pre>
+  <p><code>/examples</code> prints the complete generated short catalog rather than requiring hidden example IDs. The current catalog has 134 cases. Entries that depend on QUICK say <code>works with quick</code>; they will not falsely appear available after QUICK has been unloaded.</p>
 
   <h2>Interactive commands</h2>
   <p>The two normal load targets are Open English WordNet 2025 and ATOMIC 2020. QUICK remains visible and explicitly loadable as a fixture. You do not need to memorize canonical IDs: commands match a full name, a distinctive title or role word, a wildcard such as <code>*net*</code>, or a conservative close spelling such as <code>wordnt</code>. Ambiguous words produce a useful diagnostic instead of loading an arbitrary source.</p>
@@ -53,7 +54,7 @@ eslm&gt; /trace</code></pre>
   <pre><code>eslm&gt; /unload all
 Loaded: (base model only).
 eslm&gt; Define dog
-I cannot map that input to a supported symbolic question.
+I do not know how to handle that kind of question yet. Try /examples to see the question families I can execute.
 eslm&gt; /load wordnet
 Loaded knowledge: oewn-2025.
 eslm&gt; Define dog
@@ -105,6 +106,8 @@ node src/cli.mjs dataset prepare --dataset babi-15-en-10k-v1.2
 node src/cli.mjs evaluate --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl --publish
 node src/cli.mjs benchmark run --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl --publish</code></pre>
   <p>bAbI and other benchmark inputs live under ignored <code>training/datasets/</code>; shared archives live under <code>training/.cache/datasets/</code>. Evaluation is separate from public-corpus KB testing. Adding <code>--kb</code> changes the evidence regime and must be recorded in the report.</p>
+  <pre><code>npm run benchmark:conversation</code></pre>
+  <p>This second command runs the generated 1,000-case long-input regression suite and refreshes its <a href="results/latest-conversation-benchmark.html">compact HTML report</a>. It is an internal/source-exposed stress test, not a public benchmark or an LLM comparison.</p>
 
   <h2>Diagnose failures and performance</h2>
   <pre><code>node src/cli.mjs ask "QUESTION" --profile

@@ -26,19 +26,10 @@
     "passRate": 1
   },
   "profile": {
-    "elapsedMilliseconds": 2191.8727710000003,
-    "rssDeltaBytes": 593047552,
-    "heapUsedDeltaBytes": 400698208,
+    "elapsedMilliseconds": 2454.648395,
+    "rssDeltaBytes": 605761536,
+    "heapUsedDeltaBytes": 415809200,
     "slowest": [
-      {
-        "kb": "atomic-2020",
-        "kind": "obstacle",
-        "input": "What could prevent PersonX hits the rocks?",
-        "passed": true,
-        "status": "ANSWERED",
-        "answer": "possible obstacle candidates for “PersonX hits the rocks”: PersonX's wife won't let him drink in the morning; The tour guide says it's too icy to hike; PersonX has a broken hand.; They have no hands; PersonX has no rocks.; The rocks are covered in glass.. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 2.0517549999999574
-      },
       {
         "kb": "oewn-2025",
         "kind": "definition",
@@ -46,7 +37,7 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "northern shrike has 1 compiled sense:\n1. (n) a butcherbird of northern North America",
-        "milliseconds": 0.931880000000092
+        "milliseconds": 2.0251759999996466
       },
       {
         "kb": "atomic-2020",
@@ -55,7 +46,7 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "possible effect candidates for “PersonX loves every minute of it”: Laughs; Rejoices; Smiles; PersonX goes on a roller coaster; PersonX is water skiing. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.847805999999764
+        "milliseconds": 1.6288949999998295
       },
       {
         "kb": "oewn-2025",
@@ -64,16 +55,16 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "Yes. At least one sense of environmentalism reaches preservation through a 1-edge WordNet path.",
-        "milliseconds": 0.7078980000001138
+        "milliseconds": 0.8027619999998024
       },
       {
         "kb": "oewn-2025",
-        "kind": "synonym",
-        "input": "What are synonyms of stripped?",
+        "kind": "definition",
+        "input": "Define noncivilized",
         "passed": true,
         "status": "ANSWERED",
-        "answer": "Possible synonyms across the compiled senses are: bare, stripped-down.",
-        "milliseconds": 0.3862749999998414
+        "answer": "noncivilized has 1 compiled sense:\n1. (a) not having a high state of culture and social development",
+        "milliseconds": 0.48564500000020416
       },
       {
         "kb": "atomic-2020",
@@ -82,34 +73,7 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "possible obstacle candidates for “PersonX quickly turned around”: PersonX's friend is blocking them in.; The doctor has PersonX bound in a body cast.; They are driving on a one-way street.; PersonX is in a wheelchair.; PersonX has too big of a car.; The light at the intersection is red.; PersonX has a cast on their leg.; PersonX has too slow of reflexes.. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.37036399999988134
-      },
-      {
-        "kb": "atomic-2020",
-        "kind": "intent",
-        "input": "Why might PersonX reads every ___?",
-        "passed": true,
-        "status": "ANSWERED",
-        "answer": "possible intention or reason candidates for “PersonX reads every ___”: to be informed; x likes to read; x doesn't want to miss anything while reading; to keep himself updated. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.3491180000000895
-      },
-      {
-        "kb": "oewn-2025",
-        "kind": "hypernym",
-        "input": "Is a Columbus Day a legal holiday?",
-        "passed": true,
-        "status": "ANSWERED",
-        "answer": "Yes. At least one sense of columbus day reaches legal holiday through a 1-edge WordNet path.",
-        "milliseconds": 0.28171300000030897
-      },
-      {
-        "kb": "atomic-2020",
-        "kind": "reaction",
-        "input": "How might PersonX feel after PersonX brings it inside?",
-        "passed": true,
-        "status": "ANSWERED",
-        "answer": "possible reaction candidates for “PersonX brings it inside”: less worried; accomplished. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.2808110000000852
+        "milliseconds": 0.4352990000002137
       },
       {
         "kb": "atomic-2020",
@@ -118,7 +82,43 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "possible effect candidates for “PersonX wants PersonY to go”: becomes disappointed in PersonY; gets angry with PersonY; hopes they can go; thinks about the event; Becomes anxious and shaky; Glances repeatedly at door/way out; gets confused; moves away from PersonX. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.24855200000001787
+        "milliseconds": 0.41720699999996214
+      },
+      {
+        "kb": "oewn-2025",
+        "kind": "synonym",
+        "input": "What are synonyms of stripped?",
+        "passed": true,
+        "status": "ANSWERED",
+        "answer": "Possible synonyms across the compiled senses are: bare, stripped-down.",
+        "milliseconds": 0.3538909999997486
+      },
+      {
+        "kb": "atomic-2020",
+        "kind": "intent",
+        "input": "Why might PersonX reads every ___?",
+        "passed": true,
+        "status": "ANSWERED",
+        "answer": "possible intention or reason candidates for “PersonX reads every ___”: to be informed; x likes to read; x doesn't want to miss anything while reading; to keep himself updated. These are defeasible possibilities, not certain facts.",
+        "milliseconds": 0.3242720000002919
+      },
+      {
+        "kb": "atomic-2020",
+        "kind": "reaction",
+        "input": "How might PersonX feel after PersonX brings it inside?",
+        "passed": true,
+        "status": "ANSWERED",
+        "answer": "possible reaction candidates for “PersonX brings it inside”: less worried; accomplished. These are defeasible possibilities, not certain facts.",
+        "milliseconds": 0.3032659999998941
+      },
+      {
+        "kb": "oewn-2025",
+        "kind": "hypernym",
+        "input": "Is a Columbus Day a legal holiday?",
+        "passed": true,
+        "status": "ANSWERED",
+        "answer": "Yes. At least one sense of columbus day reaches legal holiday through a 1-edge WordNet path.",
+        "milliseconds": 0.29954499999985273
       }
     ]
   },

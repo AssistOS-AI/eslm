@@ -8,10 +8,10 @@ import rules from './rules.mjs';
 export const model = Object.freeze({
   manifest: Object.freeze({
     format: 'eslm-code-model-v1',
-    modelId: 'babi-15-en-10k-v1.2',
+    modelId: 'babi-15+16-en-10k-v1.2',
     generatedAt: '2026-08-10T00:00:00.000Z',
-    sourceDigest: '149fd0cba766b19507dded58def9559bc53e54fdbf692055fbe57bda7380ffec',
-    evidenceRegime: 'babi-task-15-train-only',
+    sourceDigest: 'edf87945fde73c7a8cb7dce6907486056e2f75c720d0ddaf3a81bb87734eab35',
+    evidenceRegime: 'babi-tasks-15-and-16-train-only',
   }),
   entities,
   facts,

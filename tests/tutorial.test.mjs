@@ -8,8 +8,8 @@ const engine = new EslmEngine(await loadModel());
 const examples = [
   ['Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?', 'ANSWERED', ['wolf'], 'Gertrude is afraid of wolf.'],
   ['Cats are afraid of sheep. Jessica is a cat. Waht is Jessica afraid of?', 'ANSWERED', ['sheep'], 'Jessica is afraid of sheep.'],
-  ['Dana is a sparrow. Can Dana fly?', 'UNKNOWN', [], 'I have no evidence that this is true.'],
-  ['Write a poem about mice.', 'UNSUPPORTED', undefined, 'I cannot map that input to a supported symbolic statement or question.'],
+  ['Dana is a sparrow. Can Dana fly?', 'UNKNOWN', [], 'I understand the question, but I do not have evidence for a yes or no answer.'],
+  ['Write a poem about mice.', 'UNSUPPORTED', undefined, 'I could not interpret that as a supported statement or question yet. Try /examples for forms I can execute.'],
 ];
 
 test('CLI tutorial examples match the promoted model', () => {

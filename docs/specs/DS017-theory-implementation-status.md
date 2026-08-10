@@ -19,14 +19,14 @@ This specification prevents planned theory from being mistaken for implemented b
 | Theory component | Current implementation | Current evidence | Boundary |
 | --- | --- | --- | --- |
 | Unicode surface normalization | `src/language.mjs` | normalization unit tests | English token and punctuation handling; no general morphology |
-| Controlled spelling correction | declared variants and bounded edit distance | typo evaluation and correction trace tests | controlled vocabulary only; ambiguity margin is not yet modeled |
-| English construction compilation | `src/parser.mjs` | direct, paraphrase, relation, and unsupported cases | small hand-authored construction set |
+| Controlled spelling and proper-name correction | declared variants, capitalized-token preservation, and unique bounded Damerau entity matching | typo, proper-name substitution, ambiguity, and correction trace tests | controlled vocabulary and active entities only |
+| English construction compilation | `src/parser.mjs` plus public-KB adapters | direct, paraphrase, relation, meta-question, unknown-entity, and unsupported cases | bounded construction set, not unrestricted English |
 | Query Normal Form | parser query objects consumed by `EslmEngine` | semantic-value assertions | no separate persisted query schema yet |
 | Entity identity and aliases | generated `entities.mjs` and alias resolution | direct lookup and pronoun tests | aliases must currently be globally unique |
 | Canonical facts and provenance | generated `facts.mjs` | fact validation and answer traces | no temporal, modal, negative, or conflict fields yet |
 | Posting-list retrieval | generated indexes plus runtime closure indexes | stale-index validation and QA tests | rule activation still uses complete bounded closure |
 | Positive conjunctive rules | `src/reasoner.mjs` | derived location and explanation tests | no explicit negation, aggregation, or query-directed rule plan |
-| Epistemic outcomes | `ANSWERED`, `UNKNOWN`, `UNSUPPORTED`, and parser ambiguity path | unsupported and missing-proof tests | clarification and conflict flows need end-to-end cases |
+| Epistemic outcomes | `ANSWERED`, `INDUCTIVE`, `ABDUCTIVE`, `UNKNOWN`, `UNSUPPORTED`, and parser ambiguity path | unsupported, missing-entity, missing-proof, induction, and abduction tests | clarification and conflict flows need end-to-end cases |
 | Proof provenance | direct source arrays and derived support IDs | explanation and provenance assertions | no minimal-proof selection or source entailment audit |
 | English factual realization | `src/realizer.mjs` | answer-string assertions | short deterministic templates only |
 | Bounded discourse | explicit `lastEntity` context | pronoun follow-up test | one referent; no salience graph or correction episode |
@@ -34,9 +34,9 @@ This specification prevents planned theory from being mistaken for implemented b
 | Training packet isolation | `src/training.mjs` | hidden-packet test | no immutable experiment archive or contamination scanner |
 | Generated-module validation | static scan and model invariants | model validation tests and synthesis-skill validator | static scanning is not a security sandbox |
 | Task Calculus base execution | operations, THEN, ALL, and CHOOSE in `src/task-calculus.mjs` | typed circuit test | remaining declared controls have no executor |
-| Evaluation and reports | Node test, evaluation, benchmark, and HTML publishing modules | generated latest reports | committed suites are smoke-sized |
+| Evaluation and reports | Node test, evaluation, public benchmark, conversational benchmark, and HTML publishing modules | Task 15 and Task 16 public results, 134 short conversation cases, and 1,000 long generated cases | conversational suite is internal/source-exposed and cannot establish open-English competence |
 | External prediction exchange | label-free export and local prediction scoring | workflow test | no external runner or credential handling by design |
-| Real-corpus registry and source modules | `src/corpora.mjs`, `src/public-kbs.mjs`, WordNet/ATOMIC Node compilers, generated shards, `kb build`, `kb validate`, and source-KB random test | catalog/status, smoke validation, semantic queries, and 700 seeded source-exposed cases | WordNet contextual sense choice, ATOMIC general participant binding, calibrated ranking, held-out evaluation, and lazy shard import remain incomplete |
+| Real-corpus registry and source modules | `src/corpora.mjs`, `src/public-kbs.mjs`, WordNet/ATOMIC Node compilers, generated shards, eager/adaptive loading, `kb build`, `kb validate`, and source-KB random test | catalog/status, smoke validation, semantic queries, lazy equivalence cases, cache tests, and 700 seeded eager source-exposed cases | WordNet contextual sense choice, ATOMIC participant binding, calibrated ranking, generated event-token index, and held-out evaluation remain incomplete |
 | Opt-in execution profiling | `src/profiling.mjs`, engine stage instrumentation, and training preparation sidecars | profiling tests and `ask --profile` | current stages expose time, CPU, memory deltas, and basic counts; peak streaming metrics await corpus adapters |
 | Indexed rule premise selection | posting lists and bound-term candidate selection in `src/reasoner.mjs` | reasoning tests and synthetic scale probe | full startup closure and session-wide rebuild remain blockers |
 

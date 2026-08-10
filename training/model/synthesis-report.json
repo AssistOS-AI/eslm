@@ -1,5 +1,6 @@
 {
   "format": "eslm-synthesis-report-v1",
+  "artifactRole": "initial Task 15 synthesis report; followed by learning-run-task16.json",
   "status": "coding-agent-synthesized-and-promoted",
   "dataset": "babi-15-en-10k-v1.2",
   "packetContentDigest": "149fd0cba766b19507dded58def9559bc53e54fdbf692055fbe57bda7380ffec",
@@ -30,6 +31,7 @@
     "No parallel workers generated the promoted model. A parallel assignment and deterministic reduction protocol was added afterward for future runs.",
     "Task 15 measures one-step class-rule instantiation, not arbitrary deductive depth.",
     "The generated model does not include Task 15 test text, answers, entities, or story facts.",
-    "Induction and abduction remain runtime methods verified with isolated unit fixtures, not capabilities measured by this dataset."
-  ]
+    "Induction is not measured by Task 15; the later Task 16 capability is recorded separately in learning-run-task16.json. Abduction remains verified with isolated fixtures."
+  ],
+  "subsequentCheckpoint": "babi-15+16-en-10k-v1.2"
 }

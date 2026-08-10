@@ -63,7 +63,7 @@ A synthesis report records agent product/version when known, prompts or assignme
 
 Deterministic preparation, validation, inference, and evaluation remain replayable. Future experiments should compare multiple agent runs to measure synthesis variance.
 
-### Public dataset cache, chunks, and completed Task 15 run
+### Public dataset cache, Task 15 synthesis, and Task 16 learning
 
 Public acquisition is catalog-driven. A definition freezes family, task, language, scale, version, source URL, archive SHA-256, license status, selected files, and stage fields. `dataset fetch` reuses a matching cache, rejects a hash mismatch, safely scans the TAR archive, extracts only selected files, and records byte counts and hashes. `dataset prepare` preserves the official split and emits a manifest with agent-visible train chunks and an agent-hidden test file.
 
@@ -73,7 +73,7 @@ Parallel synthesis uses deterministic, immutable, disjoint assignments. A worker
 
 The parallel protocol was added after the promoted Task 15 run. A four-worker demonstration plan partitions its 20 chunks and has a frozen plan digest, but it has zero worker results and no reduction. It proves orchestration preparation, not a parallel training run. Future run records must name execution mode, forked worker count, assignment-plan digest, valid result receipts, reducer digest, coding-agent identities, and unavailable cost/transcript fields explicitly.
 
-Task 16 has been fetched and deterministically prepared into 10,000 train and 1,000 test cases. Its 20-chunk ledger exists, but every entry remains pending. No coding-agent synthesis result, candidate, promotion, or evaluation exists. A stage label may change only after the corresponding artifact exists.
+Task 16 was learned through the benchmark-guided cycle rather than the unused parallel ledger. The coding agent inspected train evidence, created deterministic working and fresh train pools, kept official test cases aggregate-only, and promoted the accepted typed-property and analogical-induction candidate after proof, metamorphic, and regression gates. The ledger entries remain pending and are still not worker receipts; the learning-cycle evidence, candidate validation, and aggregate shadow report support the promotion. Task 16 therefore must not be described as a completed parallel synthesis run.
 
 ### Selectable educational KB synthesis
 
@@ -89,7 +89,7 @@ At corpus scale, the coding agent designs semantic mappings, profile boundaries,
 
 Every corpus build produces a source manifest, probe report, prepared manifest, profiling sidecar, synthesis report, generated profile manifests, and validation report. Mutable sources resolve to a release, dated snapshot, or fixed entity revisions. Full ingestion is prohibited until the probe accounts for every observed stratum and profiling estimates the resource envelope.
 
-Open English WordNet 2025 and ATOMIC 2020 are the first completed source transformations. The WordNet compiler processed all 107,519 synsets into sense-aware lemma and synset shards. The ATOMIC compiler streamed all 1,076,880 train rows and retained 940,427 unique non-`none` tuples under 36,940 events; dev and test were not compiled. These are experimental source-derived modules rather than public benchmark generalization claims. Filtered English ConceptNet and bounded GeoNames remain next, but are blocked on the DS019 lazy/query-directed import step. Wikidata remains optional and thematic only.
+Open English WordNet 2025 and ATOMIC 2020 are the first completed source transformations. The WordNet compiler processed all 107,519 synsets into sense-aware lemma and synset shards. The ATOMIC compiler streamed all 1,076,880 train rows and retained 940,427 unique non-`none` tuples under 36,940 events; dev and test were not compiled. These are experimental source-derived modules rather than public benchmark generalization claims. DS021 implements their budget-aware query-selected loading. Filtered English ConceptNet and bounded GeoNames remain blocked on source-specific probes, streaming compilation, compact indexes, scope semantics, and benchmark-guided regression evidence. Wikidata remains optional and thematic only.
 
 ## Decisions & Questions
 

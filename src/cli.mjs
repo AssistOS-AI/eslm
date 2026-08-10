@@ -31,6 +31,7 @@ import { prepareTraining, validateGeneratedModel, writeCandidateSkeleton } from 
 import { parseArgs } from './util.mjs';
 import { editDistance } from './util.mjs';
 import { createTerminalStyle } from './terminal-style.mjs';
+import { smokeExamples } from './conversation-smoke.mjs';
 
 const runFile = promisify(execFile);
 
@@ -84,7 +85,7 @@ function selectedRuntimeKbIds(value) {
   const known = new Set([...Object.keys(KB_CATALOG), ...Object.keys(PUBLIC_KB_CATALOG)]);
   const requested = String(value).split(',').map((item) => item.trim().toLocaleLowerCase('en-US')).filter(Boolean);
   const ids = requested.includes('all')
-    ? Object.keys(PUBLIC_KB_CATALOG)
+    ? ['quick', ...Object.keys(PUBLIC_KB_CATALOG)]
     : requested;
   for (const id of ids) {
     if (!known.has(id)) throw new Error(`Unknown knowledge base: ${id}`);
@@ -131,39 +132,16 @@ You can teach bounded session facts before a question, for example:
 }
 
 function interactiveExamples(style) {
-  const groups = {
-    quick: [
-      '[works] Jhon is a man. Is Jhon going to die?',
-      '[works] Can Penguin swim?',
-      '[works] Where is Neptune?',
-      '[unknown by design] Can Penguin fly? — absence is not treated as false',
-    ],
-    'oewn-2025': [
-      '[works] Define dog',
-      '[works] What are synonyms of dog?',
-      '[works] How many senses does bank have?',
-      '[works] Is a dog an animal?',
-    ],
-    'atomic-2020': [
-      '[works] Why might apologize?',
-      '[works] What might happen after PersonX apologizes profusely?',
-      '[works] How might PersonX feel after PersonX apologizes profusely?',
-      '[works] What could prevent PersonX apologizes to PersonX\'s boss?',
-    ],
-    limits: [
-      '[unsupported] Write a new poem — no open-ended generative executor',
-      '[unsupported] Prove an arbitrary theorem — no general theorem prover',
-      '[unsupported] What will certainly happen after an ATOMIC event? — ATOMIC is defeasible, not certain',
-      '[unsupported] Is every missing fact false? — ESLM uses open-world UNKNOWN',
-    ],
-  };
-  return Object.entries(groups).map(([key, examples]) => {
+  const groups = new Map();
+  for (const example of smokeExamples()) groups.set(example.group, [...(groups.get(example.group) ?? []), example]);
+  return [...groups].map(([group, examples]) => {
     const rendered = examples.map((example) => {
-      if (example.startsWith('[works]')) return example.replace('[works]', style.green('[works]'));
-      if (example.startsWith('[unsupported]')) return example.replace('[unsupported]', style.red('[unsupported]'));
-      return example.replace('[unknown by design]', style.yellow('[unknown by design]'));
+      const marker = `[${example.label}]`;
+      const colored = example.label === 'unsupported' ? style.red(marker)
+        : example.label === 'unknown by design' ? style.yellow(marker) : style.green(marker);
+      return `${colored} ${example.input}`;
     });
-    return `${style.bold(key)}\n  ${rendered.join('\n  ')}`;
+    return `${style.bold(group)} (${examples.length})\n  ${rendered.join('\n  ')}`;
   }).join('\n\n');
 }
 
@@ -203,7 +181,13 @@ function formatBytes(bytes) {
 function memoryText(engine, style) {
   const memory = engine.memorySnapshot();
   if (!memory || memory.providers.length === 0) return `${style.yellow('No public KB is active.')} There is no public shard cache to report.`;
-  const target = memory.softTarget ? `${memory.targetMiB} MiB soft whole-process target` : 'no memory target; full loading is preferred';
+  const target = memory.softTarget
+    ? `${memory.targetMiB} MiB soft whole-process target`
+    : memory.requestedPolicy === 'lazy'
+      ? 'lazy loading was explicitly requested; each public provider receives a 64 MiB cache'
+      : memory.requestedPolicy === 'eager'
+        ? 'complete loading was explicitly requested without a soft target'
+        : 'no memory target; adaptive mode selected complete loading';
   const rows = memory.providers.map((provider) => {
     if (provider.mode === 'eager') return `  ${style.green('eager')} ${provider.id}: complete model resident, estimated ${formatBytes(provider.estimatedBytes)}`;
     return `  ${style.yellow('lazy')}  ${provider.id}: ${provider.loadedShards} shard(s), ${formatBytes(provider.estimatedBytes)} / ${formatBytes(provider.targetBytes)} cache; ${provider.hits} hits, ${provider.misses} misses, ${provider.evictions} evictions`;

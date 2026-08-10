@@ -36,6 +36,16 @@ function eventTokens(value) {
     .map((token) => token.length > 4 && token.endsWith('s') ? token.slice(0, -1) : token);
 }
 
+function conversationalQuestion(text) {
+  return text.trim()
+    .replace(/^(?:please tell me|could you tell me|can you tell me|please|could you|can you|using the loaded knowledge,|based on the loaded source,)\s+/iu, '')
+    .replace(/\s*,?\s*(?:please|for me|using the loaded knowledge|according to the compiled source)([?.!]*)$/iu, '$1')
+    .replace(/^tell me what (.+?) means([?.!]*)$/iu, 'what does $1 mean$2')
+    .replace(/^explain what (.+?) means([?.!]*)$/iu, 'what does $1 mean$2')
+    .replace(/^give me (?:the )?synonyms for /iu, 'give me synonyms for ')
+    .replace(/[.!]+$/u, '?');
+}
+
 function provenance(id, source, detail) {
   return [{ fact: `${id}:${source}`, source: [detail], method: 'source-retrieval' }];
 }
@@ -138,7 +148,7 @@ class WordNetProvider {
   }
 
   async ask(text) {
-    const clean = text.trim();
+    const clean = conversationalQuestion(text);
     let match = clean.match(/^(?:what does (.+?) mean|define (.+?))\??$/iu);
     if (match) {
       const lemma = match[1] ?? match[2];
@@ -183,19 +193,9 @@ class AtomicProvider {
     }
   }
 
-  beginQuery() { this.queryShards = new Map(); }
-  endQuery() { this.queryShards = undefined; }
-
-  async cachedShard(key, loader) {
-    if (this.queryShards?.has(key)) return this.queryShards.get(key);
-    const value = await this.cache.get(key, loader);
-    this.queryShards?.set(key, value);
-    return value;
-  }
-
   async eventData(bucket) {
     if (this.mode === 'eager') return this.events;
-    return this.cachedShard(`event:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'events', `${bucket}.mjs`)));
+    return this.cache.get(`event:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'events', `${bucket}.mjs`)));
   }
 
   async findEvent(input) {
@@ -245,7 +245,7 @@ class AtomicProvider {
   }
 
   async ask(text) {
-    const clean = text.trim();
+    const clean = conversationalQuestion(text);
     let match = clean.match(/^what might happen after (.+?)\??$/iu);
     if (match) return this.answerFor(match[1], ['xEffect', 'oEffect', 'isAfter', 'Causes'], 'possible effect');
     match = clean.match(/^what might happen before (.+?)\??$/iu);

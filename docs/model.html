@@ -10,16 +10,16 @@
   <main>
     <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Generated Model</p>
     <h1>The promoted core and generated knowledge modules</h1>
-    <p class="lead">The default graph rooted at <code>training/model/manifest.mjs</code> was generated from 10,000 bAbI Task 15 train episodes and contains reusable language and reasoning policy, not story answers. QUICK adds a small v1 fact/rule graph. WordNet and ATOMIC add source-specific generated providers that preserve lexical senses and defeasible event relations.</p>
+    <p class="lead">The default graph rooted at <code>training/model/manifest.mjs</code> combines reusable language and reasoning learned from 10,000 bAbI Task 15 and 10,000 Task 16 train episodes. It contains no story answers. QUICK adds a small v1 fact/rule graph. WordNet and ATOMIC add source-specific generated providers that preserve lexical senses and defeasible event relations.</p>
 
     <h2>Why the persistent fact tables are empty</h2>
     <p>Each bAbI case defines a new world. A name such as Gertrude may have a different class in another episode, and a class such as mice may fear a different class. Promoting any of those story facts globally would leak train worlds into unrelated test worlds. The correct compiled representation is therefore a small episode compiler: it recognizes the recurring constructions, creates temporary entities, facts, and rules from the supplied story, answers the question, and discards the world.</p>
     <figure class="diagram"><pre class="mermaid">flowchart LR
   A[10,000 train worlds] --> B[Coding-agent analysis]
   B --> C[Construction schemas]
-  B --> D[Morphology table]
+  B --> D[Morphology + property policy]
   B -. rejected .-> E[Story answer table]
-  C --> F[1,743-byte model]
+  C --> F[2,044-byte model]
   D --> F
   T[New test story] --> G[Temporary world]
   F --> G
@@ -27,9 +27,9 @@
 
     <h2>Module inventory</h2>
     <table><thead><tr><th>Module</th><th>Generated content</th><th>Runtime role</th></tr></thead><tbody>
-      <tr><td><code>manifest.mjs</code></td><td>Model ID, format, generation time, train digest, and <code>babi-task-15-train-only</code> evidence regime.</td><td>Single static entry point that composes all model sections.</td></tr>
+      <tr><td><code>manifest.mjs</code></td><td>Model ID, format, generation time, source digest, and <code>babi-tasks-15-and-16-train-only</code> evidence regime.</td><td>Single static entry point that composes all model sections.</td></tr>
       <tr><td><code>language.mjs</code></td><td>Three constructions: universal fear rule, individual class assertion, and fear-object question.</td><td>Documents corpus-conditioned language coverage used by the stable compilers.</td></tr>
-      <tr><td><code>reasoning.mjs</code></td><td>Eight deduction rounds, induction and abduction budgets, and four plural-to-singular class mappings.</td><td>Supplies bounded execution policy and bAbI morphology.</td></tr>
+      <tr><td><code>reasoning.mjs</code></td><td>Eight deduction rounds, induction and abduction budgets, four plural-to-singular class mappings, four typed colors, and the Task 16 color-induction policy.</td><td>Supplies bounded execution policy, bAbI morphology, and model-scoped analogical behavior.</td></tr>
       <tr><td><code>entities.mjs</code></td><td>Empty frozen array.</td><td>Confirms that no train-episode identity was promoted.</td></tr>
       <tr><td><code>facts.mjs</code></td><td>Empty frozen array.</td><td>Confirms that no train story or answer became persistent knowledge.</td></tr>
       <tr><td><code>rules.mjs</code></td><td>Empty frozen array.</td><td>Universal fear relations vary by episode and are compiled from the current input.</td></tr>
@@ -37,12 +37,12 @@
     </tbody></table>
 
     <h2>Recorded run evidence</h2>
-    <p>The generated modules total 1,743 bytes. <code>synthesis-report.json</code> records coverage and limitations, while <code>training-run.json</code> records acquisition, deterministic preparation, full-train analysis by one coding agent, candidate validation, promotion, and the held-out result. Integrity digests remain in those machine-readable artifacts rather than being repeated on this page.</p>
+    <p>The current seven generated modules total 2,044 bytes. <code>synthesis-report.json</code> and <code>training-run.json</code> retain the initial Task 15 synthesis record; <code>learning-run-task16.json</code> records the subsequent benchmark-guided candidate, rejection, acceptance gates, and combined checkpoint. Integrity details remain in those machine-readable artifacts rather than being repeated on this page.</p>
     <p>The v1 ledger verified the 20 prepared chunk files but was not used as a completion journal; every ledger entry remains <code>pending</code>. The full-train analysis and candidate validation support the recorded synthesis, not nonexistent per-chunk or parallel-worker receipts.</p>
     <p>The training run reports 40,000 individual classifications, 40,000 universal-rule observations over 12 class-pair signatures, and zero unsupported statements. The answer distribution was measured during train-only analysis but not placed in generated code. Test hash and accuracy are attached only after candidate handoff.</p>
 
     <h2>Runtime composition</h2>
-    <p><code>modelWithSession</code> merges the promoted frozen arrays with an explicit session overlay. For Task 15, each universal statement adds one rule and each individual statement adds one fact. <code>deriveClosure</code> runs over that combined view. The promoted object stays unchanged, so separate benchmark cases cannot contaminate one another.</p>
+    <p><code>modelWithSession</code> merges the promoted frozen arrays with an explicit session overlay. For Task 15, each universal statement adds one rule and each individual statement adds one fact. For Task 16, model-declared color statements add typed temporary properties and the color query activates configured induction. The promoted object stays unchanged, so separate benchmark cases cannot contaminate one another.</p>
     <figure class="diagram"><pre class="mermaid">flowchart TD
   A[Promoted empty world] --> D[Combined view]
   K[Selected KB modules] --> D

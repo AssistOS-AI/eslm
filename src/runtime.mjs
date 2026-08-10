@@ -1,3 +1,5 @@
+import { performance } from 'node:perf_hooks';
+
 export class EslmRuntime {
   constructor(core, providers = [], selected = [], memoryPlan) {
     this.core = core;
@@ -17,10 +19,13 @@ export class EslmRuntime {
 
   async ask(text, context = {}) {
     for (const provider of this.providers) {
+      const started = performance.now();
+      const before = this.core.profileEnabled ? process.memoryUsage() : undefined;
       provider.beginQuery?.();
       let result;
       try { result = await provider.ask(text); } finally { provider.endQuery?.(); }
       if (!result) continue;
+      const after = this.core.profileEnabled ? process.memoryUsage() : undefined;
       return {
         ...result,
         context,
@@ -30,6 +35,15 @@ export class EslmRuntime {
           benchmarkComparable: false,
           memory: this.memorySnapshot(),
         },
+        ...(this.core.profileEnabled ? { profile: {
+          initialization: this.core.initializationProfile,
+          query: {
+            format: 'eslm-profile-v1', operation: 'public-kb-query', status: result.status,
+            stages: [{ name: 'public-kb.query', wallMilliseconds: performance.now() - started }],
+            resources: { rssDeltaBytes: after.rss - before.rss, heapUsedDeltaBytes: after.heapUsed - before.heapUsed },
+            memory: this.memorySnapshot(),
+          },
+        } } : {}),
       };
     }
     const result = this.core.ask(text, context);

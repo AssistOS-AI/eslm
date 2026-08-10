@@ -68,6 +68,14 @@ Every accepted nontrivial change records the observed cluster, trace-supported r
 
 A dataset is substantially integrated only when unseen performance is high, repeated random samples are stable, metamorphic consistency and proof validity are high, prior competencies remain intact, nonce/generalized structures succeed where applicable, and remaining failures form recognizable hard classes. The final capability report identifies learned KB content, added generic mechanisms, capability gains, remaining limits, avoided regressions, uncertainty boundaries, scale costs, and the checkpoint inherited by the next dataset.
 
+### Accepted bAbI Task 16 cycle
+
+The first completed use of this procedure beyond Task 15 is bAbI v1.2 Task 16 English 10k. The coding agent inspected authorized train examples only. Deterministic pools contained 200 working and 1,000 fresh train cases; the 1,000 official test cases remained shadow evidence and exposed aggregate scoring only during the cycle.
+
+The baseline was 0/200 working and 0/1,000 fresh because property statements did not compile. Train analysis found that the expected exemplar follows the most recently stated member of the queried class when colors conflict. A first candidate reached 196/200 and 996/1,000 but failed proof audit because it did not retain all membership support; it was rejected. The corrected candidate implemented typed property statements, configured property induction, latest-member ranking, and complete analogical support. It passed 200/200 working, 1,000/1,000 fresh, 1,000/1,000 aggregate shadow, 52/52 prior regressions, and 3/3 metamorphic tests before promotion.
+
+The promoted model contains reusable color-property configuration and no episode-to-answer table. Its behavior is bounded: only model-declared properties are eligible, induction is labeled `INDUCTIVE`, conflict counts and supporting memberships remain in the trace, and unconfigured adjectives do not silently become universal properties.
+
 ## Decisions & Questions
 
 ### Q1. Why is score improvement insufficient for acceptance?

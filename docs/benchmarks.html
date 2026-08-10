@@ -10,19 +10,20 @@
   <main>
     <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Benchmarks</p>
     <h1>Public benchmarks: what was actually run</h1>
-    <p class="lead">The project currently has one completed public benchmark result: bAbI v1.2 Task 15, English 10k. Three more bAbI tasks are locally prepared but have not been learned or scored. BLiMP, CLUTRR, EWoK, SimpleQA, Entity Tracking, and Story Cloze are documented future experiments, not current results.</p>
+    <p class="lead">The project currently has completed local public-data results for bAbI v1.2 Tasks 15 and 16, English 10k. Tasks 2 and 3 are locally prepared but have not been learned or scored. BLiMP, CLUTRR, EWoK, SimpleQA, Entity Tracking, and Story Cloze are documented future experiments, not current results.</p>
 
     <h2>Evidence ledger</h2>
     <table><thead><tr><th>Public suite</th><th>What ESLM used</th><th>Current evidence</th><th>What may be claimed</th></tr></thead><tbody>
       <tr class="cap-row--yes"><td>bAbI v1.2 Task 15, English 10k</td><td>10,000 official train cases for coding-agent synthesis; 1,000 isolated official test cases for final scoring</td><td>Completed local run: 1,000/1,000 semantic answers correct, with no optional KB loaded</td><td>A narrow result for controlled one-step class deduction</td></tr>
-      <tr class="cap-row--partial"><td>bAbI v1.2 Tasks 2, 3, and 16, English 10k</td><td>Official train and test files were downloaded and converted to the neutral Node.js format</td><td>Prepared only; worker ledgers remain pending; no generated model and no score</td><td>Dataset ingestion works; reasoning competence is not established</td></tr>
+      <tr class="cap-row--yes"><td>bAbI v1.2 Task 16, English 10k</td><td>10,000 official train cases split into working and fresh pools; 1,000 official test cases kept aggregate-only during adaptation</td><td>Accepted learning cycle: 1,000/1,000 fresh train and 1,000/1,000 aggregate test, plus proof, metamorphic and regression gates</td><td>A narrow result for controlled class-property induction</td></tr>
+      <tr class="cap-row--partial"><td>bAbI v1.2 Tasks 2 and 3, English 10k</td><td>Official train and test files were downloaded and converted to the neutral Node.js format</td><td>Prepared only; no accepted generated model and no score</td><td>Dataset ingestion works; state and temporal reasoning competence is not established</td></tr>
       <tr class="cap-row--no"><td>BLiMP, CLUTRR, EWoK, SimpleQA, Entity Tracking, Story Cloze</td><td>No locally frozen adapter input</td><td>Not run</td><td>Only their intended diagnostic role may be discussed</td></tr>
     </tbody></table>
     <p>Open English WordNet 2025 and ATOMIC 2020 do not appear in this ledger because they are knowledge sources, not benchmark suites. The 700-case randomized source-KB check is also not a public benchmark: its questions are generated from already compiled source records and therefore measure import, indexing, lookup, and proof plumbing rather than unseen knowledge.</p>
 
     <h2>Public artifacts named by this project</h2>
     <table><thead><tr><th>Suite</th><th>Official source</th><th>Local status</th><th>Role</th></tr></thead><tbody>
-      <tr><td>bAbI v1.2</td><td><a href="https://github.com/facebookarchive/bAbI-tasks">Facebook bAbI tasks archive</a></td><td>Tasks 2, 3, 15, and 16 prepared; only Task 15 synthesized and scored</td><td>Controlled world-state and reasoning traces</td></tr>
+      <tr><td>bAbI v1.2</td><td><a href="https://github.com/facebookarchive/bAbI-tasks">Facebook bAbI tasks archive</a></td><td>Tasks 2, 3, 15, and 16 prepared; Tasks 15 and 16 learned and scored</td><td>Controlled world-state and reasoning traces</td></tr>
       <tr><td>BLiMP</td><td><a href="https://github.com/alexwarstadt/blimp">official repository</a> and <a href="https://aclanthology.org/2020.tacl-1.25/">TACL paper</a></td><td>Not acquired or run</td><td>English grammatical minimal-pair preference</td></tr>
       <tr><td>CLUTRR</td><td><a href="https://github.com/facebookresearch/clutrr">official repository</a></td><td>Not acquired or run</td><td>Held-out relation-composition length</td></tr>
       <tr><td>EWoK</td><td><a href="https://arxiv.org/abs/2405.09605">paper and dataset description</a></td><td>Not acquired or run</td><td>World-knowledge preference by domain</td></tr>
@@ -72,7 +73,8 @@
       <tr><td>External prediction scoring</td><td>implemented</td><td><code>benchmark score-predictions</code></td></tr>
       <tr><td>BLiMP official-format adapter</td><td>planned</td><td>must preserve phenomenon and official record IDs</td></tr>
       <tr><td>bAbI Task 15 adapter</td><td>implemented and run</td><td><code>dataset fetch/prepare/analyze</code>; 10,000 train and 1,000 test cases</td></tr>
-      <tr><td>bAbI Tasks 2, 3, and 16 ingestion</td><td>cached and prepared, not learned</td><td>10,000 train and 1,000 test cases each; all synthesis ledgers pending, with no candidate or evaluation</td></tr>
+      <tr><td>bAbI Task 16 learning</td><td>implemented and run</td><td>10,000 train and 1,000 aggregate-only test cases; accepted property-induction checkpoint</td></tr>
+      <tr><td>bAbI Tasks 2 and 3 ingestion</td><td>cached and prepared, not learned</td><td>10,000 train and 1,000 test cases each; no accepted candidate or evaluation</td></tr>
       <tr><td>CLUTRR parser</td><td>planned</td><td>requires relation compilation, license handling, and length-held-out splits</td></tr>
       <tr><td>Entity Tracking adapter</td><td>planned</td><td>requires explicit state-transition execution</td></tr>
     </tbody></table>
@@ -92,6 +94,7 @@
     <h2>Current score and published references</h2>
     <table><thead><tr><th>System</th><th>Reported condition</th><th>Result</th><th>Comparison class</th></tr></thead><tbody>
       <tr><td>ESLM <code>babi-15-en-10k-v1.2</code></td><td>Official prepared test split, no optional KB</td><td>1,000/1,000; accuracy 1.0</td><td>Locally reproduced primary result</td></tr>
+      <tr><td>ESLM <code>babi-16-en-10k-v1.2</code></td><td>Official prepared test split used as aggregate-only shadow evidence during the accepted DS020 cycle</td><td>1,000/1,000; accuracy 1.0</td><td>Local narrow induction result; individual shadow failures were not adapted to</td></tr>
       <tr><td>H-Mem extended model, position encoding</td><td>Paper-reported bAbI Task 15 10k condition</td><td>0% test error</td><td>Reference-only until preprocessing, run selection, and exact hash are matched</td></tr>
       <tr><td>Recurrent Relational Network</td><td>Paper-reported all-task bAbI experiment</td><td>20/20 tasks solved</td><td>Context-only; no local Task 15 predictions were rescored</td></tr>
       <tr><td>External LLM</td><td>Exact label-free local export</td><td>Not run</td><td>Will become direct only after local scoring</td></tr>
@@ -103,6 +106,9 @@
 npm run benchmark
 node src/cli.mjs benchmark references</code></pre>
     <p><code>npm run benchmark</code> evaluates the promoted symbolic core on the prepared Task 15 test split and refreshes both <a href="results/latest-benchmark.html">the readable report</a> and <a href="results/latest-benchmark.json">the detailed JSON report</a>. It does not download data, run a coding agent, retrain the model, or load QUICK, WordNet, or ATOMIC.</p>
+
+    <h2>Internal conversational benchmark</h2>
+    <p><code>npm run benchmark:conversation</code> runs 1,000 generated longer questions and refreshes the <a href="results/latest-conversation-benchmark.html">readable conversational report</a>. This suite contains source-exposed WordNet and ATOMIC cases plus generated core and abstention cases, so it is explicitly not listed as a public benchmark result. Its job is to prevent documented examples, surface variants and lazy-loaded providers from silently regressing.</p>
 
     <h2>Knowledge modules and benchmarks</h2>
     <p>Optional KBs are never loaded into the default Task 15 command. If <code>--kb</code> is supplied to a benchmark, the report records those IDs and marks the run non-comparable with the clean result. A benchmark-specific module may be synthesized only from that benchmark's authorized train split; hidden test answers remain excluded. This allows modular experiments without concealing additional knowledge.</p>

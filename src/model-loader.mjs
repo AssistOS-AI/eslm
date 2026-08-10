@@ -36,8 +36,19 @@ export function validateModel(model) {
     assert(Number.isInteger(model.reasoning.deduction?.maxRounds)
       && model.reasoning.deduction.maxRounds > 0, 'Deduction maxRounds must be a positive integer.');
     assert(Array.isArray(induction?.predicates), 'Induction requires an allowlisted predicate array.');
-    assert(Number.isInteger(induction.minSupport) && induction.minSupport >= 2, 'Induction minSupport must be at least 2.');
+    assert(Number.isInteger(induction.minSupport) && induction.minSupport >= 1, 'Induction minSupport must be at least 1.');
     assert(induction.minCoverage > 0 && induction.minCoverage <= 1, 'Induction minCoverage must be in (0, 1].');
+    assert((induction.implicitPredicates ?? []).every((predicate) => induction.predicates.includes(predicate)), 'Implicit induction predicates must be allowlisted.');
+    for (const [predicate, override] of Object.entries(induction.byPredicate ?? {})) {
+      assert(induction.predicates.includes(predicate), `Induction override predicate is not allowlisted: ${predicate}`);
+      assert(Number.isInteger(override.minSupport) && override.minSupport >= 1, `Invalid induction minSupport for ${predicate}.`);
+      assert(override.minCoverage > 0 && override.minCoverage <= 1, `Invalid induction minCoverage for ${predicate}.`);
+      assert(['all', 'latest-support', 'latest-member'].includes(override.selection ?? 'all'), `Invalid induction selection for ${predicate}.`);
+    }
+    for (const [predicate, values] of Object.entries(model.reasoning.propertyValues ?? {})) {
+      assert(Array.isArray(values) && values.length > 0, `Property predicate ${predicate} requires values.`);
+      assert(values.every((value) => typeof value === 'string'), `Property values for ${predicate} must be strings.`);
+    }
     assert(Number.isInteger(model.reasoning.abduction?.maxHypotheses)
       && model.reasoning.abduction.maxHypotheses > 0, 'Abduction maxHypotheses must be a positive integer.');
   }

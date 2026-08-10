@@ -1,5 +1,6 @@
 {
   "format": "eslm-training-run-v1",
+  "artifactRole": "initial Task 15 synthesis record; followed by learning-run-task16.json",
   "runId": "babi-15-en-10k-v1.2-2026-08-10",
   "dataset": {
     "id": "babi-15-en-10k-v1.2",
@@ -52,7 +53,9 @@
     "status": "promoted",
     "modelId": "babi-15-en-10k-v1.2",
     "generatedModules": 7,
-    "generatedModuleBytes": 1743
+    "generatedModuleBytes": 1743,
+    "subsequentlyExtendedBy": "learning-run-task16.json",
+    "currentModelId": "babi-15+16-en-10k-v1.2"
   },
   "evaluation": {
     "status": "complete",
@@ -69,7 +72,7 @@
   "nextDatasetRun": {
     "id": "babi-16-en-10k-v1.2",
     "task": "basic induction",
-    "status": "fetched and prepared; all synthesis-ledger chunks pending; no candidate or evaluation"
+    "status": "accepted and promoted through benchmark-guided learning; see learning-run-task16.json"
   },
   "nextKnowledgeMilestone": {
     "id": "oewn-2025",

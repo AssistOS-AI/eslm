@@ -7,6 +7,7 @@ const BASE_VARIANTS = Object.freeze({
 
 const QUESTION_WORDS = new Set([
   'where', 'what', 'who', 'which', 'why', 'how', 'is', 'does', 'can',
+  'tell', 'show',
 ]);
 
 export function tokenize(text) {
@@ -39,12 +40,14 @@ export function normalizeInput(text, model) {
   }
   const vocabulary = correctionVocabulary(model);
   const corrections = [];
-  const tokens = tokenize(text).map((token) => {
+  const surfaces = text.normalize('NFKC').replace(/[’']/gu, '').match(/[\p{L}\p{N}_-]+|[?.!,;:]/gu) ?? [];
+  const tokens = tokenize(text).map((token, index) => {
     if (/^[?.!,;:]$/u.test(token)) return token;
     if (variants[token]) {
       corrections.push({ from: token, to: variants[token], method: 'declared-variant' });
       return variants[token];
     }
+    if (/^\p{Lu}/u.test(surfaces[index] ?? '')) return token;
     if (vocabulary.has(token) || token.length < 4) return token;
     let candidate;
     let distance = Number.POSITIVE_INFINITY;

@@ -78,7 +78,7 @@ The initial six modules may split into `events`, `discourse`, `narrative`, `real
 
 ### Promoted artifact and optional KB artifacts
 
-The promoted bAbI Task 15 artifact is an episodic compiler. Its persistent entity, fact, and rule arrays are empty because each story defines a distinct world. Its generated knowledge is three construction declarations, four plural-to-singular mappings, and bounded reasoning policy. The prepared train digest and `babi-task-15-train-only` evidence regime identify that artifact.
+The promoted combined bAbI Tasks 15 and 16 artifact is an episodic compiler. Its persistent entity, fact, and rule arrays are empty because each story defines a distinct world. Its generated knowledge includes Task 15 constructions and morphology plus Task 16 typed color vocabulary and configured latest-member analogical induction. The `babi-tasks-15-and-16-train-only` evidence regime identifies that artifact. It contains no episode entity, story fact, or answer table.
 
 Each optional KB is a complete `eslm-code-model-v1` graph under `training/KBs/QUICK/model/ID/`. Its manifest additionally declares title, semantic version, generated-by method, source digest, scope, examples, and `benchmarkEligible: false`. Sources are compiled by deterministic Node code from `training/KBs/QUICK/source/ID.json`.
 

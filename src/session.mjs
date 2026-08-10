@@ -72,6 +72,16 @@ function assertionFrom(text, model, entities, ruleNumber) {
       value: match[2], sourceText: text,
     };
   }
+  if ((match = normalized.match(/^(.+?) is ([a-z][a-z0-9_-]*)$/u))) {
+    const property = match[2];
+    for (const [predicate, values] of Object.entries(model.reasoning?.propertyValues ?? {})) {
+      if (!values.includes(property)) continue;
+      return {
+        subject: ensureEntity(match[1], 'entity', model, entities), predicate,
+        value: property, sourceText: text,
+      };
+    }
+  }
   if ((match = normalized.match(/^(.+?) is (?:a|an) (.+)$/u))) {
     return {
       subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'is_a',
@@ -95,7 +105,7 @@ export function compileSessionEpisode(text, model, context = {}) {
   const segments = splitEpisode(text);
   const final = segments.at(-1) ?? '';
   const finalWords = normalizedPhrase(final).split(' ');
-  const questionStarters = new Set(['where', 'what', 'who', 'which', 'why', 'how', 'is', 'does', 'can']);
+  const questionStarters = new Set(['where', 'what', 'who', 'which', 'why', 'how', 'is', 'does', 'can', 'tell', 'show']);
   const hasQuestion = final.endsWith('?') || questionStarters.has(finalWords[0]);
   const statementSegments = hasQuestion ? segments.slice(0, -1) : segments;
   const learned = [];

@@ -21,10 +21,10 @@
       <tr><td>bAbI Task 2</td><td>1,794,716 / 179,835 bytes</td><td>6,898,640 / 684,981 bytes</td><td>20 × 500</td><td>Prepared; train-only audit; no model</td></tr>
       <tr><td>bAbI Task 3</td><td>5,317,883 / 526,527 bytes</td><td>17,697,727 / 1,740,392 bytes</td><td>20 × 500</td><td>Prepared; train-only audit; no model</td></tr>
       <tr><td>bAbI Task 15</td><td>877,358 / 87,769 bytes</td><td>3,951,095 / 393,407 bytes</td><td>20 × 500</td><td>Synthesized, promoted, evaluated</td></tr>
-      <tr><td>bAbI Task 16</td><td>2,082,804 / 208,208 bytes</td><td>3,748,323 / 372,846 bytes</td><td>20 × 500</td><td>Prepared; train-only audit; no model</td></tr>
+      <tr><td>bAbI Task 16</td><td>2,082,804 / 208,208 bytes</td><td>3,748,323 / 372,846 bytes</td><td>20 × 500</td><td>Learned, promoted, aggregate test evaluated</td></tr>
     </tbody></table>
     <p>Every row has 10,000 train cases and 1,000 test cases. Prepared JSONL is larger than raw text because it preserves context, question, semantic answer, support-line identifiers, supporting sentences, split, and stable case ID. The public files are cached locally and ignored by Git. Exact integrity hashes remain in machine-readable manifests rather than cluttering this explanatory page.</p>
-    <p>“Prepared” means that the official text was parsed and isolated into train and test artifacts; it does not mean that ESLM learned the task. Only Task 15 passed the later synthesis, promotion, and held-out evaluation stages. The <a href="benchmarks.html">public benchmark ledger</a> is the authoritative human-readable record of which suites were actually run.</p>
+    <p>“Prepared” means that the official text was parsed and isolated into train and test artifacts; it does not mean that ESLM learned the task. Tasks 15 and 16 passed later learning, promotion, and evaluation gates; Tasks 2 and 3 did not. The <a href="benchmarks.html">public benchmark ledger</a> is the authoritative human-readable record of which suites were actually run.</p>
 
     <figure class="diagram"><pre class="mermaid">flowchart TD
   A[One verified bAbI archive] --> B{Selected task}
@@ -62,9 +62,9 @@ npm run benchmark</code></pre>
     </section>
 
     <section id="babi-16">
-      <h2>Task 16: basic induction — prepared</h2>
+      <h2>Task 16: basic induction — completed</h2>
       <p>A train episode may classify Lily and Bernhard as frogs, state that both are green, classify Greg as a swan, and show another green swan. The question “What color is Greg?” requires inferring a class-level color pattern from other members and applying it to Greg. This differs from the current optional core induction query because the benchmark expects an ordinary answer under its own evidence rules.</p>
-      <p>The split is cached and prepared in 20 train chunks with a four-worker assignment plan. A train-only semantic audit is identifying exact support and exception behavior. Test cases remain outside agent assignments. Candidate synthesis and evaluation have not begun.</p>
+      <p>The benchmark-guided cycle began at 0/200 working and 0/1,000 fresh cases because typed property statements were unsupported. A first latest-member candidate reached 196/200 and 996/1,000 but failed proof audit and was rejected. The accepted candidate retains typed colors, complete membership supports, conflicts and configured latest-member ranking. It passed 200/200 working, 1,000/1,000 fresh, 1,000/1,000 aggregate-only official test cases, 52/52 prior regressions and three ordering/nonce metamorphic cases.</p>
       <pre><code>node src/cli.mjs dataset status --dataset babi-16-en-10k-v1.2</code></pre>
     </section>
 

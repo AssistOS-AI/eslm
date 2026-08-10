@@ -1,6 +1,6 @@
 {
   "format": "eslm-core-scale-report-v1",
-  "createdAt": "2026-08-10T14:34:06.553Z",
+  "createdAt": "2026-08-10T15:32:17.064Z",
   "node": "v22.23.1",
   "platform": "linux-x64",
   "interpretation": "Synthetic primitive profile; not a corpus or end-to-end model benchmark.",
@@ -18,12 +18,12 @@
       "metadata": {
         "directFacts": 1000
       },
-      "durationMs": 7.229,
-      "rssBytes": 10514432,
-      "heapUsedBytes": 1328824,
-      "externalBytes": -8336,
-      "cpuUserMs": 8.552,
-      "cpuSystemMs": 1.904,
+      "durationMs": 6.82,
+      "rssBytes": 10776576,
+      "heapUsedBytes": 1318912,
+      "externalBytes": -10417,
+      "cpuUserMs": 9.087,
+      "cpuSystemMs": 1.023,
       "metrics": {
         "directFacts": 1000,
         "closureFacts": 1500
@@ -32,12 +32,12 @@
         {
           "name": "retrieval.build-index",
           "status": "ok",
-          "durationMs": 0.755,
-          "rssBytes": 393216,
-          "heapUsedBytes": 490104,
+          "durationMs": 0.692,
+          "rssBytes": 524288,
+          "heapUsedBytes": 488744,
           "externalBytes": 0,
-          "cpuUserMs": 0,
-          "cpuSystemMs": 0.718,
+          "cpuUserMs": 0.658,
+          "cpuSystemMs": 0,
           "metrics": {
             "facts": 1000,
             "subjectKeys": 1000,
@@ -48,12 +48,12 @@
         {
           "name": "reasoning.one-premise-closure",
           "status": "ok",
-          "durationMs": 6.032,
-          "rssBytes": 10121216,
-          "heapUsedBytes": 816680,
-          "externalBytes": -8392,
-          "cpuUserMs": 8.419,
-          "cpuSystemMs": 0.962,
+          "durationMs": 5.733,
+          "rssBytes": 10252288,
+          "heapUsedBytes": 808200,
+          "externalBytes": -10473,
+          "cpuUserMs": 8.134,
+          "cpuSystemMs": 0.997,
           "metrics": {
             "facts": 1000,
             "rules": 1,
@@ -70,12 +70,12 @@
       "metadata": {
         "directFacts": 10000
       },
-      "durationMs": 40.597,
-      "rssBytes": 33771520,
-      "heapUsedBytes": 16181584,
+      "durationMs": 40.895,
+      "rssBytes": 33501184,
+      "heapUsedBytes": 16230080,
       "externalBytes": -18675,
-      "cpuUserMs": 64.681,
-      "cpuSystemMs": 13.333,
+      "cpuUserMs": 72.218,
+      "cpuSystemMs": 6.7,
       "metrics": {
         "directFacts": 10000,
         "closureFacts": 15000
@@ -84,12 +84,12 @@
         {
           "name": "retrieval.build-index",
           "status": "ok",
-          "durationMs": 4.704,
-          "rssBytes": 6553600,
-          "heapUsedBytes": 2993552,
+          "durationMs": 4.722,
+          "rssBytes": 6533120,
+          "heapUsedBytes": 2992000,
           "externalBytes": 0,
-          "cpuUserMs": 9.211,
-          "cpuSystemMs": 1.929,
+          "cpuUserMs": 8.909,
+          "cpuSystemMs": 2.135,
           "metrics": {
             "facts": 10000,
             "subjectKeys": 10000,
@@ -100,12 +100,12 @@
         {
           "name": "reasoning.one-premise-closure",
           "status": "ok",
-          "durationMs": 35.778,
-          "rssBytes": 27217920,
-          "heapUsedBytes": 13178440,
+          "durationMs": 36.047,
+          "rssBytes": 26968064,
+          "heapUsedBytes": 13228488,
           "externalBytes": -18675,
-          "cpuUserMs": 55.343,
-          "cpuSystemMs": 11.392,
+          "cpuUserMs": 63.163,
+          "cpuSystemMs": 4.558,
           "metrics": {
             "facts": 10000,
             "rules": 1,
@@ -122,12 +122,12 @@
       "metadata": {
         "directFacts": 100000
       },
-      "durationMs": 38.796,
-      "rssBytes": 39133184,
-      "heapUsedBytes": 29107032,
+      "durationMs": 37.529,
+      "rssBytes": 39063552,
+      "heapUsedBytes": 29123216,
       "externalBytes": 0,
-      "cpuUserMs": 70.022,
-      "cpuSystemMs": 10.965,
+      "cpuUserMs": 62.527,
+      "cpuSystemMs": 17.226,
       "metrics": {
         "directFacts": 100000
       },
@@ -135,12 +135,12 @@
         {
           "name": "retrieval.build-index",
           "status": "ok",
-          "durationMs": 38.686,
-          "rssBytes": 39133184,
-          "heapUsedBytes": 29103640,
+          "durationMs": 37.431,
+          "rssBytes": 39063552,
+          "heapUsedBytes": 29119824,
           "externalBytes": 0,
-          "cpuUserMs": 69.931,
-          "cpuSystemMs": 10.952,
+          "cpuUserMs": 62.447,
+          "cpuSystemMs": 17.213,
           "metrics": {
             "facts": 100000,
             "subjectKeys": 100000,

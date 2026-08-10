@@ -96,7 +96,7 @@ Every experiment archives configuration, packet/source hashes, candidate digest,
 
 ### Q1. What is the next implementation priority after v0.1?
 
-Response: Complete WordNet and ATOMIC source builds now exist and establish their semantic/query prototypes. The next gate is lazy query-directed import, contextual sense selection, participant binding, and held-out source-aware evaluation. Filtered ConceptNet and bounded GeoNames follow only after that gate. Wikidata remains optional and thematic. bAbI, CLUTRR, Entity Tracking, and BLiMP remain controlled diagnostics rather than persistent world knowledge.
+Response: Complete WordNet and ATOMIC source builds and budget-aware query-selected providers exist. Their next semantic gates are contextual sense selection, participant binding, calibrated ranking, compact indexes, and held-out source-aware evaluation. Filtered ConceptNet and bounded GeoNames require independent probes and streaming adapters before any learning cycle. Wikidata remains optional and thematic. bAbI, CLUTRR, Entity Tracking, and BLiMP remain controlled diagnostics rather than persistent world knowledge.
 
 ### Q2. When is the experiment allowed to change the eight operators?
 

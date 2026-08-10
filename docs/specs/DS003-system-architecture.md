@@ -66,7 +66,7 @@ Model format, runtime protocol, benchmark protocol, dataset hashes, and evidence
 
 ### Dataset and KB selection paths
 
-`src/datasets.mjs` owns the frozen public evaluation-dataset catalog, archive verification, safe TAR extraction, official split preservation, JSONL adaptation, chunk manifests, train-only analysis, and local status. bAbI Task 15 is implemented and complete. Tasks 2, 3, and 16 reuse the archive and have prepared splits but no promoted model or held-out result.
+`src/datasets.mjs` owns the frozen public evaluation-dataset catalog, archive verification, safe TAR extraction, official split preservation, JSONL adaptation, chunk manifests, train-only analysis, and local status. bAbI Tasks 15 and 16 are implemented and complete through different learning protocols. Tasks 2 and 3 reuse the archive and have prepared splits but no promoted model or held-out result.
 
 `src/corpora.mjs` owns the real knowledge-source registry and local source/probe/model state. Open English WordNet 2025 and the ATOMIC 2020 train split are cached, compiled, validated, and queryable through source-specific providers. QUICK remains an authored fixture bundle. ConceptNet and bounded GeoNames are next; Wikidata is future and thematic only, while DBpedia and Wikipedia remain deferred.
 

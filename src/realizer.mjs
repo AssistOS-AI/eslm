@@ -36,14 +36,14 @@ export function realize(query, answer, model) {
   const subject = query.subject ? entityName(query.subject, model) : undefined;
   const object = query.object ? entityName(query.object, model) : undefined;
   if (query.intent === 'yes-no' || query.intent === 'explanation') {
-    if (!answer.values[0]) return 'I have no evidence that this is true.';
+    if (!answer.values[0]) return 'I understand the question, but I do not have evidence for a yes or no answer.';
     if (query.intent === 'explanation') {
       const derived = answer.evidence.find((fact) => fact.derived);
       if (derived) return `Yes. It follows by rule ${derived.rule}, supported by ${derived.support.join(', ')}.`;
     }
     return 'Yes.';
   }
-  if (answer.values.length === 0) return 'The model does not contain enough evidence to answer.';
+  if (answer.values.length === 0) return 'I understand the question, but I do not have enough evidence to answer it.';
   const joined = list(names);
   if (query.intent === 'location') return `${subject} is in ${joined}.`;
   if (query.intent === 'owner') return `${joined} owns ${object}.`;
@@ -51,6 +51,7 @@ export function realize(query, answer, model) {
   if (query.intent === 'possessions') return `${subject} owns ${joined}.`;
   if (query.intent === 'contents') return `${joined} is there.`;
   if (query.intent === 'fear-object') return `${subject} is afraid of ${joined}.`;
+  if (query.intent === 'entity-description') return `${subject} is a ${joined}.`;
   if (query.intent === 'relation' && query.predicate === 'north_of') {
     return `${joined} is north of ${object}.`;
   }

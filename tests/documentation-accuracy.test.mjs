@@ -46,21 +46,23 @@ test('knowledge-source pages follow the machine priority and artifact state', as
   assert.match(sources, /Wikidata thematic packs/u);
 });
 
-test('documentation does not resurrect disproven chunk or Task 16 status claims', async () => {
+test('documentation distinguishes unused chunk ledgers from the accepted Task 16 learning cycle', async () => {
   const [model, benchmarks, training] = await Promise.all([
     page('model.html'), page('benchmarks.html'), page('training.html'),
   ]);
   assert.doesNotMatch(model, /20\/20 chunk analysis/u);
   assert.match(model, /every ledger entry remains <code>pending<\/code>/u);
-  assert.match(benchmarks, /Tasks 2, 3, and 16 ingestion/u);
+  assert.match(benchmarks, /bAbI Task 16 learning/u);
+  assert.match(benchmarks, /bAbI Tasks 2 and 3 ingestion/u);
   assert.match(training, /No accepted synthesis or promoted capability/u);
 });
 
 test('public benchmark documentation separates completed, prepared, and source-exposed evidence', async () => {
   const benchmarks = await page('benchmarks.html');
-  assert.match(benchmarks, /one completed public benchmark result/u);
+  assert.match(benchmarks, /completed local public-data results for bAbI v1.2 Tasks 15 and 16/u);
   assert.match(benchmarks, /1,000\/1,000 semantic answers correct/u);
-  assert.match(benchmarks, /prepared but have not been learned or scored/u);
+  assert.match(benchmarks, /Tasks 2 and 3 are locally prepared but have not been learned or scored/u);
   assert.match(benchmarks, /not a public benchmark/u);
   assert.match(benchmarks, /latest-benchmark\.html/u);
+  assert.match(benchmarks, /latest-conversation-benchmark\.html/u);
 });

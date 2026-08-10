@@ -87,7 +87,7 @@ test('does not turn missing proof into a negative fact', () => {
   const result = engine.ask('Is Mira in the garden?');
   assert.equal(result.status, 'UNKNOWN');
   assert.deepEqual(result.values, []);
-  assert.match(result.answer, /no evidence/u);
+  assert.equal(result.answer, 'I understand the question, but I do not have evidence for a yes or no answer.');
 });
 
 test('does not claim support for a non-English question', () => {

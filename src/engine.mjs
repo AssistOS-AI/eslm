@@ -63,7 +63,7 @@ export class EslmEngine {
       }
       return complete({
         status: 'UNSUPPORTED',
-        answer: 'I cannot map that input to a supported symbolic statement or question.',
+        answer: 'I could not interpret that as a supported statement or question yet. Try /examples for forms I can execute.',
         learned: episode.learned,
         learnedRules: episode.learnedRules,
         provenance: [],
@@ -82,12 +82,45 @@ export class EslmEngine {
         status: query.status,
         answer: query.status === 'AMBIGUOUS'
           ? 'The question matches more than one known entity.'
-          : 'I cannot map that input to a supported symbolic question.',
+          : query.status === 'UNKNOWN'
+            ? `I understand the question, but I do not know “${query.missingEntity}” in the active session or loaded knowledge bases.`
+            : 'I do not know how to handle that kind of question yet. Try /examples to see the question families I can execute.',
         input: normalized,
         query,
         provenance: [],
         learned: episode.learned,
         learnedRules: episode.learnedRules,
+        context: { ...context, session: episode.session },
+        episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
+      });
+    }
+    if (query.intent === 'system-identity') {
+      return complete({
+        status: 'ANSWERED',
+        answer: 'I am ESLM, an offline executable symbolic language model. I answer by running generated knowledge and explicit reasoning rules, without calling an LLM at runtime.',
+        values: ['eslm'], provenance: [], reasoning: { method: 'system-description' }, query,
+        input: normalized, learned: episode.learned, learnedRules: episode.learnedRules,
+        context: { ...context, session: episode.session },
+        episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
+      });
+    }
+    if (query.intent === 'user-identity') {
+      return complete({
+        status: 'UNKNOWN',
+        answer: 'I do not know who you are from this session yet. You can tell me a supported fact about yourself, but I will not guess your identity.',
+        values: [], provenance: [], reasoning: { method: 'epistemic-abstention' }, query,
+        input: normalized, learned: episode.learned, learnedRules: episode.learnedRules,
+        context: { ...context, session: episode.session },
+        episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
+      });
+    }
+    if (query.intent === 'system-capabilities') {
+      return complete({
+        status: 'ANSWERED',
+        answer: 'I can learn bounded session facts, retrieve loaded knowledge, run explicit deduction and configured induction, return defeasible event candidates, and show provenance. Use /examples for tested questions and /kbs for available knowledge.',
+        values: ['session-learning', 'retrieval', 'deduction', 'induction', 'provenance'],
+        provenance: [], reasoning: { method: 'system-description' }, query, input: normalized,
+        learned: episode.learned, learnedRules: episode.learnedRules,
         context: { ...context, session: episode.session },
         episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
       });

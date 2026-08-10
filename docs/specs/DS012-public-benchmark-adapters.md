@@ -34,7 +34,9 @@ The Node adapter parses numbered story lines, resets worlds at story boundaries,
 
 Task 15 English 10k v1.2 is implemented and has run. The frozen archive identity is preserved in the acquisition manifest rather than repeated in explanatory prose. The selected raw train and test files contain 10,000 and 1,000 episodes. Preparation emits 20 train chunks of 500, preserves support IDs, and keeps test agent-hidden. The current default model scores 1,000/1,000 semantic answers.
 
-Tasks 2, 3, and 16 English 10k v1.2 are separate catalog entries that reuse the same archive cache. Each has 10,000 fetched and prepared train cases, 1,000 isolated test cases, and 20 train chunks of 500. Every synthesis-ledger entry remains pending. Task-specific state tracking, temporal history, or induction analysis; worker execution; reduction; candidate validation; promotion; and evaluation have not run. The CLI rejects Task 15-specific analysis on these tasks rather than emitting misleading counts.
+Task 16 English 10k v1.2 is implemented through the DS020 learning cycle. It has 10,000 fetched and prepared train cases and 1,000 isolated test cases. The accepted model adds typed color-property compilation and configured latest-member analogical induction; it does not retain story answers. The aggregate-only official test result is 1,000/1,000. Proof auditing, nonce examples, ordering metamorphics, and the prior regression suite were required for promotion.
+
+Tasks 2 and 3 English 10k v1.2 are separate catalog entries that reuse the same archive cache. Each has 10,000 fetched and prepared train cases, 1,000 isolated test cases, and 20 train chunks of 500. They remain prepared only: task-specific state tracking, temporal history, worker synthesis, candidate validation, promotion, and evaluation have not run.
 
 Official source: [Facebook bAbI tasks archive](https://github.com/facebookarchive/bAbI-tasks).
 

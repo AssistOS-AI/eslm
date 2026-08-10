@@ -30,13 +30,15 @@ Batch output preserves stable ids and includes status, answer, normalized input,
 
 The global `--profile` option adds initialization and per-query `eslm-profile-v1` data. `--memory-mb N` and `--memory-policy auto|eager|lazy` control public-KB residency under DS021. `--color auto|always|never` controls human styling; automatic color appears only in an interactive terminal. JSON, JSONL, files, evaluation, benchmark, trace data, and profile records never contain ANSI escapes. Profiling is diagnostic metadata and must not change semantic values, status, provenance order, or context.
 
+Readable memory output distinguishes automatic eager selection, explicitly forced eager loading, explicitly forced lazy loading, and budget-triggered adaptive selection. It must not claim that full loading is active when the user forced lazy providers.
+
 ### Training commands
 
 `train prepare` validates and hashes a JSONL corpus and writes an authorized packet. `--split train` includes records and marks them agent-visible; other splits omit records. `train candidate` creates isolated candidate work from a train packet. `train validate` scans and semantically validates a promoted or candidate model directory.
 
 There is no CLI command that invokes a coding agent. Agent choice, credentials, and training cost belong outside the deployed tool. There is also no automatic promotion command in v0.1. `train prepare --profile` writes an `eslm-profile-v1` sidecar beside the packet.
 
-`dataset catalog` lists exact dataset IDs and stage fields. `dataset fetch`, `prepare`, `analyze`, and `status` operate on one named definition. Fetch and preparation are explicit network/data operators, never implicit side effects of inference. The bAbI Task 16 definition supports fetch and generic preparation but its `analyze` command rejects execution until a task-specific semantic analyzer exists.
+`dataset catalog` lists exact dataset IDs and stage fields. `dataset fetch`, `prepare`, `analyze`, and `status` operate on one named definition. Fetch and preparation are explicit network/data operators, never implicit side effects of inference. Task 16 learning uses the DS020 pool and evaluation scripts; the older dataset `analyze` subcommand remains Task 15-specific and rejects Task 16 rather than emitting a misleading Task 15-shaped analysis.
 
 `corpus catalog` lists persistent public knowledge sources in priority order and their semantic roles. `corpus status` reports source cache, probe, prepared, and generated artifact presence. `corpus probe --corpus oewn-2025 --archive FILE` is the only implemented source probe; it analyzes a local official archive, profiles the scan, publishes the report, and emits no model. Fetch, prepare, and build actions are added source by source only after DS018 and DS019 gates are implemented; the CLI must not offer a generic command that begins an unbounded dump download.
 
@@ -85,3 +87,11 @@ Response: The tutorial is the shortest reproducible demonstration of what the in
 ### Q5. Why must `--kb` be explicit rather than stored as a global default?
 
 Response: Explicit selection keeps runs replayable, reduces accidental benchmark contamination, and makes the active fact/rule scope visible in command history and report metadata. A future profile may name a selection, but it must still serialize those IDs into the run record.
+
+### Q6. Why does `/examples` print the complete catalog?
+
+Response: The command is a discovery interface, not an internal test selector. Requiring undocumented IDs prevented users from seeing the supported boundary. The same generated catalog drives regression tests, and QUICK-dependent entries disclose that requirement.
+
+### Q7. Why can `/memory` report lazy loading without a memory number?
+
+Response: The user may force `lazy` as an execution policy for diagnostics or constrained deployment. A numerical target is needed only for adaptive planning; readable output states whether the policy was automatic, explicitly eager, explicitly lazy, or budget-triggered.

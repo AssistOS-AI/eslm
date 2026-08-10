@@ -22,6 +22,8 @@ Input is normalized with Unicode NFKC, locale-stable lowercasing, punctuation to
 
 Declared variants have priority. Bounded edit distance is then allowed only against a controlled vocabulary containing question words, relation language, and model aliases. Short tokens are not guessed aggressively. Thresholds grow conservatively with token length. Correction must never silently merge two known entity aliases; ambiguous corrections yield candidate analyses.
 
+Capitalized surface tokens are not rewritten by the general vocabulary corrector. This prevents a name such as `Jhon` from being shortened to a common fragment merely because that fragment occurs in the model vocabulary. After session facts have introduced entities, question resolution may compare a missing proper name with active entity aliases using bounded Damerau distance. The repair is accepted only for one closest candidate; tied candidates remain ambiguous. The original and normalized forms remain in the trace.
+
 Spell tolerance is not unrestricted fuzzy retrieval. It repairs likely surface errors before semantic compilation. Benchmarks vary edit position, distance, entity proximity, and adversarial near-names to measure both recovery and false correction.
 
 ### Lexicon and morphology
@@ -33,6 +35,8 @@ English is the only supported language. The parser, lexicon, spelling tolerance,
 ### Constructions and approximate syntax
 
 The parser recognizes typed constructions such as `where is ENTITY`, `who owns ENTITY`, `what color is ENTITY`, `what is ENTITY afraid of`, `what is north of ENTITY`, `is ENTITY in ENTITY`, `is ENTITY a CLASS`, `can ENTITY VERB`, `is ENTITY going to die`, `is ENTITY likely to VERB`, and `what could explain why ENTITY is PROPERTY`. A construction compiles into a query contract containing intent, predicate, known arguments, requested slot, evidence scope, answer type, language, and uncertainty policy.
+
+Implemented conversational constructions also include `who is ENTITY`, bounded system identity questions, user identity questions, and requests for the system's supported capabilities. `Who is ENTITY?` queries known class membership. When the construction matches but the entity is absent, the result is `UNKNOWN`; it is not mislabeled as an unsupported syntax. ESLM answers what it is, does not guess who the user is, and describes only capabilities backed by executable paths.
 
 Construction matching may be approximate in surface order but strict in semantic slots. Required function words, negation, quantifiers, temporal modifiers, and relation direction cannot be discarded as noise. If two parses remain plausible, the system returns `AMBIGUOUS` or requests clarification rather than selecting solely by string similarity.
 
@@ -62,6 +66,8 @@ Realization consumes a verified semantic answer and language features. It select
 
 Realizers must never insert unsupported factual content to sound natural. Unknown evidence produces an epistemically accurate sentence. Derived explanations name the rule and support ids. Future generation separates content planning, referring-expression choice, clause planning, morphology, and surface punctuation.
 
+Unknown and unsupported responses are written for interactive users as well as evaluators. `UNKNOWN` says that the question was understood but evidence is missing. `UNSUPPORTED` says that the construction cannot yet be executed and points to `/examples`. Structured status, diagnostics, normalization, and provenance remain available even when the visible answer is friendlier.
+
 ## Decisions & Questions
 
 ### Q1. Should the core “guess the most probable question”?
@@ -79,3 +85,7 @@ Response: Only when it recurs across independent corpora and its algorithmic beh
 ### Q4. Does the generated construction list implement parsing by itself?
 
 Response: No. In v0.1 the stable parser implements the executable construction algorithms, while generated lists disclose corpus-conditioned coverage and morphology. This duplication is an acknowledged intermediate architecture. A future typed construction interpreter must make generated slot bindings executable before the core can stop carrying those patterns.
+
+### Q5. Why is an unknown entity different from an unsupported question?
+
+Response: `Who is Jhon?` matches an executable entity-description contract even when no active entity is named Jhon, so the correct outcome is `UNKNOWN`. A poem request has no executable contract and is `UNSUPPORTED`. Keeping the distinction makes coverage and abstention metrics meaningful.
