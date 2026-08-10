@@ -1,0 +1,15 @@
+{
+  "format": "eslm-source-manifest-v1",
+  "id": "atomic-2020",
+  "officialSource": "https://github.com/allenai/comet-atomic-2020",
+  "archive": "training/.cache/corpora/atomic-2020/atomic2020_data-feb2021.zip",
+  "archiveBytes": 12580048,
+  "archiveSha256": "47c5f362ab4a3ea58c4962eebfdfd1c5420d3780e74cd3fe09efeef64f941c2b",
+  "release": "February 2021",
+  "splitPolicy": {
+    "train": "compiled",
+    "dev": "evaluation-only",
+    "test": "evaluation-only"
+  },
+  "license": "CC BY; retain ATOMIC 2020 paper and dataset attribution"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "full",
+  "model_id": "storycircuit-full",
+  "corpus": {
+    "input": "data/raw/TinyStoriesV2-GPT4-train.txt",
+    "train_prepared": "data/prepared/full/train.jsonl",
+    "prepared_dir": "data/prepared/full",
+    "max_stories": null,
+    "min_chars": 40,
+    "max_chars": 24000,
+    "exact_dedup": true,
+    "splits": {"train": 0.96, "dev": 0.015, "agent_shadow": 0.0125, "test": 0.0125}
+  },
+  "training": {
+    "byte_order": 5,
+    "byte_alpha": 0.005,
+    "word_order": 5,
+    "word_alpha": 0.005,
+    "min_word_count": 3,
+    "max_stories": null,
+    "parse_stories": null
+  },
+  "artifacts": {"model": "artifacts/full/model.json"},
+  "budgets": {"peak_ram_gb": 64, "target_wall_hours": 168, "distributed_recommended": true}
+}

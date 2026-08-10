@@ -1,0 +1,25 @@
+{
+  "created_at": "2026-08-10T08:08:34.148852+00:00",
+  "environment": {
+    "cpu_count": 5,
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+    "processor": "",
+    "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]"
+  },
+  "errors_path": null,
+  "metrics_path": "metrics.json",
+  "model": {
+    "path": "results/smoke/model.json",
+    "sha256": "2582805d58b0b9b341243941ee75fc8333a6fd29cb5f92d9516d65f2969a1f00"
+  },
+  "predictions_path": "predictions.jsonl",
+  "run_id": "smoke-2582805d58b0",
+  "schema_version": "0.1",
+  "status": "complete",
+  "suite": {
+    "path": "eval/samples/smoke_cases.jsonl",
+    "sha256": "f2ece081431158e000de05c84a827082b44d24545e2432ac894a6d78fa31bcd1"
+  }
+}

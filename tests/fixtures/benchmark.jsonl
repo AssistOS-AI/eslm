@@ -1,0 +1,6 @@
+{"id":"qa-direct","kind":"qa","text":"Where is Orin?","values":["garden"]}
+{"id":"qa-rule","kind":"qa","text":"Where is Lumen?","values":["observatory"]}
+{"id":"qa-relation","kind":"qa","text":"What is north of the garden?","values":["observatory"]}
+{"id":"qa-deduction-depth-3","kind":"qa","text":"Niko is a man. Is Niko going to die?","values":[true]}
+{"id":"preference-order","kind":"preference","good":"Where is Mira?","bad":"Mira Mira where?"}
+{"id":"preference-auxiliary","kind":"preference","good":"Who owns Lumen?","bad":"Who Lumen owns owns?"}

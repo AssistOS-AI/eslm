@@ -1,0 +1,68 @@
+{
+  "format": "eslm-kb-build-report-v1",
+  "dataset": "oewn-2025",
+  "status": "complete",
+  "manifest": {
+    "format": "eslm-public-kb-v1",
+    "id": "oewn-2025",
+    "title": "Open English WordNet 2025",
+    "version": "2025",
+    "kind": "lexical-taxonomy",
+    "generatedBy": "coding-agent+deterministic-node-compiler",
+    "sourceRelease": "2025-12-31",
+    "sourceArchive": "english-wordnet-2025-json.zip",
+    "sourceDigest": "7d749f6e2c39e6970e4997839dcf6e42fd281f3c2fae0171d2192bae8cfa4b51",
+    "license": "CC BY 4.0; Open English WordNet and Princeton WordNet attribution required",
+    "trainOnly": false,
+    "benchmarkEligible": false,
+    "counts": {
+      "synsets": 107519,
+      "uniqueLemmas": 127311,
+      "memberOccurrences": 185129,
+      "definitions": 107524,
+      "examples": 49596
+    },
+    "relations": {
+      "attribute": 1260,
+      "domain_topic": 6433,
+      "similar": 23176,
+      "also": 2950,
+      "exemplifies": 1639,
+      "domain_region": 2,
+      "hypernym": 88075,
+      "mero_part": 5387,
+      "wikidata": 1140,
+      "mero_member": 723,
+      "mero_substance": 825,
+      "entails": 407,
+      "causes": 221
+    },
+    "capabilities": [
+      "define",
+      "list-senses",
+      "synonyms",
+      "bounded-hypernym-deduction"
+    ],
+    "limitations": [
+      "no automatic word-sense disambiguation",
+      "no closed-world negation",
+      "no proper-noun Namenet extension"
+    ]
+  },
+  "source": {
+    "archive": "training/.cache/corpora/oewn-2025/english-wordnet-2025-json.zip",
+    "bytes": 9986555,
+    "files": 45
+  },
+  "generated": {
+    "directory": "training/KBs/oewn-2025/model",
+    "files": 38,
+    "bytes": 23771871
+  },
+  "profile": {
+    "elapsedMilliseconds": 1341.928962,
+    "recordsPerSecond": 80122.72113104598,
+    "rssDeltaBytes": 280932352,
+    "heapUsedDeltaBytes": 193031248
+  }
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ESLM Documentation — Theory</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script type="module" src="assets/mermaid-loader.mjs"></script>
+  <script src="partials-loader.js" defer></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main>
+    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Theory</p>
+    <h1>Current ESLM theory</h1>
+    <p class="lead">An ESLM is a compiled language-and-knowledge program. It maps a supported natural-language utterance to an explicit semantic query, executes that query against generated symbolic structures, verifies the evidence, and constructs a response. Its competence is the combined competence of the stable language core and the generated model modules.</p>
+
+    <h2>1. The representation has distinct layers</h2>
+    <p>Surface text, semantic meaning, stored knowledge, and the final sentence are different objects. Keeping them separate makes errors diagnosable and allows each layer to use the most appropriate representation.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+  A[English input] --> B[Normalize]
+  B --> C[Tokens]
+  B --> D[Correction trace]
+  C --> E{Construction found?}
+  E -->|yes| F[Query with IDs]
+  E -->|no| G[UNSUPPORTED]</pre><figcaption>Linguistic compilation produces both an auditable correction path and either a typed query or an explicit unsupported result.</figcaption></figure>
+    <p><strong>Purpose of this diagram.</strong> It shows linguistic compilation. Language analysis normalizes spelling and matches a construction. The semantic query states the intent, predicate, known arguments, requested answer slot, language, and uncertainty policy. Entity and relation identifiers remove accidental wording differences before reasoning begins.</p>
+
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Semantic query] --> B{Matching direct fact?}
+  B -->|yes| C[Direct proof]
+  B -->|no| D[Activate relevant rules]
+  D --> E{Premises unify?}
+  E -->|yes| F[Derived proof]
+  E -->|no| G[UNKNOWN]
+  C --> H[Verified value]
+  F --> H</pre><figcaption>Knowledge execution prefers direct support, attempts bounded rule composition when needed, and returns UNKNOWN when no proof exists.</figcaption></figure>
+    <p><strong>Purpose of this diagram.</strong> It shows meaning execution. Generated indexes locate candidate facts. Rules derive only consequences licensed by their premises. Verification requires direct or derived support, so failure to find evidence produces <code>UNKNOWN</code> rather than an invented negative fact.</p>
+
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+  A[Verified value] --> B[Content form]
+  B --> C[English realization]
+  B --> D[Proof projection]
+  C --> E[Answer text]
+  D --> F[JSON provenance]</pre><figcaption>One verified value produces two synchronized outputs: readable English and machine-readable proof information.</figcaption></figure>
+    <p><strong>Purpose of this diagram.</strong> It shows response generation. The semantic value is selected before wording. Realization chooses entity labels, an answer construction, list order, epistemic wording, and punctuation. It cannot add facts that are absent from the verified value.</p>
+
+    <h3>Concrete execution: a held-out bAbI episode</h3>
+    <p>Consider “Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?”. The promoted model stores none of these episode-specific claims. It stores constructions and morphology that let the runtime compile the first sentence into a temporary rule and the second into a temporary classification.</p>
+    <ol>
+      <li><code>splitEpisode</code> separates two statements from the final question.</li>
+      <li>The statement compiler singularizes mice and wolves, producing <code>(?x, is_a, mouse) → (?x, afraid_of, wolf)</code>.</li>
+      <li>It creates temporary entity <code>gertrude</code> and fact <code>(gertrude, is_a, mouse)</code>.</li>
+      <li><code>parseQuestion</code> produces <code>{ subject: "gertrude", predicate: "afraid_of", target: "value" }</code>.</li>
+      <li><code>deriveClosure</code> binds <code>?x=gertrude</code> and derives <code>(gertrude, afraid_of, wolf)</code> with the rule and classification as proof.</li>
+      <li><code>realize</code> returns “Gertrude is afraid of wolf.” while the JSON value remains <code>["wolf"]</code>.</li>
+    </ol>
+    <p>Retrieval alone cannot produce this answer. The result depends on episode segmentation, class morphology, rule compilation, entity identity, unification, answer-slot selection, and deterministic English realization. The same operation succeeds on all 1,000 held-out Task 15 cases; no story answer is stored in the promoted model.</p>
+
+    <h2>2. Language understanding is bounded compilation</h2>
+    <p>The language core does not claim unrestricted human parsing. It recognizes a declared set of constructions and tolerates controlled surface variation. A construction is useful only when it binds words to typed semantic slots. For example, “Is Mars a planet?” and “Jhon is a man” use the same <code>is_a</code> predicate in question and assertion positions, while “What is Gertrude afraid of?” leaves the value of <code>afraid_of</code> open.</p>
+    <p>Normalization retains the original input and records every correction. Declared spelling variants are preferred over edit distance. Approximate correction is limited to a controlled vocabulary and must not merge known entities. If several analyses remain plausible, the correct result is <code>AMBIGUOUS</code> or <code>NEEDS_CLARIFICATION</code>, not an arbitrary guess.</p>
+    <p>Discourse state is explicit input to compilation. The current runtime carries one last-resolved entity for simple pronouns. Richer salience, ellipsis, corrections, and competing referents require future typed discourse modules; they are not hidden inside a chat transcript.</p>
+
+    <h2>3. The generated code is the learned model</h2>
+    <p>The stable runtime contains algorithms that should transfer between corpora: tokenization, construction matching, query execution, unification, provenance, induction thresholds, abduction mechanics, and realization mechanics. The promoted model contains corpus-conditioned constructions and morphology from bAbI. Optional generated KB modules contain domain entities, facts, rules, constructions, and indexes and are selected explicitly.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+  A[Stable core] --> C[ESLM competence]
+  B[Promoted model] --> C
+  K[Selected KB modules] --> C
+  C --> D[Runtime behavior]
+  C --> E[Named experimental condition]</pre><figcaption>ESLM competence is the composition of transferable algorithms, a promoted corpus model, and any explicitly selected domain modules.</figcaption></figure>
+    <p><strong>Purpose of this diagram.</strong> It shows that neither half is a complete model. The core without generated knowledge has algorithms but little content. Generated tables without the core cannot interpret questions or execute rules. Runtime behavior is their deterministic composition.</p>
+    <p>Generated modules compress repeated structure with stable IDs, canonical predicates, posting lists, shared rules, and reusable constructions. Compression is valid only when claims, qualifications, exceptions, and provenance remain reconstructible. Shorter source that loses semantics is not a better model.</p>
+
+    <h2>4. Reasoning is proof-producing execution</h2>
+    <p>A fact contains a subject, predicate, object or scalar value, and source provenance. A rule contains positive triple premises and one triple conclusion. Unification binds variables consistently; derived facts record the rule and supporting fact IDs. Duplicate signatures and a round budget guarantee termination for the current rule language.</p>
+    <p>Deduction produces ordinary supported facts and records proof depth. Induction is deliberately separated: it may propose an allowlisted capability when at least three class members meet a configured coverage threshold, and returns <code>INDUCTIVE</code> with observed support rather than pretending to prove a universal. Abduction reverses only rules explicitly marked abductive and only when the queried observation is itself supported; it returns ranked hypotheses under <code>ABDUCTIVE</code>, never asserted causes.</p>
+    <p>The inference result is epistemic as well as semantic. <code>ANSWERED</code> means a direct or deductive value has support. <code>INDUCTIVE</code> marks a thresholded generalization. <code>ABDUCTIVE</code> marks possible explanations. <code>UNKNOWN</code> means the query is representable but evidence is insufficient. <code>UNSUPPORTED</code> means no safe construction or executor represents the request. <code>AMBIGUOUS</code> means multiple analyses survive. These outcomes are part of model competence, not error-message decoration.</p>
+
+    <h2>5. Task Calculus describes executable work</h2>
+    <p>Task Calculus supplies eight semantic operation families: OBSERVE, STRUCTURE, RELATE, REDUCE, DERIVE, CONSTRUCT, VERIFY, and EFFECT. They classify the work performed by training, inference, and evaluation circuits. They do not replace grammar or knowledge representation.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[STRUCTURE input] --> B[RELATE to model]
+  B --> C{Direct support?}
+  C -->|yes| E[VERIFY proof]
+  C -->|no| D[DERIVE consequence]
+  D --> E
+  E -->|valid| F[CONSTRUCT response]
+  E -->|absent| G[UNKNOWN or UNSUPPORTED]</pre><figcaption>The runtime Task Calculus macro branches on direct support and exposes both successful construction and residual outcomes.</figcaption></figure>
+    <p><strong>Purpose of this diagram.</strong> It shows the central runtime macro, not the entire operator vocabulary. The input is structured into a query, entities are related to indexed knowledge, consequences are derived, and support is verified. Response realization is a subsequent CONSTRUCT operation.</p>
+    <p>Control operators such as THEN, ALL, CHOOSE, EACH, UNTIL, BEAM, MEMO, and COMPENSATE describe how operations compose. Only controls with implemented executors may appear in an executable circuit. A missing capability remains explicit; runtime never delegates it to an undeclared external model.</p>
+    <p>For the Gertrude episode, STRUCTURE segments statements and compiles typed triples; RELATE resolves the individual against the temporary world; DERIVE instantiates the fear rule; VERIFY requires the classification and rule in the proof; and CONSTRUCT realizes the semantic value. OBSERVE reads the supplied episode and promoted morphology. REDUCE narrows predicate and subject postings. No EFFECT occurs because inference does not modify a generated module.</p>
+
+    <h2>6. Training is evidence-bounded program synthesis</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Authorized records] --> B[Training packet]
+  B --> C[Coding agent]
+  C --> D[Model modules]
+  C --> E[Residual report]
+  D --> F{Validation passes?}
+  F -->|yes| G[Candidate for evaluation]
+  F -->|no| H[Rejected candidate]</pre><figcaption>Agent synthesis has two products—model code and residual disclosure—and validation determines whether the candidate may enter evaluation.</figcaption></figure>
+    <p><strong>Purpose of this diagram.</strong> It shows the complete authority boundary. The packet contains only agent-visible training evidence and its hashes. The coding agent generates a candidate model in an isolated directory. Validation checks capabilities, schema, references, indexes, provenance, and representative training-only probes before review.</p>
+    <p>The agent groups repeated evidence into symbols and executable modules. Direct assertions remain distinct from deterministic consequences and tentative induction. A rule requires repeated support or an explicit source rule. Hidden evaluation labels never enter synthesis. A failed benchmark cannot be copied into the model while retaining the same held-out claim.</p>
+
+    <h2>7. The theory is falsifiable</h2>
+    <p>The approach is useful only if generated modules generalize beyond source wording. Evaluation therefore varies spelling, paraphrase, unseen entity names, distractors, relation direction, composition depth, temporal length, ambiguity, and missing evidence. It also measures model bytes, synthesis cost, import time, query latency, trace correctness, and abstention.</p>
+    <p>The hypothesis weakens if model source grows approximately one branch per example, if small paraphrases destroy coverage, if hidden labels are required, if proof traces do not match the actual support, or if an evidence-matched external model is consistently better without losing verification, replay, or efficiency.</p>
+
+    <h2>8. Current implementation boundary</h2>
+    <p>The implemented system covers short English factual queries, aliases, selected spelling errors, one-step discourse references, temporary session learning, indexed direct facts, positive rule closure to a configured depth, thresholded capability induction, guarded rule-based abduction, explicit provenance, deterministic English response forms, batch automation, modular KB loading, model validation, and a completed 1,000-case public Task 15 run. The current optional KBs provide 62 unique direct facts and 14 rules when loaded together. Event calculus, explicit negation, defeasible exceptions, broad construction induction, conflict representation, narrative schemas, and broad world knowledge remain research work.</p>
+    <p class="related"><strong>Continue with:</strong> <a href="concepts.html">Concepts</a> for definitions, <a href="model.html">Generated Model</a> for stored representations, and <a href="reasoning.html">Reasoning Trace</a> for executable semantics. The authoritative theory is <a href="specsLoader.html?spec=DS002-current-eslm-theory.md">DS002</a>; implementation coverage is <a href="specsLoader.html?spec=DS017-theory-implementation-status.md">DS017</a>.</p>
+  </main>
+</body>
+</html>

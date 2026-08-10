@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ESLM Documentation — Generated Model</title>
+  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main>
+    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Generated Model</p>
+    <h1>The promoted model and optional KB graph</h1>
+    <p class="lead">The default model is the static ESM graph rooted at <code>training/model/manifest.mjs</code>. It was generated from 10,000 bAbI Task 15 training episodes and contains reusable language and reasoning policy, not the people, rules, or answers of those episodes. Optional domain graphs under <code>training/KBs/QUICK/model/</code> can be selected independently.</p>
+
+    <h2>Why the persistent fact tables are empty</h2>
+    <p>Each bAbI case defines a new world. A name such as Gertrude may have a different class in another episode, and a class such as mice may fear a different class. Promoting any of those story facts globally would leak train worlds into unrelated test worlds. The correct compiled representation is therefore a small episode compiler: it recognizes the recurring constructions, creates temporary entities, facts, and rules from the supplied story, answers the question, and discards the world.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+  A[10,000 train worlds] --> B[Coding-agent analysis]
+  B --> C[Construction schemas]
+  B --> D[Morphology table]
+  B -. rejected .-> E[Story answer table]
+  C --> F[1,743-byte model]
+  D --> F
+  T[New test story] --> G[Temporary world]
+  F --> G
+  G --> H[Deductive answer]</pre><figcaption>Training compresses recurring language structure. Episode-specific states are rejected from promotion and reconstructed from every new input.</figcaption></figure>
+
+    <h2>Module inventory</h2>
+    <table><thead><tr><th>Module</th><th>Generated content</th><th>Runtime role</th></tr></thead><tbody>
+      <tr><td><code>manifest.mjs</code></td><td>Model ID, format, generation time, train digest, and <code>babi-task-15-train-only</code> evidence regime.</td><td>Single static entry point that composes all model sections.</td></tr>
+      <tr><td><code>language.mjs</code></td><td>Three constructions: universal fear rule, individual class assertion, and fear-object question.</td><td>Documents corpus-conditioned language coverage used by the stable compilers.</td></tr>
+      <tr><td><code>reasoning.mjs</code></td><td>Eight deduction rounds, induction and abduction budgets, and four plural-to-singular class mappings.</td><td>Supplies bounded execution policy and bAbI morphology.</td></tr>
+      <tr><td><code>entities.mjs</code></td><td>Empty frozen array.</td><td>Confirms that no train-episode identity was promoted.</td></tr>
+      <tr><td><code>facts.mjs</code></td><td>Empty frozen array.</td><td>Confirms that no train story or answer became persistent knowledge.</td></tr>
+      <tr><td><code>rules.mjs</code></td><td>Empty frozen array.</td><td>Universal fear relations vary by episode and are compiled from the current input.</td></tr>
+      <tr><td><code>indexes.mjs</code></td><td>Empty canonical postings and alias map.</td><td>Valid starting indexes; session facts receive runtime postings after compilation.</td></tr>
+    </tbody></table>
+
+    <h2>Recorded run evidence</h2>
+    <p>The generated modules total 1,743 bytes. <code>synthesis-report.json</code> records coverage and limitations, while <code>training-run.json</code> records acquisition, deterministic preparation, full-train analysis by one coding agent, candidate validation, promotion, and the held-out result. Integrity digests remain in those machine-readable artifacts rather than being repeated on this page.</p>
+    <p>The v1 ledger verified the 20 prepared chunk files but was not used as a completion journal; every ledger entry remains <code>pending</code>. The full-train analysis and candidate validation support the recorded synthesis, not nonexistent per-chunk or parallel-worker receipts.</p>
+    <p>The training run reports 40,000 individual classifications, 40,000 universal-rule observations over 12 class-pair signatures, and zero unsupported statements. The answer distribution was measured during train-only analysis but not placed in generated code. Test hash and accuracy are attached only after candidate handoff.</p>
+
+    <h2>Runtime composition</h2>
+    <p><code>modelWithSession</code> merges the promoted frozen arrays with an explicit session overlay. For Task 15, each universal statement adds one rule and each individual statement adds one fact. <code>deriveClosure</code> runs over that combined view. The promoted object stays unchanged, so separate benchmark cases cannot contaminate one another.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Promoted empty world] --> D[Combined view]
+  K[Selected KB modules] --> D
+  B[Episode entities + facts] --> D
+  C[Episode universal rules] --> D
+  D --> E[Bounded closure]
+  E --> F[Runtime postings]
+  F --> G{Query match}
+  G -->|found| H[Value + proof]
+  G -->|absent| I[UNKNOWN]</pre><figcaption>The promoted model supplies schemas and limits; optional KBs supply persistent domain claims; the current episode supplies temporary world state.</figcaption></figure>
+
+    <h2>Optional generated knowledge graphs</h2>
+    <p>The directories <code>kbs/child-basic</code>, <code>kbs/animals</code>, and <code>kbs/space-geography</code> each contain the same seven-module contract as a complete model. Their reviewed sources live in <code>training/KBs/QUICK/source/</code> and are compiled by <code>kb build</code>. The loader merges selected entities by stable ID, deduplicates facts and rules by semantic signature, combines constructions and lexical variants, rebuilds all postings, and validates the result before engine construction.</p>
+    <table><thead><tr><th>Configuration</th><th>Persistent entities</th><th>Direct facts</th><th>Rules</th><th>Closure facts</th></tr></thead><tbody>
+      <tr><td>Promoted model only</td><td>0</td><td>0</td><td>0</td><td>0 before an episode</td></tr>
+      <tr><td><code>child-basic</code></td><td>8</td><td>12</td><td>9</td><td>18</td></tr>
+      <tr><td><code>animals</code></td><td>12</td><td>21</td><td>5</td><td>45</td></tr>
+      <tr><td><code>space-geography</code></td><td>20</td><td>35</td><td>0</td><td>35</td></tr>
+      <tr><td>All selected</td><td>36</td><td>62</td><td>14</td><td>116</td></tr>
+    </tbody></table>
+    <p>The all-module closure is not the sum of standalone closures. Predicates are shared intentionally, so <code>animals</code> can prove that a penguin is a living being and <code>child-basic</code> can then apply its living-being rules. Every cross-module consequence records both rule and fact provenance. The merged manifest lists active KB IDs and marks the artifact non-comparable to the default public run.</p>
+
+    <h2>Validation</h2>
+    <p>The skill-local validator rejects forbidden ambient capabilities and checks the imported model shape. The project validator checks model format, entities, facts, rules, reasoning thresholds, alias uniqueness, and equality between canonical facts and generated postings. Empty indexes are valid only because canonical persistent facts are also empty. Candidate and promoted validation both passed for the recorded run.</p>
+    <p class="related"><strong>Continue with:</strong> <a href="knowledge-bases.html">Knowledge Bases</a> for source-by-source contents, <a href="training.html">Training</a> for chunked synthesis, <a href="reasoning.html">Reasoning</a> for execution, and <a href="specsLoader.html?spec=DS005-code-model-and-indexes.md">DS005</a> for the model contract.</p>
+  </main>
+</body>
+</html>

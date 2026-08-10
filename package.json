@@ -1,0 +1,29 @@
+{
+  "name": "executable-symbolic-language-model",
+  "version": "0.1.0",
+  "description": "Offline executable symbolic language model generated as auditable Node.js modules",
+  "type": "module",
+  "private": true,
+  "bin": {
+    "eslm": "./src/cli.mjs"
+  },
+  "scripts": {
+    "test": "node --test",
+    "dataset:fetch": "node src/cli.mjs dataset fetch --dataset babi-15-en-10k-v1.2",
+    "dataset:prepare": "node src/cli.mjs dataset prepare --dataset babi-15-en-10k-v1.2 --chunk-size 500",
+    "evaluate": "node src/cli.mjs evaluate --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl --publish",
+    "benchmark": "node src/cli.mjs benchmark run --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl --publish",
+    "profile:scale": "node scripts/profile-core-scale.mjs --output docs/results/latest-core-scale.json",
+    "probe:oewn": "node scripts/probe-oewn.mjs --publish-output docs/results/latest-oewn-probe.json",
+    "kb:build": "node src/cli.mjs kb build all",
+    "kb:validate": "node src/cli.mjs kb validate all",
+    "test:kbs:random": "node scripts/test-source-kbs.mjs --cases 100 --output docs/results/latest-kb-random-tests.json",
+    "docs:matrix": "node src/spec-matrix.mjs",
+    "docs:check": "node src/cli.mjs docs check",
+    "check": "npm test && npm run profile:scale && npm run evaluate && npm run benchmark && npm run docs:matrix && npm run docs:check && node src/cli.mjs train validate"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

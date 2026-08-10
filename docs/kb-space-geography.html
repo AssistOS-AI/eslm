@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESLM — space-geography KB</title><link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script></head>
+<body><div data-include="partials/header.html"></div><main>
+  <p class="breadcrumb"><a href="knowledge-bases.html">Knowledge Bases</a> / space-geography</p>
+  <h1>Solar system and broad geography</h1>
+  <p class="lead"><code>space-geography</code> contains 20 entities and 35 direct facts. It has no rules, so its standalone executable count is also 35. It demonstrates selective retrieval across classifications, containment, colors, and directed spatial relations.</p>
+
+  <h2>What can be queried</h2>
+  <p>The module classifies the Sun as a star, the Moon as a natural satellite, and eight named planets as planets. It places those ten astronomical bodies in the Solar System. Mars is represented as red, while Earth and Neptune are represented as blue in the simplified visible-color vocabulary. Seven continents and two oceans are located on Earth.</p>
+  <p>Three continent-scale relations are included: Europe north of Africa, North America north of South America, and Asia north of Australia. These are intentionally coarse educational relations. They are not claims about every point, border geometry, political territory, or coordinate system.</p>
+  <figure class="diagram"><pre class="mermaid">flowchart LR
+  A[Question] --> B{Requested predicate}
+  B -->|is_a| C[Planet/category postings]
+  B -->|located_in| D[Solar or Earth postings]
+  B -->|color| E[Visible-color postings]
+  B -->|north_of| F[Directed relation postings]
+  C --> G[Exact semantic value]
+  D --> G
+  E --> G
+  F --> G
+  G --> H[English realization]
+  G --> I[Fact provenance]</pre><figcaption>One domain module supports several query shapes. Predicate selection routes the same entity IDs into different postings, and each result retains its source fact.</figcaption></figure>
+
+  <h2>Tested commands</h2>
+  <pre><code>node src/cli.mjs ask "Is Mars a planet?" --kb space-geography
+node src/cli.mjs ask "Where is Neptune?" --kb space-geography
+node src/cli.mjs ask "What color is Mars?" --kb space-geography
+node src/cli.mjs ask "What is north of Africa?" --kb space-geography</code></pre>
+  <p>These produce, respectively, <code>Yes.</code>, <code>Neptune is in Solar System.</code>, <code>Mars is red.</code>, and <code>Europe is north of Africa.</code>. Questions about countries, capitals, distances, orbital order, moons other than Earth's Moon, or current geographical facts return <code>UNKNOWN</code> or <code>UNSUPPORTED</code> because this module does not encode them.</p>
+
+  <h2>Source and regeneration</h2>
+  <p>The reviewed source is <code>training/KBs/QUICK/source/space-geography.json</code>; generated ESM modules are under <code>training/KBs/QUICK/model/space-geography/</code>. Rebuild with <code>kb build space-geography</code> and validate with <code>kb validate space-geography</code>. This source is locally generated and explicitly excluded from public benchmark claims.</p>
+  <p class="related"><strong>Continue with:</strong> <a href="knowledge-bases.html">Knowledge Bases</a> for loading and counts, <a href="architecture.html">Architecture</a> for merge and indexing, and <a href="benchmarks.html">Benchmarks</a> for experimental isolation.</p>
+</main></body></html>

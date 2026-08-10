@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://axiologic.net/storycircuit/schemas/trace.schema.json",
+  "title": "Execution trace",
+  "type": "object",
+  "required": ["trace_id", "model_hash", "input_hash", "nodes", "edges", "result"],
+  "properties": {
+    "trace_id": {"type": "string"},
+    "model_hash": {"type": "string"},
+    "input_hash": {"type": "string"},
+    "nodes": {"type": "array", "items": {"type": "object", "required": ["id", "kind", "status", "payload"], "properties": {"id": {"type": "string"}, "kind": {"type": "string"}, "status": {"type": "string"}, "payload": {"type": "object"}, "provenance": {"type": "array", "items": {"type": "object"}}}, "additionalProperties": false}},
+    "edges": {"type": "array", "items": {"type": "object", "required": ["source", "target", "type"], "properties": {"source": {"type": "string"}, "target": {"type": "string"}, "type": {"type": "string"}}, "additionalProperties": false}},
+    "result": {},
+    "diagnostics": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": false
+}

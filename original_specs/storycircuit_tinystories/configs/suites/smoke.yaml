@@ -1,0 +1,7 @@
+{
+  "name": "smoke",
+  "case_files": ["eval/samples/smoke_cases.jsonl"],
+  "output_dir": "results/smoke/evaluation",
+  "bootstrap_samples": 200,
+  "generation_seeds": [0, 1, 2]
+}

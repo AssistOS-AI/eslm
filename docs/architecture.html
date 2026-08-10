@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ESLM Documentation — Architecture</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script type="module" src="assets/mermaid-loader.mjs"></script>
+  <script src="partials-loader.js" defer></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main>
+    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Architecture</p>
+    <h1>Runtime and model architecture</h1>
+    <p class="lead">The architecture separates transferable algorithms in <code>src/</code> from corpus-conditioned executable data in <code>training/model/</code>. This boundary allows the coding agent to change learned knowledge without rewriting the language and inference engine.</p>
+
+    <h2>Language compilation</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Input text] --> B[Normalizer]
+  B --> C[Tokens]
+  B --> D[Corrections]
+  C --> E{Parser match?}
+  E -->|yes| F[Query contract]
+  E -->|no| G[Diagnostic]</pre><figcaption>Language compilation separates correction evidence from tokens and branches explicitly when no supported construction matches.</figcaption></figure>
+    <p><strong>Purpose.</strong> This diagram isolates the part that interprets language. The normalizer produces tokens and correction records. The parser matches supported English constructions and resolves their slots. The query contract is a structured object consumed by the reasoner; it contains no executable source from the user.</p>
+    <p>The relevant modules are <code>language.mjs</code>, <code>parser.mjs</code>, and the orchestration in <code>engine.mjs</code>. A failure here is reported as unsupported or ambiguous before knowledge execution starts.</p>
+    <table><thead><tr><th>Function</th><th>Receives</th><th>Returns</th></tr></thead><tbody>
+      <tr><td><code>normalizeInput</code></td><td>raw text and loaded model</td><td>tokens, normalized text, corrections, and <code>language: "en"</code></td></tr>
+      <tr><td><code>parseQuestion</code></td><td>normalized input, model, and context</td><td>typed query or an unsupported/ambiguous diagnostic</td></tr>
+      <tr><td>entity resolution</td><td>construction slot and model aliases</td><td>one entity ID, ambiguity candidates, or a missing phrase</td></tr>
+    </tbody></table>
+
+    <h2>Knowledge execution</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Query contract] --> B[Subject posting]
+  A --> C[Predicate posting]
+  A --> D[Object posting]
+  B --> E[Intersection]
+  C --> E
+  D --> E
+  E --> F{Fact found?}
+  F -->|yes| G[Values and proof]
+  F -->|no| H[Bounded rules]</pre><figcaption>Each bound query field selects its own posting; their intersection either provides a fact or hands the query to bounded derivation.</figcaption></figure>
+    <p><strong>Purpose.</strong> This diagram shows the reasoning boundary. Subject, predicate, and object postings narrow candidate facts. The rule engine derives additional facts by unification. The output preserves direct sources, rule ID, and supporting fact IDs.</p>
+    <p><code>reasoner.mjs</code> builds indexes over direct and derived facts. Duplicate signatures and the maximum round count bound closure. The engine never treats a missing proof as false.</p>
+    <p>At engine construction, <code>deriveClosure(model)</code> starts with direct facts and applies each rule for at most eight rounds. <code>indexFacts(facts)</code> then builds maps by subject, predicate, and object/value. With <code>--kb space-geography</code>, “Where is Neptune?” intersects the <code>neptune</code> subject posting with the <code>located_in</code> predicate posting and returns the direct Solar System fact. With <code>--kb child-basic</code>, the Jhon mortality query instead reaches a fact derived through three rules.</p>
+
+    <h2>Response construction</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Semantic values] --> B{Evidence exists?}
+  B -->|yes| C[English realizer]
+  B -->|no| D[Epistemic response]
+  C --> E[Answer text]
+  C --> F[JSON values and proof]
+  D --> G[UNKNOWN status]</pre><figcaption>Response construction separates supported realization from epistemic abstention and emits text plus structured evidence in parallel.</figcaption></figure>
+    <p><strong>Purpose.</strong> This diagram shows that wording follows verification. <code>realizer.mjs</code> selects an English sentence form and model display names. <code>engine.mjs</code> returns that sentence together with status, semantic values, normalization details, query, provenance, conversation context, and explicit active-model/KB comparability metadata.</p>
+
+    <h2>Stable core and generated model</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+  A[src algorithms] --> C[Engine instance]
+  B[Promoted benchmark model] --> C
+  K{KB selection} -->|none| C
+  K -->|one or more| M[Validated merged graph]
+  M --> C
+  C --> D[Deterministic inference]
+  C --> E[Model + KB metadata]</pre><figcaption>The engine always has one promoted base model; optional KB selection creates a validated merged graph and records that experimental condition.</figcaption></figure>
+    <p><strong>Purpose.</strong> This diagram defines ownership and configuration. Stable algorithms implement normalization, parsing, indexing, rules, tracing, and realization. The promoted generated model provides corpus-conditioned constructions. Optional KB modules add persistent entities, facts, and rules. The manifest remains the entry point for each artifact, while <code>mergeModels</code> constructs and validates the selected active view.</p>
+    <table><thead><tr><th>Generated module</th><th>Runtime use</th></tr></thead><tbody>
+      <tr><td><code>manifest.mjs</code></td><td>loads the complete model and declares format and evidence regime</td></tr>
+      <tr><td><code>entities.mjs</code></td><td>resolves aliases and selects English display names</td></tr>
+      <tr><td><code>facts.mjs</code></td><td>provides direct claims with source provenance</td></tr>
+      <tr><td><code>rules.mjs</code></td><td>provides bounded triple premises and conclusions</td></tr>
+      <tr><td><code>language.mjs</code></td><td>provides accepted English variants and declared constructions</td></tr>
+      <tr><td><code>indexes.mjs</code></td><td>stores generated direct-fact postings checked by validation</td></tr>
+    </tbody></table>
+    <p>Generated KB directories use the same module contract. When several are selected, entity declarations with matching IDs and kinds are combined, semantically identical facts and rules are deduplicated, and indexes are rebuilt from the merged fact positions. This prevents stale postings and makes module composition deterministic. The merged manifest lists its KB IDs and disables direct comparability with the clean benchmark configuration.</p>
+
+    <h2>Candidate trust boundary</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Generated candidate] --> B{Policy scan}
+  B -->|fail| C[Reject code]
+  B -->|pass| D{Model invariants}
+  D -->|fail| E[Return diagnostics]
+  D -->|pass| F[Human review]
+  F --> G[Promoted model]</pre><figcaption>The trust boundary has two machine rejection points before a candidate can reach human review and promotion.</figcaption></figure>
+    <p><strong>Purpose.</strong> Generated JavaScript is treated as untrusted until validation. The static scan rejects ambient capabilities such as networking, child processes, dynamic code compilation, and corpus-selected imports. Semantic validation checks the format, entity references, fact shape, provenance, rules, and generated indexes. Human review remains required before promotion.</p>
+    <p><code>validateGeneratedModel</code> reads every candidate <code>.mjs</code> source and applies the forbidden-pattern policy. It then imports only <code>manifest.mjs</code> and calls <code>validateModel</code>. The validator recomputes subject, predicate, and object postings from <code>facts.mjs</code> and compares them with <code>indexes.mjs</code>. A stale position fails validation.</p>
+
+    <h2>Scaling boundary</h2>
+    <p>The current engine builds complete bounded closure and posting lists in memory. Posting insertion and bound-premise selection have been improved, but the model still imports all arrays, rejects polysemous aliases, validates whole indexes, and rebuilds closure for session overlays. These are explicit blockers, not future optimizations hidden behind a scale claim.</p>
+    <p>The <a href="scalability.html">Scale and Context review</a> defines the replacement: streaming probes and compilation, interned dictionaries, relation-and-scope shards, query-directed rule activation, profiling, and explicit time, space, domain, actual/fictional world, perspective, and hypothetical branch semantics. WordNet training cannot proceed to promotion before that gate passes.</p>
+    <p class="related"><strong>Continue with:</strong> <a href="scalability.html">Scale and Context</a> for the architecture gate, <a href="model.html">Generated Model</a> for every current v1 module, <a href="reasoning.html">Reasoning Trace</a> for one derivation, and <a href="cli.html">CLI Tutorial</a> to run the paths. Authoritative contracts are <a href="specsLoader.html?spec=DS003-system-architecture.md">DS003</a>, <a href="specsLoader.html?spec=DS005-code-model-and-indexes.md">DS005</a>, <a href="specsLoader.html?spec=DS008-runtime-query-pipeline.md">DS008</a>, and <a href="specsLoader.html?spec=DS019-scalability-profiling-and-contextual-worlds.md">DS019</a>.</p>
+  </main>
+</body>
+</html>

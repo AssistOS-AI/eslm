@@ -1,0 +1,11 @@
+{
+  "format": "eslm-kb-bundle-source-v1",
+  "id": "quick",
+  "title": "QUICK development knowledge base",
+  "version": "1.0.0",
+  "role": "A small, inspectable fixture bundle for smoke tests, CLI tutorials, parser checks, bounded deduction, induction, abduction, and provenance checks.",
+  "evidenceBoundary": "QUICK is authored project data. It is not learned from a public corpus, does not establish broad world knowledge, and is never eligible for public benchmark comparison.",
+  "members": ["child-basic", "animals", "space-geography"],
+  "defaultInInteractiveCli": true,
+  "benchmarkEligible": false
+}

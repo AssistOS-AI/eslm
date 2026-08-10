@@ -1,0 +1,35 @@
+{
+  "format": "eslm-synthesis-report-v1",
+  "status": "coding-agent-synthesized-and-promoted",
+  "dataset": "babi-15-en-10k-v1.2",
+  "packetContentDigest": "149fd0cba766b19507dded58def9559bc53e54fdbf692055fbe57bda7380ffec",
+  "sourceRecords": 10000,
+  "sourceChunks": 20,
+  "executionMode": "single-primary-coding-agent",
+  "forkedWorkers": 0,
+  "sourceBytes": 877358,
+  "generatedModuleBytes": 1743,
+  "compressionClaim": "episode schemas only; train episode facts and answers are not promoted",
+  "coverage": {
+    "episodeEntities": { "source": 4, "encodedPersistent": 0 },
+    "episodeFacts": { "encodedPersistent": 0 },
+    "episodeRules": { "encodedPersistent": 0 },
+    "constructions": { "encoded": 3 },
+    "irregularClassForms": { "encoded": 4 },
+    "reasoningPolicies": { "encoded": 1 }
+  },
+  "residuals": {
+    "ambiguous": [],
+    "conflicts": [],
+    "unsupported": [],
+    "lowConfidenceInductions": []
+  },
+  "limitations": [
+    "The promoted run covered a 10,000-case public train split, but its narrow recurring schema makes this a construction-generalization result rather than a broad knowledge-compression result.",
+    "The prepared v1 chunk ledger was not used as a worker completion journal; completion is supported by full-train analysis and candidate validation, not by 20 worker receipts.",
+    "No parallel workers generated the promoted model. A parallel assignment and deterministic reduction protocol was added afterward for future runs.",
+    "Task 15 measures one-step class-rule instantiation, not arbitrary deductive depth.",
+    "The generated model does not include Task 15 test text, answers, entities, or story facts.",
+    "Induction and abduction remain runtime methods verified with isolated unit fixtures, not capabilities measured by this dataset."
+  ]
+}

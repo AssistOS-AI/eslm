@@ -1,0 +1,81 @@
+{
+  "format": "eslm-kb-build-report-v1",
+  "dataset": "atomic-2020",
+  "status": "complete",
+  "manifest": {
+    "format": "eslm-public-kb-v1",
+    "id": "atomic-2020",
+    "title": "ATOMIC 2020",
+    "version": "February 2021",
+    "kind": "defeasible-event-commonsense",
+    "generatedBy": "coding-agent+deterministic-node-compiler",
+    "sourceArchive": "atomic2020_data-feb2021.zip",
+    "sourceDigest": "47c5f362ab4a3ea58c4962eebfdfd1c5420d3780e74cd3fe09efeef64f941c2b",
+    "sourceSplit": "train.tsv",
+    "license": "CC BY; retain ATOMIC 2020 paper and dataset attribution",
+    "trainOnly": true,
+    "benchmarkEligible": false,
+    "counts": {
+      "sourceTrainRows": 1076880,
+      "retainedUniqueNonNoneTuples": 940426,
+      "ignoredNoneRows": 120282,
+      "malformedRows": 1,
+      "uniqueEvents": 36940
+    },
+    "relations": {
+      "oReact": 27534,
+      "oWant": 47116,
+      "xAttr": 113096,
+      "xEffect": 83711,
+      "xIntent": 49699,
+      "xNeed": 91161,
+      "xReact": 62424,
+      "xWant": 109072,
+      "oEffect": 31544,
+      "AtLocation": 17423,
+      "ObjectUse": 140181,
+      "Desires": 2718,
+      "HasProperty": 4971,
+      "NotDesires": 2807,
+      "Causes": 329,
+      "HasSubEvent": 10894,
+      "xReason": 292,
+      "CapableOf": 7216,
+      "MadeUpOf": 2911,
+      "isAfter": 16461,
+      "isBefore": 17076,
+      "isFilledBy": 24174,
+      "HinderedBy": 77616
+    },
+    "capabilities": [
+      "intent",
+      "precondition",
+      "effect",
+      "reaction",
+      "desire",
+      "event-order",
+      "defeasible-cause"
+    ],
+    "limitations": [
+      "answers are plausible candidates, not certain facts",
+      "event matching is lexical and bounded",
+      "dev/test tuples are not compiled"
+    ]
+  },
+  "source": {
+    "archive": "training/.cache/corpora/atomic-2020/atomic2020_data-feb2021.zip",
+    "bytes": 12580048,
+    "split": "train.tsv"
+  },
+  "generated": {
+    "directory": "training/KBs/atomic-2020/model",
+    "files": 17,
+    "bytes": 32959130
+  },
+  "profile": {
+    "elapsedMilliseconds": 4522.286379,
+    "recordsPerSecond": 238127.33421763688,
+    "rssDeltaBytes": 493252608,
+    "heapUsedDeltaBytes": 409769616
+  }
+}

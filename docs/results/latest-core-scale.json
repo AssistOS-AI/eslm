@@ -1,0 +1,154 @@
+{
+  "format": "eslm-core-scale-report-v1",
+  "createdAt": "2026-08-10T13:43:54.920Z",
+  "node": "v22.23.1",
+  "platform": "linux-x64",
+  "interpretation": "Synthetic primitive profile; not a corpus or end-to-end model benchmark.",
+  "sizes": [
+    1000,
+    10000,
+    100000
+  ],
+  "closureLimit": 10000,
+  "profiles": [
+    {
+      "format": "eslm-profile-v1",
+      "kind": "core-scale",
+      "status": "ok",
+      "metadata": {
+        "directFacts": 1000
+      },
+      "durationMs": 7.904,
+      "rssBytes": 10805248,
+      "heapUsedBytes": 1266848,
+      "externalBytes": -8336,
+      "cpuUserMs": 10.033,
+      "cpuSystemMs": 1.77,
+      "metrics": {
+        "directFacts": 1000,
+        "closureFacts": 1500
+      },
+      "stages": [
+        {
+          "name": "retrieval.build-index",
+          "status": "ok",
+          "durationMs": 0.789,
+          "rssBytes": 524288,
+          "heapUsedBytes": 486448,
+          "externalBytes": 0,
+          "cpuUserMs": 0.756,
+          "cpuSystemMs": 0,
+          "metrics": {
+            "facts": 1000,
+            "subjectKeys": 1000,
+            "predicateKeys": 1,
+            "objectKeys": 2
+          }
+        },
+        {
+          "name": "reasoning.one-premise-closure",
+          "status": "ok",
+          "durationMs": 6.662,
+          "rssBytes": 10280960,
+          "heapUsedBytes": 758432,
+          "externalBytes": -8392,
+          "cpuUserMs": 8.932,
+          "cpuSystemMs": 1.757,
+          "metrics": {
+            "facts": 1000,
+            "rules": 1,
+            "maxRounds": 3,
+            "closureFacts": 1500
+          }
+        }
+      ]
+    },
+    {
+      "format": "eslm-profile-v1",
+      "kind": "core-scale",
+      "status": "ok",
+      "metadata": {
+        "directFacts": 10000
+      },
+      "durationMs": 46.281,
+      "rssBytes": 34156544,
+      "heapUsedBytes": 16778464,
+      "externalBytes": -18675,
+      "cpuUserMs": 77.142,
+      "cpuSystemMs": 10.564,
+      "metrics": {
+        "directFacts": 10000,
+        "closureFacts": 15000
+      },
+      "stages": [
+        {
+          "name": "retrieval.build-index",
+          "status": "ok",
+          "durationMs": 5.435,
+          "rssBytes": 6545408,
+          "heapUsedBytes": 2920736,
+          "externalBytes": 0,
+          "cpuUserMs": 10.482,
+          "cpuSystemMs": 1.783,
+          "metrics": {
+            "facts": 10000,
+            "subjectKeys": 10000,
+            "predicateKeys": 1,
+            "objectKeys": 2
+          }
+        },
+        {
+          "name": "reasoning.one-premise-closure",
+          "status": "ok",
+          "durationMs": 40.735,
+          "rssBytes": 27611136,
+          "heapUsedBytes": 13848136,
+          "externalBytes": -18675,
+          "cpuUserMs": 66.526,
+          "cpuSystemMs": 8.766,
+          "metrics": {
+            "facts": 10000,
+            "rules": 1,
+            "maxRounds": 3,
+            "closureFacts": 15000
+          }
+        }
+      ]
+    },
+    {
+      "format": "eslm-profile-v1",
+      "kind": "core-scale",
+      "status": "ok",
+      "metadata": {
+        "directFacts": 100000
+      },
+      "durationMs": 39.402,
+      "rssBytes": 39301120,
+      "heapUsedBytes": 29807976,
+      "externalBytes": 0,
+      "cpuUserMs": 78.395,
+      "cpuSystemMs": 13.312,
+      "metrics": {
+        "directFacts": 100000
+      },
+      "stages": [
+        {
+          "name": "retrieval.build-index",
+          "status": "ok",
+          "durationMs": 39.28,
+          "rssBytes": 39301120,
+          "heapUsedBytes": 29804584,
+          "externalBytes": 0,
+          "cpuUserMs": 78.305,
+          "cpuSystemMs": 13.299,
+          "metrics": {
+            "facts": 100000,
+            "subjectKeys": 100000,
+            "predicateKeys": 1,
+            "objectKeys": 2
+          }
+        }
+      ]
+    }
+  ]
+}

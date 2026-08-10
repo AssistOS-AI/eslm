@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: "StoryCircuit-TinyStories: An Executable Symbolic Language Model Research Kit"
+message: "Please cite this software and the TinyStories paper when using the kit."
+type: software
+version: 0.1.0
+date-released: 2026-08-10
+authors:
+  - name: "Axiologic Research"
+license: Apache-2.0
+repository-code: "https://www.axiologic.net/"
+keywords:
+  - symbolic language model
+  - TinyStories
+  - neuro-symbolic AI
+  - executable semantics
+  - program induction

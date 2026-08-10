@@ -1,0 +1,23 @@
+{
+  "expected_parameter_count": 18912,
+  "model": {
+    "d_ff": 64,
+    "d_model": 32,
+    "dropout": 0.0,
+    "max_seq_len": 64,
+    "n_heads": 4,
+    "n_layers": 1,
+    "tie_embeddings": true
+  },
+  "name": "byte_smoke",
+  "training": {
+    "batch_size": 4,
+    "grad_clip": 1.0,
+    "learning_rate": 0.001,
+    "log_every": 1,
+    "seed": 1729,
+    "steps": 5,
+    "warmup_steps": 1,
+    "weight_decay": 0.0
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "count_per_family": 200,
+  "files": {
+    "generation": {
+      "items": 200,
+      "path": "generation.jsonl"
+    },
+    "interpretability": {
+      "items": 200,
+      "path": "interpretability.jsonl"
+    },
+    "likelihood": {
+      "items": 200,
+      "path": "likelihood.jsonl"
+    },
+    "minimal_pairs": {
+      "items": 200,
+      "path": "minimal_pairs.jsonl"
+    },
+    "narrative_selection": {
+      "items": 200,
+      "path": "narrative_selection.jsonl"
+    },
+    "reasoning": {
+      "items": 200,
+      "path": "reasoning.jsonl"
+    },
+    "state_tracking": {
+      "items": 200,
+      "path": "state_tracking.jsonl"
+    },
+    "systematic_ood": {
+      "items": 200,
+      "path": "systematic_ood.jsonl"
+    }
+  },
+  "generator": "storycircuit-eval-v0.1",
+  "seed": 20260810
+}

@@ -1,0 +1,639 @@
+{
+  "format": "eslm-corpus-probe-v1",
+  "corpus": "oewn-2025",
+  "status": "probe-complete-architecture-gate-still-blocked",
+  "scope": "The complete moderate archive was scanned, while examples retained by this report remain bounded.",
+  "source": {
+    "release": "2025",
+    "officialUrl": "https://en-word.net/static/english-wordnet-2025-json.zip",
+    "license": "CC BY 4.0 with Princeton WordNet attribution retained",
+    "sha256": "7d749f6e2c39e6970e4997839dcf6e42fd281f3c2fae0171d2192bae8cfa4b51"
+  },
+  "archive": {
+    "compressedBytes": 9986555,
+    "jsonFiles": 73,
+    "synsetFiles": 45,
+    "entryFiles": 27
+  },
+  "synsets": {
+    "count": 107519,
+    "partOfSpeech": {
+      "a": 7502,
+      "n": 71864,
+      "r": 3615,
+      "s": 10717,
+      "v": 13821
+    },
+    "lexicalFiles": {
+      "adj.all": 14496,
+      "adj.pert": 3663,
+      "adj.ppl": 60,
+      "adv.all": 3615,
+      "noun.act": 6566,
+      "noun.animal": 4654,
+      "noun.artifact": 11985,
+      "noun.attribute": 3329,
+      "noun.body": 2036,
+      "noun.cognition": 3148,
+      "noun.communication": 5714,
+      "noun.event": 1078,
+      "noun.feeling": 432,
+      "noun.food": 2670,
+      "noun.group": 2579,
+      "noun.location": 875,
+      "noun.motive": 41,
+      "noun.object": 809,
+      "noun.person": 7848,
+      "noun.phenomenon": 653,
+      "noun.plant": 5588,
+      "noun.possession": 1118,
+      "noun.process": 799,
+      "noun.quantity": 1340,
+      "noun.relation": 455,
+      "noun.shape": 367,
+      "noun.state": 3593,
+      "noun.substance": 3142,
+      "noun.time": 994,
+      "noun.Tops": 51,
+      "verb.body": 550,
+      "verb.change": 2389,
+      "verb.cognition": 697,
+      "verb.communication": 1564,
+      "verb.competition": 460,
+      "verb.consumption": 246,
+      "verb.contact": 2202,
+      "verb.creation": 698,
+      "verb.emotion": 345,
+      "verb.motion": 1409,
+      "verb.perception": 464,
+      "verb.possession": 847,
+      "verb.social": 1112,
+      "verb.stative": 758,
+      "verb.weather": 80
+    },
+    "memberOccurrences": 185129,
+    "uniqueNormalizedMembers": 127311,
+    "ambiguousNormalizedMembers": 25805,
+    "ambiguityHistogram": {
+      "1": 101506,
+      "2": 14962,
+      "3": 4964,
+      "4": 2200,
+      "5": 1197,
+      "6": 698,
+      "7": 490,
+      "8": 279,
+      "9": 207,
+      "10": 164,
+      "11": 133,
+      "12": 98,
+      "13": 71,
+      "14": 58,
+      "15": 43,
+      "16": 31,
+      "17": 35,
+      "18": 30,
+      "19": 16,
+      "20": 17,
+      "21": 16,
+      "22": 18,
+      "23": 11,
+      "24": 6,
+      "25": 7,
+      "26": 3,
+      "27": 4,
+      "28": 3,
+      "29": 3,
+      "30": 2,
+      "31": 2,
+      "32": 3,
+      "33": 1,
+      "34": 3,
+      "35": 2,
+      "36": 3,
+      "37": 3,
+      "38": 2,
+      "39": 1,
+      "40": 2,
+      "41": 2,
+      "42": 2,
+      "43": 1,
+      "44": 3,
+      "45": 3,
+      "48": 1,
+      "51": 1,
+      "52": 1,
+      "57": 1,
+      "70": 1,
+      "75": 1
+    },
+    "mostAmbiguousMembers": [
+      {
+        "value": "break",
+        "occurrences": 75
+      },
+      {
+        "value": "cut",
+        "occurrences": 70
+      },
+      {
+        "value": "run",
+        "occurrences": 57
+      },
+      {
+        "value": "play",
+        "occurrences": 52
+      },
+      {
+        "value": "make",
+        "occurrences": 51
+      },
+      {
+        "value": "light",
+        "occurrences": 48
+      },
+      {
+        "value": "clear",
+        "occurrences": 45
+      },
+      {
+        "value": "draw",
+        "occurrences": 45
+      },
+      {
+        "value": "hold",
+        "occurrences": 45
+      },
+      {
+        "value": "give",
+        "occurrences": 44
+      },
+      {
+        "value": "set",
+        "occurrences": 44
+      },
+      {
+        "value": "take",
+        "occurrences": 44
+      },
+      {
+        "value": "fall",
+        "occurrences": 43
+      },
+      {
+        "value": "head",
+        "occurrences": 42
+      },
+      {
+        "value": "pass",
+        "occurrences": 42
+      },
+      {
+        "value": "call",
+        "occurrences": 41
+      },
+      {
+        "value": "carry",
+        "occurrences": 41
+      },
+      {
+        "value": "charge",
+        "occurrences": 40
+      },
+      {
+        "value": "point",
+        "occurrences": 40
+      },
+      {
+        "value": "catch",
+        "occurrences": 39
+      }
+    ],
+    "definitions": 107524,
+    "examples": 49596,
+    "maximumMembersPerSynset": 28,
+    "maximumDefinitionCharacters": 431,
+    "fieldShapes": {
+      "also:array<string>": 1450,
+      "attribute:array<string>": 925,
+      "causes:array<string>": 219,
+      "definition:array<string>": 107519,
+      "domain_region:array<string>": 2,
+      "domain_topic:array<string>": 6212,
+      "entails:array<string>": 389,
+      "example:array<object>": 629,
+      "example:array<object|string>": 367,
+      "example:array<string>": 33099,
+      "exemplifies:array<string>": 1561,
+      "hypernym:array<string>": 85676,
+      "ili:string": 104335,
+      "members:array<string>": 107519,
+      "mero_member:array<string>": 452,
+      "mero_part:array<string>": 3056,
+      "mero_substance:array<string>": 687,
+      "partOfSpeech:string": 107519,
+      "similar:array<string>": 14707,
+      "source:string": 2222,
+      "wikidata:array<string>": 563,
+      "wikidata:string": 8773
+    }
+  },
+  "lexicalEntries": {
+    "lemmas": 128009,
+    "partOfSpeechRecords": 135969,
+    "partOfSpeech": {
+      "a": 21619,
+      "a-1": 1,
+      "a-2": 1,
+      "n": 98137,
+      "n-1": 42,
+      "n-2": 41,
+      "r": 4489,
+      "s": 22,
+      "v": 11595,
+      "v-1": 11,
+      "v-2": 11
+    },
+    "senses": 185129,
+    "uniqueSenseIds": 185129,
+    "duplicateSenseIds": 0,
+    "pronunciations": 43534,
+    "entryFieldShapes": {
+      "form:array<string>": 3084,
+      "pronunciation:array<object>": 32473,
+      "sense:array<object>": 135969
+    },
+    "senseFieldShapes": {
+      "adjposition:string": 1052,
+      "agent:array<string>": 2625,
+      "also:array<string>": 889,
+      "antonym:array<string>": 7774,
+      "body_part:array<string>": 39,
+      "by_means_of:array<string>": 1026,
+      "derivation:array<string>": 49552,
+      "destination:array<string>": 14,
+      "event:array<string>": 6498,
+      "exemplifies:array<string>": 4329,
+      "id:string": 185129,
+      "instrument:array<string>": 703,
+      "location:array<string>": 226,
+      "material:array<string>": 100,
+      "participle:array<string>": 73,
+      "pertainym:array<string>": 7248,
+      "property:array<string>": 272,
+      "result:array<string>": 1144,
+      "sent:array<string>": 3408,
+      "similar:array<string>": 2,
+      "state:array<string>": 462,
+      "subcat:array<string>": 25096,
+      "synset:string": 185129,
+      "undergoer:array<string>": 727,
+      "uses:array<string>": 567,
+      "vehicle:array<string>": 77
+    }
+  },
+  "relations": {
+    "occurrencesBySynset": {
+      "also": 1450,
+      "attribute": 925,
+      "causes": 219,
+      "domain_region": 2,
+      "domain_topic": 6212,
+      "entails": 389,
+      "exemplifies": 1561,
+      "hypernym": 85676,
+      "mero_member": 452,
+      "mero_part": 3056,
+      "mero_substance": 687,
+      "similar": 14707,
+      "wikidata": 9336
+    },
+    "targetCounts": {
+      "also": 2950,
+      "attribute": 1260,
+      "causes": 221,
+      "domain_region": 2,
+      "domain_topic": 6433,
+      "entails": 407,
+      "exemplifies": 1639,
+      "hypernym": 88075,
+      "mero_member": 723,
+      "mero_part": 5387,
+      "mero_substance": 825,
+      "similar": 23176,
+      "wikidata": 1140
+    },
+    "totalStringTargets": 131098,
+    "missingRelationTargets": 0,
+    "missingByRelation": {},
+    "externalReferenceTargets": {
+      "wikidata": 1140
+    },
+    "selfRelations": 0,
+    "missingLexicalEntryTargets": 0,
+    "hypernymNodesRemainingAfterTopologicalReduction": 0
+  },
+  "performance": {
+    "slowestFilePasses": [
+      {
+        "pass": "inventory",
+        "file": "adj.all.json",
+        "bytes": 4773741,
+        "durationMs": 72.615,
+        "heapDeltaBytes": 8816352,
+        "records": 14496
+      },
+      {
+        "pass": "entries",
+        "file": "entries-s.json",
+        "bytes": 4714509,
+        "durationMs": 68.182,
+        "heapDeltaBytes": 5556024,
+        "records": 14453
+      },
+      {
+        "pass": "references",
+        "file": "adj.all.json",
+        "bytes": 4773741,
+        "durationMs": 53.504,
+        "heapDeltaBytes": 8769024,
+        "records": 14496
+      },
+      {
+        "pass": "entries",
+        "file": "entries-c.json",
+        "bytes": 4094117,
+        "durationMs": 43.341,
+        "heapDeltaBytes": 15305472,
+        "records": 12798
+      },
+      {
+        "pass": "inventory",
+        "file": "noun.artifact.json",
+        "bytes": 3503064,
+        "durationMs": 43.096,
+        "heapDeltaBytes": 3359400,
+        "records": 11985
+      },
+      {
+        "pass": "references",
+        "file": "noun.artifact.json",
+        "bytes": 3503064,
+        "durationMs": 40.047,
+        "heapDeltaBytes": 13705512,
+        "records": 11985
+      },
+      {
+        "pass": "entries",
+        "file": "entries-p.json",
+        "bytes": 3247589,
+        "durationMs": 36.775,
+        "heapDeltaBytes": -5002128,
+        "records": 10455
+      },
+      {
+        "pass": "entries",
+        "file": "entries-a.json",
+        "bytes": 2727267,
+        "durationMs": 30.82,
+        "heapDeltaBytes": -6017776,
+        "records": 8912
+      },
+      {
+        "pass": "entries",
+        "file": "entries-b.json",
+        "bytes": 2294615,
+        "durationMs": 28.573,
+        "heapDeltaBytes": 8676808,
+        "records": 7788
+      },
+      {
+        "pass": "entries",
+        "file": "entries-m.json",
+        "bytes": 2065744,
+        "durationMs": 28.407,
+        "heapDeltaBytes": 7740272,
+        "records": 7127
+      },
+      {
+        "pass": "entries",
+        "file": "entries-d.json",
+        "bytes": 2315940,
+        "durationMs": 27.414,
+        "heapDeltaBytes": -5694704,
+        "records": 6420
+      },
+      {
+        "pass": "references",
+        "file": "noun.person.json",
+        "bytes": 2151749,
+        "durationMs": 26.642,
+        "heapDeltaBytes": 8424856,
+        "records": 7848
+      }
+    ],
+    "largestLogicalFiles": [
+      {
+        "pass": "inventory",
+        "file": "adj.all.json",
+        "bytes": 4773741,
+        "durationMs": 72.615,
+        "heapDeltaBytes": 8816352,
+        "records": 14496
+      },
+      {
+        "pass": "entries",
+        "file": "entries-s.json",
+        "bytes": 4714509,
+        "durationMs": 68.182,
+        "heapDeltaBytes": 5556024,
+        "records": 14453
+      },
+      {
+        "pass": "entries",
+        "file": "entries-c.json",
+        "bytes": 4094117,
+        "durationMs": 43.341,
+        "heapDeltaBytes": 15305472,
+        "records": 12798
+      },
+      {
+        "pass": "inventory",
+        "file": "noun.artifact.json",
+        "bytes": 3503064,
+        "durationMs": 43.096,
+        "heapDeltaBytes": 3359400,
+        "records": 11985
+      },
+      {
+        "pass": "entries",
+        "file": "entries-p.json",
+        "bytes": 3247589,
+        "durationMs": 36.775,
+        "heapDeltaBytes": -5002128,
+        "records": 10455
+      },
+      {
+        "pass": "entries",
+        "file": "entries-a.json",
+        "bytes": 2727267,
+        "durationMs": 30.82,
+        "heapDeltaBytes": -6017776,
+        "records": 8912
+      },
+      {
+        "pass": "entries",
+        "file": "entries-d.json",
+        "bytes": 2315940,
+        "durationMs": 27.414,
+        "heapDeltaBytes": -5694704,
+        "records": 6420
+      },
+      {
+        "pass": "entries",
+        "file": "entries-b.json",
+        "bytes": 2294615,
+        "durationMs": 28.573,
+        "heapDeltaBytes": 8676808,
+        "records": 7788
+      },
+      {
+        "pass": "inventory",
+        "file": "noun.person.json",
+        "bytes": 2151749,
+        "durationMs": 25.444,
+        "heapDeltaBytes": 8682848,
+        "records": 7848
+      },
+      {
+        "pass": "entries",
+        "file": "entries-m.json",
+        "bytes": 2065744,
+        "durationMs": 28.407,
+        "heapDeltaBytes": 7740272,
+        "records": 7127
+      },
+      {
+        "pass": "entries",
+        "file": "entries-t.json",
+        "bytes": 2052533,
+        "durationMs": 23.529,
+        "heapDeltaBytes": 7725152,
+        "records": 6659
+      },
+      {
+        "pass": "entries",
+        "file": "entries-r.json",
+        "bytes": 1976136,
+        "durationMs": 23.743,
+        "heapDeltaBytes": -9302480,
+        "records": 5541
+      }
+    ],
+    "note": "Each JSON member is parsed independently; the largest logical member bounds parser memory for this probe. Generated-model memory is not measured here."
+  },
+  "findings": [
+    "The archive is already divided by lexical file and lemma initial; these are useful source partitions but are not necessarily optimal query shards.",
+    "Surface members are many-to-many with synsets. The v1 globally unique alias table cannot represent this polysemy and must become a lemma-to-sense candidate index.",
+    "Adjective satellites use a distinct s part-of-speech code and must not be silently collapsed before relation semantics are preserved.",
+    "Lexical-entry part-of-speech keys may carry homograph suffixes such as n-1 and n-2; an adapter must split base POS from homograph identity instead of rejecting them as unknown POS values.",
+    "Definitions and examples are textual evidence, not automatically executable universal facts.",
+    "Wikidata values are external identifiers, not synset targets; reference validation must dispatch by field semantics rather than by JSON value shape alone.",
+    "Synset relations include domain and lexical-semantic links with different symmetry, transitivity, and inference safety; relation-specific policies are mandatory.",
+    "Lexical entry senses contain their own fields and must retain sense identity instead of treating every member of a synset as an interchangeable global entity alias."
+  ],
+  "gateDecision": {
+    "fullCompilationAuthorized": false,
+    "reasons": [
+      "sense-aware entity resolution is not implemented",
+      "dictionary and immutable relation-shard model v2 is not implemented",
+      "query-directed shard loading and bounded top-down reasoning are not implemented",
+      "streaming validation budgets and cold/warm query budgets are not yet enforced"
+    ],
+    "next": "Build a sense-aware dictionary plus noun.animal and noun.Tops shard prototype, then run ambiguity, taxonomy, negative-query, cold-import, and memory profiles."
+  },
+  "profile": {
+    "format": "eslm-profile-v1",
+    "kind": "corpus-probe",
+    "status": "ok",
+    "metadata": {
+      "corpus": "oewn-2025",
+      "sourceArtifact": "english-wordnet-2025-json.zip"
+    },
+    "durationMs": 2823.956,
+    "rssBytes": 228319232,
+    "heapUsedBytes": 154362032,
+    "externalBytes": -18619,
+    "cpuUserMs": 2601.741,
+    "cpuSystemMs": 361.601,
+    "metrics": {
+      "synsets": 107519,
+      "lexicalEntries": 128009,
+      "senses": 185129,
+      "relationTargets": 131098
+    },
+    "stages": [
+      {
+        "name": "archive.inventory",
+        "status": "ok",
+        "durationMs": 3.622,
+        "rssBytes": 131072,
+        "heapUsedBytes": 115712,
+        "externalBytes": 1217,
+        "cpuUserMs": 1.421,
+        "cpuSystemMs": 0.929,
+        "metrics": {}
+      },
+      {
+        "name": "archive.hash",
+        "status": "ok",
+        "durationMs": 16.859,
+        "rssBytes": 6815744,
+        "heapUsedBytes": -73704,
+        "externalBytes": 4414778,
+        "cpuUserMs": 17.552,
+        "cpuSystemMs": 3.24,
+        "metrics": {}
+      },
+      {
+        "name": "synsets.inventory",
+        "status": "ok",
+        "durationMs": 983.412,
+        "rssBytes": 99229696,
+        "heapUsedBytes": 60993112,
+        "externalBytes": -3819737,
+        "cpuUserMs": 933.783,
+        "cpuSystemMs": 136.922,
+        "metrics": {
+          "files": 45
+        }
+      },
+      {
+        "name": "entries.inventory",
+        "status": "ok",
+        "durationMs": 1014.265,
+        "rssBytes": 61517824,
+        "heapUsedBytes": 12600928,
+        "externalBytes": -375447,
+        "cpuUserMs": 956.298,
+        "cpuSystemMs": 115.165,
+        "metrics": {
+          "files": 27
+        }
+      },
+      {
+        "name": "references.validate",
+        "status": "ok",
+        "durationMs": 667.062,
+        "rssBytes": 26570752,
+        "heapUsedBytes": 54114024,
+        "externalBytes": 26373,
+        "cpuUserMs": 512.617,
+        "cpuSystemMs": 94.819,
+        "metrics": {
+          "files": 45
+        }
+      }
+    ]
+  }
+}

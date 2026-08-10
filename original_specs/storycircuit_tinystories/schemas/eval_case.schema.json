@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://axiologic.net/storycircuit/schemas/eval_case.schema.json",
+  "title": "Evaluation case",
+  "type": "object",
+  "required": ["id", "family", "visibility", "input", "metric"],
+  "properties": {
+    "id": {"type": "string"},
+    "family": {"enum": ["likelihood", "minimal_pair", "state_tracking", "reasoning", "narrative_selection", "qa", "generation", "systematic_ood", "efficiency", "interpretability"]},
+    "subcategory": {"type": "string"},
+    "visibility": {"enum": ["train", "dev", "agent_shadow", "test", "external"]},
+    "input": {"type": "object"},
+    "target": {},
+    "metric": {"type": "string"},
+    "parent_story_id": {"type": ["string", "null"]},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "provenance": {"type": "object"}
+  },
+  "additionalProperties": false
+}

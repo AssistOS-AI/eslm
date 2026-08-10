@@ -1,0 +1,204 @@
+import { grammarScore, normalizeInput } from './language.mjs';
+import { parseQuestion } from './parser.mjs';
+import {
+  abduceExplanations, answerQuery, deriveClosure, deriveInductiveFacts, indexFacts,
+} from './reasoner.mjs';
+import { realize } from './realizer.mjs';
+import { compileSessionEpisode, modelWithSession } from './session.mjs';
+import { ExecutionProfiler } from './profiling.mjs';
+
+export class EslmEngine {
+  constructor(model, options = {}) {
+    this.model = model;
+    this.profileEnabled = Boolean(options.profile);
+    const profiler = new ExecutionProfiler('engine-initialization', this.profileEnabled, {
+      modelId: model.manifest.modelId,
+    });
+    this.facts = profiler.measureSync('reasoning.full-closure', () => deriveClosure(model), {
+      directFacts: model.facts.length, rules: model.rules.length,
+    });
+    profiler.annotate('reasoning.full-closure', { closureFacts: this.facts.length });
+    this.index = profiler.measureSync('retrieval.build-index', () => indexFacts(this.facts), {
+      facts: this.facts.length,
+    });
+    this.initializationProfile = profiler.finish('ok', {
+      entities: model.entities.length,
+      directFacts: model.facts.length,
+      closureFacts: this.facts.length,
+    });
+  }
+
+  ask(text, context = {}) {
+    const profiler = new ExecutionProfiler('query', this.profileEnabled, {
+      modelId: this.model.manifest.modelId, inputCharacters: text.length,
+    });
+    const complete = (response) => this.#profiled(response, profiler);
+    const episode = profiler.measureSync(
+      'language.compile-session', () => compileSessionEpisode(text, this.model, context),
+    );
+    profiler.annotate('language.compile-session', {
+      segments: episode.segments.length,
+      sessionFacts: episode.session.facts.length,
+      sessionRules: episode.session.rules.length,
+    });
+    const activeModel = profiler.measureSync(
+      'model.session-overlay', () => modelWithSession(this.model, episode.session),
+    );
+    if (!episode.question) {
+      if ((episode.learned.length > 0 || episode.learnedRules.length > 0)
+        && episode.unsupportedStatements.length === 0) {
+        const learnedCount = episode.learned.length + episode.learnedRules.length;
+        return complete({
+          status: 'LEARNED',
+          answer: `I learned ${learnedCount} session item${learnedCount === 1 ? '' : 's'}.`,
+          learned: episode.learned,
+          learnedRules: episode.learnedRules,
+          provenance: [
+            ...episode.learned.map((fact) => ({ fact: fact.id, source: fact.provenance })),
+            ...episode.learnedRules.map((rule) => ({ rule: rule.id, source: [rule.source] })),
+          ],
+          context: { ...context, session: episode.session, lastEntity: episode.learned.at(-1)?.subject },
+          episode: { original: text, segments: episode.segments, unsupportedStatements: [] },
+        });
+      }
+      return complete({
+        status: 'UNSUPPORTED',
+        answer: 'I cannot map that input to a supported symbolic statement or question.',
+        learned: episode.learned,
+        learnedRules: episode.learnedRules,
+        provenance: [],
+        context: { ...context, session: episode.session },
+        episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
+      });
+    }
+    const normalized = profiler.measureSync(
+      'language.normalize', () => normalizeInput(episode.question, activeModel),
+    );
+    const query = profiler.measureSync(
+      'language.parse-question', () => parseQuestion(normalized, activeModel, context),
+    );
+    if (query.status) {
+      return complete({
+        status: query.status,
+        answer: query.status === 'AMBIGUOUS'
+          ? 'The question matches more than one known entity.'
+          : 'I cannot map that input to a supported symbolic question.',
+        input: normalized,
+        query,
+        provenance: [],
+        learned: episode.learned,
+        learnedRules: episode.learnedRules,
+        context: { ...context, session: episode.session },
+        episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
+      });
+    }
+    const activeFacts = episode.session.facts.length > 0
+      ? profiler.measureSync('reasoning.session-closure', () => deriveClosure(activeModel), {
+        directFacts: activeModel.facts.length, rules: activeModel.rules.length,
+      }) : this.facts;
+    if (episode.session.facts.length > 0) {
+      profiler.annotate('reasoning.session-closure', { closureFacts: activeFacts.length });
+    }
+    if (query.reasoning === 'abduction') {
+      const hypotheses = profiler.measureSync('reasoning.abduction', () => abduceExplanations(
+        query, activeFacts, activeModel.rules, activeModel.reasoning?.abduction?.maxHypotheses,
+      ), { facts: activeFacts.length, rules: activeModel.rules.length });
+      const result = {
+        values: hypotheses.map((hypothesis) => hypothesis.id),
+        evidence: hypotheses,
+        hypotheses,
+      };
+      return complete(this.#response({
+        text, context, episode, activeModel, normalized, query, result,
+        status: hypotheses.length > 0 ? 'ABDUCTIVE' : 'UNKNOWN',
+        reasoning: { method: 'abduction', candidateCount: hypotheses.length },
+      }, profiler));
+    }
+    const inducedFacts = query.reasoning === 'induction'
+      ? profiler.measureSync('reasoning.induction', () => deriveInductiveFacts(activeModel, activeFacts), {
+        facts: activeFacts.length,
+      }) : [];
+    const activeIndex = inducedFacts.length > 0
+      ? profiler.measureSync('retrieval.query-index', () => indexFacts([...activeFacts, ...inducedFacts]), {
+        facts: activeFacts.length + inducedFacts.length,
+      })
+      : episode.session.facts.length > 0
+        ? profiler.measureSync('retrieval.query-index', () => indexFacts(activeFacts), { facts: activeFacts.length })
+        : this.index;
+    const result = profiler.measureSync('retrieval.answer', () => answerQuery(query, activeIndex));
+    profiler.annotate('retrieval.answer', { values: result.values.length, evidence: result.evidence.length });
+    const inferred = result.evidence.find((fact) => fact.reasoning === 'induction');
+    const derived = result.evidence.filter((fact) => fact.reasoning === 'deduction');
+    return complete(this.#response({
+      text, context, episode, activeModel, normalized, query, result,
+      status: result.values.length === 0 ? 'UNKNOWN' : inferred ? 'INDUCTIVE' : 'ANSWERED',
+      reasoning: inferred ? {
+        method: 'induction', confidence: inferred.confidence, ...inferred.induction,
+      } : {
+        method: derived.length > 0 ? 'deduction' : 'retrieval',
+        depth: Math.max(0, ...derived.map((fact) => fact.depth ?? 0)),
+      },
+    }, profiler));
+  }
+
+  #response({ text, context, episode, activeModel, normalized, query, result, status, reasoning }, profiler) {
+    const evidence = result.evidence.map((fact) => ({
+      fact: fact.id,
+      source: fact.provenance ?? (fact.ruleSource ? [fact.ruleSource] : []),
+      rule: fact.rule,
+      support: fact.support,
+      observation: fact.observation,
+      hypotheses: fact.hypotheses,
+      confidence: fact.confidence ?? fact.score,
+      method: fact.reasoning,
+    }));
+    return {
+      status,
+      answer: profiler.measureSync(
+        'language.realize', () => realize(query, result, activeModel, normalized.language),
+      ),
+      input: normalized,
+      query,
+      values: result.values,
+      provenance: evidence,
+      reasoning,
+      hypotheses: result.hypotheses,
+      learned: episode.learned,
+      learnedRules: episode.learnedRules,
+      context: {
+        ...context,
+        session: episode.session,
+        lastEntity: query.subject
+          ?? (activeModel.entities.some((entity) => entity.id === query.object) ? query.object : undefined)
+          ?? context.lastEntity,
+      },
+      episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
+    };
+  }
+
+  #profiled(response, profiler) {
+    const annotated = {
+      ...response,
+      model: {
+        id: this.model.manifest.modelId,
+        knowledgeBases: this.model.manifest.knowledgeBases ?? [],
+        benchmarkComparable: this.model.manifest.benchmarkComparable !== false,
+      },
+    };
+    if (!this.profileEnabled) return annotated;
+    return {
+      ...annotated,
+      profile: {
+        initialization: this.initializationProfile,
+        query: profiler.finish(response.status, {
+          resultValues: response.values?.length ?? 0,
+          provenanceItems: response.provenance?.length ?? 0,
+        }),
+      },
+    };
+  }
+
+  score(text) {
+    return grammarScore(text, this.model);
+  }
+}

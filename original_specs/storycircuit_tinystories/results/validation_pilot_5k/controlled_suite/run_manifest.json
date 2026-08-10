@@ -1,0 +1,26 @@
+{
+  "created_at": "2026-08-10T08:16:00.328644+00:00",
+  "environment": {
+    "cpu_count": 5,
+    "implementation": "CPython",
+    "machine": "x86_64",
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+    "processor": "",
+    "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]"
+  },
+  "errors_path": null,
+  "metrics_path": "metrics.json",
+  "model": {
+    "path": "results/validation_pilot_5k/model.json",
+    "sha256": "a3a8d115d3168b1e83688ca0c39cce9c9729e63cac6369871cfc2a8a23006ad1"
+  },
+  "predictions_path": "predictions.jsonl",
+  "run_id": "research_full-a3a8d115d3",
+  "schema_version": "0.1",
+  "status": "complete",
+  "suite": {
+    "name": "research_full",
+    "path": "configs/suites/research_full.yaml",
+    "sha256": "e54d0a7d2b006881d09d88b0493b24fd6a89e59129be68c180ddd881d9d8c682"
+  }
+}

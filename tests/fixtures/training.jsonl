@@ -1,0 +1,2 @@
+{"type":"entity","id":"unit-entity","names":["Unit Entity"],"kind":"test"}
+{"type":"fact","subject":"unit-entity","predicate":"has_property","value":"tested","source":"unit:1"}

@@ -1,0 +1,61 @@
+{
+  "format": "eslm-kb-source-v1",
+  "id": "animals",
+  "title": "Animals and ordinary capabilities",
+  "version": "1.0.0",
+  "generatedAt": "2026-08-10T00:00:00.000Z",
+  "scope": "A small educational taxonomy with explicit capabilities. It avoids a universal bird-flying rule because penguins and ostriches are counterexamples.",
+  "entities": [
+    { "id": "sparrow", "names": ["sparrow", "a sparrow"], "kind": "species" },
+    { "id": "robin", "names": ["robin", "a robin"], "kind": "species" },
+    { "id": "eagle", "names": ["eagle", "an eagle"], "kind": "species" },
+    { "id": "penguin", "names": ["penguin", "a penguin"], "kind": "species" },
+    { "id": "ostrich", "names": ["ostrich", "an ostrich"], "kind": "species" },
+    { "id": "whale", "names": ["whale", "a whale"], "kind": "species" },
+    { "id": "dolphin", "names": ["dolphin", "a dolphin"], "kind": "species" },
+    { "id": "dog", "names": ["dog", "a dog"], "kind": "species" },
+    { "id": "cat", "names": ["cat", "a cat"], "kind": "species" },
+    { "id": "cow", "names": ["cow", "a cow"], "kind": "species" },
+    { "id": "frog", "names": ["frog", "a frog"], "kind": "species" },
+    { "id": "salmon", "names": ["salmon", "a salmon"], "kind": "species" }
+  ],
+  "facts": [
+    { "id": "animals:f0", "subject": "sparrow", "predicate": "is_a", "value": "bird" },
+    { "id": "animals:f1", "subject": "robin", "predicate": "is_a", "value": "bird" },
+    { "id": "animals:f2", "subject": "eagle", "predicate": "is_a", "value": "bird" },
+    { "id": "animals:f3", "subject": "penguin", "predicate": "is_a", "value": "bird" },
+    { "id": "animals:f4", "subject": "ostrich", "predicate": "is_a", "value": "bird" },
+    { "id": "animals:f5", "subject": "whale", "predicate": "is_a", "value": "mammal" },
+    { "id": "animals:f6", "subject": "dolphin", "predicate": "is_a", "value": "mammal" },
+    { "id": "animals:f7", "subject": "dog", "predicate": "is_a", "value": "mammal" },
+    { "id": "animals:f8", "subject": "cat", "predicate": "is_a", "value": "mammal" },
+    { "id": "animals:f9", "subject": "cow", "predicate": "is_a", "value": "mammal" },
+    { "id": "animals:f10", "subject": "frog", "predicate": "is_a", "value": "amphibian" },
+    { "id": "animals:f11", "subject": "salmon", "predicate": "is_a", "value": "fish" },
+    { "id": "animals:f12", "subject": "sparrow", "predicate": "can", "value": "fly" },
+    { "id": "animals:f13", "subject": "robin", "predicate": "can", "value": "fly" },
+    { "id": "animals:f14", "subject": "eagle", "predicate": "can", "value": "fly" },
+    { "id": "animals:f15", "subject": "penguin", "predicate": "can", "value": "swim" },
+    { "id": "animals:f16", "subject": "ostrich", "predicate": "can", "value": "run" },
+    { "id": "animals:f17", "subject": "whale", "predicate": "can", "value": "swim" },
+    { "id": "animals:f18", "subject": "dolphin", "predicate": "can", "value": "swim" },
+    { "id": "animals:f19", "subject": "frog", "predicate": "can", "value": "jump" },
+    { "id": "animals:f20", "subject": "salmon", "predicate": "can", "value": "swim" }
+  ],
+  "rules": [
+    { "id": "animals:bird-animal", "when": [["?x", "is_a", "bird"]], "then": ["?x", "is_a", "animal"] },
+    { "id": "animals:mammal-animal", "when": [["?x", "is_a", "mammal"]], "then": ["?x", "is_a", "animal"] },
+    { "id": "animals:amphibian-animal", "when": [["?x", "is_a", "amphibian"]], "then": ["?x", "is_a", "animal"] },
+    { "id": "animals:fish-animal", "when": [["?x", "is_a", "fish"]], "then": ["?x", "is_a", "animal"] },
+    { "id": "animals:animal-living", "when": [["?x", "is_a", "animal"]], "then": ["?x", "is_a", "living-being"] }
+  ],
+  "constructions": ["is ENTITY a CLASS", "can ENTITY VERB"],
+  "variants": {},
+  "singular": {},
+  "examples": [
+    { "input": "Can Sparrow fly?", "answer": "Yes.", "reasoning": "explicit capability fact" },
+    { "input": "Is Penguin an animal?", "answer": "Yes.", "reasoning": "one-step class deduction" },
+    { "input": "Can Penguin swim?", "answer": "Yes.", "reasoning": "explicit capability fact" },
+    { "input": "Can Penguin fly?", "answer": "I have no evidence that this is true.", "reasoning": "open-world unknown, not a false claim" }
+  ]
+}

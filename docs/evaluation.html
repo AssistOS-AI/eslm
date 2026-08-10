@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ESLM Documentation — Evaluation</title>
+  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main>
+    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation</p>
+    <h1>Evaluation and failure attribution</h1>
+    <p class="lead">Evaluation measures semantic correctness, language coverage, proof quality, abstention, and efficiency separately. A single aggregate accuracy cannot reveal whether the parser, evidence, rule engine, or realizer failed.</p>
+
+    <h2>Implementation verification</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Unit fixtures] --> B[Node tests]
+  B --> C[Language contracts]
+  B --> D[Reasoning contracts]
+  B --> E[Workflow contracts]
+  C --> F{All pass?}
+  D --> F
+  E --> F</pre><figcaption>The test runner evaluates language, reasoning, and workflow contracts independently before producing one regression verdict.</figcaption></figure>
+    <p><strong>Purpose.</strong> This diagram describes <code>npm test</code>. Tests cover normalization, parsing, direct facts, derivation, discourse, unknown evidence, model indexes, CLI path resolution, training split isolation, and external prediction exchange. These fixtures verify code contracts; they are not scientific datasets.</p>
+
+    <h2>Capability evaluation</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Evaluation case] --> B[ESLM engine]
+  B --> C[Semantic values]
+  B --> D[Status]
+  B --> E[Proof trace]
+  C --> F[Local oracle]
+  D --> F
+  E --> F
+  F --> G[Tagged metrics]</pre><figcaption>The oracle can score meaning, abstention, and proof separately because the engine exposes all three outputs.</figcaption></figure>
+    <p><strong>Purpose.</strong> This diagram shows the internal evaluation path. The oracle compares canonical semantic values or explicit statuses. Tags allow results to be separated by direct retrieval, spelling tolerance, rule execution, paraphrase, discourse, ambiguity, and abstention.</p>
+
+    <h2>Failure attribution</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Wrong result] --> B{Query compiled?}
+  B -->|no| C[Language failure]
+  B -->|yes| D{Evidence found?}
+  D -->|no| E[Knowledge or retrieval failure]
+  D -->|yes| F[Rule or realization failure]</pre><figcaption>Attribution follows the actual trace and stops at the earliest stage that can explain the wrong result.</figcaption></figure>
+    <p><strong>Purpose.</strong> The trace identifies the earliest causal failure. A parse miss must not be repaired by adding the expected answer as a fact. Missing knowledge must not create a grammar rule. A reasoning error with correct premises targets rule execution. This classification keeps model synthesis scientifically meaningful.</p>
+
+    <h2>Hidden evaluation boundary</h2>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Train-visible packet] --> B[Candidate frozen]
+  C[Hidden suite] --> D[Separate evaluator]
+  B --> D
+  D --> E[Predictions]
+  D --> F[Failure breakdown]
+  E --> G[Frozen report]
+  F --> G</pre><figcaption>Candidate and hidden suite meet only inside the evaluator; predictions and diagnostics are preserved in one frozen report.</figcaption></figure>
+    <p><strong>Purpose.</strong> Hidden labels are introduced only after the candidate is frozen. A random split is insufficient when sources, templates, stories, or relation compositions repeat. Splits should group by source, construction family, entity vocabulary, domain, and composition depth.</p>
+
+    <h2>The completed public evaluation</h2>
+    <p>The latest evaluation is not the earlier tiny smoke fixture. It contains 1,000 official bAbI v1.2 Task 15 English 10k test episodes prepared from the cached archive. The default model answered all 1,000 semantic values correctly, for accuracy 1.0. The exact split identity remains in the machine-readable report and prepared manifest.</p>
+    <table><thead><tr><th>Quantity</th><th>Current value</th><th>Interpretation</th></tr></thead><tbody>
+      <tr><td>Train cases visible to synthesis</td><td>10,000</td><td>Used to identify constructions, morphology, and the episode compilation pattern.</td></tr>
+      <tr><td>Held-out test cases</td><td>1,000</td><td>Not exposed to the coding-agent synthesis packets.</td></tr>
+      <tr><td>Correct semantic values</td><td>1,000</td><td>The expected fear class matched exactly.</td></tr>
+      <tr><td>Incorrect or unsupported</td><td>0</td><td>No parser, rule, retrieval, or semantic-value failure in this split.</td></tr>
+      <tr><td>Persistent story facts promoted</td><td>0</td><td>The runtime recomputed every answer from its supplied episode.</td></tr>
+      <tr><td>Reasoning depth measured</td><td>1 derived step</td><td>This result does not measure deeper deduction, induction, abduction, or broad English.</td></tr>
+    </tbody></table>
+    <p>The <a href="results/latest-evaluation.html">latest evaluation report</a> contains per-case engine outcomes. The <a href="results/latest-benchmark.html">latest benchmark report</a> applies the comparison protocol to the same test file. The perfect result is strong evidence of complete coverage for this narrow controlled task, not an estimate of general ESLM competence.</p>
+
+    <h2>Evaluating optional knowledge modules</h2>
+    <p>An evaluation may explicitly pass <code>--kb child-basic</code> or another selection. The JSON report then records the merged model ID, selected KB IDs, and <code>comparable: false</code>. This is appropriate for KB-specific regression suites, but it must not overwrite the interpretation of the clean bAbI result. Educational KB tests currently live in <code>tests/kbs.test.mjs</code> and verify exact counts, opt-in behavior, exception handling, and cross-module closure.</p>
+
+    <h2>Metrics beyond Task 15</h2>
+    <p>The general reporting contract includes answer accuracy, construction coverage, retrieval recall, reasoning accuracy conditional on parsing, proof fidelity, realization fidelity, abstention precision and recall, robustness delta, composition-depth curves, model size, latency, and replayability. A suite reports only metrics for which it has a valid oracle. Task 16 must add induction calibration and factual-versus-inductive separation; deeper bAbI tasks must report accuracy by support depth.</p>
+    <p class="related"><strong>Continue with:</strong> <a href="benchmarks.html">Benchmarks</a> for the public suite plan, <a href="reasoning.html">Reasoning Trace</a> for proof-level oracles, and <a href="cli.html">CLI Tutorial</a> for report commands. The methodology is <a href="specsLoader.html?spec=DS011-evaluation-methodology.md">DS011</a>; external comparison is <a href="specsLoader.html?spec=DS013-external-model-comparison.md">DS013</a>.</p>
+  </main>
+</body>
+</html>

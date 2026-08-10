@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ESLM Documentation — Datasets</title>
+  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main>
+    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Datasets</p>
+    <h1>Evaluation suites and diagnostic datasets</h1>
+    <p class="lead">bAbI, BLiMP, CLUTRR, and similar suites ask controlled questions with known answers. They are useful for exposing parser and reasoning failures, but they are not the primary source of ESLM's persistent world knowledge. The separate near-term knowledge queue is WordNet, ATOMIC, filtered ConceptNet, and bounded GeoNames; Wikidata is deferred to optional thematic packs.</p>
+
+    <h2>Why this distinction matters</h2>
+    <p>Training a KB directly on a public benchmark's answers makes later performance on that benchmark difficult or impossible to interpret. ESLM may inspect an official train split to synthesize a task compiler, while the test split stays hidden. When an evaluation was derived from a source graph that ESLM has ingested—for example, a commonsense benchmark built from ConceptNet—the report must mark that exposure and cannot present the result as independent factual generalization.</p>
+    <p>The <a href="knowledge-sources.html">real knowledge sources page</a> describes persistent corpus-derived modules. This page records evaluation adapters, split isolation, and controlled executor exercises.</p>
+
+    <h2>Four prepared controlled-reasoning suites</h2>
+    <table><thead><tr><th>Dataset</th><th>Raw train/test</th><th>Prepared train/test</th><th>Train chunks</th><th>Current stage</th></tr></thead><tbody>
+      <tr><td>bAbI Task 2</td><td>1,794,716 / 179,835 bytes</td><td>6,898,640 / 684,981 bytes</td><td>20 × 500</td><td>Prepared; train-only audit; no model</td></tr>
+      <tr><td>bAbI Task 3</td><td>5,317,883 / 526,527 bytes</td><td>17,697,727 / 1,740,392 bytes</td><td>20 × 500</td><td>Prepared; train-only audit; no model</td></tr>
+      <tr><td>bAbI Task 15</td><td>877,358 / 87,769 bytes</td><td>3,951,095 / 393,407 bytes</td><td>20 × 500</td><td>Synthesized, promoted, evaluated</td></tr>
+      <tr><td>bAbI Task 16</td><td>2,082,804 / 208,208 bytes</td><td>3,748,323 / 372,846 bytes</td><td>20 × 500</td><td>Prepared; train-only audit; no model</td></tr>
+    </tbody></table>
+    <p>Every row has 10,000 train cases and 1,000 test cases. Prepared JSONL is larger than raw text because it preserves context, question, semantic answer, support-line identifiers, supporting sentences, split, and stable case ID. The public files are cached locally and ignored by Git. Exact integrity hashes remain in machine-readable manifests rather than cluttering this explanatory page.</p>
+
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[One verified bAbI archive] --> B{Selected task}
+  B -->|2| C[Movement + object tracking]
+  B -->|3| D[Prior location over three supports]
+  B -->|15| E[Class-rule deduction]
+  B -->|16| F[Color induction]
+  C --> G[Independent train/test manifest]
+  D --> G
+  E --> G
+  F --> G
+  G --> H[20 train chunks]
+  G --> I[Hidden test split]</pre><figcaption>All four tasks reuse one downloaded archive, but extraction, prepared records, synthesis work, and held-out results remain separate for each task.</figcaption></figure>
+
+    <section id="babi-15">
+      <h2>Task 15: basic deduction — completed</h2>
+      <p>A train episode contains class rules, individual classifications, and fear questions. Example: “Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?” The agent found 40,000 classification statements and 40,000 universal-rule observations. It generated three constructions and four irregular class forms, not a table of answers.</p>
+      <p>The promoted model was produced by one primary coding agent, validated, and run on 1,000 held-out cases. It answered all 1,000 semantic values correctly. The task tests only one-step class-rule deduction in controlled English.</p>
+      <pre><code>node src/cli.mjs dataset status --dataset babi-15-en-10k-v1.2
+npm run benchmark</code></pre>
+    </section>
+
+    <section id="babi-2">
+      <h2>Task 2: two supporting facts — prepared</h2>
+      <p>Stories move people between locations and let them pick up or drop objects. A question such as “Where is the football?” may require the object's ownership event and the owner's later movement. The needed model is an event-state executor: location updates, possession updates, transfer of an object's effective location with its carrier, and distractor resistance.</p>
+      <p>The 10,000 train and 1,000 test cases are parsed into separate files. A 20-chunk ledger and four-worker assignment plan exist. No coding-agent worker result, reduced evidence graph, candidate model, promotion, or test score exists yet.</p>
+      <pre><code>node src/cli.mjs dataset status --dataset babi-2-en-10k-v1.2</code></pre>
+    </section>
+
+    <section id="babi-3">
+      <h2>Task 3: three supporting facts — prepared</h2>
+      <p>This task asks for a previous object location, for example “Where was the football before the bathroom?”. Correct execution must retain ordered state versions rather than only the final location. A typical proof combines object pickup, movement to one place, and later movement to another place.</p>
+      <p>The raw train file is substantially larger because episodes carry longer histories. Its 10,000 train cases are in 20 chunks and have a four-worker plan. ESLM does not yet have the temporal state-version executor required to synthesize a valid model, so no evaluation has run.</p>
+      <pre><code>node src/cli.mjs dataset status --dataset babi-3-en-10k-v1.2</code></pre>
+    </section>
+
+    <section id="babi-16">
+      <h2>Task 16: basic induction — prepared</h2>
+      <p>A train episode may classify Lily and Bernhard as frogs, state that both are green, classify Greg as a swan, and show another green swan. The question “What color is Greg?” requires inferring a class-level color pattern from other members and applying it to Greg. This differs from the current optional core induction query because the benchmark expects an ordinary answer under its own evidence rules.</p>
+      <p>The split is cached and prepared in 20 train chunks with a four-worker assignment plan. A train-only semantic audit is identifying exact support and exception behavior. Test cases remain outside agent assignments. Candidate synthesis and evaluation have not begun.</p>
+      <pre><code>node src/cli.mjs dataset status --dataset babi-16-en-10k-v1.2</code></pre>
+    </section>
+
+    <h2>Additional suite families queued for native Node adapters</h2>
+    <table><thead><tr><th>Suite</th><th>Scale or shape</th><th>Potential generated module</th><th>Why it is not prepared yet</th></tr></thead><tbody>
+      <tr><td><a href="https://aclanthology.org/2020.tacl-1.25/">BLiMP</a></td><td>67 datasets × 1,000 minimal pairs</td><td>English morphology, agreement, licensing, and construction constraints</td><td>Need a frozen source snapshot, license record, and preference adapter; it is evaluation-oriented rather than a conventional train/test corpus.</td></tr>
+      <tr><td><a href="https://github.com/facebookresearch/clutrr">CLUTRR</a></td><td>Generated relation chains with configurable lengths</td><td>Kinship ontology and relation-composition shards</td><td>Need a fixed generated release and explicit CC BY-NC 4.0 experiment condition.</td></tr>
+      <tr><td><a href="https://arxiv.org/abs/2405.09605">EWoK Core 1.0</a></td><td>4,374 items across 11 knowledge domains</td><td>Small domain KBs plus plausibility constraints</td><td>Need access terms, evidence partition, and an adapter that does not confuse preference with a factual proof.</td></tr>
+      <tr><td><a href="https://github.com/openai/simple-evals">SimpleQA</a></td><td>4,326 short factual questions</td><td>Coverage diagnostics and source-backed factual KB targets</td><td>It is primarily an evaluation set with no matching train corpus; using its answers for synthesis would invalidate the held-out claim.</td></tr>
+      <tr><td><a href="https://aclanthology.org/2023.acl-long.213/">Entity Tracking</a></td><td>Ordered attribute updates</td><td>Generic event/state transition executor</td><td>Need official artifact acquisition and a native state-trace oracle.</td></tr>
+      <tr><td><a href="https://aclanthology.org/N16-1098/">Story Cloze</a></td><td>Four-sentence contexts with two endings</td><td>Event, discourse, and narrative-consistency modules</td><td>Event calculus is absent and dataset access terms must be handled separately.</td></tr>
+    </tbody></table>
+    <p>These entries are a concrete evaluation queue, not a substitute for a knowledge corpus. The <a href="benchmarks.html">benchmark page</a> explains comparison regimes; the <a href="training.html">training page</a> explains synthesis; and the <a href="knowledge-sources.html">knowledge source plan</a> defines the data intended to make ESLM useful outside benchmark micro-worlds.</p>
+  </main>
+</body>
+</html>

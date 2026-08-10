@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ESLM Documentation — Reasoning</title>
+  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main>
+    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Reasoning</p>
+    <h1>Deduction, induction, and abduction</h1>
+    <p class="lead">ESLM uses different output statuses for logically supported conclusions, data-driven generalizations, and possible explanations. This is not cosmetic labeling: each method runs a different algorithm, accepts a different query contract, and exposes different evidence.</p>
+
+    <h2>The deduction measured by bAbI Task 15</h2>
+    <p>The promoted model recognizes a universal statement, an individual classification, and a question about the resulting property. Consider the complete episode:</p>
+    <pre><code>Mice are afraid of wolves.
+Gertrude is a mouse.
+What is Gertrude afraid of?</code></pre>
+    <p>The first statement becomes a temporary rule. The generated morphology table maps plural <code>mice</code> to <code>mouse</code> and <code>wolves</code> to <code>wolf</code>. The second statement creates a temporary fact. The question resolves Gertrude and requests the value of <code>afraid_of</code>.</p>
+    <pre><code>rule session:r0
+  when: [?entity, is_a, mouse]
+  then: [?entity, afraid_of, wolf]
+
+fact session:f0
+  [gertrude, is_a, mouse]
+
+query
+  [gertrude, afraid_of, ?value]</code></pre>
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+  A[Plural class rule] --> C[Normalize classes]
+  B[Individual fact] --> D[Bind ?entity]
+  C --> E{Premise matches?}
+  D --> E
+  E -->|yes| F[Derived afraid_of fact]
+  E -->|no| U[Unknown]
+  F --> G[wolf]
+  F --> H[Rule + fact provenance]</pre><figcaption>The join succeeds only because the individual class matches the normalized premise. The derived semantic value and its proof are emitted together.</figcaption></figure>
+    <p><code>deriveClosure</code> binds <code>?entity=gertrude</code>, derives <code>(gertrude, afraid_of, wolf)</code>, records the rule and supporting fact, and assigns deduction depth 1. The realizer returns “Gertrude is afraid of wolf.” The exact benchmark scorer compares the semantic value <code>wolf</code>, not the sentence wording. The public test contains 1,000 such held-out episodes and the current run answers all 1,000 correctly.</p>
+
+    <h2>Bounded multi-step deduction</h2>
+    <p>The same forward-chaining executor can compose rule conclusions into later premises. Its model policy currently permits at most eight rounds, while duplicate triple signatures stop cyclic rules from generating the same result repeatedly. Derived facts record their immediate supports, flattened source provenance, rule identifier, and depth.</p>
+    <p>The optional <code>child-basic</code> knowledge module and an isolated unit fixture both check the mortality example with these three conceptual steps:</p>
+    <pre><code>man(?x)          → human(?x)
+human(?x)        → living-being(?x)
+living-being(?x) → will_die(?x, eventually)</code></pre>
+    <p>Given “Jhon is a man”, the executor produces the eventual-death relation at depth 3. The promoted bAbI model deliberately does not include these world-knowledge rules, so its default answer to the same question is <code>UNKNOWN</code>. Adding <code>--kb child-basic</code> supplies them and returns <code>ANSWERED</code>. The parser and executor work in both configurations; selected knowledge determines whether a proof exists.</p>
+    <pre><code>node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?"
+# status: UNKNOWN
+
+node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?" --kb child-basic
+# status: ANSWERED, reasoning.depth: 3</code></pre>
+
+    <h2>Thresholded induction</h2>
+    <p>Induction proposes a regularity from repeated examples; it does not prove a conclusion. The current algorithm considers only predicates allowlisted by the model. It groups entities by <code>is_a</code> class, counts how many known class members share a candidate predicate and value, and requires both a minimum support count and minimum observed coverage. The promoted policy requires three supports and coverage of at least 0.70.</p>
+    <p>In the unit fixture, four entities are sparrows and three of them have an asserted <code>can fly</code> fact. A factual query, “Can Dana fly?”, remains <code>UNKNOWN</code>. The explicitly probabilistic-form query, “Is Dana likely to fly?”, permits induction and returns:</p>
+    <pre><code>status: INDUCTIVE
+value: true
+class: sparrow
+support: 3
+observed population: 4
+confidence: 0.75</code></pre>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  A[Class members] --> B[Allowlisted observations]
+  B --> C[Group by predicate + value]
+  C --> D{Support ≥ 3?}
+  D -->|no| U[No induction]
+  D -->|yes| E{Coverage ≥ 0.70?}
+  E -->|no| U
+  E -->|yes| F[INDUCTIVE candidate]
+  F --> G[Confidence + support IDs]
+  F -. never promoted as .-> H[Ordinary fact]</pre><figcaption>Induction is activated only by a likelihood query. The candidate remains epistemically separate from direct and deductive facts.</figcaption></figure>
+    <p>The confidence value is observed coverage, not a calibrated probability. Absence of a flight fact is not an explicit counterexample, and the current fact format has no general negative predicate semantics. bAbI Task 16 is a planned public diagnostic for this method. Its 10,000 train and 1,000 test cases are cached and prepared, but all synthesis chunks remain pending and no candidate or evaluation exists.</p>
+
+    <h2>Grounded abduction</h2>
+    <p>Abduction starts from an observed result and searches for rule premises that could produce it. ESLM considers only rules explicitly marked <code>abductive</code>. The observation must already have direct or deductive support; the wording of a question alone cannot manufacture the effect being explained.</p>
+    <p>The unit fixture asserts that the lawn is wet and contains two forward rules: rain wets the lawn, and an active sprinkler wets the lawn. The query “What could explain why the lawn is wet?” matches both rule conclusions. Reversing them produces the missing premises <code>(weather, condition, rain)</code> and <code>(sprinkler, state, on)</code>. Neither premise is asserted, so the response calls them hypotheses rather than causes.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+  O[Supported observation: lawn wet] --> R{Rules with matching conclusion}
+  R --> A[Rain rule]
+  R --> B[Sprinkler rule]
+  A --> C[Hypothesis: rain]
+  B --> D[Hypothesis: sprinkler on]
+  C --> E[Ranked ABDUCTIVE result]
+  D --> E
+  X[No observed wetness] -->|blocks reversal| U[Unknown]</pre><figcaption>Several causes may explain the same effect. The result preserves alternatives and never converts a missing premise into an asserted event.</figcaption></figure>
+    <p>The current score is a deterministic completeness heuristic based on supported and missing premises, not a probability of causation. There is no intervention model, causal discovery, mutually exclusive explanation logic, or public abductive benchmark result yet.</p>
+
+    <h2>Why the statuses must remain different</h2>
+    <table><thead><tr><th>Method</th><th>Question asked</th><th>Result status</th><th>What may be claimed</th></tr></thead><tbody>
+      <tr><td>Retrieval</td><td>Does an asserted fact match?</td><td><code>ANSWERED</code></td><td>The accepted source directly states the semantic value.</td></tr>
+      <tr><td>Deduction</td><td>Does a rule proof derive the value?</td><td><code>ANSWERED</code></td><td>The value follows from the encoded premises and rules within the execution budget.</td></tr>
+      <tr><td>Induction</td><td>Does an observed pattern meet configured thresholds?</td><td><code>INDUCTIVE</code></td><td>The value is a qualified generalization with stated support and coverage.</td></tr>
+      <tr><td>Abduction</td><td>Which encoded premises could explain a supported observation?</td><td><code>ABDUCTIVE</code></td><td>The returned premises are possible explanations, not established causes.</td></tr>
+      <tr><td>Insufficient evidence</td><td>Can the query be represented but not resolved?</td><td><code>UNKNOWN</code></td><td>No positive or negative conclusion follows.</td></tr>
+      <tr><td>Missing semantics</td><td>Can the input be compiled safely?</td><td><code>UNSUPPORTED</code></td><td>The system lacks a construction or executor and has not evaluated the proposition.</td></tr>
+    </tbody></table>
+    <p class="related"><strong>Continue with:</strong> <a href="index.html">Current experiment</a> for data and run status, <a href="knowledge-bases.html">Knowledge Bases</a> for the exact premises available by module, <a href="cli.html">CLI Tutorial</a> for executable examples, and <a href="specsLoader.html?spec=DS008-runtime-query-pipeline.md">DS008</a> for the authoritative runtime contract.</p>
+  </main>
+</body>
+</html>

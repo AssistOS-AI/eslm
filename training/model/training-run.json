@@ -1,0 +1,78 @@
+{
+  "format": "eslm-training-run-v1",
+  "runId": "babi-15-en-10k-v1.2-2026-08-10",
+  "dataset": {
+    "id": "babi-15-en-10k-v1.2",
+    "source": "https://s3.amazonaws.com/text-datasets/babi_tasks_1-20_v1-2.tar.gz",
+    "archiveBytes": 11745123,
+    "archiveSha256": "84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c",
+    "cachedLocally": true,
+    "redistributed": false
+  },
+  "preparation": {
+    "status": "complete",
+    "trainCases": 10000,
+    "testCases": 1000,
+    "chunkSize": 500,
+    "trainChunks": 20,
+    "trainSha256": "149fd0cba766b19507dded58def9559bc53e54fdbf692055fbe57bda7380ffec",
+    "testSha256": "92a836137c8a4cdbf2844ca1abf049b41c4a9b8a958411be82fa4188bc5a29fb",
+    "leakagePolicy": { "train": "agent-visible", "test": "agent-hidden" }
+  },
+  "codingAgentSynthesis": {
+    "status": "complete",
+    "executionMode": "single-primary-coding-agent",
+    "forkedWorkers": 0,
+    "sourceChunksCovered": 20,
+    "completionEvidence": "full prepared train split analysis plus candidate and project validation",
+    "ledgerNote": "The v1 chunk ledger was prepared but was not used as a per-worker completion journal; its entries remain pending and must not be cited as worker receipts.",
+    "sourceCasesAnalyzed": 10000,
+    "membershipStatements": 40000,
+    "universalRuleObservations": 40000,
+    "universalRuleSignatures": 12,
+    "unsupportedStatements": 0,
+    "generatedConstructions": 3,
+    "generatedIrregularClassForms": 4,
+    "promotedEpisodeFacts": 0,
+    "candidateValidation": "passed",
+    "projectValidation": "passed"
+  },
+  "parallelSynthesis": {
+    "status": "protocol-implemented-not-run-for-promoted-model",
+    "strategy": "immutable disjoint worker assignments followed by one deterministic coordinator reduction",
+    "preparedDemonstrationPlan": {
+      "workers": 4,
+      "chunks": 20,
+      "planDigest": "e1623bc6f8cf09ea04ed3721ba5e6f6832d2d5434c5c12d34e641e80ba4c2c95"
+    },
+    "workerResults": 0,
+    "reduction": "not run"
+  },
+  "promotion": {
+    "status": "promoted",
+    "modelId": "babi-15-en-10k-v1.2",
+    "generatedModules": 7,
+    "generatedModuleBytes": 1743
+  },
+  "evaluation": {
+    "status": "complete",
+    "protocol": "eslm-native-v1",
+    "total": 1000,
+    "correct": 1000,
+    "accuracy": 1,
+    "report": "docs/results/latest-benchmark.json"
+  },
+  "capabilityBoundary": {
+    "measured": "one-step class-rule deduction from supplied English episodes",
+    "notMeasured": ["multi-step deduction", "induction", "abduction", "open-domain knowledge"]
+  },
+  "nextDatasetRun": {
+    "id": "babi-16-en-10k-v1.2",
+    "task": "basic induction",
+    "status": "fetched and prepared; all synthesis-ledger chunks pending; no candidate or evaluation"
+  },
+  "nextKnowledgeMilestone": {
+    "id": "oewn-2025",
+    "status": "complete source probe; sense-aware shard prototype required before KB compilation"
+  }
+}

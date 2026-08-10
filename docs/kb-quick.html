@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESLM — QUICK knowledge base</title><link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script></head>
+<body><div data-include="partials/header.html"></div><main>
+  <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / <a href="knowledge-bases.html">Knowledge bases</a> / QUICK</p>
+  <h1>QUICK: the small development knowledge base</h1>
+  <p class="lead"><code>quick</code> exists so a developer can start ESLM immediately and inspect every premise behind an answer. It combines the <code>child-basic</code>, <code>animals</code>, and <code>space-geography</code> fixtures into one generated graph. QUICK is authored project data, not public-corpus training, and its results are never presented as broad knowledge or public benchmark evidence.</p>
+
+  <h2>What it is for</h2>
+  <p>QUICK tests the parts of the runtime that large corpora also depend on: module loading, entity merging, fact deduplication, rule closure, source provenance, exceptions, session overlays, natural-language normalization and deterministic realization. Because the graph is small, a failing proof can be understood without searching millions of records. It is loaded by default in interactive mode and may be removed with <code>/unload quick</code>.</p>
+  <div class="table-wrap"><table><thead><tr><th>Component</th><th>Direct content</th><th>Purpose</th></tr></thead><tbody>
+    <tr><td><a href="kb-child-basic.html"><code>child-basic</code></a></td><td>8 entities, 12 facts, 9 rules</td><td>Categories, locations, growth and a transparent three-step mortality proof.</td></tr>
+    <tr><td><a href="kb-animals.html"><code>animals</code></a></td><td>12 entities, 21 facts, 5 rules</td><td>Taxonomic inheritance plus explicit capabilities and a penguin counterexample boundary.</td></tr>
+    <tr><td><a href="kb-space-geography.html"><code>space-geography</code></a></td><td>20 entities, 35 facts</td><td>Direct retrieval for planets, locations, colors and coarse directional relations.</td></tr>
+    <tr><td><strong>Merged QUICK</strong></td><td>36 unique entities, 62 direct facts, 14 rules, 116 executable facts</td><td>Cross-module composition after shared astronomy entities and facts are deduplicated.</td></tr>
+  </tbody></table></div>
+
+  <figure class="diagram"><pre class="mermaid">flowchart LR
+    S[Session fact: Jhon is a man] --> M[man → human]
+    M --> L[human → living being]
+    L --> D[living being → eventually dies]
+    A[animals module] --> L
+    G[space-geography] --> R[direct location / color answers]
+    D --> P[proof with three rule sources]
+    R --> P</pre><figcaption>QUICK contains both direct retrieval and cross-module proofs. The graph is intentionally small enough that each edge can be audited.</figcaption></figure>
+
+  <h2>Commands and tested examples</h2>
+  <pre><code>node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?" --kb quick
+node src/cli.mjs ask "Can Penguin swim?" --kb quick
+node src/cli.mjs ask "Where is Neptune?" --kb quick
+node src/cli.mjs kb show quick
+node src/cli.mjs kb validate quick</code></pre>
+  <p>The source manifest is <code>training/KBs/QUICK/source/manifest.json</code>. Its three reviewed source files live beside it, and the generated bundle is rooted at <code>training/KBs/QUICK/model/manifest.mjs</code>. Rebuilding QUICK also rebuilds the three components, merges them by semantic identity, regenerates all postings and validates the final graph.</p>
+
+  <h2>What QUICK does not establish</h2>
+  <p>Its facts were not extracted from WordNet, ATOMIC, ConceptNet, Wikipedia or another external authority. Its tiny selection does not establish coverage, factual currency or general commonsense. It is useful precisely because its evidence boundary is narrow and visible. Use <a href="kb-oewn-2025.html">WordNet</a> for source-derived lexical knowledge and <a href="kb-atomic-2020.html">ATOMIC</a> for source-derived event hypotheses.</p>
+</main></body></html>

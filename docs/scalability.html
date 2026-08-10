@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ESLM Documentation — Scalability and Context</title>
+  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main>
+    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Scalability and context</p>
+    <h1>Architecture gate before large-corpus training</h1>
+    <p class="lead">The current runtime is a correct small-model reference, not a million-edge architecture. Real training is deliberately blocked until ingestion streams data, generated modules load selectively, reasoning follows the question instead of closing the entire graph, and facts are scoped by time, space, domain, world, and perspective.</p>
+
+    <h2>Review verdict</h2>
+    <table><thead><tr><th>Current mechanism</th><th>Why it fails at scale</th><th>Required replacement</th></tr></thead><tbody>
+      <tr class="cap-row--no"><td>Complete ESM arrays imported at startup</td><td>Node must parse and allocate every object even when one domain or predicate is queried.</td><td>Interned dictionaries, relation-and-scope shards, and manifest metadata that can be read before shard import.</td></tr>
+      <tr class="cap-row--no"><td>Full bounded closure during engine construction</td><td>It derives unrelated consequences, delays startup, multiplies memory, and repeats when session facts are added.</td><td>Head-indexed rule planning plus memoized top-down or semi-naive evaluation over a bounded relevant subgraph.</td></tr>
+      <tr class="cap-row--no"><td>Whole-file training preparation</td><td>JSONL arrays, canonical strings, synchronous archive decompression, and complete split buffers scale with corpus size.</td><td>Streaming parse, incremental digest and counts, bounded samples, partitioned emission, and external spill/sort where necessary.</td></tr>
+      <tr class="cap-row--partial"><td>Posting-list indexes</td><td>The old implementation copied a posting list at every insertion and rules scanned all facts for each premise.</td><td>Amortized append and bound-term candidate selection are implemented; sorted integer postings and shard-level intersection remain pending.</td></tr>
+      <tr class="cap-row--no"><td>Globally unique normalized aliases</td><td>Polysemous words such as “bank” cannot represent multiple WordNet senses.</td><td>Alias-to-candidate indexes followed by contextual sense and entity resolution.</td></tr>
+      <tr class="cap-row--no"><td>Unscoped triples</td><td>Historical, hypothetical, believed, and fictional claims can collide with current real-world claims.</td><td>Claim identity includes world, valid time, perspective, modality, polarity, domain, and source scope.</td></tr>
+    </tbody></table>
+    <p>The first reproducible corrective profile used simple synthetic <code>is_a</code> data after the posting and premise-index changes. In the <a href="results/latest-core-scale.json">latest local report</a>, index construction took about 0.7 ms for 1,000 facts, 4.9 ms for 10,000, and 41.0 ms for 100,000; a one-premise rule closed 10,000 direct facts into 15,000 facts in about 38.2 ms. Run <code>npm run profile:scale</code> to replace the report. These numbers show only that the corrected primitive no longer has the obvious posting-copy bottleneck. They are not a release benchmark: real relation density, multi-premise joins, provenance, ESM parsing, and scope indexes remain unmeasured.</p>
+
+    <h2>Profiling is part of the experiment</h2>
+    <p><code>eslm-profile-v1</code> records stage order, wall time, user and system CPU, RSS, heap and external-memory deltas, status, and work counts. Memory deltas can be negative when garbage collection occurs; large-run reports therefore also need sampled peak memory. Normal queries omit profiling. Release, scale, training, and validation runs must enable it.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  Q[Question] --> L[Language stages]
+  L --> S[Scope + shard plan]
+  S --> R[Retrieval + rules]
+  R --> A[Answer + proof]
+  L --> P[Stage profile]
+  S --> P
+  R --> P
+  A --> P</pre><figcaption>Profiling follows the semantic pipeline rather than measuring only total latency. A slow answer can therefore be attributed to parsing, scope selection, postings, rule expansion, proof work, or realization.</figcaption></figure>
+    <pre><code>node src/cli.mjs ask \
+  "Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?" \
+  --profile
+
+node src/cli.mjs train prepare \
+  --input INPUT.jsonl \
+  --output training/work/packet.json \
+  --profile</code></pre>
+    <p>The query report already separates engine closure and index construction from session compilation, normalization, parsing, session closure, query index work, answer retrieval, and realization. The training report separates input reading, record validation, canonicalization, type counts, source hashing, and packet writing and persists a <code>.profile.json</code> sidecar. Corpus adapters must add decompression, relation mapping, deduplication, dictionary construction, anomalies, sharding, index emission, validation, cold import, and probe-query stages.</p>
+
+    <h2>A probe precedes every adapter</h2>
+    <p>The first pass over a corpus is a diagnostic probe, not training. It inventories the schema and takes deterministic stratified samples by relation, record kind, language, upstream source, license, weight or rank, datatype, qualifier presence, time shape, spatial shape, and parse result. It gives extra space to rare and rejected strata. Taking the first thousand lines is insufficient because source files are commonly grouped by language, relation, or entity.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+  A[Frozen source] --> C[Streaming counts]
+  A --> S[Stable stratified samples]
+  C --> R{Probe review}
+  S --> R
+  R -->|unknown shape| X[Extend schema or quarantine]
+  R -->|accounted for| D[Approve adapter design]</pre><figcaption>The probe discovers surprises before the agent commits to a representation. Full ingestion starts only when each observed stratum has a mapping, explicit abstention, or quarantine policy.</figcaption></figure>
+    <p>The probe report must identify unknown relations and datatypes, malformed and oversized values, alias collisions, negative assertions, cycles, conflicts, source mixtures, license mixtures, qualifiers, time intervals, coordinates, units, and estimated output/index size. For WordNet's moderate archive the probe may scan the complete source while retaining only bounded examples. ATOMIC, ConceptNet, and GeoNames require bounded memory and stable per-stratum sampling. Any future thematic Wikidata probe has the same requirement and a separately approved domain boundary.</p>
+    <h3>What the WordNet probe actually found</h3>
+    <p>The first <a href="results/latest-oewn-probe.json">complete WordNet probe</a> scanned 107,519 synsets and 185,129 lexical senses in under three seconds on the recorded machine. Its principal stages were archive inventory and hashing, synset inventory, lexical-entry inventory, and a second reference-validation pass. The latest report records the exact run-dependent deltas; RSS grew by more than 200 MB and heap by roughly 150 MB. These are not sampled peaks, but they already show that retaining global ID and ambiguity sets dominates the tiny compressed archive and must not become the design for ATOMIC, ConceptNet, or GeoNames.</p>
+    <p>The probe found 25,805 ambiguous normalized members, including 75 synsets for “break” and 70 for “cut”. It also found homograph-suffixed part-of-speech keys and external Wikidata IDs shaped like string arrays. Those observations invalidate two tempting shortcuts: aliases cannot be unique, and a string array cannot be classified as an internal edge without field semantics. No full KB was emitted; the gate moved only from “probe missing” to “sense-aware shard prototype required”.</p>
+
+    <h2>Generated storage and query planning</h2>
+    <p>The scalable model uses integer dictionaries for source IDs, entities or senses, predicates, scalar types, worlds, domains, and repeated strings. Facts are immutable rows in relation-and-scope shards. Postings contain sorted integer claim IDs. Provenance uses compact claim-to-source tables and separate derivation records rather than repeating source strings in every object.</p>
+    <p>A small manifest index describes predicates, worlds, domains, time coverage, entity ranges, counts, and dependencies for each shard. The compiled query names candidate senses or entities, requested predicates, world and temporal scope, result type, and reasoning budget. Only then may the loader import relevant shards. Module paths are a static allowlist generated by trusted build logic; no corpus or user string becomes an import path.</p>
+    <figure class="diagram"><pre class="mermaid">flowchart TD
+  M[Small profile manifest] --> Q{Compiled query}
+  Q -->|taxonomy| T[Lexical taxonomy shards]
+  Q -->|place + time| G[Geography/time shards]
+  Q -->|fictional world| F[Canon-scoped shards]
+  T --> E[Bounded executor]
+  G --> E
+  F --> E
+  E --> P[Scoped proof]</pre><figcaption>The query branches into only the relevant semantic and scope shards. Unrelated domains remain unloaded, and the proof records exactly which profile and shard supplied each support.</figcaption></figure>
+
+    <h2>Time, space, domain, and worlds</h2>
+    <p>Time is not a predicate suffix. A claim distinguishes source-record time, ingestion time, and valid time. Valid time may be an instant, interval, recurring condition, event order, or unknown. “Current” is evaluated against an explicit query/evaluation time and frozen source snapshot. Historical statements remain available instead of being overwritten.</p>
+    <p>Space separates administrative containment, physical part-whole, coordinates and reference systems, topology, relative direction, distance, and event location. A disputed boundary or approximate coordinate retains its source and precision. Spatial rules declare their coordinate system and whether composition is valid.</p>
+    <p>Conceptual domains form a versioned hierarchy covering lexical semantics and fields such as biology, medicine, physics, chemistry, astronomy, geography, history, social behavior, and literature. Domains select terminology, units, executors, and shards; they are not truth weights. Cross-domain claims retain multiple domain IDs.</p>
+    <p>Every contextual claim belongs to a world. Actual-world sources use <code>world:actual</code>. Each fictional universe, work, canon, or edition has a distinct world. A benchmark story and a user's thought experiment create ephemeral worlds. Beliefs and reports add perspective, so a character may believe something false without changing the fictional world's state.</p>
+    <p>A hypothetical question creates an immutable branch from a named base world, adds assumptions, and runs scoped reasoning. Contradicting the base does not rewrite it. The answer states whether it is deductive under assumptions, defeasible, abductive, or unknown. Real background knowledge enters a fictional or hypothetical world only through a declared bridge policy.</p>
+
+    <h2>Gate required before WordNet and larger sources</h2>
+    <table><thead><tr><th>Gate evidence</th><th>Required outcome</th></tr></thead><tbody>
+      <tr class="cap-row--yes"><td>WordNet source probe</td><td>Complete scan and profile recorded; observed source shapes and the first representation surprises are inventoried.</td></tr>
+      <tr><td>Streaming path</td><td>Source read, validation, digest, normalization, and shard emission do not retain the complete decoded corpus.</td></tr>
+      <tr><td>Model v2 prototype</td><td>Sense-aware candidate aliases, intern dictionaries, relation/scope shards, compact provenance, and static manifest inventory.</td></tr>
+      <tr><td>Query-directed execution</td><td>No full-profile closure at startup and no full rebuild for one session or hypothetical assertion.</td></tr>
+      <tr><td>Scale curve</td><td>Increasing-size runs report throughput, peak memory, bytes, cold import, p50/p95 queries, postings, rules, and proof equivalence.</td></tr>
+      <tr><td>Context isolation</td><td>Time, actual/fictional worlds, perspectives, and hypothetical branches cannot contaminate one another.</td></tr>
+    </tbody></table>
+    <p>A gate fails when peak memory follows complete source size, a query loads unrelated domains, alias ambiguity is rejected at build time, a small overlay triggers whole-model closure, an unexplained superlinear hotspot appears, or the probe discovers an unrepresented stratum. The failure produces an architecture change and a new probe; it does not justify silently dropping the difficult records.</p>
+
+    <p class="related"><strong>Continue with:</strong> <a href="knowledge-sources.html">Real Knowledge Sources</a> for the corpus order, <a href="architecture.html">Architecture</a> for component boundaries, <a href="reasoning.html">Reasoning</a> for inference semantics, and <a href="specsLoader.html?spec=DS019-scalability-profiling-and-contextual-worlds.md">DS019</a> for the authoritative gate.</p>
+  </main>
+</body>
+</html>

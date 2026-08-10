@@ -1,0 +1,62 @@
+{
+  "architecture": {
+    "role_prompt": "agents/prompts/01_ARCHITECTURE_GUARDIAN.md",
+    "specs": ["design_specs/DS-001-RESEARCH-CONTRACT.md", "design_specs/DS-004-STORYIR-SCHEMA.md", "design_specs/DS-011-NORMALIZED-LM-SCORING.md", "design_specs/DS-017-EVALUATION-PROTOCOL.md"],
+    "contracts": ["architecture/SYSTEM_OVERVIEW.md", "architecture/STORYIR_CONTRACT.md", "architecture/LM_PROTOCOL.md", "architecture/CIRCUIT_API.md"]
+  },
+  "corpus": {
+    "role_prompt": "agents/prompts/02_CORPUS_ENGINEER.md",
+    "specs": ["design_specs/DS-002-CORPUS-INGESTION-AND-PROVENANCE.md", "design_specs/DS-003-TOKENIZATION-LEXICON-MORPHOLOGY.md", "design_specs/DS-019-REPRODUCIBILITY-AND-EXPERIMENT-TRACKING.md"],
+    "contracts": ["DATA_CARD.md", "docs/LOCAL_RUNBOOK.md"]
+  },
+  "construction_induction": {
+    "role_prompt": "agents/prompts/03_CONSTRUCTION_INDUCTION.md",
+    "specs": ["design_specs/DS-003-TOKENIZATION-LEXICON-MORPHOLOGY.md", "design_specs/DS-005-CONSTRUCTION-GRAMMAR-INDUCTION.md", "design_specs/DS-006-INCREMENTAL-PARSING-AND-COMPILATION.md"],
+    "contracts": ["architecture/STORYIR_CONTRACT.md", "docs/ANNOTATION_GUIDE.md"]
+  },
+  "parser": {
+    "role_prompt": "agents/prompts/04_PARSER_COMPILER.md",
+    "specs": ["design_specs/DS-004-STORYIR-SCHEMA.md", "design_specs/DS-005-CONSTRUCTION-GRAMMAR-INDUCTION.md", "design_specs/DS-006-INCREMENTAL-PARSING-AND-COMPILATION.md"],
+    "contracts": ["architecture/STORYIR_CONTRACT.md", "schemas/story_ir.schema.json"]
+  },
+  "discourse": {
+    "role_prompt": "agents/prompts/05_DISCOURSE_COREFERENCE.md",
+    "specs": ["design_specs/DS-007-REFERENCE-AND-DISCOURSE-MEMORY.md", "design_specs/DS-009-TEMPORAL-CAUSAL-MENTAL-STATE.md"],
+    "contracts": ["architecture/STORYIR_CONTRACT.md", "docs/ANNOTATION_GUIDE.md"]
+  },
+  "world_model": {
+    "role_prompt": "agents/prompts/06_WORLD_MODEL.md",
+    "specs": ["design_specs/DS-008-WORLD-STATE-AND-EVENT-CALCULUS.md", "design_specs/DS-009-TEMPORAL-CAUSAL-MENTAL-STATE.md", "design_specs/DS-016-VERIFICATION-PROVENANCE-AND-TRACE.md"],
+    "contracts": ["architecture/CIRCUIT_API.md", "architecture/STORYIR_CONTRACT.md"]
+  },
+  "rule_induction": {
+    "role_prompt": "agents/prompts/07_RULE_SCHEMA_INDUCTION.md",
+    "specs": ["design_specs/DS-009-TEMPORAL-CAUSAL-MENTAL-STATE.md", "design_specs/DS-010-RULE-AND-NARRATIVE-SCHEMA-INDUCTION.md", "design_specs/DS-015-AGENTIC-CIRCUIT-SYNTHESIS.md"],
+    "contracts": ["architecture/CIRCUIT_API.md", "agents/FAILURE_PACKET_SCHEMA.md"]
+  },
+  "probability": {
+    "role_prompt": "agents/prompts/08_PROBABILISTIC_SCORING.md",
+    "specs": ["design_specs/DS-003-TOKENIZATION-LEXICON-MORPHOLOGY.md", "design_specs/DS-011-NORMALIZED-LM-SCORING.md", "design_specs/DS-018-BASELINES-AND-BENCHMARK-ADAPTERS.md"],
+    "contracts": ["architecture/LM_PROTOCOL.md", "docs/NEURAL_BASELINE_RUNBOOK.md"]
+  },
+  "generation": {
+    "role_prompt": "agents/prompts/09_PLANNER_REALIZER.md",
+    "specs": ["design_specs/DS-010-RULE-AND-NARRATIVE-SCHEMA-INDUCTION.md", "design_specs/DS-012-NARRATIVE-PLANNING.md", "design_specs/DS-013-SURFACE-REALIZATION.md"],
+    "contracts": ["architecture/LM_PROTOCOL.md", "BENCHMARK_CARD.md"]
+  },
+  "evaluation": {
+    "role_prompt": "agents/prompts/10_EVALUATION_REDTEAM.md",
+    "specs": ["design_specs/DS-017-EVALUATION-PROTOCOL.md", "design_specs/DS-018-BASELINES-AND-BENCHMARK-ADAPTERS.md", "design_specs/DS-019-REPRODUCIBILITY-AND-EXPERIMENT-TRACKING.md"],
+    "contracts": ["eval/TAXONOMY.md", "eval/BENCHMARK_MATRIX.md", "BENCHMARK_CARD.md"]
+  },
+  "performance": {
+    "role_prompt": "agents/prompts/11_PERFORMANCE_ENGINEER.md",
+    "specs": ["design_specs/DS-014-TRAINING-ORCHESTRATION-AND-ARTIFACTS.md", "design_specs/DS-019-REPRODUCIBILITY-AND-EXPERIMENT-TRACKING.md", "design_specs/DS-020-SCALING-PERFORMANCE-AND-SANDBOX.md"],
+    "contracts": ["architecture/MODEL_ARTIFACT_LAYOUT.md", "docs/LOCAL_RUNBOOK.md"]
+  },
+  "research": {
+    "role_prompt": "agents/prompts/12_EXPERIMENT_RESEARCHER.md",
+    "specs": ["design_specs/DS-001-RESEARCH-CONTRACT.md", "design_specs/DS-017-EVALUATION-PROTOCOL.md", "design_specs/DS-018-BASELINES-AND-BENCHMARK-ADAPTERS.md"],
+    "contracts": ["docs/EXPERIMENT_MATRIX.md", "docs/RESULT_INTERPRETATION.md", "reports/EXPERIMENT_STATUS.md"]
+  }
+}

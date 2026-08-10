@@ -1,0 +1,10 @@
+{
+  "format": "eslm-source-manifest-v1",
+  "id": "oewn-2025",
+  "officialSource": "https://en-word.net/downloads",
+  "archive": "training/.cache/corpora/oewn-2025/english-wordnet-2025-json.zip",
+  "archiveBytes": 9986555,
+  "archiveSha256": "7d749f6e2c39e6970e4997839dcf6e42fd281f3c2fae0171d2192bae8cfa4b51",
+  "release": "2025-12-31",
+  "license": "CC BY 4.0; Open English WordNet and Princeton WordNet attribution required"
+}

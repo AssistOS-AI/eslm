@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://axiologic.net/storycircuit/schemas/construction.schema.json",
+  "title": "Weighted construction",
+  "type": "object",
+  "required": ["id", "version", "surface", "semantic", "weight", "provenance"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "version": {"type": "string"},
+    "surface": {
+      "type": "object",
+      "required": ["pattern", "slots"],
+      "properties": {
+        "pattern": {"type": "array", "items": {"type": "object"}},
+        "slots": {"type": "object"},
+        "morphology": {"type": "array", "items": {"type": "object"}},
+        "punctuation": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "semantic": {
+      "type": "object",
+      "required": ["operation"],
+      "properties": {
+        "operation": {"type": "string"},
+        "template": {"type": "object"},
+        "preconditions": {"type": "array", "items": {"type": "object"}},
+        "effects": {"type": "array", "items": {"type": "object"}}
+      },
+      "additionalProperties": false
+    },
+    "discourse_conditions": {"type": "array", "items": {"type": "object"}},
+    "weight": {
+      "type": "object",
+      "required": ["count", "log_probability"],
+      "properties": {
+        "count": {"type": "integer", "minimum": 0},
+        "log_probability": {"type": "number"},
+        "smoothing": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "provenance": {"type": "array", "items": {"type": "object"}},
+    "metrics": {"type": "object"},
+    "regime": {"enum": ["S0", "S1", "S2"]}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,25 @@
+{
+  "name": "pilot",
+  "model_id": "storycircuit-pilot",
+  "corpus": {
+    "input": "data/raw/TinyStoriesV2-GPT4-train.txt",
+    "train_prepared": "data/prepared/pilot/train.jsonl",
+    "prepared_dir": "data/prepared/pilot",
+    "max_stories": 25000,
+    "min_chars": 40,
+    "max_chars": 12000,
+    "exact_dedup": true,
+    "splits": {"train": 0.90, "dev": 0.04, "agent_shadow": 0.03, "test": 0.03}
+  },
+  "training": {
+    "byte_order": 4,
+    "byte_alpha": 0.05,
+    "word_order": 4,
+    "word_alpha": 0.05,
+    "min_word_count": 2,
+    "max_stories": 25000,
+    "parse_stories": 25000
+  },
+  "artifacts": {"model": "artifacts/pilot/model.json"},
+  "budgets": {"peak_ram_gb": 4, "target_wall_hours": 2}
+}

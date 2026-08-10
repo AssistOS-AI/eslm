@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ESLM Documentation</title>
+  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main>
+    <p class="breadcrumb">ESLM Documentation</p>
+    <h1>An executable symbolic language model built as Node.js code</h1>
+    <p class="lead">The experiment asks whether a coding agent can transform real language and commonsense sources into auditable executable modules. At runtime ESLM uses no LLM, coding agent, network service, Python, or neural checkpoint. It normalizes an English question, selects an installed knowledge module, executes retrieval or bounded reasoning, realizes an answer, and preserves the evidence that produced it.</p>
+
+    <h2>The experiment now</h2>
+    <p>The repository contains three different kinds of evidence, and they must not be confused. The promoted core learned a narrow language-and-deduction pattern from bAbI Task 15. <code>QUICK</code> is authored project knowledge used to test software behavior. Open English WordNet 2025 and ATOMIC 2020 are the first source-derived KBs compiled from official public releases. Public benchmark results are not mixed with tests that expose those same sources.</p>
+    <div class="table-wrap"><table><thead><tr><th>Module</th><th>What was processed</th><th>Generated knowledge</th><th>Runtime role</th><th>Status</th></tr></thead><tbody>
+      <tr class="cap-row--yes"><td><a href="kb-quick.html"><code>quick</code></a></td><td>Three small authored fixture files.</td><td>36 entities, 62 direct facts, 14 rules, 116 facts after closure.</td><td>Fast smoke tests, tutorials, session learning, deduction, induction and abduction regression.</td><td><span class="cap cap--yes">ready</span></td></tr>
+      <tr class="cap-row--yes"><td><a href="kb-oewn-2025.html"><code>oewn-2025</code></a></td><td>The complete official 2025 JSON release: 45 synset files in a 9,986,555-byte archive.</td><td>107,519 synsets, 127,311 lemmas, 185,129 member occurrences, 107,524 definitions.</td><td>Definitions, senses, synonyms and bounded hypernym proofs.</td><td><span class="cap cap--yes">built</span></td></tr>
+      <tr class="cap-row--yes"><td><a href="kb-atomic-2020.html"><code>atomic-2020</code></a></td><td>All 1,076,880 rows of the official train split; dev and test remain evaluation-only.</td><td>940,427 unique non-<code>none</code> tuples grouped under 36,940 events after the repaired source row is included.</td><td>Defeasible intentions, needs, effects, reactions, wants, obstacles, causes and event order.</td><td><span class="cap cap--yes">built</span></td></tr>
+      <tr class="cap-row--yes"><td>bAbI Task 15 core</td><td>10,000 train episodes; the 1,000 test episodes remained hidden from synthesis.</td><td>Reusable parser construction, morphology and universal-rule execution rather than memorized story answers.</td><td>Controlled proof that a narrow learned symbolic circuit transfers.</td><td><span class="cap cap--yes">1000/1000</span></td></tr>
+    </tbody></table></div>
+
+    <figure class="diagram"><pre class="mermaid">flowchart LR
+  Q[English input] --> C{Question family}
+  C -->|session / small facts| K[QUICK + core]
+  C -->|word sense / taxonomy| W[WordNet shards]
+  C -->|intent / effect / obstacle| A[ATOMIC event shards]
+  K --> D[Direct fact or bounded proof]
+  W --> D
+  A --> H[Defeasible candidates]
+  D --> R[Answer + provenance]
+  H --> R
+  C -->|no compiled construction| U[Explicit unsupported or unknown]</pre><figcaption>One input can follow different executable paths. WordNet conclusions are lexical or taxonomic; ATOMIC results remain possibilities; missing support does not become a fabricated answer.</figcaption></figure>
+
+    <h2>Questions you can run now</h2>
+    <div class="table-wrap"><table><thead><tr><th>Input</th><th>Required KB</th><th>What happens</th></tr></thead><tbody>
+      <tr class="cap-row--yes"><td><code>Socrates is a man. Is Socrates a man?</code></td><td>base model</td><td>The first sentence becomes a session fact and the second retrieves it. The spelling of the name is not pre-registered.</td></tr>
+      <tr class="cap-row--yes"><td><code>Jhon is a man. Is Jhon going to die?</code></td><td><code>quick</code></td><td>The session classification enters a three-rule mortality chain and returns a depth-3 proof.</td></tr>
+      <tr class="cap-row--yes"><td><code>Define dog</code></td><td><code>oewn-2025</code></td><td>Returns the compiled WordNet senses and definitions without collapsing the animal, tool, food and verb senses.</td></tr>
+      <tr class="cap-row--yes"><td><code>Is a dog an animal?</code></td><td><code>oewn-2025</code></td><td>Finds at least one sense path from dog to animal and reports the proof length.</td></tr>
+      <tr class="cap-row--yes"><td><code>Why might apologize?</code></td><td><code>atomic-2020</code></td><td>Returns a source-backed possible intention, labeled as defeasible rather than certain.</td></tr>
+      <tr class="cap-row--yes"><td><code>What might happen after PersonX apologizes profusely?</code></td><td><code>atomic-2020</code></td><td>Retrieves actor and other-person effects with exact train-line provenance.</td></tr>
+      <tr class="cap-row--partial"><td><code>Can Penguin fly?</code></td><td><code>quick</code></td><td>Returns <code>UNKNOWN</code>. No positive flying fact exists, and open-world reasoning refuses to turn absence into falsehood.</td></tr>
+      <tr class="cap-row--no"><td><code>Write a new poem</code></td><td>none</td><td>Unsupported. ESLM has no open-ended text generator and does not call a hidden LLM.</td></tr>
+    </tbody></table></div>
+
+    <h2>Independent randomized check</h2>
+    <p>The latest reproducible source-KB run used seed <code>20260810</code> and tested 700 cases: 100 WordNet definitions, 100 synonym checks, 100 hypernym proofs, and 100 cases for each of four ATOMIC relation families. All 700 passed. The combined import and run used roughly 592 MB additional RSS on the recorded machine; this is acceptable for the present experiment but confirms that future work must make shard loading query-directed rather than eager. See the <a href="results/latest-kb-random-tests.json">machine-readable report</a>.</p>
+
+    <h2>Start here</h2>
+    <div class="nav-grid" aria-label="Documentation paths">
+      <a class="nav-card" href="cli.html"><strong>Use the CLI</strong><span>Start an interactive session, inspect KBs, load or unload modules, and run tested examples.</span></a>
+      <a class="nav-card" href="knowledge-bases.html"><strong>Choose a knowledge base</strong><span>See what QUICK, WordNet and ATOMIC contain, what they prove, and what remains unknown.</span></a>
+      <a class="nav-card" href="training.html"><strong>Understand training</strong><span>Follow official archive, cache, source manifest, semantic compiler, generated shards, validation and profiling.</span></a>
+      <a class="nav-card" href="architecture.html"><strong>Follow execution</strong><span>See how language compilation, source selection, retrieval, reasoning and realization connect.</span></a>
+      <a class="nav-card" href="reasoning.html"><strong>Reasoning boundaries</strong><span>Distinguish exact retrieval, deduction, induction, abduction and defeasible event candidates.</span></a>
+      <a class="nav-card" href="benchmarks.html"><strong>Read results correctly</strong><span>Separate isolated public benchmarks, source-exposed checks and regression tests.</span></a>
+    </div>
+  </main>
+</body>
+</html>
