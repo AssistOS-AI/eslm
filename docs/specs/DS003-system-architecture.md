@@ -58,7 +58,7 @@ Program synthesis is intentionally not fully automated by the runtime. A determi
 
 ### Scale path
 
-The v0.1 arrays optimize inspectability but are not approved for million-edge ingestion. Scale requires dictionary interning, relation-and-scope shards, sorted integer postings, tries or automata for aliases and constructions, event transition tables, static manifest-declared lazy imports, streaming validation, and memoized rule subgoals. Corpus text never chooses a module path. DS019 defines the mandatory gate and failure conditions.
+The v0.1 arrays optimize inspectability but are not approved for million-edge ingestion. Scale requires dictionary interning, relation-and-scope shards, sorted integer postings, tries or automata for aliases and constructions, event transition tables, manifest-declared shard metadata, streaming validation, and memoized rule subgoals. DS021 implements bounded query-selected reads for current public-KB data envelopes because dynamic ESM imports cannot be evicted. Corpus text never chooses a path. DS019 defines the remaining ingestion gate and failure conditions.
 
 ### Versioning
 

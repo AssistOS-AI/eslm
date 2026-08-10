@@ -8,7 +8,7 @@ The first completed public run uses bAbI v1.2 Task 15 English 10k: 10,000 agent-
 
 Two real source-derived KBs are now compiled. Open English WordNet 2025 contributes 107,519 synsets, 127,311 unique lemmas, definitions, synonyms, and bounded hypernym paths. ATOMIC 2020 contributes 940,427 unique non-empty train-derived tuples under 36,940 events for defeasible intentions, prerequisites, effects, reactions, wants, obstacles, causes, order, uses, and locations. Their seeded 700-case source-exposed integration run passes every case, but it is not an independent public benchmark. QUICK combines three small authored modules for tutorials and regressions; it is not learned world knowledge.
 
-Filtered English ConceptNet and a bounded GeoNames pack remain next only after query-directed lazy shard loading replaces eager full-KB import. Wikidata is deferred to optional dated thematic packs and will never be treated as a near-term full-dump KB.
+Budget-aware shard loading is implemented for WordNet and ATOMIC while eager loading remains the default when memory is ample. Filtered English ConceptNet and a bounded GeoNames pack still require streaming compilers, probes, compact relation indexes, and scoped semantics before ingestion. Wikidata is deferred to optional dated thematic packs and will never be treated as a near-term full-dump KB.
 
 ## Try it
 
@@ -19,6 +19,7 @@ node src/cli.mjs ask "Mice are afraid of wolves. Gertrude is a mouse. What is Ge
 node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?" --kb quick
 node src/cli.mjs ask "Is a dog an animal?" --kb oewn-2025
 node src/cli.mjs ask "Why might apologize?" --kb atomic-2020
+node src/cli.mjs --memory-mb 256
 node src/cli.mjs kb list
 node src/cli.mjs kb validate all
 node src/cli.mjs corpus status
@@ -49,7 +50,7 @@ original_specs/       archived source material; not current project authority
 
 Training is program synthesis, not parameter optimization. Evaluation datasets and knowledge corpora have separate registries. A coding agent designs source semantics, inference policies, module boundaries, and index strategies; deterministic Node.js adapters perform exhaustive validation and compilation. `train validate` checks safety and semantic invariants before a candidate can be evaluated. Knowledge profiles remain independently selectable with `--kb`, and selection is always recorded in evaluation metadata.
 
-The first real builds prove that deterministic Node compilation is fast enough at this scale, but they also expose the next bottleneck: loading WordNet and ATOMIC together uses roughly 0.6 GB additional RSS because their generated shards are assembled eagerly. Query-directed loading, compact relation-and-scope shards, contextual sense resolution, and explicit time, space, domain, fictional-world, perspective, and hypothetical-branch semantics are required before ConceptNet, GeoNames, or a larger source is authorized. See [the scalability review](docs/scalability.html).
+The first real builds prove that deterministic Node compilation is fast enough at this scale. Loading both public KBs eagerly uses roughly 0.6 GB additional RSS, which remains the fast default when no target is supplied. `--memory-mb` activates measured adaptive planning and bounded shard caches; `/memory` explains the live policy. Compact relation-and-scope indexes, contextual sense resolution, streaming source adapters, and explicit time, space, domain, fictional-world, perspective, and hypothetical-branch semantics remain required before a larger source is authorized. See [the scalability review](docs/scalability.html).
 
 ## Comparison policy
 

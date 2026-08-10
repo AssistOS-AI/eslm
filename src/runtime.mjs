@@ -17,7 +17,9 @@ export class EslmRuntime {
 
   async ask(text, context = {}) {
     for (const provider of this.providers) {
-      const result = await provider.ask(text);
+      provider.beginQuery?.();
+      let result;
+      try { result = await provider.ask(text); } finally { provider.endQuery?.(); }
       if (!result) continue;
       return {
         ...result,

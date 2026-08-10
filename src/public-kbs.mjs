@@ -80,16 +80,26 @@ class WordNetProvider {
     }
   }
 
+  beginQuery() { this.queryShards = new Map(); }
+  endQuery() { this.queryShards = undefined; }
+
+  async cachedShard(key, loader) {
+    if (this.queryShards?.has(key)) return this.queryShards.get(key);
+    const value = await this.cache.get(key, loader);
+    this.queryShards?.set(key, value);
+    return value;
+  }
+
   async lemmaData(lemma) {
     if (this.mode === 'eager') return this.lemmas;
     const bucket = lemmaBucket(lemma);
-    return this.cache.get(`lemma:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'lemmas', `${bucket}.mjs`)));
+    return this.cachedShard(`lemma:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'lemmas', `${bucket}.mjs`)));
   }
 
   async synsetData(id) {
     if (this.mode === 'eager') return this.synsets;
     const bucket = synsetBucket(id);
-    return this.cache.get(`synset:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'synsets', `${bucket}.mjs`)));
+    return this.cachedShard(`synset:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'synsets', `${bucket}.mjs`)));
   }
 
   async synset(id) { return (await this.synsetData(id))[id]; }
@@ -173,9 +183,19 @@ class AtomicProvider {
     }
   }
 
+  beginQuery() { this.queryShards = new Map(); }
+  endQuery() { this.queryShards = undefined; }
+
+  async cachedShard(key, loader) {
+    if (this.queryShards?.has(key)) return this.queryShards.get(key);
+    const value = await this.cache.get(key, loader);
+    this.queryShards?.set(key, value);
+    return value;
+  }
+
   async eventData(bucket) {
     if (this.mode === 'eager') return this.events;
-    return this.cache.get(`event:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'events', `${bucket}.mjs`)));
+    return this.cachedShard(`event:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'events', `${bucket}.mjs`)));
   }
 
   async findEvent(input) {

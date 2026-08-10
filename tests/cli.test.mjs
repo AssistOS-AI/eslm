@@ -76,3 +76,14 @@ test('CLI can query compiled public KBs explicitly', async () => {
   assert.equal(atomic.status, 'ANSWERED');
   assert.match(atomic.answer, /possibilit/u);
 });
+
+test('CLI structured output remains ANSI-free and reports lazy memory policy', async () => {
+  const { stdout } = await run(process.execPath, [
+    'src/cli.mjs', 'ask', 'Why might apologize?', '--kb', 'atomic-2020',
+    '--memory-policy', 'lazy', '--memory-mb', '160', '--color', 'always',
+  ], { cwd: PROJECT_ROOT });
+  assert.equal(stdout.includes('\u001b['), false);
+  const result = JSON.parse(stdout);
+  assert.equal(result.model.memory.effectivePolicy, 'lazy');
+  assert.equal(result.model.memory.providers[0].mode, 'lazy');
+});

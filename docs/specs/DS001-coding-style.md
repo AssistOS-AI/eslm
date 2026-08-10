@@ -44,7 +44,7 @@ Generated modules are not a dumping ground for stable algorithms. The core owns 
 
 ### Forbidden runtime behavior
 
-Runtime and generated model code must not use `eval`, `Function`, `node:vm`, child processes, networking, environment-secret access, corpus-selected dynamic imports, or import-time I/O. Model source strings are data and never executed. The CLI may read explicitly selected input and write explicitly selected output; the inference engine receives objects and performs no I/O.
+Runtime and generated model code must not use `eval`, `Function`, `node:vm`, child processes, networking, environment-secret access, corpus-selected dynamic imports, or import-time I/O. Model source strings are data and never executed. The CLI may read explicitly selected input and write explicitly selected output. The graph inference core receives objects and performs no I/O. Under DS021, a public-KB provider may read a compiler-generated, allowlisted shard data envelope after a query selects its fixed bucket; it verifies the envelope and parses JSON without evaluating the module source.
 
 Generated model validation uses static forbidden-capability scanning plus semantic imports in a controlled local process. This scanner is a defense layer, not a proof. Promotion also requires review of the generated diff and model contract.
 

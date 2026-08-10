@@ -10,7 +10,7 @@ summary: Establishes the pre-ingestion architecture gate for streaming compilati
 
 ## Introduction
 
-The v0.1 graph runtime proves a small executable path but is not the final architecture for million-edge corpora. The first complete WordNet and ATOMIC experimental builds now demonstrate deterministic source compilation and source-specific queries, while measuring the remaining scale problem: generated files are sharded statically, but their manifests eagerly import and merge every shard. Larger-source work is prohibited until query-directed import and bounded working sets replace that behavior.
+The v0.1 graph runtime proves a small executable path but is not the final architecture for million-edge corpora. Complete WordNet and ATOMIC builds demonstrate deterministic source compilation and source-specific queries. DS021 adds budget-triggered query-directed shard access while retaining eager loading when memory is ample. Larger-source work still requires source-specific streaming compilation and compact indexes; lazy loading alone does not authorize an unbounded corpus.
 
 ## Core Content
 
@@ -46,9 +46,9 @@ The coding agent receives the probe, source documentation, and approved samples.
 
 The Open English WordNet probe and complete compiler run are complete. The 38-module build produced 23,771,871 bytes in about 1.34 seconds with about 281 MB RSS growth during the recorded run. An isolated cold import took about 0.80 seconds and added about 349 MB RSS.
 
-The probe found 25,805 ambiguous normalized synset members, homograph-suffixed lexical-entry part-of-speech keys, adjective satellites, lexical relations nested at sense level, and external Wikidata IDs that share the JSON shape of internal edge lists. The provider now preserves lemma-to-many-synset postings and supports definitions, synonyms, sense counts, and bounded hypernym proofs. Contextual sense selection and lazy shard loading remain open.
+The probe found 25,805 ambiguous normalized synset members, homograph-suffixed lexical-entry part-of-speech keys, adjective satellites, lexical relations nested at sense level, and external Wikidata IDs that share the JSON shape of internal edge lists. The provider preserves lemma-to-many-synset postings and supports definitions, synonyms, sense counts, and bounded hypernym proofs. Contextual sense selection remains open. Budget-aware lazy shard loading is implemented by DS021.
 
-The ATOMIC compiler streamed 1,076,880 train rows, retained 940,427 unique non-`none` tuples, and emitted 17 modules totaling about 32.96 MB. The recorded build took about 4.5 seconds and about 493 MB RSS growth. Isolated cold import took about 0.76 seconds and added about 284 MB RSS. The combined seeded 700-case WordNet/ATOMIC test passes every case and uses roughly 0.6 GB additional RSS; the report retains the run-specific value. This confirms that eager full-profile import is the next bottleneck.
+The ATOMIC compiler streamed 1,076,880 train rows, retained 940,427 unique non-`none` tuples, and emitted 17 modules totaling about 32.96 MB. The recorded build took about 4.5 seconds and about 493 MB RSS growth. Isolated cold import took about 0.76 seconds and added about 284 MB RSS. The combined seeded 700-case WordNet/ATOMIC eager test passes every case and uses roughly 0.6 GB additional RSS. This measurement motivated DS021's adaptive provider plan and bounded shard caches.
 
 ### Scalable generated model
 
@@ -88,9 +88,9 @@ A hypothetical question creates an immutable branch from a named base world and 
 
 ### Architecture gate and budgets
 
-The experimental K1 build has a probe, deterministic source reader, profiling report, sense-aware lemma postings, generated shards, validation, and random tests. It does not yet have query-directed shard import. This is sufficient to test semantics and establish measured costs, but not to authorize a larger eager corpus or call the architecture scale-complete.
+The experimental K1 build has a probe, deterministic source reader, profiling report, sense-aware lemma postings, generated shards, validation, random tests, and query-directed shard access under an explicit target. This is sufficient to test semantics and bounded residency, but not to authorize an unbounded source or call the architecture scale-complete.
 
-The experimental ATOMIC provider preserves PersonX/PersonY text, relation direction, and defeasible answer status, but general participant binding and calibrated ranking remain open. Before ConceptNet, query-directed loading must be implemented, decompression and CSV parsing must be streaming, memory must remain within a declared fixed working-set budget, and relation shards must be emitted incrementally. GeoNames additionally requires typed coordinates and administrative containment. A future thematic Wikidata pack requires external partitioning, typed values, qualifiers, and revisioned scope; the full dump is not a build target.
+The experimental ATOMIC provider preserves PersonX/PersonY text, relation direction, and defeasible answer status, but general participant binding and calibrated ranking remain open. Before ConceptNet, decompression and CSV parsing must be streaming, memory must remain within a declared working-set target, and relation shards must be emitted incrementally. DS021 supplies runtime residency control but not these compiler guarantees. GeoNames additionally requires typed coordinates and administrative containment. A future thematic Wikidata pack requires external partitioning, typed values, qualifiers, and revisioned scope; the full dump is not a build target.
 
 A gate fails when throughput collapses superlinearly without an explained relation-density cause, peak memory scales with complete source size, one query loads unrelated domains, a session fact triggers whole-model closure, alias ambiguity is rejected at build time, profiling cannot attribute a hotspot, or a probe finds an unrepresented source stratum.
 
@@ -118,4 +118,4 @@ Response: A reviewed probe report must account for all observed strata, unknowns
 
 ## Conclusion
 
-Large-corpus ESLM requires streaming compilation, compact scoped shards, query-directed reasoning, and evidence-backed profiling. WordNet and ATOMIC now provide real measured source builds and queries, not plans. Their eager combined memory cost keeps the scale gate open and blocks larger ConceptNet or GeoNames ingestion until lazy selection exists. Time, space, domain, world, perspective, and hypothetical branches remain required semantics for later scoped corpora.
+Large-corpus ESLM requires streaming compilation, compact scoped shards, query-directed reasoning, and evidence-backed profiling. WordNet and ATOMIC provide measured builds, eager execution, and budget-aware lazy execution. The remaining scale gate concerns source streaming, compact relation indexes, and scoped planning rather than the implemented shard cache. Time, space, domain, world, perspective, and hypothetical branches remain required semantics for later scoped corpora.

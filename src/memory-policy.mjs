@@ -19,12 +19,13 @@ export function planPublicKnowledgeMemory(ids, catalog, options = {}) {
   const targetBytes = targetMiB === undefined ? undefined : Math.floor(targetMiB * MIB);
   let available = targetBytes === undefined ? Number.POSITIVE_INFINITY : Math.max(0, targetBytes - reserveBytes);
   const providers = [];
+  const orderedIds = [...ids].sort((left, right) => (catalog[left].priority ?? 100) - (catalog[right].priority ?? 100));
 
-  for (let index = 0; index < ids.length; index += 1) {
-    const id = ids[index];
+  for (let index = 0; index < orderedIds.length; index += 1) {
+    const id = orderedIds[index];
     const definition = catalog[id];
     const eagerBytes = definition.estimatedEagerRssBytes;
-    const remainingCount = ids.length - index - 1;
+    const remainingCount = orderedIds.length - index - 1;
     const minimumForRemaining = remainingCount * MIN_CACHE_MIB * MIB;
     const mode = requestedPolicy === 'eager' || (requestedPolicy === 'auto' && (targetBytes === undefined || eagerBytes + minimumForRemaining <= available))
       ? 'eager' : 'lazy';
@@ -67,23 +68,21 @@ export class ShardCache {
     const loaded = await loader();
     const estimatedBytes = Math.ceil(loaded.sourceBytes * this.expansionFactor);
     this.stats.loads += 1;
-    if (estimatedBytes > this.targetBytes) this.stats.oversizedLoads += 1;
+    if (estimatedBytes > this.targetBytes) {
+      this.stats.oversizedLoads += 1;
+      this.stats.peakEstimatedBytes = Math.max(this.stats.peakEstimatedBytes, this.stats.estimatedBytes + estimatedBytes);
+      return loaded.value;
+    }
     this.entries.set(key, { value: loaded.value, estimatedBytes });
     this.stats.estimatedBytes += estimatedBytes;
     this.stats.peakEstimatedBytes = Math.max(this.stats.peakEstimatedBytes, this.stats.estimatedBytes);
-    this.trim(key);
+    this.trim();
     return loaded.value;
   }
 
-  trim(protectedKey) {
-    while (this.stats.estimatedBytes > this.targetBytes && this.entries.size > 1) {
+  trim() {
+    while (this.stats.estimatedBytes > this.targetBytes && this.entries.size > 0) {
       const key = this.entries.keys().next().value;
-      if (key === protectedKey) {
-        const entry = this.entries.get(key);
-        this.entries.delete(key);
-        this.entries.set(key, entry);
-        continue;
-      }
       const entry = this.entries.get(key);
       this.entries.delete(key);
       this.stats.estimatedBytes -= entry.estimatedBytes;

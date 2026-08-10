@@ -18,7 +18,7 @@ DS files under `docs/specs/` are the detailed source of truth. `matrix.md` index
 
 ### HTML requirements
 
-Every principal page contains several compact diagrams where they materially clarify local flows, accessible navigation, responsive layout, current capability boundaries, and direct links to DS files through `specsLoader.html`. Each diagram must have adjacent prose explaining its purpose, inputs, processing steps, output, and connection to source modules. Pages load as static files through a local HTTP server because the DS loader uses `fetch`.
+Every principal page contains several compact diagrams where they materially clarify local flows, accessible navigation, responsive layout, current capability boundaries, and direct links to DS files through `specsLoader.html`. Each diagram must have adjacent prose explaining its purpose, inputs, processing steps, output, and connection to source modules. Pages load as static files through a local HTTP server because the DS loader uses `fetch`. The shared header is loaded from one partial. At most one dropdown remains open; opening another closes the previous menu, clicking outside navigation closes all menus, and Escape closes all menus.
 
 Page titles and introductory headings must fit normal reading layouts without artificial narrow widths or oversized display typography. Explanatory pages use continuous chapters rather than decorative card grids. The DS loader presents breadcrumb and metadata in compact lines and must not duplicate the specification title in a large metadata panel.
 

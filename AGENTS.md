@@ -33,7 +33,7 @@ This repository develops an Executable Symbolic Language Model (ESLM). Training-
 - Never modify `original_specs/` or imported `.agents/skills/` for product implementation.
 - Runtime source under `src/` must not access networks, invoke an LLM, invoke a coding agent, execute corpus strings, use `eval`, or dynamically import corpus-provided paths.
 - Treat all training and benchmark input as untrusted. Validate schemas, freeze hashes, and generate only allowlisted module shapes.
-- Do not start the next larger public corpus until DS018 and DS019 requirements are met: frozen source, stratified probe, scope mapping, profiling budget, streaming adapter, compact shards, and query-directed execution. WordNet and ATOMIC establish the measured baseline but still load eagerly.
+- Do not start the next larger public corpus until DS018 and DS019 requirements are met: frozen source, stratified probe, scope mapping, profiling budget, streaming adapter, compact shards, and query-directed execution. WordNet and ATOMIC support measured eager loading plus DS021 budget-aware shard caches; this does not waive source-specific compiler gates.
 - Generated modules under `training/model/` and `training/KBs/*/model/` are executable data: deterministic, side-effect free, statically importable, and reviewable.
 - Training may use a coding agent, but promotion requires local validation and evaluation. Test and benchmark splits must not be exposed in synthesis packets.
 - Changes to behavior, interfaces, evaluation, or claims require synchronized DS, HTML documentation, and tests.
@@ -47,6 +47,7 @@ This repository develops an Executable Symbolic Language Model (ESLM). Training-
 - Real-corpus status: `node src/cli.mjs corpus status`
 - WordNet source probe: `node src/cli.mjs corpus probe --corpus oewn-2025 --archive ARCHIVE.zip`
 - Runtime profiling: `node src/cli.mjs ask "QUESTION" --profile`
+- Budgeted interactive runtime: `node src/cli.mjs --memory-mb 256` and then `/memory`
 - Core scale profile: `npm run profile:scale`
 - Knowledge modules: `node src/cli.mjs kb list` and `node src/cli.mjs ask "Can Penguin swim?" --kb animals`
 - Source-derived KB examples: `node src/cli.mjs ask "Define dog" --kb oewn-2025` and `node src/cli.mjs ask "Why might apologize?" --kb atomic-2020`

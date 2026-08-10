@@ -66,7 +66,7 @@ Minimum Description Length guides tradeoffs. Adding a reusable rule may reduce r
 
 ### Module safety and determinism
 
-All imports are static and local. Import has no I/O or time-dependent behavior. Values are frozen where practical. Pure helper functions are bounded and cannot access ambient authority. Source literals are safely escaped; corpus text cannot close a string and introduce syntax.
+Generated-module imports are static and local. Import has no I/O or time-dependent behavior. Values are frozen where practical. Pure helper functions are bounded and cannot access ambient authority. Source literals are safely escaped; corpus text cannot close a string and introduce syntax. DS021 additionally permits the trusted runtime provider to read a fixed generated shard as a validated JSON data envelope; the generated module itself still performs no I/O.
 
 Validation scans for forbidden capabilities, imports the model, checks format, unique ids, references, fact shape, provenance, rule shape, and index consistency. An isolated candidate is reviewed before replacing the promoted module graph.
 
@@ -74,7 +74,7 @@ Validation scans for forbidden capabilities, imports the model, checks format, u
 
 The initial six modules may split into `events`, `discourse`, `narrative`, `realization`, and fact shards. The manifest stays the only entry point. Runtime loaders select only declared format versions and known module keys. Format evolution uses migrations and retains old report readers.
 
-`eslm-code-model-v1` remains the promoted core and QUICK graph format. Open English WordNet and ATOMIC use generated static shards plus `eslm-public-kb-v1` manifests. Their first complete builds prove source compilation and runtime semantics, but manifests currently import and merge all shards eagerly; dividing data into files alone does not satisfy the DS019 query-directed scale target.
+`eslm-code-model-v1` remains the promoted core and QUICK graph format. Open English WordNet and ATOMIC use generated static shards plus `eslm-public-kb-v1` manifests. Their manifests remain the complete eager entry points. DS021 adds an alternate query-selected provider path over the same generated data envelopes, with bounded caches and eager/lazy semantic-equivalence tests.
 
 ### Promoted artifact and optional KB artifacts
 
@@ -92,7 +92,7 @@ The current exact inventory is:
 
 Loading all modules yields 36 unique entities, 62 direct facts, 14 rules, and 116 facts after combined closure. The difference from the source totals is explicit deduplication of four shared entities and six shared astronomy facts. The additional cross-module closure arises because animal classification consequences can satisfy living-being rules in `child-basic`.
 
-The top-level `quick` bundle generates the same merged graph under `training/KBs/QUICK/model/manifest.mjs`. It is the default interactive fixture and declares `benchmarkEligible: false`. `oewn-2025` generates 10 synset shards, 27 lemma shards, and one manifest. `atomic-2020` generates 16 event shards and one manifest. Both preserve source inventories and expose source-specific runtime providers rather than pretending that lexical senses and defeasible event continuations are ordinary v1 facts.
+The top-level `quick` bundle generates the same merged graph under `training/KBs/QUICK/model/manifest.mjs`. It is explicitly loadable for tests and tutorials, is excluded from the interactive default, and declares `benchmarkEligible: false`. `oewn-2025` generates 10 synset shards, 27 lemma shards, and one manifest. `atomic-2020` generates 16 event shards and one manifest. Both preserve source inventories and expose source-specific runtime providers rather than pretending that lexical senses and defeasible event continuations are ordinary v1 facts.
 
 ## Decisions & Questions
 

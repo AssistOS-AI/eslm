@@ -26,27 +26,18 @@
     "passRate": 1
   },
   "profile": {
-    "elapsedMilliseconds": 2090.7733980000003,
-    "rssDeltaBytes": 601812992,
-    "heapUsedDeltaBytes": 416803072,
+    "elapsedMilliseconds": 2191.8727710000003,
+    "rssDeltaBytes": 593047552,
+    "heapUsedDeltaBytes": 400698208,
     "slowest": [
       {
-        "kb": "oewn-2025",
-        "kind": "hypernym",
-        "input": "Is a whoremaster a pimp?",
+        "kb": "atomic-2020",
+        "kind": "obstacle",
+        "input": "What could prevent PersonX hits the rocks?",
         "passed": true,
         "status": "ANSWERED",
-        "answer": "Yes. At least one sense of whoremaster reaches pimp through a 1-edge WordNet path.",
-        "milliseconds": 3.9217949999997472
-      },
-      {
-        "kb": "oewn-2025",
-        "kind": "hypernym",
-        "input": "Is a environmentalism a preservation?",
-        "passed": true,
-        "status": "ANSWERED",
-        "answer": "Yes. At least one sense of environmentalism reaches preservation through a 1-edge WordNet path.",
-        "milliseconds": 0.9733949999999822
+        "answer": "possible obstacle candidates for “PersonX hits the rocks”: PersonX's wife won't let him drink in the morning; The tour guide says it's too icy to hike; PersonX has a broken hand.; They have no hands; PersonX has no rocks.; The rocks are covered in glass.. These are defeasible possibilities, not certain facts.",
+        "milliseconds": 2.0517549999999574
       },
       {
         "kb": "oewn-2025",
@@ -55,7 +46,7 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "northern shrike has 1 compiled sense:\n1. (n) a butcherbird of northern North America",
-        "milliseconds": 0.7997779999998329
+        "milliseconds": 0.931880000000092
       },
       {
         "kb": "atomic-2020",
@@ -64,7 +55,16 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "possible effect candidates for “PersonX loves every minute of it”: Laughs; Rejoices; Smiles; PersonX goes on a roller coaster; PersonX is water skiing. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.7427550000002157
+        "milliseconds": 0.847805999999764
+      },
+      {
+        "kb": "oewn-2025",
+        "kind": "hypernym",
+        "input": "Is a environmentalism a preservation?",
+        "passed": true,
+        "status": "ANSWERED",
+        "answer": "Yes. At least one sense of environmentalism reaches preservation through a 1-edge WordNet path.",
+        "milliseconds": 0.7078980000001138
       },
       {
         "kb": "oewn-2025",
@@ -73,7 +73,7 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "Possible synonyms across the compiled senses are: bare, stripped-down.",
-        "milliseconds": 0.3863129999999728
+        "milliseconds": 0.3862749999998414
       },
       {
         "kb": "atomic-2020",
@@ -82,16 +82,7 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "possible obstacle candidates for “PersonX quickly turned around”: PersonX's friend is blocking them in.; The doctor has PersonX bound in a body cast.; They are driving on a one-way street.; PersonX is in a wheelchair.; PersonX has too big of a car.; The light at the intersection is red.; PersonX has a cast on their leg.; PersonX has too slow of reflexes.. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.35944800000015675
-      },
-      {
-        "kb": "oewn-2025",
-        "kind": "hypernym",
-        "input": "Is a Columbus Day a legal holiday?",
-        "passed": true,
-        "status": "ANSWERED",
-        "answer": "Yes. At least one sense of columbus day reaches legal holiday through a 1-edge WordNet path.",
-        "milliseconds": 0.31120899999996254
+        "milliseconds": 0.37036399999988134
       },
       {
         "kb": "atomic-2020",
@@ -100,7 +91,16 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "possible intention or reason candidates for “PersonX reads every ___”: to be informed; x likes to read; x doesn't want to miss anything while reading; to keep himself updated. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.29677399999991394
+        "milliseconds": 0.3491180000000895
+      },
+      {
+        "kb": "oewn-2025",
+        "kind": "hypernym",
+        "input": "Is a Columbus Day a legal holiday?",
+        "passed": true,
+        "status": "ANSWERED",
+        "answer": "Yes. At least one sense of columbus day reaches legal holiday through a 1-edge WordNet path.",
+        "milliseconds": 0.28171300000030897
       },
       {
         "kb": "atomic-2020",
@@ -109,7 +109,7 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "possible reaction candidates for “PersonX brings it inside”: less worried; accomplished. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.28714799999988827
+        "milliseconds": 0.2808110000000852
       },
       {
         "kb": "atomic-2020",
@@ -118,7 +118,7 @@
         "passed": true,
         "status": "ANSWERED",
         "answer": "possible effect candidates for “PersonX wants PersonY to go”: becomes disappointed in PersonY; gets angry with PersonY; hopes they can go; thinks about the event; Becomes anxious and shaky; Glances repeatedly at door/way out; gets confused; moves away from PersonX. These are defeasible possibilities, not certain facts.",
-        "milliseconds": 0.2445279999997183
+        "milliseconds": 0.24855200000001787
       }
     ]
   },

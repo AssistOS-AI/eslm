@@ -107,7 +107,7 @@ async function engineFor(options) {
 }
 
 function interactiveHelp(style) {
-  const command = (value) => style.blue(value.padEnd(23));
+  const command = (value) => style.blue(value.padEnd(28));
   return `${style.bold('Interactive commands')}
   ${command('/help')}Explain every interactive command and its purpose.
   ${command('/kbs')}Show installed knowledge sources, sizes, roles, and load state.

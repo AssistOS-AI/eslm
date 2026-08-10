@@ -9,8 +9,8 @@
   <pre><code>npm exec -- eslm
 # equivalent:
 node src/cli.mjs</code></pre>
-  <p>Interactive mode loads <code>quick</code>, <code>oewn-2025</code>, and <code>atomic-2020</code> when their generated artifacts are installed. Startup reports the active IDs. Type <code>/help</code> at any time.</p>
-  <pre><code>ESLM ready with quick, oewn-2025, atomic-2020.
+  <p>Interactive mode loads installed public sources—currently <code>oewn-2025</code> and <code>atomic-2020</code>—but excludes QUICK. QUICK contains authored fixtures for tests and tutorials, so loading it silently would make ordinary answers look more knowledgeable than the source-derived system. Type <code>/help</code> at any time. A real terminal colors status, command names, load state, warnings, and answers; redirected output remains plain.</p>
+  <pre><code>ESLM is ready. Public knowledge: oewn-2025, atomic-2020.
 eslm&gt; /help
 eslm&gt; /kbs
 eslm&gt; /examples
@@ -21,15 +21,16 @@ Yes.
 eslm&gt; /trace</code></pre>
 
   <h2>Interactive commands</h2>
-  <p>The three normal load targets are <code>quick</code> (the small authored development fixture), <code>oewn-2025</code> (Open English WordNet 2025), and <code>atomic-2020</code> (ATOMIC 2020 train-derived defeasible event knowledge). The <code>/kbs</code> command prints these names, readiness, loaded state, counts, and evidence boundaries from the current installation.</p>
+  <p>The two normal load targets are Open English WordNet 2025 and ATOMIC 2020. QUICK remains visible and explicitly loadable as a fixture. You do not need to memorize canonical IDs: commands match a full name, a distinctive title or role word, a wildcard such as <code>*net*</code>, or a conservative close spelling such as <code>wordnt</code>. Ambiguous words produce a useful diagnostic instead of loading an arbitrary source.</p>
   <div class="table-wrap"><table><thead><tr><th>Command</th><th>Effect</th></tr></thead><tbody>
     <tr><td><code>/help</code></td><td>Prints every interactive command and examples of session facts.</td></tr>
     <tr><td><code>/kbs</code></td><td>Shows whether QUICK, WordNet and ATOMIC are ready or loaded, their exact counts and their evidence role.</td></tr>
-    <tr><td><code>/load ID[,ID]</code></td><td>Adds a top-level KB or focused QUICK component and rebuilds the runtime while retaining conversation context.</td></tr>
-    <tr><td><code>/unload ID[,ID]</code> or <code>/unload all</code></td><td>Removes knowledge modules without deleting session facts. Use <code>/load all</code> to restore top-level modules.</td></tr>
-    <tr><td><code>/model</code></td><td>Prints the promoted core ID, loaded KB IDs and current session-fact count.</td></tr>
-    <tr><td><code>/examples [ID]</code></td><td>Shows tested working, deliberately unknown and unsupported questions; use <code>quick</code>, <code>oewn-2025</code>, or <code>atomic-2020</code> as a filter.</td></tr>
-    <tr><td><code>/trace</code> / <code>/profile</code></td><td>Prints the latest provenance or optional execution profile.</td></tr>
+    <tr><td><code>/load all</code> or <code>/load WORDS</code></td><td>Loads every public KB or the unique name/title/wildcard/approximate match. QUICK is loaded only when named.</td></tr>
+    <tr><td><code>/unload WORDS</code> or <code>/unload all</code></td><td>Removes matching modules without deleting session facts.</td></tr>
+    <tr><td><code>/model</code></td><td>Explains the active generated core, source-derived KBs, fixture KBs, session facts, benchmark comparability, and current memory strategy in readable text.</td></tr>
+    <tr><td><code>/memory</code> or <code>/memory N|auto|eager|lazy</code></td><td>Shows cache use or rebuilds public providers with a soft MiB target or explicit loading strategy.</td></tr>
+    <tr><td><code>/examples</code></td><td>Shows every tested working, deliberately unknown, and unsupported group. No hidden ID or filter is required.</td></tr>
+    <tr><td><code>/trace</code> / <code>/profile</code></td><td>Explains the latest provenance or optional stage measurements in readable text rather than dumping JSON.</td></tr>
     <tr><td><code>/clear</code></td><td>Clears session entities, facts, rules and discourse state.</td></tr>
     <tr><td><code>/quit</code> / <code>/exit</code></td><td>Ends the session.</td></tr>
   </tbody></table></div>
@@ -37,10 +38,10 @@ eslm&gt; /trace</code></pre>
   <figure class="diagram"><pre class="mermaid">flowchart TD
     I[interactive input] --> X{slash command?}
     X -->|/kbs /examples /help| O[inspect without changing knowledge]
-    X -->|/load /unload| L[rebuild selected providers]
+    X -->|/load /unload /memory| L[rebuild selected providers]
     X -->|ordinary English| Q{question family}
     L --> Q
-    Q --> C[core + QUICK]
+    Q --> C[language and reasoning core]
     Q --> W[WordNet]
     Q --> A[ATOMIC]
     C --> R[answer + trace]
@@ -53,12 +54,14 @@ eslm&gt; /trace</code></pre>
 Loaded: (base model only).
 eslm&gt; Define dog
 I cannot map that input to a supported symbolic question.
-eslm&gt; /load oewn-2025
-Loaded: oewn-2025.
+eslm&gt; /load wordnet
+Loaded knowledge: oewn-2025.
 eslm&gt; Define dog
 dog has 8 compiled senses: ...
-eslm&gt; /load quick,atomic-2020
-Loaded: oewn-2025, quick, atomic-2020.</code></pre>
+eslm&gt; /load social commonsense
+Loaded knowledge: oewn-2025, atomic-2020.
+eslm&gt; /load quick
+Loaded knowledge: oewn-2025, atomic-2020, quick.</code></pre>
   <p><code>ready</code> means generated code exists locally. <code>loaded</code> means its evidence is active in the current engine. This distinction is also visible in every JSON answer through <code>model.knowledgeBases</code>.</p>
 
   <h2>Ask one question and receive JSON</h2>
@@ -68,6 +71,14 @@ node src/cli.mjs ask "Is a dog an animal?" --kb oewn-2025
 node src/cli.mjs ask "Why might apologize?" --kb atomic-2020
 node src/cli.mjs ask "What might happen after PersonX apologizes profusely?" --kb atomic-2020</code></pre>
   <p>Noninteractive commands do not load optional KBs by default. This makes automation and benchmarks explicit. The JSON includes status, answer, semantic query, values, provenance, reasoning method, learned session items, context and active model metadata.</p>
+
+  <h2>Control memory without paying lazy-loading cost unnecessarily</h2>
+  <pre><code>node src/cli.mjs                         # public KBs eager by default
+node src/cli.mjs --memory-mb 512         # WordNet eager, ATOMIC normally lazy
+node src/cli.mjs --memory-mb 256         # both public KBs normally lazy
+node src/cli.mjs --memory-policy lazy    # force shard mode for diagnostics
+node src/cli.mjs --color never           # disable terminal colors</code></pre>
+  <p>The memory number is a soft whole-process RSS target. ESLM reserves space for Node, the base model, active queries, and session state, then compares the remainder with measured eager expansion rather than file size. With no target it prefers complete eager models because that path is faster and simpler. A constrained plan retains only bounded shard objects and reports cache hits, misses, evictions, and oversized query shards through <code>/memory</code> and <code>model.memory</code>. Use an operating-system or container limit when a hard ceiling is required.</p>
 
   <h2>Process a file</h2>
   <pre><code>node src/cli.mjs run --input tests/fixtures/questions.txt

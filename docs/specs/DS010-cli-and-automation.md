@@ -18,7 +18,7 @@ Path lookup tries the current working directory and then the repository root der
 
 ### Interactive mode
 
-The prompt is `eslm>`. Interactive mode starts with `quick`, `oewn-2025`, and `atomic-2020` loaded when their generated artifacts are installed. `/help` prints the complete command guide; `/kbs` reports ready and loaded modules with their roles and counts; `/load ID[,ID]` and `/unload ID[,ID]|all` rebuild the active runtime without discarding session context; `/model` reports active modules; `/examples [ID]` prints tested positive, unknown, and unsupported examples; `/trace`, `/profile`, `/clear`, `/quit`, and `/exit` provide diagnostics and session control. Corrections are shown when tolerant normalization altered input.
+The prompt is `eslm>`. Interactive mode starts with installed public source-derived KBs and does not load QUICK. QUICK is an authored fixture pack and remains explicitly selectable for tutorials and regressions. `/help` explains the purpose and effect of every command. `/kbs` reports ready and loaded modules with roles and counts. `/load all` selects every installed public KB; `/load` and `/unload` also accept names, title or role words, glob patterns, and conservative approximate spellings. Ambiguous matches are reported rather than guessed. `/model`, `/memory`, `/trace`, and `/profile` render coherent human text instead of JSON. `/examples` prints every tested positive, unknown, and unsupported group without requiring an ID. `/clear`, `/quit`, and `/exit` control the session. Corrections are shown when tolerant normalization altered input.
 
 Interactive state is explicit and bounded. The CLI passes the context returned by the prior answer, including last entity and temporary session entities/facts. Supported English assertions can therefore be queried in the same input or later turns. The CLI does not edit the promoted model, write conversation logs, or use network services by default.
 
@@ -28,7 +28,7 @@ Interactive state is explicit and bounded. The CLI passes the context returned b
 
 Batch output preserves stable ids and includes status, answer, normalized input, query, values, provenance, and context. This is the preferred interface for automated tests, integrations, and external comparison prediction generation.
 
-The global `--profile` option adds initialization and per-query `eslm-profile-v1` data. Profiling is diagnostic metadata and must not change semantic values, status, provenance order, or context. Normal calls omit it to avoid measurement overhead.
+The global `--profile` option adds initialization and per-query `eslm-profile-v1` data. `--memory-mb N` and `--memory-policy auto|eager|lazy` control public-KB residency under DS021. `--color auto|always|never` controls human styling; automatic color appears only in an interactive terminal. JSON, JSONL, files, evaluation, benchmark, trace data, and profile records never contain ANSI escapes. Profiling is diagnostic metadata and must not change semantic values, status, provenance order, or context.
 
 ### Training commands
 
