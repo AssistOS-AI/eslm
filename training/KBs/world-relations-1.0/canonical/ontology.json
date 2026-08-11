@@ -1,0 +1,327 @@
+{
+  "schema": "semantic-compatibility-ontology-v1",
+  "relations": {
+    "horizontal-position": { "inverse": { "relation": "horizontal-position", "polarity": -1 } },
+    "vertical-position": { "inverse": { "relation": "vertical-position", "polarity": -1 } },
+    "north-south-position": { "inverse": { "relation": "north-south-position", "polarity": -1 } },
+    "relative-size": { "inverse": { "relation": "relative-size", "polarity": -1 } },
+    "relative-quantity": { "inverse": { "relation": "relative-quantity", "polarity": -1 } },
+    "relative-temperature": { "inverse": { "relation": "relative-temperature", "polarity": -1 } },
+    "preference": { "inverse": { "relation": "preference", "polarity": -1 } },
+    "containment": { "inverse": { "relation": "contains", "polarity": 1 } },
+    "contains": { "inverse": { "relation": "containment", "polarity": 1 } },
+    "supported-by": { "inverse": { "relation": "supports", "polarity": 1 } },
+    "supports": { "inverse": { "relation": "supported-by", "polarity": 1 } },
+    "motion-coupling": {},
+    "motion-independence": {},
+    "force-transfer": { "inverse": { "relation": "force-received", "polarity": 1 } },
+    "force-received": { "inverse": { "relation": "force-transfer", "polarity": 1 } },
+    "relative-motion": {},
+    "throwability": {},
+    "connection": { "inverse": { "relation": "connection", "polarity": 1 } },
+    "proximity": { "inverse": { "relation": "proximity", "polarity": 1 } },
+    "authority": {},
+    "rental-role": {},
+    "front-back-position": { "inverse": { "relation": "front-back-position", "polarity": -1 } }
+  },
+  "binaryConstructions": [
+    { "marker": "is next to the right side of", "relation": "horizontal-position", "polarity": 1 },
+    { "marker": "is to the right of", "relation": "horizontal-position", "polarity": 1 },
+    { "marker": "is next to the left side of", "relation": "horizontal-position", "polarity": -1 },
+    { "marker": "is to the left of", "relation": "horizontal-position", "polarity": -1 },
+    { "marker": "is above", "relation": "vertical-position", "polarity": 1 },
+    { "marker": "is higher than", "relation": "vertical-position", "polarity": 1 },
+    { "marker": "is below", "relation": "vertical-position", "polarity": -1 },
+    { "marker": "is lower than", "relation": "vertical-position", "polarity": -1 },
+    { "marker": "is north of", "relation": "north-south-position", "polarity": 1 },
+    { "marker": "is south of", "relation": "north-south-position", "polarity": -1 },
+    { "marker": "is bigger than", "relation": "relative-size", "polarity": 1 },
+    { "marker": "is larger than", "relation": "relative-size", "polarity": 1 },
+    { "marker": "occupies more space than", "relation": "relative-size", "polarity": 1 },
+    { "marker": "is smaller than", "relation": "relative-size", "polarity": -1 },
+    { "marker": "occupies less space than", "relation": "relative-size", "polarity": -1 },
+    { "marker": "has more", "relation": "relative-quantity", "polarity": 1 },
+    { "marker": "has fewer", "relation": "relative-quantity", "polarity": -1 },
+    { "marker": "is much warmer than", "relation": "relative-temperature", "polarity": 1 },
+    { "marker": "is much colder than", "relation": "relative-temperature", "polarity": -1 },
+    { "marker": "is much hotter than", "relation": "relative-temperature", "polarity": 1 },
+    { "marker": "is much colder than", "relation": "relative-temperature", "polarity": -1 },
+    { "marker": "prefers", "relation": "preference", "polarity": 1 },
+    { "marker": "likes", "relation": "preference", "polarity": 1 }
+    ,{ "marker": "is inside", "relation": "containment", "polarity": 1 }
+    ,{ "marker": "is outside", "relation": "containment", "polarity": -1 }
+    ,{ "marker": "is supported by", "relation": "supported-by", "polarity": 1 }
+    ,{ "marker": "supports", "relation": "supported-by", "polarity": 1, "argumentOrder": "reverse" }
+    ,{ "marker": "is higher up compared to", "relation": "vertical-position", "polarity": 1 }
+    ,{ "marker": "is under", "relation": "vertical-position", "polarity": -1 }
+    ,{ "marker": "is exerting force upon", "relation": "force-transfer", "polarity": 1 }
+    ,{ "marker": "is pushing", "relation": "force-transfer", "polarity": 1 }
+    ,{ "marker": "is moving away from", "relation": "relative-motion", "polarity": 1 }
+    ,{ "marker": "is moving towards", "relation": "relative-motion", "polarity": -1 }
+    ,{ "marker": "is moving toward", "relation": "relative-motion", "polarity": -1 }
+    ,{ "marker": "is throwing", "relation": "throwability", "polarity": 1 }
+    ,{ "marker": "moves with", "relation": "connection", "polarity": 1 }
+    ,{ "marker": "moves independent of", "relation": "connection", "polarity": -1 }
+    ,{ "marker": "is connected to", "relation": "connection", "polarity": 1 }
+    ,{ "marker": "can touch", "relation": "proximity", "polarity": 1 }
+    ,{ "marker": "cannot touch", "relation": "proximity", "polarity": -1 }
+    ,{ "marker": "is far from", "relation": "proximity", "polarity": -1 }
+    ,{ "marker": "is cooling", "relation": "relative-temperature", "polarity": -1 }
+    ,{ "marker": "is heating", "relation": "relative-temperature", "polarity": 1 }
+    ,{ "marker": "obeys", "relation": "authority", "polarity": 1, "argumentOrder": "reverse" }
+    ,{ "marker": "makes decisions less often than", "relation": "authority", "polarity": -1 }
+    ,{ "marker": "makes decisions more often than", "relation": "authority", "polarity": 1 }
+    ,{ "marker": "hates", "relation": "preference", "polarity": -1 }
+    ,{ "marker": "is in front of", "relation": "front-back-position", "polarity": 1 }
+  ],
+  "prefixComparatives": [
+    { "prefix": "there are more", "separator": "than", "relation": "relative-quantity", "polarity": 1 },
+    { "prefix": "there is more", "separator": "than", "relation": "relative-quantity", "polarity": 1 },
+    { "prefix": "there are fewer", "separator": "than", "relation": "relative-quantity", "polarity": -1 },
+    { "prefix": "there are many", "separator": "relative to", "relation": "relative-quantity", "polarity": 1 },
+    { "prefix": "there are few", "separator": "relative to", "relation": "relative-quantity", "polarity": -1 },
+    { "prefix": "the amount of", "separator": "is greater than the amount of", "relation": "relative-quantity", "polarity": 1 },
+    { "prefix": "the amount of", "separator": "is smaller than the amount of", "relation": "relative-quantity", "polarity": -1 }
+  ],
+  "unaryConstructions": [
+    { "suffix": "is stretchy", "concept": "elastic" },
+    { "suffix": "is elastic", "concept": "elastic" },
+    { "suffix": "is rigid", "concept": "inelastic" },
+    { "suffix": "is inelastic", "concept": "inelastic" },
+    { "suffix": "is completely flat", "concept": "smooth" },
+    { "suffix": "is smooth", "concept": "smooth" },
+    { "suffix": "is somewhat bumpy", "concept": "rough" },
+    { "suffix": "is rough", "concept": "rough" },
+    { "suffix": "looks shiny", "concept": "glossy" },
+    { "suffix": "is glossy", "concept": "glossy" },
+    { "suffix": "looks dim", "concept": "matte" },
+    { "suffix": "is matte", "concept": "matte" },
+    { "suffix": "is inflating", "concept": "expanding" },
+    { "suffix": "is growing", "concept": "growing" },
+    { "suffix": "is deflating", "concept": "contracting" },
+    { "suffix": "is shrinking", "concept": "shrinking" },
+    { "suffix": "is heavy", "concept": "heavy" },
+    { "suffix": "is light", "concept": "light" },
+    { "suffix": "is sinking", "concept": "sinking" },
+    { "suffix": "is opaque", "concept": "opaque" },
+    { "suffix": "is transparent", "concept": "transparent" }
+  ],
+  "conditionalMotions": [
+    {
+      "moveMarker": "moves",
+      "outcomes": [
+        { "marker": "will move too", "relation": "motion-coupling", "polarity": 1 },
+        { "marker": "will remain in its place", "relation": "motion-independence", "polarity": 1 }
+      ]
+    }
+  ],
+  "sameLevelMarkers": ["are on the same surface", "are on the same floor"],
+  "levelChanges": [
+    { "marker": "is moved higher", "relation": "vertical-position", "polarity": 1 },
+    { "marker": "is moved lower", "relation": "vertical-position", "polarity": -1 },
+    { "marker": "goes one floor up", "relation": "vertical-position", "polarity": 1 },
+    { "marker": "goes one floor down", "relation": "vertical-position", "polarity": -1 }
+  ],
+  "relationReversals": [
+    { "trigger": "reaches", "relations": ["north-south-position", "horizontal-position", "vertical-position"] }
+  ],
+  "orientationTurns": [
+    { "trigger": "turns right", "fromRelation": "front-back-position", "toRelation": "horizontal-position", "polarity": -1 },
+    { "trigger": "turns left", "fromRelation": "front-back-position", "toRelation": "horizontal-position", "polarity": 1 }
+  ],
+  "possessiveConstructions": [
+    { "role": "parent", "relation": "authority" },
+    { "role": "boss", "relation": "authority" },
+    { "role": "teacher", "relation": "authority" },
+    { "role": "employee", "relation": "authority", "argumentOrder": "reverse" },
+    { "role": "landlord", "relation": "rental-role" },
+    { "role": "tenant", "relation": "rental-role", "argumentOrder": "reverse" },
+    { "role": "enemy", "relation": "preference", "polarity": -1 }
+  ],
+  "objectPropertyConstructions": [
+    { "marker": "can see through", "concept": "transparent" },
+    { "marker": "cannot see through", "concept": "opaque" }
+  ],
+  "alternativeComparatives": [
+    { "prefix": "is less intent on", "separator": "than", "relation": "preference", "polarity": -1 },
+    { "prefix": "makes more effort to", "separator": "than", "relation": "preference", "polarity": 1 },
+    { "prefix": "makes less effort to", "separator": "than", "relation": "preference", "polarity": -1 },
+    { "prefix": "enjoys playing", "separator": "less than playing", "relation": "preference", "polarity": -1 },
+    { "prefix": "chooses", "separator": "over", "relation": "preference", "polarity": 1 },
+    { "prefix": "prefers", "separator": "over", "relation": "preference", "polarity": 1 },
+    { "prefix": "wants", "separator": "more than", "relation": "preference", "polarity": 1 },
+    { "prefix": "wants", "separator": "less than", "relation": "preference", "polarity": -1 },
+    { "prefix": "is less hesitant to", "separator": "than", "relation": "preference", "polarity": 1 },
+    { "prefix": "likes", "separator": "more than", "relation": "preference", "polarity": 1 },
+    { "prefix": "likes", "separator": "less than", "relation": "preference", "polarity": -1 }
+  ],
+  "choiceContrasts": [
+    { "marker": "avoided", "separator": "but not", "relation": "preference", "polarity": -1 },
+    { "marker": "reached for", "separator": "but not", "relation": "preference", "polarity": 1 }
+  ],
+  "rentalConstructions": [
+    { "marker": "rents", "direction": "to", "relation": "rental-role", "provider": "actor" },
+    { "marker": "rents", "direction": "from", "relation": "rental-role", "provider": "counterpart" }
+  ],
+  "ownershipComparatives": [
+    { "prefix": "has more", "separator": "than", "relation": "relative-quantity", "polarity": 1 },
+    { "prefix": "has fewer", "separator": "than", "relation": "relative-quantity", "polarity": -1 }
+  ],
+  "numericCompatibility": [
+    { "id": "sibling-age-gap", "targetContains": "sibling", "contextPattern": "(?:is )?(\\d+) years older than", "maximum": 20 }
+  ],
+  "propositionConstructions": [
+    { "contains": "working with each other", "concept": "cooperate" },
+    { "contains": "cooperating with", "concept": "cooperate" },
+    { "contains": "working against each other", "concept": "hinder" },
+    { "contains": "obstructing", "concept": "hinder" },
+    { "contains": "hindering", "concept": "hinder" },
+    { "contains": "assisting", "concept": "help" },
+    { "contains": "helping", "concept": "help" },
+    { "contains": "providing misleading information", "concept": "deceive" },
+    { "contains": "misleading information", "concept": "deceive" },
+    { "contains": "useful information", "concept": "honest" },
+    { "contains": "deceiving", "concept": "deceive" },
+    { "contains": "hiding from", "concept": "evade" },
+    { "contains": "evading", "concept": "evade" },
+    { "contains": "advising", "concept": "help" },
+    { "contains": "can bake worse than", "concept": "learning" },
+    { "contains": "is learning from", "concept": "learning" },
+    { "contains": "is upset about", "concept": "coerce" },
+    { "contains": "is grateful for", "concept": "welcome" },
+    { "contains": "forcing", "concept": "coerce" },
+    { "contains": "coercing", "concept": "coerce" },
+    { "contains": "disempowering", "concept": "coerce" },
+    { "contains": "remarks that", "concept": "remark" },
+    { "contains": "is ugly", "concept": "insult" },
+    { "contains": "insulting", "concept": "insult" },
+    { "contains": "hates interacting", "concept": "insult" },
+    { "contains": "often gives instructions", "concept": "dominant" },
+    { "contains": "often gets into long conversations", "concept": "warm-social" },
+    { "contains": "rarely gets into long conversations", "concept": "cold-social" },
+    { "contains": "is warm", "concept": "warm-social" },
+    { "contains": "temperature is lower than", "concept": "cold-temperature" },
+    { "contains": "temperature is the same than", "concept": "warm-temperature" },
+    { "contains": "is warm", "concept": "warm-temperature" },
+    { "contains": "often follows instructions", "concept": "submissive" },
+    { "contains": "is dominant", "concept": "dominant" },
+    { "contains": "is submissive", "concept": "submissive" },
+    { "contains": "good at completing important tasks", "concept": "trustworthy" },
+    { "contains": "bad at completing important tasks", "concept": "untrustworthy" },
+    { "contains": "is reliable", "concept": "trustworthy" },
+    { "contains": "is unreliable", "concept": "untrustworthy" },
+    { "contains": "is trustworthy", "concept": "trustworthy" },
+    { "contains": "is untrustworthy", "concept": "untrustworthy" },
+    { "contains": "enjoys spending time with other people", "concept": "extroverted" },
+    { "contains": "enjoys spending time alone", "concept": "introverted" },
+    { "contains": "is extroverted", "concept": "extroverted" },
+    { "contains": "brags about", "concept": "boastful" },
+    { "contains": "downplays", "concept": "humble" },
+    { "contains": "talking about his successes", "concept": "boastful" },
+    { "contains": "talking about his friends successes", "concept": "humble" },
+    { "contains": "talking about his friend possessive successes", "concept": "humble" },
+    { "contains": "has a sufficient amount of", "concept": "sufficient" },
+    { "contains": "has an insufficient amount of", "concept": "insufficient" },
+    { "contains": "not enough", "concept": "insufficient" },
+    { "contains": "nobody has less", "concept": "referent-least" },
+    { "contains": "has the least", "concept": "referent-least" },
+    { "contains": "is humble", "concept": "humble" },
+    { "contains": "no one else knows the secret", "concept": "trustworthy" },
+    { "contains": "everyone knows the secret", "concept": "untrustworthy" },
+    { "contains": "is deliberately", "concept": "intentional" },
+    { "contains": "deliberately approaches", "concept": "intentional" },
+    { "contains": "is inadvertently", "concept": "unintentional" },
+    { "contains": "accidentally approaches", "concept": "unintentional" },
+    { "contains": "does not intend", "concept": "unintentional" },
+    { "contains": "makes no effort", "concept": "unintentional" },
+    { "contains": "is reaching for", "concept": "intend-acquire" },
+    { "contains": "intends to get", "concept": "intend-acquire" },
+    { "contains": "is increasing", "concept": "speeding-up" },
+    { "contains": "is decreasing", "concept": "slowing-down" },
+    { "contains": "is slowing down", "concept": "slowing-down" },
+    { "contains": "is going underwater", "concept": "sinking" },
+    { "contains": "is staying on the surface", "concept": "floating" },
+    { "contains": "is floating", "concept": "floating" },
+    { "contains": "keeps accelerating and slowing down", "concept": "oscillating" },
+    { "contains": "is oscillating", "concept": "oscillating" },
+    { "contains": "will remain at the top", "concept": "not-rotating" },
+    { "contains": "is not rotating", "concept": "not-rotating" },
+    { "contains": "is rotating", "concept": "rotating" },
+    { "contains": "is sliding", "concept": "not-rotating" },
+    { "contains": "is on the ground", "concept": "ground-contact" },
+    { "contains": "is kicking", "concept": "ground-contact" },
+    { "contains": "is exerting force upon", "concept": "pushing" },
+    { "contains": "is pushing", "concept": "pushing" },
+    { "contains": "is moving toward the ground", "concept": "dropping" },
+    { "contains": "is dropping", "concept": "dropping" },
+    { "contains": "is moving away from the ground", "concept": "lifting" },
+    { "contains": "is lifting", "concept": "lifting" },
+    { "contains": "will still be touching", "concept": "pulling" },
+    { "contains": "is pulling", "concept": "pulling" }
+  ],
+  "materialConstructions": [
+    { "contains": "is fabric", "materialClass": "fabric" },
+    { "contains": "the satin", "materialClass": "fabric" },
+    { "contains": "the rug", "materialClass": "fabric" },
+    { "contains": "is liquid", "materialClass": "liquid" },
+    { "contains": "the coke", "materialClass": "liquid" },
+    { "contains": "the lemonade", "materialClass": "liquid" },
+    { "contains": "is granular", "materialClass": "granular" },
+    { "contains": "the play doh", "materialClass": "granular" },
+    { "contains": "is gas", "materialClass": "gas" },
+    { "contains": "the methane", "materialClass": "gas" },
+    { "contains": "the nitrogen", "materialClass": "gas" },
+    { "contains": "is rigid", "materialClass": "rigid" },
+    { "contains": "made of ice", "materialClass": "ice" },
+    { "contains": "made of silicone", "materialClass": "silicone" },
+    { "contains": "made of beeswax", "materialClass": "beeswax" },
+    { "contains": "made of satin", "materialClass": "satin" },
+    { "contains": "made of granite", "materialClass": "granite" },
+    { "contains": "made of sapphire", "materialClass": "sapphire" }
+  ],
+  "actionConstructions": [
+    { "contains": "flaps", "action": "flap" },
+    { "contains": "rips", "action": "rip" },
+    { "contains": "wrinkles", "action": "wrinkle" },
+    { "contains": "folds", "action": "fold" },
+    { "contains": "stirs", "action": "stir" },
+    { "contains": "drips", "action": "drip" },
+    { "contains": "disperses", "action": "disperse" },
+    { "contains": "is fragile", "action": "fragile" },
+    { "contains": "is not bouncy", "action": "not-bouncy" },
+    { "contains": "is soft", "action": "soft" },
+    { "contains": "is matte", "action": "matte" }
+  ],
+  "affordances": [
+    { "materialClass": "fabric", "action": "flap", "polarity": 1 },
+    { "materialClass": "fabric", "action": "rip", "polarity": 1 },
+    { "materialClass": "fabric", "action": "wrinkle", "polarity": 1 },
+    { "materialClass": "fabric", "action": "fold", "polarity": 1 },
+    { "materialClass": "fabric", "action": "stir", "polarity": -1 },
+    { "materialClass": "liquid", "action": "stir", "polarity": 1 },
+    { "materialClass": "liquid", "action": "drip", "polarity": 1 },
+    { "materialClass": "granular", "action": "disperse", "polarity": 1 },
+    { "materialClass": "gas", "action": "disperse", "polarity": 1 },
+    { "materialClass": "rigid", "action": "disperse", "polarity": -1 },
+    { "materialClass": "ice", "action": "fragile", "polarity": 1 },
+    { "materialClass": "beeswax", "action": "fragile", "polarity": -1 },
+    { "materialClass": "silicone", "action": "not-bouncy", "polarity": -1 },
+    { "materialClass": "beeswax", "action": "not-bouncy", "polarity": 1 },
+    { "materialClass": "satin", "action": "soft", "polarity": 1 },
+    { "materialClass": "granite", "action": "soft", "polarity": -1 },
+    { "materialClass": "sapphire", "action": "matte", "polarity": -1 },
+    { "materialClass": "granite", "action": "matte", "polarity": 1 }
+  ],
+  "implications": [
+    { "kind": "unary", "from": "expanding", "to": "growing" },
+    { "kind": "unary", "from": "contracting", "to": "shrinking" },
+    { "kind": "unary", "from": "heavy", "to": "sinking" },
+    { "kind": "binary", "from": "relative-size", "to": "containment", "polarity": -1 },
+    { "kind": "binary", "from": "motion-coupling", "to": "containment", "swapArguments": true },
+    { "kind": "binary", "from": "motion-coupling", "to": "supported-by", "swapArguments": true },
+    { "kind": "binary", "from": "motion-independence", "to": "supported-by" },
+    { "kind": "binary", "from": "relative-size", "to": "throwability", "polarity": -1, "swapArguments": true },
+    { "kind": "binary", "from": "relative-motion", "to": "throwability", "swapArguments": true },
+    { "kind": "binary", "from": "motion-independence", "to": "containment", "polarity": -1 }
+  ]
+}

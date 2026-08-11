@@ -1,0 +1,37 @@
+{
+  "manifestType": "knowledgeBasePackage",
+  "format": "eslm-kb-package-v1",
+  "schemaVersion": "1",
+  "kbId": "world-relations-1.0",
+  "kbVersion": "1.0.0",
+  "namespace": "world-relations",
+  "id": "world-relations-1.0",
+  "title": "Authored general semantic relation ontology",
+  "version": "1.0.0",
+  "kind": "semantic-relation-ontology",
+  "generatedBy": "deterministic-node-compiler",
+  "license": "MIT",
+  "trainOnly": false,
+  "benchmarkEligible": false,
+  "counts": {
+    "relations": 22,
+    "constructions": 257
+  },
+  "capabilities": [
+    "argument-sensitive-compatibility",
+    "inverse-relations",
+    "polarity",
+    "property-implication"
+  ],
+  "limitations": [
+    "reviewed English constructions only",
+    "plausibility evidence is graded rather than deductively certain"
+  ],
+  "provider": "world-relations-v1",
+  "shardDirectoryRef": "shards.json",
+  "canonicalSource": {
+    "path": "../canonical/ontology.json",
+    "checksum": "sha256:414143a2bdca92ca514b240bd9598036c07af607ab92e560c6ec7b470ed8e79a",
+    "recordCount": 257
+  }
+}

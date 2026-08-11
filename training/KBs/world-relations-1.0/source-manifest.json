@@ -1,0 +1,8 @@
+{
+  "format": "eslm-source-manifest-v1",
+  "id": "world-relations-1.0",
+  "source": "repository-authored-reviewed-semantic-ontology",
+  "canonicalSha256": "414143a2bdca92ca514b240bd9598036c07af607ab92e560c6ec7b470ed8e79a",
+  "license": "MIT",
+  "benchmarkRowsIncluded": false
+}

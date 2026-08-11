@@ -1,0 +1,12 @@
+[
+  {
+    "shardId": "ontology-all",
+    "shardKind": "semanticRelationOntology",
+    "accessPath": "semantic-frame",
+    "dataRef": "ontology/all.json",
+    "recordCount": 257,
+    "compressedBytes": 17797,
+    "checksum": "sha256:7f669ba6c8dd8c9b0d7c81da2fed4f7a8428a9b208f3a031c97ddb42d9873436",
+    "dependencies": []
+  }
+]
