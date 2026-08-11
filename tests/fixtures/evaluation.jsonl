@@ -1,13 +1,5 @@
-{"id":"direct-location","text":"Where is Mira?","values":["observatory"]}
-{"id":"typo-location","text":"wher iz Mira?","values":["observatory"]}
-{"id":"derived-location","text":"Where is the lantern?","values":["observatory"]}
-{"id":"inverse-owner","text":"Who owns Lumen?","values":["mira"]}
-{"id":"attribute","text":"What color is Lumen?","values":["blue"]}
-{"id":"yes-no","text":"Is Lumen in the observatory?","values":[true]}
-{"id":"english-paraphrase","text":"Where can I find Mira?","values":["observatory"]}
-{"id":"session-learning","text":"Socrate is a man. Is Socrate a man?","values":[true]}
-{"id":"deep-deduction","text":"Jhon is a man. Is Jhon going to die?","values":[true]}
-{"id":"factual-induction-boundary","text":"Can Dana fly?","status":"UNKNOWN"}
-{"id":"inductive-pattern","text":"Is Dana likely to fly?","status":"INDUCTIVE"}
-{"id":"abductive-candidates","text":"What could explain why the lawn is wet?","status":"ABDUCTIVE"}
-{"id":"abstention","text":"Compose a poem about Mira","status":"UNSUPPORTED"}
+{"id":"quick-capability","text":"Can Penguin swim?","values":[true]}
+{"id":"quick-classification","text":"Is Penguin a bird?","values":[true]}
+{"id":"session-assertion","text":"Socrate is a man. Is Socrate a man?","values":[true]}
+{"id":"safe-horn-depth-three","text":"Jhon is a man. Is Jhon going to die?","values":[true]}
+{"id":"unsupported-language","text":"Compose a poem about Penguin","status":"UNPARSED"}

@@ -1,7 +1,7 @@
 import { gunzipSync } from 'node:zlib';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { basename, dirname, join, relative } from 'node:path';
-import { readJsonLines, writeJson, writeJsonLines } from './io.mjs';
+import { writeJson, writeJsonLines } from './io.mjs';
 import { PROJECT_ROOT } from './paths.mjs';
 import { sha256 } from './util.mjs';
 
@@ -11,7 +11,7 @@ export const DATASET_CATALOG = Object.freeze({
     source: 'https://s3.amazonaws.com/text-datasets/babi_tasks_1-20_v1-2.tar.gz',
     expectedSha256: '84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c',
     licenseStatus: 'research dataset; cached locally and not redistributed',
-    adapterStatus: 'prepared-not-synthesized', trainingStatus: 'not-started', evaluationStatus: 'not-run',
+    adapterStatus: 'implemented-reset-unprepared', trainingStatus: 'not-started', evaluationStatus: 'not-run',
     archiveCache: 'training/.cache/datasets/babi-v1.2/babi_tasks_1-20_v1-2.tar.gz',
     files: Object.freeze({ train: 'qa2_two-supporting-facts_train.txt', test: 'qa2_two-supporting-facts_test.txt' }),
   }),
@@ -20,7 +20,7 @@ export const DATASET_CATALOG = Object.freeze({
     source: 'https://s3.amazonaws.com/text-datasets/babi_tasks_1-20_v1-2.tar.gz',
     expectedSha256: '84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c',
     licenseStatus: 'research dataset; cached locally and not redistributed',
-    adapterStatus: 'prepared-not-synthesized', trainingStatus: 'not-started', evaluationStatus: 'not-run',
+    adapterStatus: 'implemented-reset-unprepared', trainingStatus: 'not-started', evaluationStatus: 'not-run',
     archiveCache: 'training/.cache/datasets/babi-v1.2/babi_tasks_1-20_v1-2.tar.gz',
     files: Object.freeze({ train: 'qa3_three-supporting-facts_train.txt', test: 'qa3_three-supporting-facts_test.txt' }),
   }),
@@ -34,9 +34,9 @@ export const DATASET_CATALOG = Object.freeze({
     source: 'https://s3.amazonaws.com/text-datasets/babi_tasks_1-20_v1-2.tar.gz',
     expectedSha256: '84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c',
     licenseStatus: 'research dataset; cached locally and not redistributed',
-    adapterStatus: 'implemented-and-run',
-    trainingStatus: 'single-agent-full-train-analysis-recorded; ledger-not-journaled',
-    evaluationStatus: '1000-of-1000-correct',
+    adapterStatus: 'implemented-reset-unprepared',
+    trainingStatus: 'not-started-after-declarative-reset',
+    evaluationStatus: 'not-run-after-declarative-reset',
     archiveCache: 'training/.cache/datasets/babi-v1.2/babi_tasks_1-20_v1-2.tar.gz',
     files: Object.freeze({
       train: 'qa15_basic-deduction_train.txt',
@@ -53,9 +53,9 @@ export const DATASET_CATALOG = Object.freeze({
     source: 'https://s3.amazonaws.com/text-datasets/babi_tasks_1-20_v1-2.tar.gz',
     expectedSha256: '84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c',
     licenseStatus: 'research dataset; cached locally and not redistributed',
-    adapterStatus: 'implemented-and-run',
-    trainingStatus: 'benchmark-guided-single-agent-cycle-accepted',
-    evaluationStatus: '1000-of-1000-correct',
+    adapterStatus: 'implemented-reset-unprepared',
+    trainingStatus: 'not-started-after-declarative-reset',
+    evaluationStatus: 'not-run-after-declarative-reset',
     archiveCache: 'training/.cache/datasets/babi-v1.2/babi_tasks_1-20_v1-2.tar.gz',
     files: Object.freeze({
       train: 'qa16_basic-induction_train.txt',
@@ -219,71 +219,6 @@ export async function prepareDataset(id, chunkSize = 500) {
   };
   await writeJson(join(preparedDirectory, 'manifest.json'), manifest);
   return manifest;
-}
-
-function increment(map, key) {
-  map.set(key, (map.get(key) ?? 0) + 1);
-}
-
-export async function analyzeDatasetTraining(id) {
-  const definition = DATASET_CATALOG[id];
-  if (!definition) throw new Error(`Unknown dataset: ${id}`);
-  if (definition.task !== 15) {
-    throw new Error(`Train analysis for ${id} requires a task-specific semantic analyzer; fetch and prepare are available.`);
-  }
-  const directory = datasetDirectory(id);
-  const trainPath = join(directory, 'prepared', 'train.jsonl');
-  const cases = await readJsonLines(trainPath);
-  const names = new Set();
-  const classes = new Set();
-  const universalRules = new Map();
-  const answers = new Map();
-  const supportDepths = new Map();
-  let membershipStatements = 0;
-  let unsupportedStatements = 0;
-  for (const item of cases) {
-    increment(answers, item.answer);
-    increment(supportDepths, String(item.supportIds.length));
-    for (const sentence of item.context.match(/[^.]+\./gu) ?? []) {
-      let match = sentence.trim().match(/^([A-Z][a-z]+) are afraid of ([a-z]+)\.$/u);
-      if (match) {
-        classes.add(match[1].toLocaleLowerCase('en-US'));
-        classes.add(match[2]);
-        increment(universalRules, `${match[1].toLocaleLowerCase('en-US')} -> ${match[2]}`);
-        continue;
-      }
-      match = sentence.trim().match(/^([A-Z][a-z]+) is a ([a-z]+)\.$/u);
-      if (match) {
-        names.add(match[1]);
-        classes.add(match[2]);
-        membershipStatements += 1;
-        continue;
-      }
-      unsupportedStatements += 1;
-    }
-  }
-  const analysis = {
-    format: 'eslm-training-analysis-v1',
-    dataset: id,
-    trainOnly: true,
-    trainDigest: sha256(await readFile(trainPath)),
-    cases: cases.length,
-    uniqueNames: [...names].sort(),
-    classes: [...classes].sort(),
-    membershipStatements,
-    universalRuleSignatures: universalRules.size,
-    universalRuleObservations: [...universalRules.values()].reduce((sum, value) => sum + value, 0),
-    answers: Object.fromEntries([...answers].sort()),
-    supportDepths: Object.fromEntries([...supportDepths].sort()),
-    unsupportedStatements,
-    promotedStructures: {
-      constructions: ['CLASS are afraid of CLASS', 'ENTITY is a CLASS', 'what is ENTITY afraid of'],
-      morphology: { mice: 'mouse', wolves: 'wolf', cats: 'cat', sheep: 'sheep' },
-      persistentEpisodeFacts: 0,
-    },
-  };
-  await writeJson(join(directory, 'prepared', 'training-analysis.json'), analysis);
-  return analysis;
 }
 
 export async function datasetStatus(id) {

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Benchmark-Guided Symbolic Learning"
-  short_description: "Learn reusable symbolic capabilities from failures"
-  default_prompt: "Use $benchmark-guided-symbolic-learning to adapt ESLM to this dataset without benchmark memorization or regressions."

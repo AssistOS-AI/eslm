@@ -1,51 +1,55 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESLM — Knowledge Bases</title><link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script></head>
-<body><div data-include="partials/header.html"></div><main>
-  <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Knowledge bases</p>
-  <h1>Installed knowledge bases and their boundaries</h1>
-  <p class="lead">A KB is an independently selectable executable evidence module. The CLI distinguishes <em>ready</em> from <em>loaded</em>: a generated model can be installed on disk without participating in the current answer. Every response identifies the active KBs, and any selected KB makes a clean public benchmark run non-comparable unless the protocol explicitly declares the exposure.</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Knowledge packages — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Knowledge packages</p><h1>Canonical records, deterministic packages, catalogs, routing, and trust</h1>
+<p class="lead">A knowledge base is data with a logical interpretation, not a directory of generated programs. Source evidence is normalized into canonical records. A trusted compiler validates cross-record invariants and emits content-addressed JSON shards plus a manifest. The runtime opens only packages registered in its catalog and reads only allowlisted paths whose hashes match the manifest.</p>
 
-  <h2>Top-level modules</h2>
-  <div class="table-wrap"><table><thead><tr><th>ID</th><th>Evidence</th><th>Exact inventory</th><th>Question families</th><th>Default chat</th></tr></thead><tbody>
-    <tr class="cap-row--yes"><td><a href="kb-quick.html"><code>quick</code></a></td><td>Authored development fixtures; not public training.</td><td>36 entities, 62 direct facts, 14 rules, 116 closure facts.</td><td>Session facts, categories, capabilities, location, color, direction, mortality, controlled induction/abduction.</td><td>loaded</td></tr>
-    <tr class="cap-row--yes"><td><a href="kb-oewn-2025.html"><code>oewn-2025</code></a></td><td>Complete official Open English WordNet 2025 JSON release.</td><td>107,519 synsets, 127,311 lemmas, 107,524 definitions, 49,596 examples.</td><td>Define, synonyms, sense count, bounded “is-a” hypernym proof.</td><td>loaded</td></tr>
-    <tr class="cap-row--yes"><td><a href="kb-atomic-2020.html"><code>atomic-2020</code></a></td><td>Complete official ATOMIC 2020 train split; dev/test held out.</td><td>940,427 unique non-<code>none</code> tuples under 36,940 events.</td><td>Possible intent, prerequisite, effect, reaction, desire, obstacle, cause, order, use and location.</td><td>loaded</td></tr>
-  </tbody></table></div>
-  <p><code>child-basic</code>, <code>animals</code>, and <code>space-geography</code> remain directly selectable components for focused tests, but normal users should load the combined <code>quick</code> bundle. Their hand-authored regression fixtures are not evidence of broad world knowledge.</p>
+<h2>The canonical record model</h2>
+<p>The record vocabulary includes source and provenance records; contexts; terms and lexemes; assertions; rules; mappings; and, as later capabilities require them, events, temporal relations, modalities, trust statements, defaults, exceptions, and method-support metadata. Each record has a stable identifier and a declared type. References use identifiers rather than embedding executable expressions. Canonical JSONL is convenient for streaming, review, diffs, and deterministic recompilation.</p>
+<p>Provenance is part of meaning. An assertion identifies the provenance records supporting it. Provenance points to a frozen source, document location, extraction method, and confidence or trust information where available. A rule identifies why it is licensed and its scope. A record without required provenance is invalid even if its content happens to be true.</p>
 
-  <figure class="diagram"><pre class="mermaid">flowchart TD
-    C[CLI selection] --> B{Evidence regime}
-    B -->|quick| Q[small v1 fact/rule graph]
-    B -->|oewn-2025| W[sense + taxonomy provider]
-    B -->|atomic-2020| A[event continuation provider]
-    Q --> X[exact retrieval / deduction]
-    W --> X
-    A --> H[defeasible retrieval]
-    X --> P[answer + proof provenance]
-    H --> P
-    B -->|nothing selected| N[promoted bAbI-derived core only]</pre><figcaption>Modules share one CLI but not one unsafe data model. QUICK uses ordinary facts and rules, WordNet preserves polysemy, and ATOMIC preserves defeasible event relation direction.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Record family</th><th>Responsibility</th><th>Important checks</th></tr></thead><tbody>
+<tr><td>Source and provenance</td><td>Identify immutable evidence, extraction location, license, and lineage.</td><td>Stable hash, valid source reference, no orphan provenance.</td></tr>
+<tr><td>Context</td><td>Separate baseline, session, hypothetical, quoted, temporal, or source views.</td><td>Known parent and explicit projection policy.</td></tr>
+<tr><td>Term and lexeme</td><td>Connect stable concepts or entities to language forms.</td><td>Unique identifiers, normalized forms, declared language and sense scope.</td></tr>
+<tr><td>Assertion</td><td>State a grounded proposition with polarity and context.</td><td>Known references, provenance, supported predicate shape.</td></tr>
+<tr><td>Rule</td><td>State reusable inference from premises to conclusions.</td><td>Range restriction, bound conclusion variables, declared strength and context.</td></tr>
+<tr><td>Mapping</td><td>Relate equivalent or translated identifiers across sources.</td><td>Direction, relation type, provenance, and conflict policy.</td></tr>
+</tbody></table></div>
 
-  <h2>Inspect and change the active set</h2>
-  <pre><code>node src/cli.mjs kb list
-node src/cli.mjs kb show quick
-node src/cli.mjs kb show oewn-2025
-node src/cli.mjs kb show atomic-2020
+<h2>Compilation is a security and reproducibility boundary</h2>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  S[Canonical records] --> V[Schema and graph checks]
+  V --> P[JSON package]
+  P --> A[Independent audit]</pre><figcaption>Validation checks record shapes, references, provenance, and rule safety before deterministic JSON is written. The package audit then checks paths, counts, and hashes independently.</figcaption></figure>
+<p>Validation occurs at several levels. Record validation rejects an unknown type or malformed field. Graph validation rejects dangling identifiers and missing provenance. Logical validation rejects unsafe rules and unsupported operator shapes. Package validation rejects paths outside the package, duplicate shard roles, incorrect byte counts or checksums, and incompatible schema or compiler versions. A build report records counts and source hashes but cannot substitute for these checks.</p>
+<p>Compilation does not “improve” source claims by inventing missing facts. It normalizes, indexes, and partitions accepted records. Source-specific adapters may preserve compact formats when converting a huge resource into the full canonical form would add unacceptable size or latency, but those formats remain declarative and their semantics are documented and tested.</p>
 
-# one-shot execution is explicit
-node src/cli.mjs ask "Define dog" --kb oewn-2025
-node src/cli.mjs ask "Why might apologize?" --kb atomic-2020
-node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?" --kb quick</code></pre>
-  <p>Interactive chat starts with all three top-level modules. Inside it, use <code>/kbs</code>, <code>/load</code>, <code>/unload</code>, and <code>/model</code>. One-shot, batch, evaluation, and benchmark commands load no optional KB unless <code>--kb</code> is present, preventing an evaluation from silently acquiring source knowledge.</p>
+<h2>Package layout</h2>
+<pre><code>training/KBs/&lt;kb-id&gt;/
+  source-manifest.json
+  canonical/
+    records.jsonl
+  package/
+    manifest.json
+    shards.json
+    shards/
+      *.json</code></pre>
+<p>The small <code>quick</code> package follows the complete canonical path and is used for deterministic smoke tests. Its canonical data includes provenance, terms, lexemes, facts, a context, and safe rules. The current Open English WordNet and ATOMIC packages are rebuilt from cached immutable archives into provider-specific JSON shards. Their old generated <code>.mjs</code> payloads no longer participate in the product.</p>
 
-  <h2>Rebuild and validate</h2>
-  <pre><code>node src/cli.mjs kb build quick
-node src/cli.mjs kb build oewn-2025
-node src/cli.mjs kb build atomic-2020
-node src/cli.mjs kb validate all
-npm run test:kbs:random</code></pre>
-  <p>QUICK build compiles reviewed JSON to the v1 graph contract. WordNet build parses every synset file and emits lemma/synset shards. ATOMIC build streams every train row and emits event shards. Validation imports generated data, verifies inventory and runs semantic smoke proofs. The seeded random suite then runs 700 source-backed queries across seven capability families.</p>
+<h2>Catalogs and composition</h2>
+<p>A catalog entry binds a logical KB identifier and version to a package manifest and declares its provider and loading policy. Selection is explicit through CLI options or runtime configuration. Composing packages does not merge their source authority: provenance and context stay attached to every contribution, and conflicts are handled by declared trust and context policies. Package order must not silently decide truth.</p>
+<p>The base core has no domain assertions. Selecting <code>quick</code> supplies its small development vocabulary. Selecting <code>oewn-2025</code> supplies lexical senses, glosses, and relations. Selecting <code>atomic-2020</code> supplies defeasible event-centered commonsense tuples. These resources answer different kinds of questions and must not be presented as one homogeneous truth store.</p>
 
-  <h2>Cost and next boundary</h2>
-  <p>Both public KBs are modest on disk—about 23.77 MB generated WordNet code and 32.96 MB generated ATOMIC code—but JavaScript objects expand in memory. Their combined eager random run uses roughly 0.6 GB additional RSS. Static manifests remain the fast complete path; an explicit memory target selects bounded shard caches over the same generated envelopes. Larger sources additionally require streaming compilation, compact indexes, scoped semantics, and measured regression gates.</p>
-  <p class="related"><strong>Continue with:</strong> <a href="cli.html">CLI tutorial</a>, <a href="training.html">training and generated-code workflow</a>, <a href="knowledge-sources.html">source policy</a>, and <a href="scalability.html">scale gate</a>.</p>
-</main></body></html>
+<h2>Query-directed loading</h2>
+<p>The loader derives conservative routing keys from the normalized query. A WordNet definition request routes by lemma and then loads the synset shards named by the lemma index. An ATOMIC question routes by normalized event key. Generic canonical packages may route by entity, predicate, lexical form, or declared index. Each selected shard is checked against the manifest before decoding.</p>
+<p>The cache bounds resident shard data according to the runtime memory plan. It records hits, misses, loads, evictions, and bytes. Eager mode remains useful for small packages and controlled measurements; lazy mode is the normal path for large sources. Tests compare eager and lazy semantic answers on randomized samples so performance work cannot silently change meaning.</p>
+
+<h2>Current knowledge resources</h2>
+<div class="table-wrap"><table><thead><tr><th>KB</th><th>Data and intended use</th><th>Current loading form</th></tr></thead><tbody>
+<tr><td><code>quick</code></td><td>Small authored development KB for terms, facts, strict rules, provenance, and end-to-end runtime tests.</td><td>Canonical JSONL compiled to seven deterministic JSON shards.</td></tr>
+<tr><td><code>oewn-2025</code></td><td>Lexical senses, definitions, lemma-to-synset lookup, and semantic relations from a frozen Open English WordNet archive.</td><td>Ten synset shards and twenty-seven lemma shards, loaded eagerly or by lemma-directed cache.</td></tr>
+<tr><td><code>atomic-2020</code></td><td>Defeasible event-centered social and commonsense relations from a frozen ATOMIC archive.</td><td>Sixteen event-prefix shards, normally selected from the event phrase.</td></tr>
+</tbody></table></div>
+
+<h2>What a reviewer verifies</h2>
+<p>For an extraction change, compare frozen source hash, split visibility, assignment packet, candidate records, rejected evidence, and extraction coverage. For a compiler change, compile the same records twice and compare bytes and manifests, then exercise malformed paths, hashes, references, and rules. For a runtime change, verify catalog allowlisting, eager/lazy equivalence, cache budgets, provenance in answers, and deliberate gaps for absent content. The complete logical model is in <a href="specsLoader.html?spec=DS005-knowledge-base-logical-model.md">DS005</a>; packaging and routing are in <a href="specsLoader.html?spec=DS006-kb-packages-catalog-routing-and-cache.md">DS006</a>.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

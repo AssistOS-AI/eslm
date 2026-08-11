@@ -1,0 +1,58 @@
+{
+  "manifestType": "knowledgeBasePackage",
+  "format": "eslm-kb-package-v1",
+  "schemaVersion": "1",
+  "kbId": "oewn-2025",
+  "kbVersion": "2025",
+  "namespace": "oewn-2025",
+  "id": "oewn-2025",
+  "title": "Open English WordNet 2025",
+  "version": "2025",
+  "kind": "lexical-taxonomy",
+  "generatedBy": "coding-agent+deterministic-node-compiler",
+  "sourceRelease": "2025-12-31",
+  "sourceArchive": "english-wordnet-2025-json.zip",
+  "sourceDigest": "7d749f6e2c39e6970e4997839dcf6e42fd281f3c2fae0171d2192bae8cfa4b51",
+  "license": "CC BY 4.0; Open English WordNet and Princeton WordNet attribution required",
+  "trainOnly": false,
+  "benchmarkEligible": false,
+  "counts": {
+    "synsets": 107519,
+    "uniqueLemmas": 127311,
+    "memberOccurrences": 185129,
+    "definitions": 107524,
+    "examples": 49596
+  },
+  "relations": {
+    "attribute": 1260,
+    "domain_topic": 6433,
+    "similar": 23176,
+    "also": 2950,
+    "exemplifies": 1639,
+    "domain_region": 2,
+    "hypernym": 88075,
+    "mero_part": 5387,
+    "wikidata": 1140,
+    "mero_member": 723,
+    "mero_substance": 825,
+    "entails": 407,
+    "causes": 221
+  },
+  "capabilities": [
+    "define",
+    "list-senses",
+    "synonyms",
+    "bounded-hypernym-deduction"
+  ],
+  "limitations": [
+    "no automatic word-sense disambiguation",
+    "no closed-world negation",
+    "no proper-noun Namenet extension"
+  ],
+  "provider": "oewn-compact-source-v1",
+  "shardDirectoryRef": "shards.json",
+  "canonicalSource": {
+    "checksum": "sha256:7d749f6e2c39e6970e4997839dcf6e42fd281f3c2fae0171d2192bae8cfa4b51",
+    "recordCount": 107519
+  }
+}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ESLM Documentation — Specifications</title>
+  <title>Specification Matrix - Skill Repository Documentation</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
@@ -13,14 +13,23 @@
 <body>
   <div data-include="partials/header.html"></div>
   <main class="page">
-    <p class="breadcrumb">
-      <a href="index.html">ESLM Documentation</a> /
-      <a href="specsLoader.html?spec=matrix.md">Specifications</a> /
-      <span id="current-spec">Loading…</span>
-    </p>
-    <p id="spec-meta" class="spec-meta-line"></p>
-    <div id="content" class="content">
-      <div class="loading">Loading specification…</div>
+    <div class="page__panel loader-frame">
+      <div class="loader-heading">
+        <div>
+          <p class="kicker">Specification Viewer</p>
+          <h1 id="spec-title">Specification Matrix</h1>
+        </div>
+        <small>
+          <a href="index.html">Home</a> |
+          <a href="specsLoader.html?spec=matrix.md">Specs</a> |
+          <span id="current-spec">Loading...</span>
+        </small>
+      </div>
+
+      <div id="spec-meta"></div>
+      <div id="content" class="content">
+        <div class="loading">Loading specification...</div>
+      </div>
     </div>
   </main>
   <div data-include="partials/footer.html"></div>
@@ -30,6 +39,7 @@
       constructor() {
         this.content = document.getElementById('content');
         this.currentSpecSpan = document.getElementById('current-spec');
+        this.specTitle = document.getElementById('spec-title');
         this.specMeta = document.getElementById('spec-meta');
         this.specPath = this.getSpecPath();
         this.load();
@@ -87,7 +97,8 @@
           this.scrollToHash();
 
           const title = metadata.title || body.match(/^#\s+(.+)$/m)?.[1] || this.specPath;
-          document.title = `${title} — ESLM Documentation`;
+          this.specTitle.textContent = title;
+          document.title = `${title} - Skill Repository Documentation`;
         } catch (error) {
           this.showError(error.message);
         }
@@ -100,12 +111,31 @@
         }
 
         const items = [];
-        if (metadata.id) items.push(`<code>${this.escapeHtml(metadata.id)}</code>`);
-        if (metadata.status) items.push(this.escapeHtml(metadata.status));
-        if (metadata.owner) items.push(this.escapeHtml(metadata.owner));
-        const prefix = items.join(' · ');
-        const summary = metadata.summary ? ` — ${this.escapeHtml(metadata.summary)}` : '';
-        this.specMeta.innerHTML = `${prefix}${summary}`;
+        if (metadata.id) {
+          items.push(this.renderMetaItem('Identifier', `<code>${this.escapeHtml(metadata.id)}</code>`));
+        }
+        if (metadata.status) {
+          items.push(
+            this.renderMetaItem(
+              'Status',
+              `<span class="spec-status spec-status--${this.normalizeStatus(metadata.status)}">${this.escapeHtml(metadata.status)}</span>`
+            )
+          );
+        }
+        if (metadata.owner) {
+          items.push(this.renderMetaItem('Owner', this.escapeHtml(metadata.owner)));
+        }
+        if (metadata.summary) {
+          items.push(this.renderMetaItem('Summary', this.escapeHtml(metadata.summary)));
+        }
+
+        this.specMeta.innerHTML = items.length
+          ? `<section class="spec-meta"><div class="spec-meta__grid">${items.join('')}</div></section>`
+          : '';
+      }
+
+      renderMetaItem(label, value) {
+        return `<dl class="spec-meta__item"><dt>${label}</dt><dd>${value}</dd></dl>`;
       }
 
       normalizeStatus(status) {

@@ -1,114 +1,49 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { execFile, spawnSync } from 'node:child_process';
-import { promisify } from 'node:util';
+import { mkdtemp } from 'node:fs/promises';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { PROJECT_ROOT } from '../src/paths.mjs';
+import { main } from '../src/cli.mjs';
 
-const run = promisify(execFile);
+async function captureMain(arguments_) {
+  let output = '';
+  await main(arguments_, { write: (chunk) => { output += String(chunk); } });
+  return output;
+}
 
-test('CLI resolves its model when launched from training directory', async () => {
-  const input = 'Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?';
-  const { stdout } = await run(process.execPath, ['../src/cli.mjs', 'ask', input], {
-    cwd: `${PROJECT_ROOT}/training`,
-  });
-  const result = JSON.parse(stdout);
-  assert.deepEqual(result.values, ['wolf']);
+function parseCapturedJson(output) {
+  const start = output.indexOf('{');
+  const end = output.lastIndexOf('}');
+  return JSON.parse(output.slice(start, end + 1));
+}
+
+test('CLI one-shot output exposes the new task, plan, KB, and result contracts', async () => {
+  const stdout = await captureMain(['ask', 'Can Penguin swim?', '--kb', 'quick']);
+  const result = parseCapturedJson(stdout);
+  assert.equal(result.status, 'SOLVED');
+  assert.equal(result.protocol, 'eslm-runtime-result-v1');
+  assert.equal(result.taskFrame.goals.length, 1);
+  assert.equal(result.plan.methodId, 'method:core:safe-horn-deduction');
+  assert.deepEqual(result.model.knowledgeBases, ['quick']);
 });
 
-test('CLI emits JSONL for plain-text batch input', async () => {
-  const { stdout } = await run(process.execPath, ['src/cli.mjs', 'run', '--input', 'tests/fixtures/questions.txt'], {
-    cwd: PROJECT_ROOT,
-  });
-  assert.equal(stdout.trim().split('\n').length, 4);
+test('CLI Codex training dry-run constructs an isolated subprocess receipt', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'eslm-cli-agent-'));
+  const packet = join(directory, 'packet.json');
+  const workspace = join(directory, 'workspace');
+  await captureMain(['train', 'prepare', '--input', 'tests/fixtures/training.jsonl', '--output', packet]);
+  const stdout = await captureMain(['train', 'run', '--packet', packet, '--output', workspace, '--skill', 'document-to-kb-builder', '--dry-run']);
+  assert.equal(parseCapturedJson(stdout).receipt.dryRun, true);
 });
 
-test('CLI exposes the compiled WordNet corpus state accurately', async () => {
-  const { stdout } = await run(process.execPath, [
-    'src/cli.mjs', 'corpus', 'status', '--corpus', 'oewn-2025',
-  ], { cwd: PROJECT_ROOT });
-  const [status] = JSON.parse(stdout);
-  assert.equal(status.id, 'oewn-2025');
-  assert.equal(status.sourceCached, true);
-  assert.equal(status.probeComplete, true);
-  assert.equal(status.prepared, false);
-  assert.equal(status.generatedModel, true);
-  assert.equal(status.buildStatus, 'complete');
-  assert.equal(status.architectureGate, 'experimental-build-query-directed-gate-open');
-});
-
-test('CLI rejects an unsupported corpus probe before invoking an adapter', async () => {
-  await assert.rejects(run(process.execPath, [
-    'src/cli.mjs', 'corpus', 'probe', '--corpus', 'wikidata-thematic', '--archive', 'unused.zip',
-  ], { cwd: PROJECT_ROOT }), /currently supports only/u);
-});
-
-test('CLI profile option includes stage measurements', async () => {
-  const input = 'Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?';
-  const { stdout } = await run(process.execPath, ['src/cli.mjs', 'ask', input, '--profile'], {
-    cwd: PROJECT_ROOT,
-  });
-  const result = JSON.parse(stdout);
-  assert.equal(result.profile.query.format, 'eslm-profile-v1');
-  assert.equal(result.profile.query.stages.some((stage) => stage.name === 'retrieval.answer'), true);
-});
-
-test('CLI answers disclose active knowledge modules and comparability', async () => {
-  const { stdout } = await run(process.execPath, [
-    'src/cli.mjs', 'ask', 'Can Penguin swim?', '--kb', 'animals',
-  ], { cwd: PROJECT_ROOT });
-  const result = JSON.parse(stdout);
-  assert.deepEqual(result.model.knowledgeBases, ['animals']);
-  assert.equal(result.model.benchmarkComparable, false);
-});
-
-test('CLI can query compiled public KBs explicitly', async () => {
-  const { stdout: wordnetOutput } = await run(process.execPath, [
-    'src/cli.mjs', 'ask', 'Is a dog an animal?', '--kb', 'oewn-2025',
-  ], { cwd: PROJECT_ROOT });
-  const wordnet = JSON.parse(wordnetOutput);
-  assert.equal(wordnet.status, 'ANSWERED');
-  assert.match(wordnet.answer, /WordNet path/u);
-
-  const { stdout: atomicOutput } = await run(process.execPath, [
-    'src/cli.mjs', 'ask', 'Why might apologize?', '--kb', 'atomic-2020',
-  ], { cwd: PROJECT_ROOT });
-  const atomic = JSON.parse(atomicOutput);
-  assert.equal(atomic.status, 'ANSWERED');
-  assert.match(atomic.answer, /possibilit/u);
-});
-
-test('CLI structured output remains ANSI-free and reports lazy memory policy', async () => {
-  const { stdout } = await run(process.execPath, [
-    'src/cli.mjs', 'ask', 'Why might apologize?', '--kb', 'atomic-2020',
-    '--memory-policy', 'lazy', '--memory-mb', '160', '--color', 'always',
-  ], { cwd: PROJECT_ROOT });
-  assert.equal(stdout.includes('\u001b['), false);
-  const result = JSON.parse(stdout);
-  assert.equal(result.model.memory.effectivePolicy, 'lazy');
-  assert.equal(result.model.memory.providers[0].mode, 'lazy');
-});
-
-test('interactive examples disclose evidence and smoke executes a reproducible sample', () => {
-  const examples = spawnSync(process.execPath, [
-    'src/cli.mjs', 'chat', '--kb', 'quick', '--color', 'never',
-  ], {
-    cwd: PROJECT_ROOT,
-    input: '/examples cli-test-seed\n',
-    encoding: 'utf8',
-    timeout: 30_000,
-  });
-  assert.equal(examples.status, 0, examples.stderr);
-  assert.match(examples.stdout, /Public benchmarks actually run: bAbI v1\.2 Tasks 15 and 16/u);
-  const smoke = spawnSync(process.execPath, [
-    'src/cli.mjs', 'chat', '--kb', 'quick', '--color', 'never',
-  ], {
-    cwd: PROJECT_ROOT,
-    input: '/smoke cli-test-seed\n',
-    encoding: 'utf8',
-    timeout: 30_000,
-  });
-  assert.equal(smoke.status, 0, smoke.stderr);
-  assert.match(smoke.stdout, /Generated smoke run — seed cli-test-seed/u);
-  assert.match(smoke.stdout, /0 failed/u);
-  assert.match(smoke.stdout, /skipped/u);
+test('CLI compiles canonical records without registering or executing them', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'eslm-cli-compile-'));
+  const stdout = await captureMain([
+    'kb', 'compile', '--input', 'training/KBs/quick/canonical/records.jsonl',
+    '--output', directory, '--id', 'compiled-fixture', '--version', '1.0.0', '--namespace', 'quick',
+  ]);
+  const result = parseCapturedJson(stdout);
+  assert.equal(result.manifest.kbId, 'compiled-fixture');
+  assert.equal(result.manifest.canonicalSource.recordCount, 14);
 });

@@ -1,5 +1,4 @@
 import { access, readFile } from 'node:fs/promises';
-import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import { PROJECT_ROOT } from './paths.mjs';
 import { ShardCache, planPublicKnowledgeMemory } from './memory-policy.mjs';
@@ -8,13 +7,13 @@ import { sha256 } from './util.mjs';
 export const PUBLIC_KB_CATALOG = Object.freeze({
   'oewn-2025': Object.freeze({
     id: 'oewn-2025', title: 'Open English WordNet 2025', role: 'public lexical and taxonomic knowledge',
-    model: 'training/KBs/oewn-2025/model/manifest.mjs', documentation: 'knowledge-sources.html',
+    model: 'training/KBs/oewn-2025/package/manifest.json', documentation: 'knowledge-bases.html',
     defaultInteractive: true, benchmarkEligible: false, priority: 1,
     estimatedEagerRssBytes: 349 * 1024 * 1024,
   }),
   'atomic-2020': Object.freeze({
     id: 'atomic-2020', title: 'ATOMIC 2020', role: 'public defeasible event and social commonsense',
-    model: 'training/KBs/atomic-2020/model/manifest.mjs', documentation: 'knowledge-sources.html',
+    model: 'training/KBs/atomic-2020/package/manifest.json', documentation: 'knowledge-bases.html',
     defaultInteractive: true, benchmarkEligible: false, priority: 2,
     estimatedEagerRssBytes: 284 * 1024 * 1024,
   }),
@@ -60,12 +59,12 @@ function response(provider, answer, values, source, detail, reasoning = 'retriev
   };
 }
 
-async function readGeneratedShard(path) {
-  const source = await readFile(path, 'utf8');
-  const prefix = 'export default Object.freeze(';
-  const suffix = ');\n';
-  if (!source.startsWith(prefix) || !source.endsWith(suffix)) throw new Error(`Invalid generated shard envelope: ${path}`);
-  return { value: Object.freeze(JSON.parse(source.slice(prefix.length, -suffix.length))), sourceBytes: Buffer.byteLength(source) };
+async function readGeneratedShard(path, expectedChecksum) {
+  const bytes = await readFile(path);
+  if (expectedChecksum && `sha256:${sha256(bytes)}` !== expectedChecksum) {
+    throw new Error(`Checksum mismatch for public KB shard ${path}.`);
+  }
+  return { value: Object.freeze(JSON.parse(bytes.toString('utf8'))), sourceBytes: bytes.length };
 }
 
 function lemmaBucket(lemma) {
@@ -83,6 +82,7 @@ class WordNetProvider {
     this.manifest = model.manifest;
     this.mode = options.mode ?? 'eager';
     this.modelDirectory = options.modelDirectory;
+    this.shardsByRef = options.shardsByRef;
     if (this.mode === 'eager') {
       this.synsets = model.data.synsets;
       this.lemmas = model.data.lemmas;
@@ -104,13 +104,15 @@ class WordNetProvider {
   async lemmaData(lemma) {
     if (this.mode === 'eager') return this.lemmas;
     const bucket = lemmaBucket(lemma);
-    return this.cachedShard(`lemma:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'lemmas', `${bucket}.mjs`)));
+    const ref = `lemmas/${bucket}.json`;
+    return this.cachedShard(`lemma:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, ref), this.shardsByRef.get(ref).checksum));
   }
 
   async synsetData(id) {
     if (this.mode === 'eager') return this.synsets;
     const bucket = synsetBucket(id);
-    return this.cachedShard(`synset:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'synsets', `${bucket}.mjs`)));
+    const ref = `synsets/${bucket}.json`;
+    return this.cachedShard(`synset:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, ref), this.shardsByRef.get(ref).checksum));
   }
 
   async synset(id) { return (await this.synsetData(id))[id]; }
@@ -189,6 +191,7 @@ class AtomicProvider {
     this.manifest = model.manifest;
     this.mode = options.mode ?? 'eager';
     this.modelDirectory = options.modelDirectory;
+    this.shardsByRef = options.shardsByRef;
     if (this.mode === 'eager') {
       this.events = model.data.events;
       this.keys = Object.keys(this.events);
@@ -199,7 +202,8 @@ class AtomicProvider {
 
   async eventData(bucket) {
     if (this.mode === 'eager') return this.events;
-    return this.cache.get(`event:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, 'events', `${bucket}.mjs`)));
+    const ref = `events/${bucket}.json`;
+    return this.cache.get(`event:${bucket}`, () => readGeneratedShard(join(this.modelDirectory, ref), this.shardsByRef.get(ref).checksum));
   }
 
   async findEvent(input) {
@@ -279,8 +283,36 @@ async function exists(path) {
 }
 
 async function readManifest(id) {
-  const report = JSON.parse(await readFile(join(PROJECT_ROOT, 'training/KBs', id, 'build-report.json'), 'utf8'));
-  return report.manifest;
+  return JSON.parse(await readFile(join(PROJECT_ROOT, 'training/KBs', id, 'package/manifest.json'), 'utf8'));
+}
+
+async function loadShardDirectory(modelDirectory, manifest) {
+  if (!/^[a-z0-9-]+\.json$/u.test(manifest.shardDirectoryRef)) throw new Error('Unsafe public KB shardDirectoryRef.');
+  const directory = JSON.parse(await readFile(join(modelDirectory, manifest.shardDirectoryRef), 'utf8'));
+  if (!Array.isArray(directory)) throw new Error('Public KB shard directory must be an array.');
+  const ids = new Set();
+  for (const shard of directory) {
+    if (ids.has(shard.shardId)) throw new Error(`Duplicate public KB shard ${shard.shardId}.`);
+    ids.add(shard.shardId);
+    if (!/^(?:synsets|lemmas|events)\/[a-z0-9-]+\.json$/u.test(shard.dataRef)) throw new Error(`Unsafe public KB dataRef ${shard.dataRef}.`);
+    if (!/^sha256:[a-f0-9]{64}$/u.test(shard.checksum)) throw new Error(`Invalid checksum for public KB shard ${shard.shardId}.`);
+  }
+  return directory;
+}
+
+async function loadEagerData(id, modelDirectory, directory) {
+  if (id === 'oewn-2025') {
+    const data = { synsets: {}, lemmas: {} };
+    for (const shard of directory) {
+      const value = (await readGeneratedShard(join(modelDirectory, shard.dataRef), shard.checksum)).value;
+      Object.assign(shard.shardKind === 'sourceSynset' ? data.synsets : data.lemmas, value);
+    }
+    return data;
+  }
+  const data = { events: {} };
+  for (const shard of directory) Object.assign(data.events,
+    (await readGeneratedShard(join(modelDirectory, shard.dataRef), shard.checksum)).value);
+  return data;
 }
 
 export async function publicKbStatuses() {
@@ -296,17 +328,19 @@ export async function publicKbStatuses() {
 export async function loadPublicKnowledgeBase(id, options = {}) {
   const definition = PUBLIC_KB_CATALOG[id];
   if (!definition) throw new Error(`Unknown public knowledge base: ${id}`);
-  const modelPath = join(PROJECT_ROOT, definition.model);
-  const modelDirectory = join(PROJECT_ROOT, 'training/KBs', id, 'model');
+  const modelDirectory = join(PROJECT_ROOT, 'training/KBs', id, 'package');
   const mode = options.mode ?? 'eager';
+  const manifest = await readManifest(id);
+  if (manifest?.format !== 'eslm-kb-package-v1') throw new Error(`Invalid public KB manifest: ${id}`);
+  const directory = await loadShardDirectory(modelDirectory, manifest);
+  const shardsByRef = new Map(directory.map((shard) => [shard.dataRef, shard]));
   let model;
   if (mode === 'eager') {
-    model = await import(`${pathToFileURL(modelPath).href}?kb=${Date.now()}`);
+    model = { manifest, data: await loadEagerData(id, modelDirectory, directory) };
   } else {
-    model = { manifest: await readManifest(id) };
+    model = { manifest };
   }
-  if (model.manifest?.format !== 'eslm-public-kb-v1') throw new Error(`Invalid public KB manifest: ${id}`);
-  const providerOptions = { ...options, mode, modelDirectory };
+  const providerOptions = { ...options, mode, modelDirectory, shardsByRef };
   if (id === 'oewn-2025') return new WordNetProvider(model, providerOptions);
   if (id === 'atomic-2020') return new AtomicProvider(model, providerOptions);
   throw new Error(`No runtime provider for ${id}.`);

@@ -1,124 +1,69 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ESLM — CLI Tutorial</title><link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script></head>
-<body><div data-include="partials/header.html"></div><main>
-  <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / CLI tutorial</p>
-  <h1>Use ESLM interactively or from automation</h1>
-  <p class="lead">The same <code>eslm</code> executable supports a conversation prompt, one JSON answer, JSONL batch processing, KB management, source builds, evaluation and reports. Runtime questions remain offline and deterministic. Commands work from the repository root and from the <code>training/</code> directory.</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CLI operations — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / CLI operations</p><h1>One runtime contract across interactive, one-shot, batch, KB, training, and evaluation commands</h1>
+<p class="lead">The CLI is both an operator interface and a review surface. All question modes construct the same runtime and return the same semantic protocol. Administrative commands build or validate declarative artifacts; they do not smuggle a second reasoning implementation into scripts.</p>
 
-  <h2>Start an interactive conversation</h2>
-  <pre><code>npm exec -- eslm
-# equivalent:
-node src/cli.mjs</code></pre>
-  <p>Interactive mode loads installed public sources—currently <code>oewn-2025</code> and <code>atomic-2020</code>—but excludes QUICK. QUICK contains authored fixtures for tests and tutorials, so loading it silently would make ordinary answers look more knowledgeable than the source-derived system. Type <code>/help</code> at any time. A real terminal colors status, command names, load state, warnings, and answers; redirected output remains plain.</p>
-  <pre><code>ESLM is ready. Public knowledge: oewn-2025, atomic-2020.
-eslm&gt; /help
-eslm&gt; /kbs
-eslm&gt; /examples
-eslm&gt; /smoke
-eslm&gt; Define dog
-dog has 8 compiled senses: ...
-eslm&gt; Socrates is a man. Is Socrates a man?
-Yes.
-eslm&gt; /trace</code></pre>
-  <p><code>/examples</code> selects up to four varied representatives from every capability group. It prints a seed rather than hidden example IDs; reuse it with <code>/examples SEED</code> to reconstruct the same selection. The underlying fixed regression catalog has 204 unique cases and 174 operand-masked structures. <code>/smoke</code> runs a smaller generated sample against the KBs currently loaded and prints each pass, failure or skipped requirement. Reuse its seed with <code>/smoke SEED</code> when diagnosing a failure.</p>
-  <p>The examples page inside the CLI also labels evidence correctly: bAbI v1.2 Tasks 15 and 16 are the public benchmarks actually run; WordNet and ATOMIC are source-exposed integration checks; bAbI Tasks 2 and 3 are prepared but not learned; the remaining named suites are catalogued or planned.</p>
-
-  <h2>Interactive commands</h2>
-  <p>The two normal load targets are Open English WordNet 2025 and ATOMIC 2020. QUICK remains visible and explicitly loadable as a fixture. You do not need to memorize canonical IDs: commands match a full name, a distinctive title or role word, a wildcard such as <code>*net*</code>, or a conservative close spelling such as <code>wordnt</code>. Ambiguous words produce a useful diagnostic instead of loading an arbitrary source.</p>
-  <div class="table-wrap"><table><thead><tr><th>Command</th><th>Effect</th></tr></thead><tbody>
-    <tr><td><code>/help</code></td><td>Prints every interactive command and examples of session facts.</td></tr>
-    <tr><td><code>/kbs</code></td><td>Shows whether QUICK, WordNet and ATOMIC are ready or loaded, their exact counts and their evidence role.</td></tr>
-    <tr><td><code>/load all</code> or <code>/load WORDS</code></td><td>Loads every public KB or the unique name/title/wildcard/approximate match. QUICK is loaded only when named.</td></tr>
-    <tr><td><code>/unload WORDS</code> or <code>/unload all</code></td><td>Removes matching modules without deleting session facts.</td></tr>
-    <tr><td><code>/model</code></td><td>Explains the active generated core, source-derived KBs, fixture KBs, session facts, benchmark comparability, and current memory strategy in readable text.</td></tr>
-    <tr><td><code>/memory</code> or <code>/memory N|auto|eager|lazy</code></td><td>Shows cache use or rebuilds public providers with a soft MiB target or explicit loading strategy.</td></tr>
-    <tr><td><code>/examples [SEED]</code></td><td>Generates representative working, deliberately unknown, and unsupported examples for every group and discloses benchmark status.</td></tr>
-    <tr><td><code>/smoke [SEED]</code></td><td>Executes two representatives per group against the active runtime and prints readable results, totals, elapsed time and the replay seed.</td></tr>
-    <tr><td><code>/trace</code> / <code>/profile</code></td><td>Explains the latest provenance or optional stage measurements in readable text rather than dumping JSON.</td></tr>
-    <tr><td><code>/clear</code></td><td>Clears session entities, facts, rules and discourse state.</td></tr>
-    <tr><td><code>/quit</code> / <code>/exit</code></td><td>Ends the session.</td></tr>
-  </tbody></table></div>
-
-  <figure class="diagram"><pre class="mermaid">flowchart TD
-    I[interactive input] --> X{slash command?}
-    X -->|/kbs /examples /help| O[inspect without changing knowledge]
-    X -->|/smoke| T[execute seeded sample]
-    X -->|/load /unload /memory| L[rebuild selected providers]
-    X -->|ordinary English| Q{question family}
-    L --> Q
-    Q --> C[language and reasoning core]
-    Q --> W[WordNet]
-    Q --> A[ATOMIC]
-    C --> R[answer + trace]
-    W --> R
-    A --> R
-    T --> R
-    R --> S[session context retained]</pre><figcaption>Slash commands manage the session and active providers. Ordinary English follows a source-specific executable path and returns to the same persistent session context.</figcaption></figure>
-
-  <h2>Load and unload examples</h2>
-  <pre><code>eslm&gt; /unload all
-Loaded: (base model only).
-eslm&gt; Define dog
-I do not know how to handle that kind of question yet. Try /examples to see the question families I can execute.
-eslm&gt; /load wordnet
-Loaded knowledge: oewn-2025.
-eslm&gt; Define dog
-dog has 8 compiled senses: ...
-eslm&gt; /load social commonsense
-Loaded knowledge: oewn-2025, atomic-2020.
-eslm&gt; /load quick
-Loaded knowledge: oewn-2025, atomic-2020, quick.</code></pre>
-  <p><code>ready</code> means generated code exists locally. <code>loaded</code> means its evidence is active in the current engine. This distinction is also visible in every JSON answer through <code>model.knowledgeBases</code>.</p>
-
-  <h2>Ask one question and receive JSON</h2>
-  <pre><code>node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?" --kb quick
+<h2>Ask one question</h2>
+<pre><code>node src/cli.mjs ask "Can Penguin swim?" --kb quick
 node src/cli.mjs ask "Define dog" --kb oewn-2025
-node src/cli.mjs ask "Is a dog an animal?" --kb oewn-2025
-node src/cli.mjs ask "Why might apologize?" --kb atomic-2020
-node src/cli.mjs ask "What might happen after PersonX apologizes profusely?" --kb atomic-2020</code></pre>
-  <p>Noninteractive commands do not load optional KBs by default. This makes automation and benchmarks explicit. The JSON includes status, answer, semantic query, values, provenance, reasoning method, learned session items, context and active model metadata.</p>
+node src/cli.mjs ask "Why might apologize?" --kb atomic-2020</code></pre>
+<p>The output is JSON. Read <code>status</code> and <code>answer</code> for the immediate result, then inspect <code>input</code>, <code>query</code>, <code>taskFrame</code>, <code>plan</code>, <code>values</code>, <code>provenance</code>, <code>reasoning</code>, <code>usedKbVersions</code>, <code>unresolvedSubgoals</code>, and <code>model.memory</code>. The WordNet and ATOMIC examples exercise source-specific declarative providers; the quick example exercises the canonical generic compiler and loader.</p>
 
-  <h2>Control memory without paying lazy-loading cost unnecessarily</h2>
-  <pre><code>node src/cli.mjs                         # public KBs eager by default
-node src/cli.mjs --memory-mb 512         # WordNet eager, ATOMIC normally lazy
-node src/cli.mjs --memory-mb 256         # both public KBs normally lazy
-node src/cli.mjs --memory-policy lazy    # force shard mode for diagnostics
-node src/cli.mjs --color never           # disable terminal colors</code></pre>
-  <p>The memory number is a soft whole-process RSS target. ESLM reserves space for Node, the base model, active queries, and session state, then compares the remainder with measured eager expansion rather than file size. With no target it prefers complete eager models because that path is faster and simpler. A constrained plan retains only bounded shard objects and reports cache hits, misses, evictions, and oversized query shards through <code>/memory</code> and <code>model.memory</code>. Use an operating-system or container limit when a hard ceiling is required.</p>
+<h2>Interactive and batch operation</h2>
+<p>Running <code>node src/cli.mjs</code> opens a session. Statements can extend only that session’s context, and later questions can refer to those entities and facts. Runtime commands expose selected KBs and memory state. The session does not alter canonical records or compiled packages.</p>
+<pre><code>node src/cli.mjs run --input tests/fixtures/questions.txt --output /tmp/eslm-answers.jsonl</code></pre>
+<p>Batch mode reads deterministic input records and writes one result object per request. It is suitable for pipeline integration because answer text, semantic values, status, and evidence remain separately machine-readable. A failed case is written as a result rather than dropped from the stream.</p>
 
-  <h2>Process a file</h2>
-  <pre><code>node src/cli.mjs run --input tests/fixtures/questions.txt
-node src/cli.mjs run --input questions.jsonl --output answers.jsonl --kb quick,oewn-2025</code></pre>
-  <p>Plain text uses one question per non-empty line. JSONL accepts <code>text</code> or <code>input</code> plus an optional <code>id</code>. Output is always one JSON record per input, which is suitable for shell pipelines and deterministic evaluators.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  C[CLI command] --> V[Validated request]
+  V --> R[Shared runtime]
+  R --> J[Structured result]
+  J --> U[Human or scorer]</pre><figcaption>Every question mode validates its request and enters the same runtime. Human presentation and automated scoring are two consumers of one structured result.</figcaption></figure>
 
-  <h2>Inspect, build and validate knowledge</h2>
-  <pre><code>node src/cli.mjs kb list
-node src/cli.mjs kb show quick
-node src/cli.mjs kb show oewn-2025
-node src/cli.mjs kb show atomic-2020
-node src/cli.mjs kb build oewn-2025
-node src/cli.mjs kb build atomic-2020
-node src/cli.mjs kb validate all
-npm run test:kbs:random</code></pre>
-  <p>Downloaded archives are reused from ignored <code>training/.cache/</code>. Builds write source manifests, reports and generated ESM under <code>training/KBs/</code>. The random command runs 700 reproducible source-backed cases and publishes <code>docs/results/latest-kb-random-tests.json</code>.</p>
+<h2>Knowledge-package operations</h2>
+<pre><code>node src/cli.mjs kb list
+node src/cli.mjs kb register /absolute/path/to/package/manifest.json
+node src/cli.mjs kb unregister my-kb
+node src/cli.mjs kb compile --input candidate/records.jsonl --output /tmp/my-kb-package \
+  --id my-kb --version 0.1.0 --namespace my-kb
+npm run kb:build
+npm run kb:validate</code></pre>
+<p><code>kb list</code> describes repository-managed and explicitly registered entries and their current package state. <code>kb compile</code> repeats the host canonical validator, sorts accepted records, writes inert JSON shards, and emits a hashed manifest; compilation does not register or promote the result. Registration opens and validates the manifest before storing a relative catalog reference; unregistration removes only the catalog entry and never deletes package data. Building recompiles repository-managed KBs from canonical records or frozen source archives. Validation opens manifests, checks package invariants, and performs provider checks. Build commands are trusted host operations; they never execute source or candidate text.</p>
 
-  <h2>Datasets, evaluation and benchmarks</h2>
-  <pre><code>node src/cli.mjs dataset catalog
-node src/cli.mjs dataset status --dataset babi-15-en-10k-v1.2
-node src/cli.mjs dataset fetch --dataset babi-15-en-10k-v1.2
-node src/cli.mjs dataset prepare --dataset babi-15-en-10k-v1.2
+<h2>Training operations</h2>
+<pre><code>node src/cli.mjs train prepare \
+  --input tests/fixtures/training.jsonl \
+  --namespace example-kb \
+  --output /tmp/eslm-packet.json
 
-node src/cli.mjs evaluate --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl --publish
-node src/cli.mjs benchmark run --suite training/datasets/babi-15-en-10k-v1.2/prepared/test.jsonl --publish</code></pre>
-  <p>bAbI and other benchmark inputs live under ignored <code>training/datasets/</code>; shared archives live under <code>training/.cache/datasets/</code>. Evaluation is separate from public-corpus KB testing. Adding <code>--kb</code> changes the evidence regime and must be recorded in the report.</p>
-  <pre><code>npm run benchmark:conversation</code></pre>
-  <p>This second command runs the generated 1,000-case long-input regression suite and refreshes its <a href="results/latest-conversation-benchmark.html">compact HTML report</a>. It is an internal/source-exposed stress test, not a public benchmark or an LLM comparison.</p>
+node src/cli.mjs train candidate \
+  --packet /tmp/eslm-packet.json \
+  --output /tmp/eslm-manual-candidate
 
-  <h2>Diagnose failures and performance</h2>
-  <pre><code>node src/cli.mjs ask "QUESTION" --profile
-npm run profile:scale
+node src/cli.mjs train run \
+  --packet /tmp/eslm-packet.json \
+  --output /tmp/eslm-agent-workspace \
+  --skill document-to-kb-builder \
+  --dry-run
+
+node src/cli.mjs train validate --model /tmp/my-kb-package</code></pre>
+<p><code>train prepare</code> accepts only allowlisted training-visible record types and writes a frozen packet with a content hash and explicit target namespace. An omitted <code>--output</code> uses the operating-system temporary directory rather than recreating <code>training/work/</code>. Train-visible records are embedded as the assigned evidence container, while every source record still declares its media type, language, license, and content checksum. <code>train candidate</code> creates a manual candidate skeleton without launching an agent. <code>train run</code> creates an isolated workspace, computes the Stage A diagnostic baseline, and copies one named skill. Remove <code>--dry-run</code> only after inspecting the packet, assignment, workspace target, and selected skill. <code>train validate</code> opens a compiled package through the trusted host checks; the skill validator and <code>kb compile</code> are the preceding canonical-record gates. A successful agent exit, portable validation, compilation, or package validation does not promote its candidate. There is deliberately no <code>train promote</code> command until the reviewed version transition and publication policy are implemented.</p>
+
+<h2>Datasets, corpora, and caches</h2>
+<pre><code>node src/cli.mjs dataset status --dataset babi-15-en-10k-v1.2
+node src/cli.mjs corpus status
+node src/cli.mjs ask "Define dog" --kb oewn-2025 --memory-mb 256</code></pre>
+<p>After the declarative reset, prepared benchmark directories are intentionally absent until rebuilt under the current contracts. Immutable downloaded archives remain in <code>training/.cache</code>. Corpus status distinguishes a cached source from a compiled package. A memory option affects package planning and cache policy and is reported in the result; it does not claim a hard process limit.</p>
+
+<h2>Evaluation and documentation</h2>
+<pre><code>npm test
+npm run evaluate
+npm run benchmark
+npm run docs:matrix
 npm run docs:check
-npm test</code></pre>
-  <p><code>UNKNOWN</code> means the question was represented but no supporting evidence was found. <code>UNSUPPORTED</code> means no compiled construction/provider handled it. <code>AMBIGUOUS</code> preserves multiple analyses. ATOMIC answers explicitly state that candidates are defeasible. These are semantic outcomes, not generic error messages.</p>
-  <p class="related"><strong>Continue with:</strong> <a href="kb-quick.html">QUICK examples</a>, <a href="kb-oewn-2025.html">WordNet queries</a>, <a href="kb-atomic-2020.html">ATOMIC queries</a>, and <a href="training.html">training workflows</a>.</p>
-</main></body></html>
+npm run check</code></pre>
+<p>The full check runs unit and integration tests, deterministic KB validation, fixed-fixture evaluation, benchmark reporting, specification-matrix generation, documentation checks, and training-package validation. Commands that publish a report replace the corresponding generated result artifact; reviewers should compare protocol, suite hash, runtime identity, package versions, and budgets before comparing scores.</p>
+
+<h2>Operational failures</h2>
+<p>CLI syntax or invalid configuration exits nonzero and writes a concise diagnostic to standard error. A well-formed but unsolved language request normally returns a structured result, because inability to solve is part of model behavior rather than an operator error. Package checksum failure, unsafe training data, or an invalid promotion artifact is an operator error and stops the command. A timed-out Codex subprocess produces a failed execution receipt and cannot promote partial output.</p>
+<p>Command details and session semantics are authoritative in <a href="specsLoader.html?spec=DS007-cli-session-and-training-operations.md">DS007</a>. Result and planning fields are defined in <a href="specsLoader.html?spec=DS008-task-planning-methods-and-results.md">DS008</a>.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

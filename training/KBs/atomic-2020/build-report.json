@@ -1,9 +1,14 @@
 {
-  "format": "eslm-kb-build-report-v1",
+  "format": "eslm-kb-build-report-v2",
   "dataset": "atomic-2020",
-  "status": "complete",
+  "status": "compiled-source-profile",
   "manifest": {
-    "format": "eslm-public-kb-v1",
+    "manifestType": "knowledgeBasePackage",
+    "format": "eslm-kb-package-v1",
+    "schemaVersion": "1",
+    "kbId": "atomic-2020",
+    "kbVersion": "2020.2",
+    "namespace": "atomic-2020",
     "id": "atomic-2020",
     "title": "ATOMIC 2020",
     "version": "February 2021",
@@ -61,7 +66,13 @@
       "answers are plausible candidates, not certain facts",
       "event matching is lexical and bounded",
       "dev/test tuples are not compiled"
-    ]
+    ],
+    "provider": "atomic-compact-source-v1",
+    "shardDirectoryRef": "shards.json",
+    "canonicalSource": {
+      "checksum": "sha256:47c5f362ab4a3ea58c4962eebfdfd1c5420d3780e74cd3fe09efeef64f941c2b",
+      "recordCount": 940427
+    }
   },
   "source": {
     "archive": "training/.cache/corpora/atomic-2020/atomic2020_data-feb2021.zip",
@@ -69,14 +80,14 @@
     "split": "train.tsv"
   },
   "generated": {
-    "directory": "training/KBs/atomic-2020/model",
-    "files": 17,
-    "bytes": 32958636
+    "directory": "training/KBs/atomic-2020/package",
+    "files": 18,
+    "bytes": 32962855
   },
   "profile": {
-    "elapsedMilliseconds": 4663.449325,
-    "recordsPerSecond": 230919.2027083944,
-    "rssDeltaBytes": 490610688,
-    "heapUsedDeltaBytes": 408806056
+    "elapsedMilliseconds": 4782.118022,
+    "recordsPerSecond": 225188.92152929807,
+    "rssDeltaBytes": 504922112,
+    "heapUsedDeltaBytes": 400123952
   }
 }

@@ -11,20 +11,17 @@ function reportHtml(title, report) {
     `<tr><td>${escapeHtml(item.id)}</td><td>${item.pass ? 'pass' : 'fail'}</td><td><code>${escapeHtml(JSON.stringify(item.actual))}</code></td></tr>`).join('\n');
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<base href="../"><title>${escapeHtml(title)}</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script></head>
+<base href="../"><title>${escapeHtml(title)} — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head>
 <body><div data-include="partials/header.html"></div><main><p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Results</p><h1>${escapeHtml(title)}</h1>
 <p>Generated ${escapeHtml(report.createdAt)}. Protocol: <code>${escapeHtml(report.protocol ?? report.format)}</code>.</p>
 <div class="metric"><strong>${escapeHtml(report.accuracy ?? 0)}</strong><span>accuracy</span></div>
 <table><thead><tr><th>Case</th><th>Verdict</th><th>Actual</th></tr></thead><tbody>${rows}</tbody></table>
-<h2>Execution flow</h2><figure class="diagram"><pre class="mermaid">flowchart TD
+<h2>Execution flow</h2><figure class="diagram"><pre class="mermaid">flowchart LR
   Input[Fixed suite] --> Runtime[Offline ESLM]
-  Runtime --> Values[Semantic outputs]
-  Runtime --> Trace[Statuses and traces]
-  Values --> Oracle[Deterministic oracle]
-  Trace --> Oracle
-  Oracle --> Pass[Passed cases]
-  Oracle --> Fail[Failed cases]</pre><figcaption>The scorer evaluates semantic outputs and diagnostic traces, then preserves both passing and failing cases in this report.</figcaption></figure>
-<script type="module" src="assets/mermaid-loader.mjs"></script></main></body></html>\n`;
+  Runtime --> Result[Semantic result]
+  Result --> Oracle[Deterministic oracle]
+  Oracle --> Report[Evidence report]</pre><figcaption>The runtime returns semantic values, statuses, and traces as one structured result. The deterministic oracle checks that result and preserves every case in the evidence report.</figcaption></figure>
+</main></body></html>\n`;
 }
 
 export async function publishReport(kind) {
@@ -37,12 +34,10 @@ export async function publishReport(kind) {
 
 export async function checkDocumentation() {
   const required = [
-    'index.html', 'concepts.html', 'theory.html', 'architecture.html', 'scalability.html', 'model.html', 'reasoning.html',
-    'cli.html', 'datasets.html', 'knowledge-sources.html', 'training.html', 'evaluation.html', 'benchmarks.html', 'knowledge-bases.html',
-    'kb-quick.html', 'kb-oewn-2025.html', 'kb-atomic-2020.html',
-    'kb-child-basic.html', 'kb-animals.html', 'kb-space-geography.html', 'specsLoader.html', 'assets/site.css',
-    'partials/header.html', 'partials-loader.js', 'results/latest-oewn-probe.json', 'results/latest-core-scale.json',
-    'results/latest-kb-random-tests.json',
+    'index.html', 'architecture.html', 'language.html', 'knowledge-bases.html', 'training.html',
+    'evaluation.html', 'cli.html', 'status.html', 'specsLoader.html', 'assets/site.css',
+    'assets/mermaid-loader.mjs', 'partials/header.html', 'partials/footer.html', 'partials-loader.js',
+    'specs/matrix.md',
   ];
   const missing = [];
   for (const path of required) {
@@ -52,7 +47,15 @@ export async function checkDocumentation() {
   const htmlFiles = (await readdir(join(PROJECT_ROOT, 'docs'))).filter((file) => file.endsWith('.html'));
   for (const file of htmlFiles) {
     const html = await readFile(join(PROJECT_ROOT, 'docs', file), 'utf8');
-    if (file !== 'specsLoader.html' && !html.includes('class="mermaid"')) throw new Error(`${file} must contain a Mermaid diagram.`);
+    if (file !== 'specsLoader.html' && !html.includes('class="mermaid"')) throw new Error(`${file} must contain a small explained Mermaid diagram.`);
+    if (file !== 'specsLoader.html' && !html.includes('<figcaption>')) throw new Error(`${file} must explain its Mermaid diagram in a figcaption.`);
+    if (file !== 'specsLoader.html') {
+      for (const diagram of html.matchAll(/<pre class="mermaid">([\s\S]*?)<\/pre>/gu)) {
+        if (!/^flowchart LR\s*$/mu.test(diagram[1])) throw new Error(`${file} diagrams must use a left-to-right flow.`);
+        const edges = (diagram[1].match(/-->/gu) ?? []).length;
+        if (edges > 5) throw new Error(`${file} diagram has ${edges} edges; split or explain it in prose.`);
+      }
+    }
     if (!html.includes('data-include="partials/header.html"')) throw new Error(`${file} must load the shared navigation partial.`);
     if (/<nav(?:\s|>)/u.test(html)) throw new Error(`${file} duplicates navigation instead of using the shared partial.`);
     for (const match of html.matchAll(/href="([^"#]+)"/gu)) {

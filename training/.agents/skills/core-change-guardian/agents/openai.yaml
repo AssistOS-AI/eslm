@@ -1,0 +1,4 @@
+interface:
+  display_name: Core Change Guardian
+  short_description: Gate reusable ESLM core changes with semantic and regression evidence.
+  default_prompt: Audit the proposed core change against the rename test, semantic contract, proof behavior, resource bounds, abstract tests, KB migration, and global regressions.

@@ -29,10 +29,10 @@ export const CORPUS_CATALOG = Object.freeze({
       'antonym', 'similar', 'verb_entailment', 'verb_cause', 'derivation',
     ],
     initialProfiles: ['core-senses', 'full-lexicon'],
-    ingestionStatus: 'compiled-from-official-source',
-    buildStatus: 'complete',
-    architectureGate: 'experimental-build-query-directed-gate-open',
-    nextArtifact: 'lazy-shard-loader-and-held-out-evaluation',
+    ingestionStatus: 'cached-source-reset-rebuild-required',
+    buildStatus: 'not-run-after-declarative-reset',
+    architectureGate: 'source-specific-compact-profile-approved',
+    nextArtifact: 'declarative-package-rebuild-and-equivalence-validation',
   }),
   'conceptnet-5.7.0-en': source({
     id: 'conceptnet-5.7.0-en',
@@ -81,10 +81,10 @@ export const CORPUS_CATALOG = Object.freeze({
       'isBefore', 'isAfter', 'HasSubEvent',
     ],
     initialProfiles: ['social-core', 'event-causality'],
-    ingestionStatus: 'compiled-from-official-source',
-    buildStatus: 'complete',
-    architectureGate: 'experimental-build-query-directed-gate-open',
-    nextArtifact: 'lazy-shard-loader-and-held-out-evaluation',
+    ingestionStatus: 'cached-source-reset-rebuild-required',
+    buildStatus: 'not-run-after-declarative-reset',
+    architectureGate: 'source-specific-compact-profile-approved',
+    nextArtifact: 'declarative-package-rebuild-and-equivalence-validation',
   }),
   'geonames-snapshot': source({
     id: 'geonames-snapshot',
@@ -151,19 +151,19 @@ export async function corpusStatus(id) {
   const buildReport = await exists(join(directory, 'build-report.json'));
   const probeComplete = await exists(join(directory, 'probe', 'probe-report.json')) || buildReport;
   const sourceCached = await exists(join(directory, 'source-manifest.json'));
-  const generatedModel = await exists(join(directory, 'model', 'manifest.mjs'));
+  const packageReady = await exists(join(directory, 'package', 'manifest.json'));
   return {
     id,
     priority: definition.priority,
     title: definition.title,
-    ingestionStatus: generatedModel ? 'compiled-from-official-source' : definition.ingestionStatus,
-    buildStatus: generatedModel ? 'complete' : definition.buildStatus,
-    architectureGate: generatedModel ? 'experimental-build-query-directed-gate-open' : definition.architectureGate,
-    nextArtifact: generatedModel ? 'lazy-shard-loader-and-held-out-evaluation' : probeComplete ? 'sense-aware-shard-prototype' : definition.nextArtifact,
+    ingestionStatus: packageReady ? 'compiled-declarative-source-profile' : definition.ingestionStatus,
+    buildStatus: packageReady ? 'compiled-source-profile' : definition.buildStatus,
+    architectureGate: packageReady ? 'source-specific-compact-profile-open' : definition.architectureGate,
+    nextArtifact: packageReady ? 'canonical-record-normalization-and-held-out-evaluation' : probeComplete ? 'sense-aware-shard-prototype' : definition.nextArtifact,
     sourceCached,
     probeComplete,
     prepared: await exists(join(directory, 'prepared', 'manifest.json')),
-    generatedModel,
+    packageReady,
   };
 }
 

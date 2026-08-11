@@ -27,9 +27,9 @@ code,pre { background:var(--code); }
 code { padding:.08rem .25rem; border-radius:4px; }
 pre { padding:1rem; overflow:auto; border-radius:10px; white-space:pre-wrap; }
 figure.diagram { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.65rem; margin:1.5rem auto 2rem; width:100%; }
-figure.diagram pre.mermaid { display:flex; align-items:center; justify-content:center; width:min(100%,760px); margin:0; background:transparent; text-align:center; }
+figure.diagram pre.mermaid { display:flex; align-items:center; justify-content:center; width:min(100%,680px); margin:0; background:transparent; text-align:center; }
 figure.diagram pre.mermaid svg { display:block; margin-inline:auto; max-width:100%; }
-figure.diagram figcaption { width:min(100%,760px); color:var(--muted); font-size:.94rem; text-align:center; }
+figure.diagram figcaption { width:min(100%,680px); color:var(--muted); font-size:.94rem; text-align:center; }
 .related { border-top:1px solid var(--line); margin-top:3rem; padding-top:1.2rem; }
 .nav-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(245px,1fr)); gap:.8rem; margin:1rem 0; }
 .nav-card { display:flex; flex-direction:column; gap:.3rem; min-height:7rem; padding:1rem; color:var(--ink); text-decoration:none; background:var(--panel); border:1px solid var(--line); border-left:5px solid var(--accent); border-radius:8px; }

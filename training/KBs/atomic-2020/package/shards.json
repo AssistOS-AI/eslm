@@ -1,0 +1,162 @@
+[
+  {
+    "shardId": "events-0",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/0.json",
+    "recordCount": 2365,
+    "compressedBytes": 2153607,
+    "checksum": "sha256:f09cb85daa7b1b9af8ae7f89c0170d68e198bd1e9611e593bcc289039682d864",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-1",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/1.json",
+    "recordCount": 2261,
+    "compressedBytes": 2018606,
+    "checksum": "sha256:2ca5dd6b0a0be21890199c93d3bc80e7fb4f4e839cfa9f5a0157da1dbbb5e211",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-2",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/2.json",
+    "recordCount": 2318,
+    "compressedBytes": 2097119,
+    "checksum": "sha256:5b617c162fec079624be3e11025e794c7808245dfc348c3de8cc635fcce2e433",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-3",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/3.json",
+    "recordCount": 2370,
+    "compressedBytes": 2245121,
+    "checksum": "sha256:4571aea7bf3cc71a9ca4f969134b856599789b99e501f180f9c1f310dd766d00",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-4",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/4.json",
+    "recordCount": 2379,
+    "compressedBytes": 2161826,
+    "checksum": "sha256:3f779d1e2972302514959594b4094cdee8c2a5f876fedee2eec1ec59fb9f659e",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-5",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/5.json",
+    "recordCount": 2283,
+    "compressedBytes": 1981097,
+    "checksum": "sha256:18224ce6da80f781e8fe466014e1caf43474b2fefb2e9ba97868046af7bf8fbb",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-6",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/6.json",
+    "recordCount": 2287,
+    "compressedBytes": 1985455,
+    "checksum": "sha256:9ed7556bfc195d5b80fb1e1464c8a97f1e1edc574b98b2253ecbb18c6874c38a",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-7",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/7.json",
+    "recordCount": 2242,
+    "compressedBytes": 1989015,
+    "checksum": "sha256:1e67ae850eaeca35d9cdc19a1772cb5dab8fa3dda2913e97e47ec2483007a028",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-8",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/8.json",
+    "recordCount": 2287,
+    "compressedBytes": 2080610,
+    "checksum": "sha256:b0855aaf6798726597fc19e24542a1f094fd1338c7fb0831c1ccc51567d58f38",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-9",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/9.json",
+    "recordCount": 2293,
+    "compressedBytes": 1995573,
+    "checksum": "sha256:ce5c2d8cd00eba7b65ca63031a7e0479f4b80d88ee31eeb8940115c3a406f251",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-a",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/a.json",
+    "recordCount": 2194,
+    "compressedBytes": 1969239,
+    "checksum": "sha256:8bfa4979128aa1bcd8605564b3f936bf82637a4e4ed8339c87a3878c8d669a9d",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-b",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/b.json",
+    "recordCount": 2309,
+    "compressedBytes": 2009963,
+    "checksum": "sha256:1919025ce39655edc63b2f5e5f39ec0d47c9a7166128b98d477720b08865d3f5",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-c",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/c.json",
+    "recordCount": 2317,
+    "compressedBytes": 2102948,
+    "checksum": "sha256:f48a979207e2482b67264b9fc70f7ba31005d3107fa9e0ca9de2067920f869ad",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-d",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/d.json",
+    "recordCount": 2354,
+    "compressedBytes": 2033514,
+    "checksum": "sha256:996de8b1ebb7c551fb666d5e6ff40ae41cdea2b646fcb94b3ee7ca66dac6a7ee",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-e",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/e.json",
+    "recordCount": 2347,
+    "compressedBytes": 2089042,
+    "checksum": "sha256:f92ffde6080027580a3f7bfd30454bb7681c0c845f45fe40af42e3cfa63c0d8c",
+    "dependencies": []
+  },
+  {
+    "shardId": "events-f",
+    "shardKind": "sourceEventIndex",
+    "accessPath": "normalized-event-hash",
+    "dataRef": "events/f.json",
+    "recordCount": 2334,
+    "compressedBytes": 2043088,
+    "checksum": "sha256:2922f12a565e2965fd50496a7f788d0c52fe81c9f94a27af2ce7b30c7e7f13fc",
+    "dependencies": []
+  }
+]

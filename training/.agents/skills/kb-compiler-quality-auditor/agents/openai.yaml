@@ -1,0 +1,4 @@
+interface:
+  display_name: KB Compiler and Quality Auditor
+  short_description: Validate and compile immutable declarative KB packages with equivalence evidence.
+  default_prompt: Validate canonical records, measure quality, compile deterministic shards, compare canonical/compiled and lazy/exhaustive results, and publish only immutable package evidence.

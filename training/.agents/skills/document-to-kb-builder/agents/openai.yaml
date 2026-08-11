@@ -1,0 +1,4 @@
+interface:
+  display_name: Document-to-KB Builder
+  short_description: Build provenance-complete declarative ESLM KB records from registered sources.
+  default_prompt: Read ASSIGNMENT.json and SKILL.md, validate the evidence boundary, build canonical records, run local checks, and report unresolved material without changing host source.

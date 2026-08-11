@@ -1,64 +1,102 @@
 # Executable Symbolic Language Model
 
-ESLM is an experiment in compiling finite evidence into an executable, inspectable language model. A coding agent may analyze training data and generate modular Node.js code during training. At inference time, ESLM uses only that frozen code and a dependency-free symbolic runtime: no LLM, embedding API, network access, or neural checkpoint.
+ESLM is a deterministic language runtime and knowledge-construction toolchain. It compiles language into symbolic assertions and task frames, selects explicit capabilities, executes bounded reasoning over declarative knowledge packages, and returns answers with plans, provenance, and unresolved subgoals.
 
-The current v0.1 is deliberately an honest vertical slice. It normalizes noisy English input, detects common question and assertion forms, resolves aliases, learns temporary session facts, retrieves indexed model-plus-session evidence, performs bounded deduction, thresholded induction, and guarded abduction, tracks provenance, and realizes short answers. It does not claim open-domain language competence. Unsupported, ambiguous, and under-evidenced requests are explicit outcomes rather than invitations to hallucinate.
+Training may invoke Codex in an isolated workspace to analyze a frozen, train-visible packet and propose declarative records or reviewed changes. Deployment uses only trusted dependency-free Node.js code and inert JSON/JSONL data. Runtime code never calls an LLM, accesses a network, executes corpus strings, evaluates generated code, or dynamically imports a knowledge payload.
 
-The first completed public run uses bAbI v1.2 Task 15 English 10k: 10,000 agent-visible train episodes and 1,000 held-out test episodes. The current model scores 1,000/1,000 on that narrow deduction task without storing training-story answers. A second benchmark-guided cycle integrated bAbI Task 16: typed color properties and configured analogical induction passed 1,000/1,000 fresh train cases, 1,000/1,000 aggregate-only official test cases, proof review, metamorphic tests, and prior regressions. These are controlled reasoning diagnostics, not the project's future knowledge source.
+The current implementation is Stage A: controlled English, session state, task frames, capability-aware plans, indexed retrieval, safe Horn deduction, provenance, structured gaps, package manifests and hashes, query-directed public-KB loading, and an isolated agent-training boundary. Broader construction learning, temporal and modal methods, mature induction and abduction, probabilistic ranking, and narrative generation remain specified future work rather than current claims.
 
-Two real source-derived KBs are now compiled. Open English WordNet 2025 contributes 107,519 synsets, 127,311 unique lemmas, definitions, synonyms, and bounded hypernym paths. ATOMIC 2020 contributes 940,427 unique non-empty train-derived tuples under 36,940 events for defeasible intentions, prerequisites, effects, reactions, wants, obstacles, causes, order, uses, and locations. Their seeded 700-case source-exposed integration run passes every case, but it is not an independent public benchmark. QUICK combines three small authored modules for tutorials and regressions; it is not learned world knowledge.
-
-Budget-aware shard loading is implemented for WordNet and ATOMIC while eager loading remains the default when memory is ample. Filtered English ConceptNet and a bounded GeoNames pack still require streaming compilers, probes, compact relation indexes, and scoped semantics before ingestion. Wikidata is deferred to optional dated thematic packs and will never be treated as a near-term full-dump KB.
-
-## Try it
+## Try the implemented path
 
 ```bash
 npm test
-node src/cli.mjs
 node src/cli.mjs ask "Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?"
-node src/cli.mjs ask "Jhon is a man. Is Jhon going to die?" --kb quick
-node src/cli.mjs ask "Is a dog an animal?" --kb oewn-2025
+node src/cli.mjs ask "Can Penguin swim?" --kb quick
+node src/cli.mjs ask "Define dog" --kb oewn-2025
 node src/cli.mjs ask "Why might apologize?" --kb atomic-2020
-node src/cli.mjs --memory-mb 256
+node src/cli.mjs run --input tests/fixtures/questions.txt --output /tmp/eslm-answers.jsonl
 node src/cli.mjs kb list
-node src/cli.mjs kb validate all
-node src/cli.mjs corpus status
-node src/cli.mjs ask "What is Gertrude afraid of?" --profile
-node src/cli.mjs run --input tests/fixtures/questions.txt
-npm run evaluate
-npm run benchmark
-npm run benchmark:conversation
+npm run kb:validate
 ```
 
-The CLI finds the repository and default model from either the project root or `training/`. Plain-text batch input emits JSON Lines; JSONL input can supply `id`, `text`, and optional `language` fields.
+Every question produces `eslm-runtime-result-v1`. The object separates the human answer from normalized input, parsed query, task frame, selected plan, semantic values, provenance, reasoning trace, loaded KB versions, unresolved subgoals, and memory policy.
+
+## Declarative knowledge, not generated executable data
+
+```text
+training/KBs/<kb-id>/
+  source-manifest.json
+  canonical/records.jsonl
+  package/manifest.json
+  package/shards/*.json
+```
+
+`quick` is a small authored KB that exercises the generic canonical compiler and loader. `oewn-2025` contains 107,519 synsets and 127,311 lemmas compiled from the preserved Open English WordNet archive into JSON indexes. `atomic-2020` contains 940,427 retained tuples under 36,940 normalized events compiled from the preserved ATOMIC archive. The public sources can load eagerly or through budget-aware query-directed shard caches. These counts describe compiled source coverage, not independent benchmark performance.
+
+Canonical records have allowlisted types, stable identifiers, explicit references, contexts, and provenance. The compiler rejects malformed references and unsafe rules, sorts records deterministically, writes JSON shards, and hashes the exact shard bytes into the manifest. The runtime resolves only cataloged package paths and never treats a manifest field as executable code.
+
+## Agent-guided training
+
+The repository owns four self-contained skills under `training/.agents/skills/`:
+
+- `document-to-kb-builder` extracts supported canonical records from assigned documents.
+- `benchmark-guided-symbolic-learner` clusters development-visible failures and proposes general changes without answer memorization.
+- `core-change-guardian` challenges generic-core changes for leakage, unsoundness, hidden policy, and regressions.
+- `kb-compiler-quality-auditor` independently checks candidate and package integrity.
+
+Prepare and inspect a workspace without launching Codex:
+
+```bash
+node src/cli.mjs train prepare \
+  --input tests/fixtures/training.jsonl \
+  --namespace example-kb \
+  --output /tmp/eslm-packet.json
+
+node src/cli.mjs train run \
+  --packet /tmp/eslm-packet.json \
+  --output /tmp/eslm-agent \
+  --skill document-to-kb-builder \
+  --dry-run
+```
+
+Removing `--dry-run` invokes `codex exec` as an ephemeral subprocess in the prepared workspace. Its output is untrusted. Promotion still requires schema and logical validation, deterministic compilation, independent audit, positive and negative tests, regressions, split-safe evaluation, and an explicit decision.
+
+The host precomputes a hashed Stage A language/reasoning analysis for every embedded document or visible benchmark case and places it beside the packet. The copied skill includes the exact canonical-field contract and a portable validator. A validated candidate can be compiled without promotion using `node src/cli.mjs kb compile`; registration remains a separate explicit operation.
 
 ## Repository shape
 
 ```text
-src/                 stable grammar, parsing, retrieval, reasoning, realization, CLI
-tests/               Node test suites and small immutable fixtures
+src/                       trusted runtime and operator entry points
+  interface/               interactive presentation and operator diagnostics
+  kb/                      schema, compiler, package loader, catalog, projection
+  reasoning/               capability registry, planning, inference
+  training/                isolated Codex subprocess runner
+tests/                     Node tests and immutable fixtures
 training/
-  .agents/skills/    source-synthesis and benchmark-guided learning instructions
-  .cache/            ignored downloaded archives shared across builds
-  KBs/               QUICK, WordNet, and ATOMIC sources, reports, and generated modules
-  datasets/          ignored raw and prepared public benchmark material
-  model/             promoted narrow bAbI-derived core
-  candidates/        ignored unpromoted agent output
-  work/              ignored packets, ledgers, and learning cycles
-docs/                 detailed HTML documentation, DS specifications, latest reports
-original_specs/       archived source material; not current project authority
+  .agents/skills/          self-contained repository training and audit skills
+  .cache/                  immutable downloaded source archives
+  KBs/                     canonical records and declarative compiled packages
+  datasets/                rebuilt benchmark data; empty after the reset
+docs/                      detailed HTML explanations and generated results
+  specs/                   sole authoritative design-specification set
+original_specs/            preserved research input, not current authority
 ```
 
-Training is program synthesis, not parameter optimization. Evaluation datasets and knowledge corpora have separate registries. A coding agent designs source semantics, inference policies, module boundaries, and index strategies; deterministic Node.js adapters perform exhaustive validation and compilation. `train validate` checks safety and semantic invariants before a candidate can be evaluated. Knowledge profiles remain independently selectable with `--kb`, and selection is always recorded in evaluation metadata.
+Prepared legacy datasets, candidates, workspaces, the former global generated model, and executable KB modules were removed in the declarative reset. Immutable source archives were retained so their packages can be regenerated without pretending that previous prepared artifacts satisfy the new contracts.
 
-The first real builds prove that deterministic Node compilation is fast enough at this scale. Loading both public KBs eagerly uses roughly 0.6 GB additional RSS, which remains the fast default when no target is supplied. `--memory-mb` activates measured adaptive planning and bounded shard caches; `/memory` explains the live policy. Compact relation-and-scope indexes, contextual sense resolution, streaming source adapters, and explicit time, space, domain, fictional-world, perspective, and hypothetical-branch semantics remain required before a larger source is authorized. See [the scalability review](docs/scalability.html).
+## Verification
 
-## Comparison policy
+```bash
+npm test
+npm run evaluate
+npm run benchmark
+npm run docs:matrix
+npm run docs:check
+npm run check
+```
 
-The benchmark portfolio targets BLiMP, bAbI, CLUTRR, Entity Tracking, EWoK, Story Cloze, and SimpleQA through native Node.js adapters. bAbI v1.2 Tasks 15 and 16 have been learned and scored locally at 1,000/1,000 on their narrow conditions. Tasks 2 and 3 each have 10,000 prepared train cases and 1,000 isolated test cases but no accepted candidate or score. All other named suites are planned diagnostics, not implemented results. Dataset files are cached locally and not vendored. External predictions or published results with different prompts, splits, graders, or evidence regimes remain reference-only.
+Evaluation uses semantic values and structured diagnostics rather than terminal phrasing. Training and development visibility are explicit; test and hidden labels cannot enter agent packets. A benchmark improvement is accepted only when it survives contrastive controls, unrelated regressions, provenance review, and resource budgets.
 
-The generated conversational gate contains 204 short cases spanning 174 structural forms and a separate 1,000-case suite spanning 536 structural forms. The latest long run passed every declared case with lazy WordNet and ATOMIC providers. Interactive `/examples` varies representative examples by a reproducible seed, and `/smoke` executes a fast sample. This is internal regression and source-exposed integration evidence, not a public benchmark or an open-English score.
+The documentation home page separates the three locally validated KB packages from the seven benchmark families reviewed for future inclusion. Only the five-case native fixture currently has a post-reset benchmark report; its result is regression evidence and is not presented as a public benchmark score.
 
-Use `benchmark export` to create a label-free input manifest for an external LLM runner, then `benchmark score-predictions` to score its JSONL predictions with the local oracle. ESLM never needs that runner's SDK or credentials.
-
-Read [the documentation](docs/index.html), inspect the [knowledge-base catalog](docs/knowledge-bases.html), see the exact [public benchmark ledger](docs/benchmarks.html), and use the tested [CLI tutorial](docs/cli.html). Read [DS000](docs/specs/DS000-vision-and-claims.md) before extending claims or architecture.
+Read the [documentation](docs/index.html), the [implementation status](docs/status.html), and the [specification matrix](docs/specs/matrix.md). The HTML pages explain the design from implementation and review viewpoints; the complete DS files remain authoritative.

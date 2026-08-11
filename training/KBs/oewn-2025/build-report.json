@@ -1,9 +1,14 @@
 {
-  "format": "eslm-kb-build-report-v1",
+  "format": "eslm-kb-build-report-v2",
   "dataset": "oewn-2025",
-  "status": "complete",
+  "status": "compiled-source-profile",
   "manifest": {
-    "format": "eslm-public-kb-v1",
+    "manifestType": "knowledgeBasePackage",
+    "format": "eslm-kb-package-v1",
+    "schemaVersion": "1",
+    "kbId": "oewn-2025",
+    "kbVersion": "2025",
+    "namespace": "oewn-2025",
     "id": "oewn-2025",
     "title": "Open English WordNet 2025",
     "version": "2025",
@@ -47,7 +52,13 @@
       "no automatic word-sense disambiguation",
       "no closed-world negation",
       "no proper-noun Namenet extension"
-    ]
+    ],
+    "provider": "oewn-compact-source-v1",
+    "shardDirectoryRef": "shards.json",
+    "canonicalSource": {
+      "checksum": "sha256:7d749f6e2c39e6970e4997839dcf6e42fd281f3c2fae0171d2192bae8cfa4b51",
+      "recordCount": 107519
+    }
   },
   "source": {
     "archive": "training/.cache/corpora/oewn-2025/english-wordnet-2025-json.zip",
@@ -55,14 +66,14 @@
     "files": 45
   },
   "generated": {
-    "directory": "training/KBs/oewn-2025/model",
-    "files": 38,
-    "bytes": 23771871
+    "directory": "training/KBs/oewn-2025/package",
+    "files": 39,
+    "bytes": 23780925
   },
   "profile": {
-    "elapsedMilliseconds": 1341.928962,
-    "recordsPerSecond": 80122.72113104598,
-    "rssDeltaBytes": 280932352,
-    "heapUsedDeltaBytes": 193031248
+    "elapsedMilliseconds": 1262.863715,
+    "recordsPerSecond": 85139.03655866778,
+    "rssDeltaBytes": 295931904,
+    "heapUsedDeltaBytes": 205848192
   }
 }

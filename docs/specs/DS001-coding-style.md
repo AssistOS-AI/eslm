@@ -3,81 +3,73 @@ id: DS001
 title: Coding Style and Repository Contract
 status: implemented
 owner: repository
-summary: Establishes dependency-free Node.js ESM, compact root structure, generated-code safety, test conventions, and synchronized documentation rules.
+summary: Establishes Node.js ESM conventions, source and test organization, declarative-data safety, documentation synchronization, and review limits.
 ---
 
 # DS001 Coding Style and Repository Contract
+
+## Introduction
+
+This specification is the coding-style authority for the repository. It applies to runtime code, training orchestration, compiler tools, tests, generated declarative data, diagnostics, specifications, and HTML documentation.
 
 ## Core Content
 
 ### Language and dependency policy
 
-All project runtime, training orchestration, evaluation, benchmark adaptation, and documentation tooling uses Node.js 22 or newer and ECMAScript modules stored as `.mjs`. No Python source, Python project metadata, PyTorch, Transformers, transpiler, bundler, native add-on, or runtime npm dependency is permitted.
+All project runtime, training orchestration, evaluation, benchmark adaptation, KB compilation, and documentation tooling must use Node.js 22 or newer and ECMAScript modules stored as `.mjs`. The project must not add Python, PyTorch, native add-ons, transpilers, bundlers, or runtime packages. Node built-ins are preferred. A future dependency requires a specification change covering operational need, deterministic behavior, security, license, and offline installation.
 
-Node built-ins are preferred. A future dependency requires a DS change explaining its operational necessity, deterministic behavior, security surface, license, and offline installation policy. The default implementation must remain runnable after `git clone` with an installed Node runtime.
+Persistent source, comments, diagnostics, specifications, agent skills, and documentation must be written in English. Test inputs and knowledge records may use any explicitly supported language.
 
-### Root structure
+### Repository layout
 
-The visible product directories are limited to `src/`, `tests/`, `training/`, `docs/`, and the preserved `original_specs/`. Hidden `.agents/` and `.claude` support agent tooling. Root files hold only project entry metadata, instructions, license, and generic checks.
+The principal product directories are `src/`, `tests/`, `training/`, `docs/`, and preserved `original_specs/`. Imported project-maintenance skills under `.agents/skills/` are read-only during ESLM product work. Repository-owned operational skills live under `training/.agents/skills/` and must be self-contained.
 
-Stable algorithms belong in `src/`. Tests and fixed small fixtures belong in `tests/`. Training source, candidate work, repository-owned synthesis skills, and the promoted code model belong under `training/`. Human documentation, specifications, and latest generated reports belong under `docs/`.
+Trusted reusable mechanisms belong in cohesive subdirectories under `src/`: language compilation, semantic contracts, KB schemas and loading, reasoning methods and planning, runtime orchestration, training control, evaluation, and CLI adapters. Tests mirror those boundaries. Canonical KB records, manifests, compiler outputs, source registrations, and reports live within independently versioned directories under `training/KBs/`. Dataset caches and prepared benchmark pools remain separate from KB knowledge.
 
-Do not create root-level `data`, `benchmarks`, `results`, `artifacts`, or `configs` directories. Place command implementation in `src/`, build/profile utilities in root `scripts/`, knowledge sources and generated source models under `training/KBs/`, public benchmark material under ignored `training/datasets/`, downloaded archives under ignored `training/.cache/`, promoted generated core code in `training/model/`, and reports in `docs/results/`.
-
-### Module boundaries
-
-Each stable module owns one cohesive concern. `language.mjs` normalizes and scores surface language; `parser.mjs` compiles supported constructions; `reasoner.mjs` executes explicit facts and rules; `realizer.mjs` produces language; `engine.mjs` composes the inference path; `cli.mjs` adapts terminal and files; training, evaluation, benchmark, and documentation modules remain outside the inference engine.
-
-Generated modules are not a dumping ground for stable algorithms. The core owns algorithms that should transfer between corpora. Generated modules own evidence-conditioned symbols, indexes, rules, exceptions, constructions, schemas, and templates. Moving a behavior across this boundary requires tests demonstrating why it is corpus-specific or general.
+Do not create root-level `data`, `benchmarks`, `results`, `artifacts`, or `configs` directories. Generated and temporary training artifacts belong under ignored paths selected by the training contract. Published documentation evidence belongs under `docs/results/`.
 
 ### JavaScript conventions
 
-- Use named functions for reusable algorithms and small pure functions for transformations.
-- Prefer immutable values, `Object.freeze` for generated tables, and explicit returned state over hidden mutation.
-- Use descriptive identifiers and semantic ids. Avoid abbreviations except established terms such as ESLM, IR, TNF, MDL, and QA.
-- Use semicolons, single-quoted strings, two-space indentation, trailing commas in multiline literals, and Unicode-aware regular expressions.
-- Validate inputs at boundaries and throw errors containing the path, record, or contract element that failed.
-- Keep diagnostics stable and in English so automation can consume them.
-- Do not catch errors merely to suppress them. Catch only to add context, implement a documented fallback, or render a boundary response.
-- Avoid files above 500 lines. Split by behavior, not arbitrary line count. Files above 800 lines require a DS rationale.
-- Avoid source lines above 120 characters when clarity permits; generated tables may be wider when splitting would harm reviewability.
+Use named functions for reusable algorithms and small pure functions for transformations. Prefer immutable values and explicit returned state over ambient mutation. Use descriptive identifiers, semicolons, single-quoted strings, two-space indentation, trailing commas in multiline literals, and Unicode-aware regular expressions. Validate every external boundary and include the failing path, record, field, or contract element in diagnostics.
 
-### Forbidden runtime behavior
+Do not suppress errors. Catch only to add context, implement a specified fallback, or translate a boundary error into a structured result. Avoid files above 500 lines; split by cohesive behavior. Files above 800 lines require an explicit rationale in the affected specification. Keep source lines within 120 characters when clarity permits. Large declarative records may exceed this only when line splitting harms deterministic review.
 
-Runtime and generated model code must not use `eval`, `Function`, `node:vm`, child processes, networking, environment-secret access, corpus-selected dynamic imports, or import-time I/O. Model source strings are data and never executed. The CLI may read explicitly selected input and write explicitly selected output. The graph inference core receives objects and performs no I/O. Under DS021, a public-KB provider may read a compiler-generated, allowlisted shard data envelope after a query selects its fixed bucket; it verifies the envelope and parses JSON without evaluating the module source.
+### Runtime and data safety
 
-Generated model validation uses static forbidden-capability scanning plus semantic imports in a controlled local process. This scanner is a defense layer, not a proof. Promotion also requires review of the generated diff and model contract.
+Runtime and declarative KB content must not use `eval`, `Function`, `node:vm`, child processes, networking, secret-bearing environment access, corpus-selected dynamic imports, or import-time I/O. Corpus strings remain inert data. A restricted declarative rule is parsed into a validated AST and interpreted by a registered trusted method; it never contains source code.
+
+Training orchestration may start an explicitly configured coding-agent subprocess because agent use is part of training. That authority is isolated from deployed inference, receives only an approved packet and skill directory, uses an explicit working directory, and produces a candidate plus an execution receipt. Runtime modules must not import training-agent code.
 
 ### Tests and fixtures
 
-Use `node:test` and strict assertions. Name tests after observable contracts. Unit tests cover normalization, parsing, indexing, rules, realization, model validation, Task Calculus execution, and error states. CLI tests run the real entry point and verify operation from both repository root and `training/`.
+Use `node:test` with strict assertions. Name tests after observable contracts. Organize unit tests by the source boundary they protect and add integration tests for CLI, canonical-to-compiled equivalence, lazy-versus-exhaustive loading, planner traces, honest failure, skill portability, agent invocation construction, dataset isolation, and documentation synchronization.
 
-Fixtures must be small, legible, and licensed for repository inclusion. A fixture used to demonstrate code paths is not reported as a scientific benchmark. Public benchmark data is downloaded locally to ignored `training/datasets/` and is never committed without explicit license review.
+Fixtures must be small, legible, deterministic, and licensed for repository inclusion. Public datasets remain local ignored inputs. A fixture demonstrates software behavior and is never reported as a scientific benchmark. Tests may write only to operating-system temporary directories or an explicit ignored work directory; they must not mutate published KB versions or promoted reports.
 
-Tests may create temporary files only in operating-system temporary directories or ignored `training/work/`. They must not mutate the promoted model or published reports. Evaluation and benchmark commands intentionally publish latest reports when `--publish` is selected.
+### Documentation synchronization and diagrams
 
-### Documentation synchronization
+The contiguous DS set under `docs/specs/` is authoritative. Behavior, interface, evaluation, claim, skill, or architecture changes must update the affected DS files, tests, HTML pages, README, and AGENTS guidance in the same change.
 
-DS files are authoritative and use contiguous identifiers. Every DS has frontmatter, a substantive `Core Content` section, and consecutively numbered `Decisions & Questions`. Decisions record architectural rationale; they are not a substitute for the actual contract.
-
-Behavioral changes update relevant tests, DS files, and HTML pages in the same change. `docs/results/latest-evaluation.*` and `latest-benchmark.*` are generated evidence and may change after a verified run. The specification matrix is generated from frontmatter and must never be hand-maintained after the generator exists.
-
-All persistent project text is English even when users converse in another language. Test inputs and model language data may contain any supported language.
+HTML documentation must explain the complete operational contract in continuous technical prose. It must not summarize away assumptions, algorithms, invariants, failure states, measurement regimes, acceptance gates, or falsification criteria. It should explain difficult behavior from several useful viewpoints: data flow, control flow, trust boundary, operator responsibility, failure diagnosis, and review procedure. Diagrams are used only when they materially clarify a relationship. They must be small, readable on mobile, use short labels, and be followed by prose that explains inputs, processing, outputs, and limits.
 
 ### Required checks
 
-`npm test` runs unit and integration tests. `npm run evaluate` executes fixed local evaluation. `npm run benchmark` executes the committed smoke benchmark. `npm run docs:check` checks required pages. `npm run check` composes all four with generated-model validation. `fileSizesCheck.sh` is advisory and reports size and long-line risks.
+`npm test` runs unit and integration tests. `npm run evaluate` runs fixed local evaluation. `npm run benchmark` runs implemented benchmark adapters without silently downloading data. `npm run docs:check` checks documentation structure, links, explanatory captions, left-to-right Mermaid direction, and the maximum five-edge diagram budget. `npm run check` composes all required verification. `npm run source:size` reports source-file size and long-line risks while excluding declarative data whose canonical representation is intentionally one record per line.
 
 ## Decisions & Questions
 
-### Q1. Why `.mjs` instead of TypeScript?
+### Question #1: Why use direct .mjs rather than TypeScript?
 
-Response: Direct ESM removes compilation and dependency ambiguity, makes generated code immediately inspectable, and supports the no-toolchain experiment.
+Response: Direct ESM removes compilation and dependency ambiguity, makes trusted mechanisms and generated tools immediately inspectable, and preserves the dependency-free offline runtime.
 
-### Q2. May generated modules contain functions?
+### Question #2: May KB packages contain functions?
 
-Response: Pure bounded helpers are allowed when tables alone are inefficient, but frozen plain values are preferred. Functions may not perform I/O, access ambient authority, or compile source strings.
+Response: No. KB packages are declarative data products. Specialized reusable behavior belongs in src and is selected through registered method identifiers. Compilers may emit optimized data segments, but not executable corpus-derived helpers.
 
-### Q3. Why keep latest reports in documentation?
+### Question #3: Why require explanatory HTML in addition to DS contracts?
 
-Response: A runnable research repository should display current evidence beside architectural claims. Reports include timestamps, protocol ids, and dataset hashes to prevent timeless claims.
+Response: The DS set states normative obligations. HTML explains how those obligations appear in the implemented system and gives reviewers multiple operational views without weakening or paraphrasing away the contract.
+
+## Conclusion
+
+The repository must remain directly executable with Node.js, organized by architectural responsibility, hostile to executable knowledge payloads, and synchronized across implementation, tests, specifications, agent skills, and human documentation.

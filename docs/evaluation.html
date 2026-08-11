@@ -1,84 +1,43 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ESLM Documentation — Evaluation</title>
-  <link rel="stylesheet" href="assets/site.css"><script type="module" src="assets/mermaid-loader.mjs"></script><script src="partials-loader.js" defer></script>
-</head>
-<body>
-  <div data-include="partials/header.html"></div>
-  <main>
-    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation</p>
-    <h1>Evaluation and failure attribution</h1>
-    <p class="lead">Evaluation measures semantic correctness, language coverage, proof quality, abstention, and efficiency separately. A single aggregate accuracy cannot reveal whether the parser, evidence, rule engine, or realizer failed.</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Evaluation and gates — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation and gates</p><h1>Capability evidence, split isolation, negative controls, regressions, and falsifiable claims</h1>
+<p class="lead">Evaluation asks what capability a result supports and under which evidence regime. It does not treat one aggregate benchmark score as a description of the whole system. Each report binds a suite, split policy, runtime version, KB versions, memory policy, semantic scorer, diagnostics, and resource measurements.</p>
 
-    <h2>Implementation verification</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Unit fixtures] --> B[Node tests]
-  B --> C[Language contracts]
-  B --> D[Reasoning contracts]
-  B --> E[Workflow contracts]
-  C --> F{All pass?}
-  D --> F
-  E --> F</pre><figcaption>The test runner evaluates language, reasoning, and workflow contracts independently before producing one regression verdict.</figcaption></figure>
-    <p><strong>Purpose.</strong> This diagram describes <code>npm test</code>. Tests cover normalization, parsing, direct facts, derivation, discourse, unknown evidence, model indexes, CLI path resolution, training split isolation, and external prediction exchange. These fixtures verify code contracts; they are not scientific datasets.</p>
+<h2>Levels of evidence</h2>
+<p>Unit tests establish local contracts such as record validation, rule safety, deterministic IDs, and path rejection. Integration tests establish that the frontend, planner, KB loader, inference engine, and result protocol work together. Capability suites vary language form and logical structure while holding the intended operation stable. Source-KB tests sample real package indexes and compare eager and lazy behavior. Benchmarks measure externally recognizable tasks but remain interpreted through the capability taxonomy.</p>
+<p>A claim must name its level. Passing an authored smoke KB is implementation evidence, not broad world-knowledge evidence. Answering sampled WordNet definitions is source-adapter evidence, not general question answering. Solving a bAbI task can support a narrow relation or deduction claim only when controls show that the system did not memorize entity names, position, or answer frequency.</p>
 
-    <h2>Capability evaluation</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Evaluation case] --> B[ESLM engine]
-  B --> C[Semantic values]
-  B --> D[Status]
-  B --> E[Proof trace]
-  C --> F[Local oracle]
-  D --> F
-  E --> F
-  F --> G[Tagged metrics]</pre><figcaption>The oracle can score meaning, abstention, and proof separately because the engine exposes all three outputs.</figcaption></figure>
-    <p><strong>Purpose.</strong> This diagram shows the internal evaluation path. The oracle compares canonical semantic values or explicit statuses. Tags allow results to be separated by direct retrieval, spelling tolerance, rule execution, paraphrase, discourse, ambiguity, and abstention.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  U[Unit and integration] --> C[Capabilities and controls]
+  C --> B[Benchmark and regression]
+  B --> F[Claim review]</pre><figcaption>Evidence moves through four gates. Capability checks include negative controls, benchmark runs include regressions, and only the combined record can support a claim.</figcaption></figure>
 
-    <h2>Failure attribution</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Wrong result] --> B{Query compiled?}
-  B -->|no| C[Language failure]
-  B -->|yes| D{Evidence found?}
-  D -->|no| E[Knowledge or retrieval failure]
-  D -->|yes| F[Rule or realization failure]</pre><figcaption>Attribution follows the actual trace and stops at the earliest stage that can explain the wrong result.</figcaption></figure>
-    <p><strong>Purpose.</strong> The trace identifies the earliest causal failure. A parse miss must not be repaired by adding the expected answer as a fact. Missing knowledge must not create a grammar rule. A reasoning error with correct premises targets rule execution. This classification keeps model synthesis scientifically meaningful.</p>
+<p>The current catalog has seven reviewed benchmark families: BLiMP, bAbI, CLUTRR, Entity Tracking, EWOK, Story Cloze, and SimpleQA. Catalog review confirms task relevance, a primary source, and a recorded license or access gate. It is not execution evidence. After the reset, only the five-case native fixture has a published run; its 5/5 result verifies the local scorer and runtime paths and is marked non-comparable. Public-dataset rows remain pending until acquisition, adapter, split, and checksum requirements are satisfied.</p>
 
-    <h2>Hidden evaluation boundary</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Train-visible packet] --> B[Candidate frozen]
-  C[Hidden suite] --> D[Separate evaluator]
-  B --> D
-  D --> E[Predictions]
-  D --> F[Failure breakdown]
-  E --> G[Frozen report]
-  F --> G</pre><figcaption>Candidate and hidden suite meet only inside the evaluator; predictions and diagnostics are preserved in one frozen report.</figcaption></figure>
-    <p><strong>Purpose.</strong> Hidden labels are introduced only after the candidate is frozen. A random split is insufficient when sources, templates, stories, or relation compositions repeat. Splits should group by source, construction family, entity vocabulary, domain, and composition depth.</p>
+<h2>Split isolation</h2>
+<p>Training-visible records may be read by a synthesis subprocess. Development-visible cases may be clustered for diagnosis and iterative proposals. Test and hidden cases are evaluated only by trusted local tools after candidate construction. Packet manifests and execution receipts make this boundary auditable. If leakage occurs, the affected score is invalid regardless of whether the resulting rule looks general.</p>
 
-    <h2>The completed Task 15 public evaluation</h2>
-    <p>The latest evaluation is not the earlier tiny smoke fixture. It contains 1,000 official bAbI v1.2 Task 15 English 10k test episodes prepared from the cached archive. The default model answered all 1,000 semantic values correctly, for accuracy 1.0. The exact split identity remains in the machine-readable report and prepared manifest.</p>
-    <table><thead><tr><th>Quantity</th><th>Current value</th><th>Interpretation</th></tr></thead><tbody>
-      <tr><td>Train cases visible to synthesis</td><td>10,000</td><td>Used to identify constructions, morphology, and the episode compilation pattern.</td></tr>
-      <tr><td>Held-out test cases</td><td>1,000</td><td>Not exposed to the coding-agent synthesis packets.</td></tr>
-      <tr><td>Correct semantic values</td><td>1,000</td><td>The expected fear class matched exactly.</td></tr>
-      <tr><td>Incorrect or unsupported</td><td>0</td><td>No parser, rule, retrieval, or semantic-value failure in this split.</td></tr>
-      <tr><td>Persistent story facts promoted</td><td>0</td><td>The runtime recomputed every answer from its supplied episode.</td></tr>
-      <tr><td>Reasoning depth measured</td><td>1 derived step</td><td>This result does not measure deeper deduction, induction, abduction, or broad English.</td></tr>
-    </tbody></table>
-    <p>The <a href="results/latest-evaluation.html">latest evaluation report</a> contains per-case engine outcomes. The <a href="results/latest-benchmark.html">latest benchmark report</a> applies the comparison protocol to the same test file. The perfect result is strong evidence of complete coverage for this narrow controlled task, not an estimate of general ESLM competence.</p>
+<h2>Semantic scoring and diagnostics</h2>
+<p>The scorer compares normalized semantic values, not punctuation or terminal phrasing. It also records status correctness, expected abstention, proof requirements, provenance presence, and resource behavior. Exact-match text can remain a secondary metric for a benchmark that requires it, but a semantically correct result should not fail solely because a realizer chose “Yes.” instead of “yes”. Conversely, a plausible string with no valid derivation must not pass a symbolic capability gate.</p>
+<p>Every failed case retains the actual result object or a bounded diagnostic projection of it. Failure categories distinguish parsing, binding, missing knowledge, missing method, invalid derivation, trust conflict, output mismatch, timeout, memory pressure, and infrastructure error. The classification directs work to the correct layer.</p>
 
-    <h2>The completed Task 16 learning evaluation</h2>
-    <p>Task 16 used 200 inspected working and 1,000 fresh cases drawn deterministically from the official train split. The official 1,000-case test split was queried only as an aggregate shadow pool during adaptation. The accepted checkpoint passed every working, fresh and aggregate test case, all 52 prior regressions, and three nonce/order metamorphic cases. The proof audit rejected an earlier 996/1,000 candidate, so the final score is evidence for a trace-complete configured induction mechanism rather than score-only acceptance.</p>
+<h2>Contrastive and negative controls</h2>
+<p>Positive examples are paired with cases that rename entities, reverse directional relations, negate or remove premises, insert distractors, vary word order within the supported grammar, cross contexts, and request an unavailable capability. A rule learned from “mice fear wolves” must generalize through the variable binding and must stop applying if the type premise disappears. A lexical answer must change when the lemma changes. An abductive hypothesis must not become an asserted fact.</p>
+<p>Unknown and abstention cases are first-class. If the package has no evidence, returning a structured unresolved subgoal is correct behavior. Evaluation therefore measures unsupported-answer rate and provenance completeness in addition to solved accuracy.</p>
 
-    <h2>Internal conversational stress evaluation</h2>
-    <p>The <a href="results/latest-conversation-benchmark.html">latest conversational report</a> covers 1,000 unique generated inputs in eleven groups and 536 operand-masked structures. It passed 1,000/1,000 with lazy WordNet and ATOMIC providers, while structural-diversity gates prevent the result from being inflated by renamed copies. It measures regression robustness and loading behavior, not independent public-data generalization or open-English competence.</p>
+<h2>Benchmark-guided change gate</h2>
+<div class="table-wrap"><table><thead><tr><th>Gate</th><th>Question</th><th>Reject when</th></tr></thead><tbody>
+<tr><td>Classification</td><td>Is the failure linguistic, knowledge, method, policy, resource, or scoring related?</td><td>The proposal edits a different layer without evidence.</td></tr>
+<tr><td>Generality</td><td>Does it operate over variables and declared structures rather than item constants?</td><td>Benchmark labels, answer strings, or corpus-specific identifiers enter generic code.</td></tr>
+<tr><td>Soundness</td><td>Are preconditions and proof obligations explicit?</td><td>The change derives conclusions beyond its licensed premises.</td></tr>
+<tr><td>Controls</td><td>Do contrastive, negative, and missing-evidence cases behave correctly?</td><td>Only motivating positives pass.</td></tr>
+<tr><td>Regression</td><td>Are existing declared capabilities and failure behaviors preserved?</td><td>An unrelated capability or abstention contract degrades.</td></tr>
+<tr><td>Resources</td><td>Does the change remain within declared time, memory, and shard budgets?</td><td>Improvement depends on uncontrolled eager loading or search.</td></tr>
+</tbody></table></div>
 
-    <h2>Evaluating optional knowledge modules</h2>
-    <p>An evaluation may explicitly pass <code>--kb quick</code>, <code>--kb oewn-2025</code>, <code>--kb atomic-2020</code>, or a focused QUICK component. The JSON report records the active IDs and <code>comparable: false</code>. This is appropriate for KB-conditioned regressions, but it must not overwrite the interpretation of the clean bAbI result. QUICK tests verify exact counts, opt-in behavior, exception handling, and cross-module closure. The seeded WordNet/ATOMIC suite verifies source compilation and provider execution; because it generates questions from compiled records, it is labeled source-exposed rather than a public generalization benchmark.</p>
+<h2>External comparisons</h2>
+<p>Comparisons with neural or hosted systems use frozen exported inputs and imported prediction files. The report names the external model, execution date, decoding policy when known, prompt or adapter, and unavailable metadata. ESLM’s offline property does not make its scores automatically superior; it changes the interpretation of reproducibility, provenance, and operational cost. Comparisons should present capability slices and resource regimes rather than one unqualified ranking.</p>
 
-    <h2>Metrics beyond the completed tasks</h2>
-    <p>The general reporting contract includes answer accuracy, construction coverage, retrieval recall, reasoning accuracy conditional on parsing, proof fidelity, realization fidelity, abstention precision and recall, robustness delta, composition-depth curves, model size, latency, and replayability. A suite reports only metrics for which it has a valid oracle. Future induction suites must add calibration and factual-versus-inductive separation; deeper bAbI tasks must report accuracy by support depth.</p>
-    <p class="related"><strong>Continue with:</strong> <a href="benchmarks.html">Benchmarks</a> for the public suite plan, <a href="reasoning.html">Reasoning Trace</a> for proof-level oracles, and <a href="cli.html">CLI Tutorial</a> for report commands. The methodology is <a href="specsLoader.html?spec=DS011-evaluation-methodology.md">DS011</a>; external comparison is <a href="specsLoader.html?spec=DS013-external-model-comparison.md">DS013</a>.</p>
-  </main>
-</body>
-</html>
+<h2>Falsification criteria</h2>
+<p>The program is weakened if symbolic traces cannot predict failure, if package provenance cannot be followed to frozen evidence, if benchmark improvements require item-specific rules, if query-directed loading changes answers relative to eager loading, if agent outputs bypass promotion gates, or if broader language requires abandoning the explicit task and result contracts. Such outcomes must be reported as limitations or design failures, not hidden by aggregate success.</p>
+<p>The complete evaluation regime is defined by <a href="specsLoader.html?spec=DS010-evaluation-benchmarks-and-comparison.md">DS010</a>; implementation phases and acceptance gates are in <a href="specsLoader.html?spec=DS011-implementation-sequence-and-acceptance.md">DS011</a>.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

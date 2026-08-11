@@ -3,7 +3,7 @@ import process from 'node:process';
 import { resolve } from 'node:path';
 import { writeJson } from '../src/io.mjs';
 import { ExecutionProfiler } from '../src/profiling.mjs';
-import { deriveClosure, indexFacts } from '../src/reasoner.mjs';
+import { deriveClosure, indexFacts } from '../src/reasoning/datalog.mjs';
 import { parseArgs } from '../src/util.mjs';
 
 function parseSizes(value) {

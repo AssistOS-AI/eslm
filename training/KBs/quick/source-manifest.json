@@ -1,0 +1,9 @@
+{
+  "format": "eslm-source-manifest-v1",
+  "id": "quick",
+  "source": "repository-authored review fixture",
+  "sourceChecksum": "sha256:9e0c2aba591b7dbea33592fc2a54aeacbf79c847604bce26c85650b60ba7ef4c",
+  "license": "MIT repository fixture",
+  "evidenceRegime": "authored-development-fixture",
+  "benchmarkEligible": false
+}

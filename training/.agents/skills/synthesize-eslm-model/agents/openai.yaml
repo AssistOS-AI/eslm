@@ -1,4 +1,0 @@
-interface:
-  display_name: "Synthesize ESLM Model"
-  short_description: "Probe and compile evidence into ESLM modules"
-  default_prompt: "Use $synthesize-eslm-model to probe an authorized corpus, verify the large-source gate when applicable, and generate validated profiled Node.js ESLM modules."

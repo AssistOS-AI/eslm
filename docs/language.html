@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Language and task frames — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Language and task frames</p><h1>Language interpretation, controlled English, and executable task meaning</h1>
+<p class="lead">The frontend does not treat a sentence as a lookup key. It preserves the original utterance, normalizes it without silently changing intent, selects a language route, constructs symbolic assertions or a query, updates discourse context when appropriate, and records every unsupported segment. The resulting task frame states what must be achieved, under which constraints and budgets, and in which output form.</p>
+
+<h2>Two language routes, one explicit contract</h2>
+<p>Stage A implements a controlled natural language route for deterministic English constructions. Statements such as “Gertrude is a mouse,” “Mice are afraid of wolves,” and questions such as “What is Gertrude afraid of?” can be compiled into entity references, predicates, constants, and safe rules. The route is deliberately narrow and testable. It never pretends that an unrecognized phrase was understood merely because some tokens resemble a known form.</p>
+<p>The wider architecture permits later construction-based or induced analyses. Such a route must still produce the same observable categories: lexical hypotheses, construction choice, bindings, discourse references, symbolic meaning, confidence or ambiguity evidence where relevant, and a failure object when no valid analysis survives. Statistical ranking may choose between candidates, but executable symbolic checks determine whether a candidate satisfies type, binding, context, and task constraints.</p>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  U[Utterance] --> N[Normalize and parse]
+  N --> S[Symbolic task]
+  N --> F[Explicit parse gap]
+  S --> T[Task evidence]
+  F --> T</pre><figcaption>The frontend preserves the original input while attempting one observable parse. Supported language becomes a symbolic task; unsupported language becomes an explicit gap, and either outcome remains part of the task evidence.</figcaption></figure>
+
+<h2>Normalization is observable</h2>
+<p>Normalization may regularize case, punctuation, and known spelling variants, but the runtime returns the original form, tokens, normalized form, corrections, and language code. This makes correction behavior reviewable and prevents a hidden preprocessor from silently rewriting the question. A correction must be deterministic, bounded, and tied to a known vocabulary or construction. When several corrections are plausible, the system should expose ambiguity rather than choose a semantically convenient one.</p>
+
+<h2>Terms, variables, predicates, and contexts</h2>
+<p>Ground entities have stable identifiers. Variables are explicit symbols such as <code>?entity</code> and cannot be confused with entity identifiers. Assertions identify a subject, predicate, and value or object, and carry context, polarity, modality, confidence or trust metadata where the relevant DS contract requires it. Rules contain premises and conclusions; every conclusion variable must be bound by a positive premise. This range restriction is checked when canonical records are accepted, not postponed until a query happens to trigger the rule.</p>
+<p>A context is not a text label added for display. It scopes assertions and establishes whether two claims may participate in the same derivation. Baseline world knowledge, a session episode, a hypothetical branch, quoted speech, or a source-specific view may be distinct contexts. A method must explicitly justify any projection or inheritance between them. Contradictory claims are therefore not automatically collapsed into one global truth value.</p>
+
+<h2>Discourse and session state</h2>
+<p>An interactive session can accumulate entities, facts, rules, and a last salient entity. That state is separate from promoted KB packages: saying “Gertrude is a mouse” in one session does not rewrite the repository’s world knowledge. Reference resolution consults the session context and reports failure when a pronoun or description has no unique valid antecedent. A batch request receives its own deterministic context unless its input format explicitly defines episodes.</p>
+<p>Session state is evidence in the result. Reviewers can determine which entity a query resolved to and whether the supporting assertion came from a loaded package or the current interaction. A future richer discourse system must preserve this separation while extending salience, temporal ordering, events, speaker commitments, and hypothetical worlds.</p>
+
+<h2>The task frame</h2>
+<p>The frontend’s most important output is not a string intent label but a task frame. It has a task identifier; instructions; asserted inputs; constraints; one or more goals; an output contract; a context stack; the chosen language route; and budgets for time, memory, search nodes, and shard bytes. A yes/no question can require a Boolean output. A definition can require glosses and lexical relations. A procedural request may require an ordered plan plus verification obligations. The task frame is complete enough for a planner to reject a request before inference when no registered capability can satisfy its goal.</p>
+<p>Instructions state actions requested by the user. Assertions state content offered as premises. Constraints limit acceptable solutions. Goals state conditions to establish. This distinction prevents an imperative from being inserted as a world fact and prevents an input statement from being mistaken for an instruction. Output contracts determine whether an otherwise correct derivation can be realized as the required Boolean, entity, list, explanation, or structured record.</p>
+
+<h2>Failure distinctions</h2>
+<div class="table-wrap"><table><thead><tr><th>Failure</th><th>Meaning</th><th>Expected evidence</th></tr></thead><tbody>
+<tr><td>Unsupported language</td><td>No allowlisted construction or valid analysis covers part of the utterance.</td><td>Original segment, normalization, attempted route, and missing construction category.</td></tr>
+<tr><td>Unresolved reference</td><td>The form is understood, but its entity binding is absent or ambiguous.</td><td>Candidate antecedents, active context, and uniqueness constraint.</td></tr>
+<tr><td>Missing knowledge</td><td>The query is well formed and a method exists, but required facts or rules are absent.</td><td>Open subgoal and KBs or shards consulted.</td></tr>
+<tr><td>Missing capability</td><td>No registered method can satisfy the goal under its constraints.</td><td>Required capability, considered descriptors, and failed preconditions.</td></tr>
+<tr><td>Trust or context conflict</td><td>Available assertions cannot be combined under the active policy.</td><td>Claim provenance, contexts, policy decision, and blocked inference.</td></tr>
+<tr><td>Resource limit</td><td>A valid computation could not finish inside an explicit budget.</td><td>Budget, measured consumption, frontier state, and unresolved subgoals.</td></tr>
+</tbody></table></div>
+
+<h2>Reviewing a language change</h2>
+<p>A parser change is incomplete unless its symbolic output, negative examples, ambiguity behavior, task-frame consequences, result diagnostics, and documentation are tested together. Adding a surface pattern that only produces the desired answer is not a language capability. The reviewer should be able to substitute entities, reverse relevant relations, remove a premise, introduce a competing antecedent, and observe principled changes. The generic core must not contain benchmark identifiers or domain constants; lexical and domain-specific mappings belong in KB records.</p>
+<p>The authoritative details are in <a href="specsLoader.html?spec=DS003-symbolic-language-frontend-and-cnl.md">DS003</a> and the task representation and method contracts in <a href="specsLoader.html?spec=DS008-task-planning-methods-and-results.md">DS008</a>.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

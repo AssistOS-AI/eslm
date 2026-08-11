@@ -1,0 +1,42 @@
+{
+  "manifestType": "knowledgeBasePackage",
+  "format": "eslm-kb-package-v1",
+  "schemaVersion": "1",
+  "kbId": "quick",
+  "kbVersion": "1.0.0",
+  "namespace": "quick",
+  "languages": [
+    "en"
+  ],
+  "domains": [
+    "development-fixture"
+  ],
+  "dependencies": [],
+  "capabilities": [
+    "classification",
+    "capability",
+    "safe-horn-deduction"
+  ],
+  "trustLevel": "repository-reviewed-fixture",
+  "benchmarkEligible": false,
+  "license": "MIT repository fixture",
+  "canonicalSource": {
+    "path": "../canonical/records.jsonl",
+    "file": "records.jsonl",
+    "checksum": "sha256:de8cb946c10399428f53803c23f7073b47949b5e64a6e228b03faf4d9331e424",
+    "recordCount": 14
+  },
+  "compiler": {
+    "version": "eslm-kb-compiler-v1",
+    "configurationHash": "sha256:1d1d6bd5b051ae7f7f809f7ee0a4538702cc687aeb567e71bcb7cb18f2e9c533"
+  },
+  "counts": {
+    "assertion": 2,
+    "context": 1,
+    "lexeme": 2,
+    "provenance": 1,
+    "rule": 3,
+    "term": 5
+  },
+  "shardDirectoryRef": "shards.json"
+}

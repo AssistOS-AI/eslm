@@ -2,43 +2,49 @@
 import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 import { execFile } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { appendFile, writeFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
-import { EslmEngine } from './engine.mjs';
-import { EslmRuntime } from './runtime.mjs';
+import { EslmEngine } from './runtime/engine.mjs';
+import { EslmRuntime } from './runtime/runtime.mjs';
 import {
   BENCHMARK_CATALOG, PUBLIC_RESULT_CATALOG, exportBenchmark, importComparison, runBenchmark,
   scoreExternalPredictions,
 } from './benchmarks.mjs';
 import { checkDocumentation, publishReport } from './docs-reports.mjs';
 import {
-  DATASET_CATALOG, analyzeDatasetTraining, datasetStatus, fetchDataset, prepareDataset,
+  DATASET_CATALOG, datasetStatus, fetchDataset, prepareDataset,
 } from './datasets.mjs';
 import { corpusCatalog, corpusStatuses } from './corpora.mjs';
 import { evaluate } from './evaluation.mjs';
 import { readBatch } from './io.mjs';
 import { buildKnowledgeBases } from './kb-training.mjs';
+import { compileKnowledgeBase } from './kb/compiler.mjs';
 import {
-  KB_CATALOG, loadKnowledgeBases, loadKnowledgeBase, mergeModels, selectedKbIds, summarizeKnowledgeBase,
+  KB_CATALOG, KB_CATALOG_PATH, loadKnowledgeBases, loadKnowledgeBase, mergeModels, registerKnowledgeBase,
+  registeredKnowledgeBases, summarizeKnowledgeBase, unregisterKnowledgeBase,
 } from './kbs.mjs';
 import {
   PUBLIC_KB_CATALOG, loadPublicKnowledgeBases, publicKbStatuses, validatePublicKnowledgeBase,
 } from './public-kbs.mjs';
-import { loadModel } from './model-loader.mjs';
+import { createCoreModel } from './runtime/core-model.mjs';
 import { PROJECT_ROOT, resolveProjectPath } from './paths.mjs';
-import { prepareTraining, validateGeneratedModel, writeCandidateSkeleton } from './training.mjs';
+import { prepareTraining, validateGeneratedModel, writeCandidateSkeleton } from './training/packet.mjs';
+import { prepareAgentWorkspace, runCodexTraining, TRAINING_SKILLS } from './training/agent-runner.mjs';
 import { parseArgs } from './util.mjs';
 import { editDistance } from './util.mjs';
 import { createTerminalStyle } from './terminal-style.mjs';
-import { smokeExamples } from './conversation-smoke.mjs';
-
+import {
+  interactiveExamples, interactiveHelp, interactiveKbText, interactiveSmoke, memoryText, modelText, profileText,
+  traceText,
+} from './interface/interactive-presenter.mjs';
 const runFile = promisify(execFile);
+let writeOutput = (text) => stdout.write(text);
 
 function printJson(value) {
-  stdout.write(`${JSON.stringify(value, null, 2)}\n`);
+  writeOutput(`${JSON.stringify(value, null, 2)}\n`);
 }
-
 function help() {
   stdout.write(`ESLM — offline executable symbolic language model
 
@@ -46,19 +52,22 @@ Usage:
   eslm                         interactive conversation
   eslm ask <question>          answer one question
   eslm run --input FILE [--output FILE]
-  eslm train prepare --input FILE [--output FILE]
+  eslm train prepare --input FILE --namespace ID [--output FILE]
   eslm train candidate --packet FILE --output DIRECTORY
-  eslm train validate [--model DIRECTORY]
+  eslm train run --packet FILE --output DIRECTORY --skill NAME [--dry-run]
+  eslm train validate [--model KB_PACKAGE_DIRECTORY]
   eslm dataset catalog
   eslm dataset fetch --dataset ID
   eslm dataset prepare --dataset ID [--chunk-size 500]
-  eslm dataset analyze --dataset ID
   eslm dataset status --dataset ID
   eslm corpus catalog
   eslm corpus status [--corpus ID[,ID]|all]
   eslm corpus probe --corpus oewn-2025 --archive FILE
   eslm kb list
   eslm kb show ID
+  eslm kb register MANIFEST
+  eslm kb unregister ID
+  eslm kb compile --input RECORDS --output DIRECTORY --id ID --version VERSION --namespace ID
   eslm kb build ID|all
   eslm kb validate ID|all
   eslm evaluate --suite FILE [--publish]
@@ -71,34 +80,29 @@ Usage:
   eslm docs check|publish
 
 Global options:
-  --model training/model/manifest.mjs
-  --kb quick,oewn-2025          knowledge modules; use --kb all for every top-level module
+  --kb quick,oewn-2025          declarative knowledge packages; use --kb all for every catalog entry
   --memory-mb 512               soft process-memory target; enables adaptive shard loading
   --memory-policy auto          auto, eager, or lazy public-KB loading
   --color auto                  auto, always, or never; structured output is never colored
   --profile                      include per-stage timing, CPU, memory deltas, and work counts
 `);
 }
-
-function selectedRuntimeKbIds(value) {
+async function selectedRuntimeKbIds(value) {
   if (!value) return [];
-  const known = new Set([...Object.keys(KB_CATALOG), ...Object.keys(PUBLIC_KB_CATALOG)]);
+  const registered = await registeredKnowledgeBases();
+  const known = new Set([...Object.keys(KB_CATALOG), ...Object.keys(PUBLIC_KB_CATALOG), ...registered.map((entry) => entry.kbId)]);
   const requested = String(value).split(',').map((item) => item.trim().toLocaleLowerCase('en-US')).filter(Boolean);
-  const ids = requested.includes('all')
-    ? ['quick', ...Object.keys(PUBLIC_KB_CATALOG)]
-    : requested;
+  const ids = requested.includes('all') ? [...known] : requested;
   for (const id of ids) {
     if (!known.has(id)) throw new Error(`Unknown knowledge base: ${id}`);
   }
   return [...new Set(ids)];
 }
-
 async function engineFor(options) {
-  const modelCandidate = options.model ?? 'training/model/manifest.mjs';
-  const base = await loadModel(modelCandidate);
-  const selected = selectedRuntimeKbIds(options.kb);
-  const graphIds = selected.filter((id) => KB_CATALOG[id]);
+  const base = await createCoreModel(options.model);
+  const selected = await selectedRuntimeKbIds(options.kb);
   const publicIds = selected.filter((id) => PUBLIC_KB_CATALOG[id]);
+  const graphIds = selected.filter((id) => !PUBLIC_KB_CATALOG[id]);
   const knowledgeBases = await loadKnowledgeBases(graphIds.join(','));
   const core = new EslmEngine(mergeModels(base, knowledgeBases), { profile: options.profile });
   const loaded = await loadPublicKnowledgeBases(publicIds, {
@@ -106,89 +110,19 @@ async function engineFor(options) {
   });
   return new EslmRuntime(core, loaded.providers, selected, loaded.memoryPlan);
 }
-
-function interactiveHelp(style) {
-  const command = (value) => style.blue(value.padEnd(28));
-  return `${style.bold('Interactive commands')}
-  ${command('/help')}Explain every interactive command and its purpose.
-  ${command('/kbs')}Show installed knowledge sources, sizes, roles, and load state.
-  ${command('/load all')}Load every installed public KB. QUICK remains opt-in.
-  ${command('/load WORDS')}Load by name, title word, wildcard, or a close spelling.
-  ${command('/unload WORDS|all')}Remove matching KBs without losing session facts.
-  ${command('/model')}Explain what model is answering, which KBs are active, and why the run is not benchmark-clean.
-  ${command('/memory')}Show eager/lazy strategy and current shard-cache use.
-  ${command('/memory N')}Set a soft memory target in MiB and rebuild KB providers.
-  ${command('/memory auto|eager|lazy')}Select adaptive, full, or shard-based loading.
-  ${command('/examples [SEED]')}Generate a varied, representative example set; reuse its seed to reproduce it.
-  ${command('/smoke [SEED]')}Run a fast generated check against the currently loaded knowledge and show each result.
-  ${command('/trace')}Explain the sources and symbolic steps behind the last answer.
-  ${command('/profile')}Show readable timing and memory measurements for the last answer.
-  ${command('/clear')}Forget temporary conversation facts and references.
-  ${command('/quit')}Leave ESLM without writing the conversation.
-
-${style.bold('Temporary context')}
-You can teach bounded session facts before a question, for example:
-  Socrates is a man. Is Socrates a man?
-  Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?`;
-}
-
-function interactiveExamples(style, seed) {
-  const groups = new Map();
-  for (const example of smokeExamples({ seed, maxPerGroup: 4 })) groups.set(example.group, [...(groups.get(example.group) ?? []), example]);
-  const catalog = [...groups].map(([group, examples]) => {
-    const rendered = examples.map((example) => {
-      const marker = `[${example.label}]`;
-      const colored = example.label === 'unsupported' ? style.red(marker)
-        : example.label === 'unknown by design' ? style.yellow(marker) : style.green(marker);
-      return `${colored} ${example.input}`;
-    });
-    return `${style.bold(group)} (${examples.length})\n  ${rendered.join('\n  ')}`;
-  }).join('\n\n');
-  return `${style.bold('What this evidence means')}
-Seed: ${style.blue(seed)} — use ${style.blue(`/examples ${seed}`)} or ${style.blue(`/smoke ${seed}`)} to reproduce these selections.
-Public benchmarks actually run: ${style.green('bAbI v1.2 Tasks 15 and 16')} (1,000/1,000 test cases each).
-Knowledge-source integration checks: Open English WordNet 2025 and ATOMIC 2020. These are source-exposed tests, ${style.yellow('not public benchmark scores')}.
-Prepared but not learned: bAbI Tasks 2 and 3. Catalogued but not run: BLiMP, CLUTRR, EWoK, SimpleQA, Entity Tracking, and Story Cloze.
-
-${catalog}`;
-}
-
-function sameExpectedValues(actual, expected) {
-  return expected === undefined || JSON.stringify(actual ?? []) === JSON.stringify(expected);
-}
-
-async function interactiveSmoke(engine, selected, style, seed) {
-  const cases = smokeExamples({ seed, maxPerGroup: 2 });
-  const started = performance.now();
-  const lines = [style.bold(`Generated smoke run — seed ${seed}`)];
-  let passed = 0;
-  let failed = 0;
-  let skipped = 0;
-  for (const item of cases) {
-    if (item.kb !== 'base' && !selected.includes(item.kb)) {
-      skipped += 1;
-      lines.push(`${style.yellow('SKIP')} ${item.input} — requires ${item.kb}`);
-      continue;
-    }
-    const result = await engine.ask(item.input, {});
-    const pass = result.status === item.expectedStatus && sameExpectedValues(result.values, item.expectedValues);
-    if (pass) passed += 1; else failed += 1;
-    const marker = pass ? style.green('PASS') : style.red('FAIL');
-    const answer = String(result.answer ?? '').replace(/\s+/gu, ' ').slice(0, 120);
-    lines.push(`${marker} ${item.input}\n     ${style.status(result.status, result.status)} — ${answer}${answer.length === 120 ? '…' : ''}`);
-  }
-  const elapsed = performance.now() - started;
-  lines.push('', `${style.bold('Summary')}: ${style.green(`${passed} passed`)}, ${failed ? style.red(`${failed} failed`) : style.green('0 failed')}, ${style.yellow(`${skipped} skipped`)} in ${elapsed.toFixed(1)} ms.`);
-  lines.push(style.dim('This is an internal generated regression check, not a public benchmark score. A failure includes its reproducible seed above.'));
-  return lines.join('\n');
-}
-
 function globExpression(value) {
   return new RegExp(`^${value.split('*').map((part) => part.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')).join('.*')}$`, 'iu');
 }
 
-function matchInteractiveKnowledgeBases(value, { includeQuick = true } = {}) {
-  const catalog = [...Object.values(PUBLIC_KB_CATALOG), ...Object.values(KB_CATALOG).filter((item) => includeQuick && !item.internal)];
+async function matchInteractiveKnowledgeBases(value, { includeQuick = true } = {}) {
+  const registered = (await registeredKnowledgeBases()).map((entry) => ({
+    ...entry, id: entry.kbId, title: entry.kbId, role: `registered ${entry.namespace} package`,
+  }));
+  const catalog = [
+    ...Object.values(PUBLIC_KB_CATALOG),
+    ...Object.values(KB_CATALOG).filter((item) => includeQuick && !item.internal),
+    ...registered,
+  ];
   const terms = String(value).split(',').map((item) => item.trim().toLocaleLowerCase('en-US')).filter(Boolean);
   if (terms.includes('all')) return Object.keys(PUBLIC_KB_CATALOG);
   const matches = [];
@@ -210,74 +144,10 @@ function matchInteractiveKnowledgeBases(value, { includeQuick = true } = {}) {
   return [...new Set(matches)];
 }
 
-function formatBytes(bytes) {
-  if (!Number.isFinite(bytes)) return 'not measured';
-  if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(1)} MiB`;
-  return `${Math.round(bytes / 1024)} KiB`;
-}
-
-function memoryText(engine, style) {
-  const memory = engine.memorySnapshot();
-  if (!memory || memory.providers.length === 0) return `${style.yellow('No public KB is active.')} There is no public shard cache to report.`;
-  const target = memory.softTarget
-    ? `${memory.targetMiB} MiB soft whole-process target`
-    : memory.requestedPolicy === 'lazy'
-      ? 'lazy loading was explicitly requested; each public provider receives a 64 MiB cache'
-      : memory.requestedPolicy === 'eager'
-        ? 'complete loading was explicitly requested without a soft target'
-        : 'no memory target; adaptive mode selected complete loading';
-  const rows = memory.providers.map((provider) => {
-    if (provider.mode === 'eager') return `  ${style.green('eager')} ${provider.id}: complete model resident, estimated ${formatBytes(provider.estimatedBytes)}`;
-    return `  ${style.yellow('lazy')}  ${provider.id}: ${provider.loadedShards} shard(s), ${formatBytes(provider.estimatedBytes)} / ${formatBytes(provider.targetBytes)} cache; ${provider.hits} hits, ${provider.misses} misses, ${provider.evictions} evictions`;
-  });
-  return `${style.bold('Memory strategy')}: ${memory.effectivePolicy}; ${target}.\n${rows.join('\n')}\n${style.dim('The target is advisory. Use an OS or container limit when a hard cap is required.')}`;
-}
-
-function modelText(engine, selected, context, style) {
-  const publicNames = engine.providers.map((provider) => PUBLIC_KB_CATALOG[provider.manifest.id]?.title ?? provider.manifest.id);
-  const fixtureNames = selected.filter((id) => KB_CATALOG[id]).map((id) => KB_CATALOG[id].title);
-  const active = [...fixtureNames, ...publicNames];
-  return `${style.bold('Active ESLM runtime')}\nModel: ${engine.core.model.manifest.modelId}\nKnowledge: ${active.length ? active.join('; ') : 'base generated model only'}\nSession: ${context.session?.facts?.length ?? 0} temporary fact(s).\nComparability: ${selected.length ? style.yellow('exploratory — selected KBs expose additional knowledge') : style.green('base-model scope')}\n\n${memoryText(engine, style)}`;
-}
-
-function traceText(last, style) {
-  if (!last) return style.yellow('Ask a question first; there is no trace yet.');
-  const lines = [style.bold('Last answer trace'), `Status: ${style.status(last.status)}`, `Method: ${last.reasoning?.method ?? 'not recorded'}`];
-  for (const [index, item] of (last.provenance ?? []).entries()) lines.push(`  ${index + 1}. ${item.fact ?? 'fact'} — ${(item.source ?? []).join(', ') || 'source not recorded'}`);
-  if (!(last.provenance ?? []).length) lines.push('  No source facts were used.');
-  return lines.join('\n');
-}
-
-function profileText(last, style) {
-  if (!last?.profile) return style.yellow('Profiling is not available for the last answer. Start ESLM with --profile.');
-  const profile = last.profile.query ?? last.profile;
-  const stages = profile.stages ?? [];
-  return `${style.bold('Last query profile')}\n${stages.map((stage) => `  ${stage.name}: ${(stage.wallMilliseconds ?? stage.durationMs ?? 0).toFixed(3)} ms`).join('\n') || '  No stage measurements recorded.'}`;
-}
-
-async function interactiveKbText(loaded, style) {
-  const quick = summarizeKnowledgeBase(await loadKnowledgeBase('quick'));
-  const publicStatuses = await publicKbStatuses();
-  const rows = [{
-    id: 'quick', title: 'QUICK development fixtures', role: 'smoke tests/tutorials; authored, not public training',
-    available: true, size: `${quick.directFactCount} direct / ${quick.executableFactCount} executable facts`,
-  }, ...publicStatuses.map((status) => ({
-    id: status.id, title: status.title, role: status.role, available: status.available,
-    size: status.counts ? (status.id === 'oewn-2025'
-      ? `${status.counts.synsets} synsets / ${status.counts.uniqueLemmas} lemmas`
-      : `${status.counts.retainedUniqueNonNoneTuples} tuples / ${status.counts.uniqueEvents} events`) : 'not built',
-  }))];
-  return rows.map((row) => {
-    const state = loaded.includes(row.id) ? style.green('[loaded]') : row.available ? style.blue('[ready] ') : style.red('[missing]');
-    const fixture = row.id === 'quick' ? `\n  ${style.yellow('Fixture only: not loaded by default; use /load quick for tutorials and regression examples.')}` : '';
-    return `${state} ${style.bold(row.title)}\n  Name match: ${row.id}; ${row.size}\n  ${row.role}${fixture}`;
-  }).join('\n\n');
-}
-
 async function chat(options) {
   const style = createTerminalStyle(options.color, stdout);
   let runtimeOptions = { ...options };
-  let selected = selectedRuntimeKbIds(options.kb ?? Object.keys(PUBLIC_KB_CATALOG).join(','));
+  let selected = await selectedRuntimeKbIds(options.kb ?? Object.keys(PUBLIC_KB_CATALOG).join(','));
   let engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
   const terminal = createInterface({ input: stdin, output: stdout });
   let context = {};
@@ -322,7 +192,7 @@ async function chat(options) {
     }
     if (line.startsWith('/load ')) {
       try {
-        const requested = matchInteractiveKnowledgeBases(line.slice('/load '.length));
+        const requested = await matchInteractiveKnowledgeBases(line.slice('/load '.length));
         selected = [...new Set([...selected, ...requested])];
         engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
         stdout.write(`${style.green('Loaded knowledge:')} ${selected.join(', ')}.\n`);
@@ -332,7 +202,7 @@ async function chat(options) {
     if (line.startsWith('/unload ')) {
       const value = line.slice('/unload '.length).trim();
       try {
-        const removed = value === 'all' ? selected : matchInteractiveKnowledgeBases(value);
+        const removed = value === 'all' ? selected : await matchInteractiveKnowledgeBases(value);
         selected = selected.filter((id) => !removed.includes(id));
         engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
         stdout.write(`${style.green('Loaded knowledge:')} ${selected.length > 0 ? selected.join(', ') : '(base model only)'}.\n`);
@@ -373,9 +243,10 @@ async function train(args, options) {
   if (action === 'prepare') {
     if (!options.input) throw new Error('train prepare requires --input.');
     const input = await resolveProjectPath(options.input);
-    const output = resolve(options.output ?? 'training/work/packet.json');
+    const output = resolve(options.output ?? resolve(tmpdir(), 'eslm-training', 'packet.json'));
     printJson(await prepareTraining({
-      input, output, split: options.split ?? 'train', profile: options.profile,
+      input, output, split: options.split ?? 'train', targetNamespace: options.namespace ?? 'local-candidate',
+      profile: options.profile,
     }));
     return;
   }
@@ -384,8 +255,25 @@ async function train(args, options) {
     printJson(await writeCandidateSkeleton(resolve(options.packet), resolve(options.output)));
     return;
   }
+  if (action === 'run') {
+    if (!options.packet || !options.output) throw new Error('train run requires --packet and --output.');
+    const skill = options.skill ?? 'document-to-kb-builder';
+    if (!TRAINING_SKILLS[skill]) throw new Error(`train run --skill must be one of: ${Object.keys(TRAINING_SKILLS).join(', ')}.`);
+    const prepared = await prepareAgentWorkspace({
+      projectRoot: PROJECT_ROOT,
+      packetPath: resolve(options.packet),
+      outputDirectory: resolve(options.output),
+      skill,
+    });
+    printJson({ ...prepared, receipt: await runCodexTraining({
+      workspace: prepared.workspace,
+      dryRun: Boolean(options['dry-run']),
+      codexCommand: options['codex-command'],
+    }) });
+    return;
+  }
   if (action === 'validate') {
-    printJson(await validateGeneratedModel(options.model ?? resolve(PROJECT_ROOT, 'training/model')));
+    printJson(await validateGeneratedModel(options.model ?? resolve(PROJECT_ROOT, 'training/KBs/quick/package')));
     return;
   }
   throw new Error('Unknown train action.');
@@ -411,7 +299,6 @@ async function dataset(args, options) {
     return;
   }
   if (action === 'status') { printJson(await datasetStatus(options.dataset)); return; }
-  if (action === 'analyze') { printJson(await analyzeDatasetTraining(options.dataset)); return; }
   throw new Error('Unknown dataset action.');
 }
 
@@ -435,26 +322,64 @@ async function corpus(args, options) {
   throw new Error('Unknown corpus action. Fetch, prepare, and build are added only with a validated source adapter.');
 }
 
-async function knowledgeBase(args) {
+async function knowledgeBase(args, options) {
   const action = args[0];
   if (action === 'list') {
     const entries = [];
     for (const id of Object.keys(KB_CATALOG)) {
       entries.push({ ...KB_CATALOG[id], ...summarizeKnowledgeBase(await loadKnowledgeBase(id)) });
     }
+    for (const entry of await registeredKnowledgeBases()) {
+      entries.push({ ...entry, ...summarizeKnowledgeBase(await loadKnowledgeBase(entry.kbId)), registered: true });
+    }
     entries.push(...await publicKbStatuses());
     printJson(entries);
     return;
   }
+  if (action === 'compile') {
+    for (const field of ['input', 'output', 'id', 'version', 'namespace']) {
+      if (!options[field]) throw new Error(`kb compile requires --${field}.`);
+    }
+    for (const [name, value] of [['id', options.id], ['namespace', options.namespace]]) {
+      if (!/^[a-z][a-z0-9-]*$/u.test(value)) throw new Error(`kb compile --${name} must be a lowercase identifier.`);
+    }
+    printJson(await compileKnowledgeBase({
+      canonicalPath: resolve(options.input),
+      outputDirectory: resolve(options.output),
+      packageMetadata: {
+        kbId: options.id,
+        kbVersion: options.version,
+        namespace: options.namespace,
+        languages: String(options.language ?? 'en').split(',').filter(Boolean),
+        domains: String(options.domain ?? 'local').split(',').filter(Boolean),
+        capabilities: String(options.capability ?? '').split(',').filter(Boolean),
+        trustLevel: options.trust ?? 'unpromoted-candidate',
+        benchmarkEligible: false,
+        license: options.license ?? 'undeclared-candidate-license',
+      },
+    }));
+    return;
+  }
   const target = args[1];
   if (!target) throw new Error(`kb ${action ?? ''} requires an ID or all.`);
-  const ids = selectedRuntimeKbIds(target);
+  if (action === 'register') {
+    printJson(await registerKnowledgeBase(resolve(target)));
+    return;
+  }
+  if (action === 'unregister') {
+    printJson({ kbId: target, removed: await unregisterKnowledgeBase(target) });
+    return;
+  }
+  const ids = action === 'build' && target === 'all'
+    ? [...Object.keys(KB_CATALOG), ...Object.keys(PUBLIC_KB_CATALOG)]
+    : await selectedRuntimeKbIds(target);
+  const registered = new Map((await registeredKnowledgeBases()).map((entry) => [entry.kbId, entry]));
   if (action === 'show') {
     if (ids.length !== 1) throw new Error('kb show accepts exactly one ID.');
     if (PUBLIC_KB_CATALOG[ids[0]]) {
       printJson((await publicKbStatuses()).find((item) => item.id === ids[0]));
     } else {
-      printJson({ ...KB_CATALOG[ids[0]], ...summarizeKnowledgeBase(await loadKnowledgeBase(ids[0])) });
+      printJson({ ...(KB_CATALOG[ids[0]] ?? registered.get(ids[0])), ...summarizeKnowledgeBase(await loadKnowledgeBase(ids[0])) });
     }
     return;
   }
@@ -462,6 +387,8 @@ async function knowledgeBase(args) {
     const results = [];
     const graphIds = ids.filter((id) => KB_CATALOG[id]);
     if (graphIds.length > 0) results.push(...await buildKnowledgeBases(graphIds));
+    const unbuildable = ids.filter((id) => registered.has(id) && !KB_CATALOG[id]);
+    if (unbuildable.length > 0) throw new Error(`Registered packages have no repository build adapter: ${unbuildable.join(', ')}.`);
     for (const id of ids.filter((item) => PUBLIC_KB_CATALOG[item])) {
       const script = resolve(PROJECT_ROOT, id === 'oewn-2025' ? 'scripts/build-oewn-kb.mjs' : 'scripts/build-atomic-kb.mjs');
       const result = await runFile(process.execPath, [script], { cwd: PROJECT_ROOT, maxBuffer: 4 * 1024 * 1024 });
@@ -474,7 +401,12 @@ async function knowledgeBase(args) {
     const results = [];
     for (const id of ids) {
       if (PUBLIC_KB_CATALOG[id]) results.push(await validatePublicKnowledgeBase(id));
-      else results.push(await validateGeneratedModel(dirname(resolve(PROJECT_ROOT, KB_CATALOG[id].model))));
+      else {
+        const manifest = KB_CATALOG[id]
+          ? resolve(PROJECT_ROOT, KB_CATALOG[id].model)
+          : resolve(dirname(KB_CATALOG_PATH), registered.get(id).manifestPath);
+        results.push(await validateGeneratedModel(dirname(manifest)));
+      }
     }
     printJson(results);
     return;
@@ -532,8 +464,8 @@ async function docs(args) {
   throw new Error('Unknown docs action.');
 }
 
-async function main() {
-  const { positional, options } = parseArgs(process.argv.slice(2));
+async function dispatch(arguments_) {
+  const { positional, options } = parseArgs(arguments_);
   const [command, ...args] = positional;
   if (!command || command === 'chat') return chat(options);
   if (['help', '-h'].includes(command) || options.help) return help();
@@ -542,14 +474,26 @@ async function main() {
   if (command === 'train') return train(args, options);
   if (command === 'dataset') return dataset(args, options);
   if (command === 'corpus') return corpus(args, options);
-  if (command === 'kb') return knowledgeBase(args);
+  if (command === 'kb') return knowledgeBase(args, options);
   if (command === 'evaluate') return evaluateCommand(options);
   if (command === 'benchmark') return benchmark(args, options);
   if (command === 'docs') return docs(args);
   throw new Error(`Unknown command: ${command}`);
 }
 
-main().catch((error) => {
-  process.stderr.write(`eslm: ${error.message}\n`);
-  process.exitCode = 1;
-});
+export async function main(arguments_ = process.argv.slice(2), io = {}) {
+  const previousWriter = writeOutput;
+  writeOutput = io.write ?? previousWriter;
+  try {
+    return await dispatch(arguments_);
+  } finally {
+    writeOutput = previousWriter;
+  }
+}
+
+if (process.argv[1] && import.meta.url === new URL(`file://${resolve(process.argv[1])}`).href) {
+  main().catch((error) => {
+    process.stderr.write(`eslm: ${error.message}\n`);
+    process.exitCode = 1;
+  });
+}

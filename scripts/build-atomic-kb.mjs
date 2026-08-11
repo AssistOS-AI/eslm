@@ -24,8 +24,8 @@ function bucket(value) {
   return createHash('sha256').update(value).digest('hex')[0];
 }
 
-function moduleSource(value) {
-  return `export default Object.freeze(${JSON.stringify(value)});\n`;
+function dataSource(value) {
+  return `${JSON.stringify(value)}\n`;
 }
 
 async function streamEntry(archive, entry, onLine) {
@@ -49,7 +49,7 @@ async function streamEntry(archive, entry, onLine) {
 }
 
 const archive = resolve(option('--archive', join(root, 'training/.cache/corpora/atomic-2020/atomic2020_data-feb2021.zip')));
-const output = resolve(option('--output', join(root, 'training/KBs/atomic-2020/model')));
+const output = resolve(option('--output', join(root, 'training/KBs/atomic-2020/package')));
 const started = process.hrtime.bigint();
 const startMemory = process.memoryUsage();
 const archiveBytes = await readFile(archive);
@@ -85,12 +85,12 @@ await streamEntry(archive, 'atomic2020_data-feb2021/train.tsv', (line, lineNumbe
 
 await mkdir(join(output, 'events'), { recursive: true });
 for (const [key, values] of Object.entries(shards)) {
-  await writeFile(join(output, 'events', `${key}.mjs`), moduleSource(values), 'utf8');
+  await writeFile(join(output, 'events', `${key}.json`), dataSource(values), 'utf8');
 }
-const imports = Object.keys(shards).map((key) => `import e${key} from './events/${key}.mjs';`);
-const names = Object.keys(shards).map((key) => `e${key}`).join(', ');
 const manifest = {
-  format: 'eslm-public-kb-v1', id: 'atomic-2020', title: 'ATOMIC 2020', version: 'February 2021',
+  manifestType: 'knowledgeBasePackage', format: 'eslm-kb-package-v1', schemaVersion: '1',
+  kbId: 'atomic-2020', kbVersion: '2020.2', namespace: 'atomic-2020',
+  id: 'atomic-2020', title: 'ATOMIC 2020', version: 'February 2021',
   kind: 'defeasible-event-commonsense', generatedBy: 'coding-agent+deterministic-node-compiler',
   sourceArchive: basename(archive), sourceDigest: digest(archiveBytes), sourceSplit: 'train.tsv',
   license: 'CC BY; retain ATOMIC 2020 paper and dataset attribution', trainOnly: true,
@@ -103,19 +103,28 @@ const manifest = {
   relations: relationRetainedCounts,
   capabilities: ['intent', 'precondition', 'effect', 'reaction', 'desire', 'event-order', 'defeasible-cause'],
   limitations: ['answers are plausible candidates, not certain facts', 'event matching is lexical and bounded', 'dev/test tuples are not compiled'],
+  provider: 'atomic-compact-source-v1',
+  shardDirectoryRef: 'shards.json',
+  canonicalSource: { checksum: `sha256:${digest(archiveBytes)}`, recordCount: retainedRows },
 };
-await writeFile(join(output, 'manifest.mjs'), [
-  ...imports, '',
-  `export const manifest = Object.freeze(${JSON.stringify(manifest, null, 2)});`,
-  `export const data = Object.freeze({ events: Object.freeze(Object.assign({}, ${names})) });`,
-  'export default Object.freeze({ manifest, data });', '',
-].join('\n'), 'utf8');
+const shardDirectory = Object.keys(shards).map((key) => ({
+  shardId: `events-${key}`, shardKind: 'sourceEventIndex', accessPath: 'normalized-event-hash',
+  dataRef: `events/${key}.json`, recordCount: Object.keys(shards[key]).length,
+}));
+for (const shard of shardDirectory) {
+  const bytes = await readFile(join(output, shard.dataRef));
+  shard.compressedBytes = bytes.length;
+  shard.checksum = `sha256:${digest(bytes)}`;
+  shard.dependencies = [];
+}
+await writeFile(join(output, 'shards.json'), `${JSON.stringify(shardDirectory, null, 2)}\n`, 'utf8');
+await writeFile(join(output, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
 const elapsedMilliseconds = Number(process.hrtime.bigint() - started) / 1e6;
-const outputFiles = [...Object.keys(shards).map((key) => join(output, 'events', `${key}.mjs`)), join(output, 'manifest.mjs')];
+const outputFiles = [...Object.keys(shards).map((key) => join(output, 'events', `${key}.json`)), join(output, 'shards.json'), join(output, 'manifest.json')];
 let generatedBytes = 0;
 for (const file of outputFiles) generatedBytes += (await stat(file)).size;
 const report = {
-  format: 'eslm-kb-build-report-v1', dataset: 'atomic-2020', status: 'complete', manifest,
+  format: 'eslm-kb-build-report-v2', dataset: 'atomic-2020', status: 'compiled-source-profile', manifest,
   source: { archive: relative(root, archive), bytes: archiveBytes.length, split: 'train.tsv' },
   generated: { directory: relative(root, output), files: outputFiles.length, bytes: generatedBytes },
   profile: {

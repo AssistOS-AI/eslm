@@ -1,2 +1,3 @@
-{"type":"entity","id":"unit-entity","names":["Unit Entity"],"kind":"test"}
-{"type":"fact","subject":"unit-entity","predicate":"has_property","value":"tested","source":"unit:1"}
+{"type":"source","id":"source:test:fixture","uri":"packet:document:test:1","mediaType":"text/plain","language":"en","license":"MIT repository fixture","sha256":"9f1f1f9119a893632e1d1982670fc7df06a648e1fa08a56e5e52bb5502b166e2"}
+{"type":"document","id":"document:test:1","text":"Astra is a planet.","sourceId":"source:test:fixture"}
+{"type":"benchmarkCase","id":"case:test:1","text":"What is Astra?","expectedPolicy":"development-visible"}

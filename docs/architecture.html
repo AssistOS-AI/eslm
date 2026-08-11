@@ -1,96 +1,41 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ESLM Documentation — Architecture</title>
-  <link rel="stylesheet" href="assets/site.css">
-  <script type="module" src="assets/mermaid-loader.mjs"></script>
-  <script src="partials-loader.js" defer></script>
-</head>
-<body>
-  <div data-include="partials/header.html"></div>
-  <main>
-    <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Architecture</p>
-    <h1>Runtime and model architecture</h1>
-    <p class="lead">The architecture separates transferable algorithms in <code>src/</code> from corpus-conditioned executable data. The promoted bAbI-derived core lives in <code>training/model/</code>; independently loadable QUICK, WordNet, and ATOMIC modules live below <code>training/KBs/</code>. This boundary lets a coding agent change learned knowledge while preserving the reviewed language and inference engine.</p>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Architecture and runtime — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Architecture and runtime</p><h1>Trusted runtime, declarative knowledge, explicit planning, and evidence-bearing results</h1>
+<p class="lead">The architecture is built around authority boundaries. Trusted source code defines schemas, parsers, planners, inference operators, caches, and validators. Knowledge packages contribute only validated data. Training agents propose candidates outside the deployed runtime. Every transition between these regions has an explicit format and validation gate.</p>
 
-    <h2>Language compilation</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Input text] --> B[Normalizer]
-  B --> C[Tokens]
-  B --> D[Corrections]
-  C --> E{Parser match?}
-  E -->|yes| F[Query contract]
-  E -->|no| G[Diagnostic]</pre><figcaption>Language compilation separates correction evidence from tokens and branches explicitly when no supported construction matches.</figcaption></figure>
-    <p><strong>Purpose.</strong> This diagram isolates the part that interprets language. The normalizer produces tokens and correction records. The parser matches supported English constructions and resolves their slots. The query contract is a structured object consumed by the reasoner; it contains no executable source from the user.</p>
-    <p>The relevant modules are <code>language.mjs</code>, <code>parser.mjs</code>, and the orchestration in <code>engine.mjs</code>. A failure here is reported as unsupported or ambiguous before knowledge execution starts.</p>
-    <table><thead><tr><th>Function</th><th>Receives</th><th>Returns</th></tr></thead><tbody>
-      <tr><td><code>normalizeInput</code></td><td>raw text and loaded model</td><td>tokens, normalized text, corrections, and <code>language: "en"</code></td></tr>
-      <tr><td><code>parseQuestion</code></td><td>normalized input, model, and context</td><td>typed query or an unsupported/ambiguous diagnostic</td></tr>
-      <tr><td>entity resolution</td><td>construction slot and model aliases</td><td>one entity ID, ambiguity candidates, or a missing phrase</td></tr>
-    </tbody></table>
+<h2>Repository and execution layers</h2>
+<p>The command layer parses operator intent and creates a configured runtime. The language layer converts utterances into symbolic queries and session assertions. The KB layer validates canonical records, compiles deterministic shards, opens manifests, routes queries, and projects declarative records into the indexes consumed by reasoning. The reasoning layer registers capabilities, constructs plans, performs bounded inference, and emits proof or gap evidence. The training layer prepares isolated workspaces and invokes Codex only when explicitly requested by a training command.</p>
+<p>These layers are not interchangeable. The CLI may select a KB, but it cannot bypass package validation. A KB may contain rules, but it cannot introduce an inference operator. A training skill may propose a generic-core change, but it cannot promote or execute that change. A reasoning method may request indexed data, but it must obey the configured cache and shard budget.</p>
 
-    <h2>Knowledge execution</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Query contract] --> B[Subject posting]
-  A --> C[Predicate posting]
-  A --> D[Object posting]
-  B --> E[Intersection]
-  C --> E
-  D --> E
-  E --> F{Fact found?}
-  F -->|yes| G[Values and proof]
-  F -->|no| H[Bounded rules]</pre><figcaption>Each bound query field selects its own posting; their intersection either provides a fact or hands the query to bounded derivation.</figcaption></figure>
-    <p><strong>Purpose.</strong> This diagram shows the reasoning boundary. Subject, predicate, and object postings narrow candidate facts. The rule engine derives additional facts by unification. The output preserves direct sources, rule ID, and supporting fact IDs.</p>
-    <p><code>reasoner.mjs</code> builds indexes over direct and derived facts. Duplicate signatures and the maximum round count bound closure. The engine never treats a missing proof as false.</p>
-    <p>At engine construction, <code>deriveClosure(model)</code> starts with direct facts and applies each rule for at most eight rounds. <code>indexFacts(facts)</code> then builds maps by subject, predicate, and object/value. With <code>--kb space-geography</code>, “Where is Neptune?” intersects the <code>neptune</code> subject posting with the <code>located_in</code> predicate posting and returns the direct Solar System fact. With <code>--kb child-basic</code>, the Jhon mortality query instead reaches a fact derived through three rules.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  I[Input] --> L[Language and task]
+  L --> P[Plan and reasoning]
+  K[Validated KB] --> P
+  P --> R[Structured result]</pre><figcaption>Input becomes a task before reasoning begins. A validated KB contributes data to the selected plan, and the final result records both the reasoning evidence and any unresolved work.</figcaption></figure>
 
-    <h2>Response construction</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Semantic values] --> B{Evidence exists?}
-  B -->|yes| C[English realizer]
-  B -->|no| D[Epistemic response]
-  C --> E[Answer text]
-  C --> F[JSON values and proof]
-  D --> G[UNKNOWN status]</pre><figcaption>Response construction separates supported realization from epistemic abstention and emits text plus structured evidence in parallel.</figcaption></figure>
-    <p><strong>Purpose.</strong> This diagram shows that wording follows verification. <code>realizer.mjs</code> selects an English sentence form and model display names. <code>engine.mjs</code> returns that sentence together with status, semantic values, normalization details, query, provenance, conversation context, and explicit active-model/KB comparability metadata.</p>
+<h2>Generic core versus knowledge packages</h2>
+<p>The generic core contains domain-independent operations: token normalization, construction matching, variable binding, task construction, capability selection, safe Horn unification, proof assembly, provenance traversal, context checks, trust policies, result realization, and bounded storage. It can know what an assertion is and how a rule is executed. It must not know that penguins swim, what “dog” means in a particular lexical resource, or which commonsense consequences accompany apologizing.</p>
+<p>A KB package contains terms, lexical forms, assertions, rules, contexts, provenance, mappings, and source-oriented indexes. Its manifest identifies the package, schema, version, compiler, source hash, record counts, shards, and shard hashes. Because package content is declarative, loading it does not grant it filesystem, process, import, or network authority. Provider-specific compact formats such as the current Open English WordNet and ATOMIC packages remain data and are accessed by trusted adapters.</p>
 
-    <h2>Stable core and generated model</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart LR
-  A[src algorithms] --> C[Engine instance]
-  B[Promoted benchmark model] --> C
-  K{KB selection} -->|none| C
-  K -->|one or more| M[Validated merged graph]
-  M --> C
-  C --> D[Deterministic inference]
-  C --> E[Model + KB metadata]</pre><figcaption>The engine always has one promoted base model; optional KB selection creates a validated merged graph and records that experimental condition.</figcaption></figure>
-    <p><strong>Purpose.</strong> This diagram defines ownership and configuration. Stable algorithms implement normalization, parsing, indexing, rules, tracing, and realization. The promoted generated model provides corpus-conditioned constructions. Optional KB modules add persistent entities, facts, and rules. The manifest remains the entry point for each artifact, while <code>mergeModels</code> constructs and validates the selected active view.</p>
-    <table><thead><tr><th>Generated module</th><th>Runtime use</th></tr></thead><tbody>
-      <tr><td><code>manifest.mjs</code></td><td>loads the complete model and declares format and evidence regime</td></tr>
-      <tr><td><code>entities.mjs</code></td><td>resolves aliases and selects English display names</td></tr>
-      <tr><td><code>facts.mjs</code></td><td>provides direct claims with source provenance</td></tr>
-      <tr><td><code>rules.mjs</code></td><td>provides bounded triple premises and conclusions</td></tr>
-      <tr><td><code>language.mjs</code></td><td>provides accepted English variants and declared constructions</td></tr>
-      <tr><td><code>indexes.mjs</code></td><td>stores generated direct-fact postings checked by validation</td></tr>
-    </tbody></table>
-    <p>QUICK and its three components use the seven-module graph contract shown in the table. QUICK is an explicit test/tutorial fixture and is not part of the interactive default. WordNet and ATOMIC deliberately do not force their data through that graph: WordNet uses lemma-to-many-synset postings plus hypernym adjacency, while ATOMIC uses normalized-event postings grouped by relation. With ample memory their manifests assemble every shard. With an explicit smaller target, the same providers read only fixed compiler-generated shard envelopes through bounded caches. <code>runtime.mjs</code> awaits those providers before delegating other constructions to the graph engine. Every response records selected KBs, disables clean benchmark comparability, and reports the effective memory plan.</p>
+<h2>Task planning and method selection</h2>
+<p>A capability descriptor states the goal kinds it can address, required input forms, preconditions, cost information, output form, and verification obligations. The planner matches a task frame to these descriptors and produces steps such as observing relevant shards, deriving a result, verifying the derivation graph, and constructing the requested output. A plan is therefore reviewable before and after execution.</p>
+<p>The Stage A planner prefers indexed retrieval for direct facts and safe Horn deduction for compositional queries. Induction and abduction have descriptors because the architecture distinguishes them, but using them requires the appropriate premises, controls, and result labels. An unsupported goal produces a structured gap. The planner must not quietly fall back to a plausible string completion.</p>
 
-    <h2>Candidate trust boundary</h2>
-    <figure class="diagram"><pre class="mermaid">flowchart TD
-  A[Generated candidate] --> B{Policy scan}
-  B -->|fail| C[Reject code]
-  B -->|pass| D{Model invariants}
-  D -->|fail| E[Return diagnostics]
-  D -->|pass| F[Human review]
-  F --> G[Promoted model]</pre><figcaption>The trust boundary has two machine rejection points before a candidate can reach human review and promotion.</figcaption></figure>
-    <p><strong>Purpose.</strong> Generated JavaScript is treated as untrusted until validation. The static scan rejects ambient capabilities such as networking, child processes, dynamic code compilation, and corpus-selected imports. Semantic validation checks the format, entity references, fact shape, provenance, rules, and generated indexes. Human review remains required before promotion.</p>
-    <p><code>validateGeneratedModel</code> reads every candidate <code>.mjs</code> source and applies the forbidden-pattern policy. It then imports only <code>manifest.mjs</code> and calls <code>validateModel</code>. The validator recomputes subject, predicate, and object postings from <code>facts.mjs</code> and compares them with <code>indexes.mjs</code>. A stale position fails validation.</p>
+<h2>Reasoning and proof evidence</h2>
+<p>Retrieval returns the record identity and provenance that directly support a value. Deduction recursively satisfies rule premises, maintains substitutions, prevents unsafe variable escape, and records rule depth. A derived value cites the rule and the supporting facts or subproofs. Negative conclusions require explicit negative evidence or a declared closed-world policy; absence alone is not ordinary proof of falsehood.</p>
+<p>Inductive conclusions are hypotheses supported by observations and must be labeled as learned, scoped, and defeasible. Abductive conclusions are explanatory candidates and must not be represented as established facts. This distinction survives realization so a human answer cannot conceal the epistemic status of its underlying result.</p>
 
-    <h2>Scaling boundary</h2>
-    <p>The v1 fact/rule engine still builds complete bounded closure and posting lists in memory, requires aliases to resolve uniquely, validates whole indexes, and rebuilds closure for session overlays. Public source providers avoid the alias restriction and now support eager or query-selected residency. The lazy path validates a restricted generated JSON envelope instead of dynamically importing shards, because Node retains ESM modules and would make application-level eviction ineffective.</p>
-    <p>The <a href="scalability.html">Scale and Context review</a> records measured WordNet and ATOMIC costs and the adaptive solution. This closes the immediate runtime-residency gate. ConceptNet and GeoNames still require streaming source adapters, compact relation dictionaries, source-specific probes, scope-aware shards, and bounded reasoning; lazy loading alone is not permission to ingest them.</p>
-    <p class="related"><strong>Continue with:</strong> <a href="scalability.html">Scale and Context</a> for the architecture gate, <a href="model.html">Generated Model</a> for every current v1 module, <a href="reasoning.html">Reasoning Trace</a> for one derivation, and <a href="cli.html">CLI Tutorial</a> to run the paths. Authoritative contracts are <a href="specsLoader.html?spec=DS003-system-architecture.md">DS003</a>, <a href="specsLoader.html?spec=DS005-code-model-and-indexes.md">DS005</a>, <a href="specsLoader.html?spec=DS008-runtime-query-pipeline.md">DS008</a>, and <a href="specsLoader.html?spec=DS019-scalability-profiling-and-contextual-worlds.md">DS019</a>.</p>
-  </main>
-</body>
-</html>
+<h2>Memory, routing, and caches</h2>
+<p>Small packages may be loaded eagerly. Large packages use manifest metadata and query-derived routing keys to select only relevant shards. The cache has an explicit memory policy, reserve, byte target, and eviction behavior. Cache occupancy and loaded-provider information are exposed in runtime metadata. A soft memory target is not advertised as a hard operating-system guarantee.</p>
+<p>Routing is part of correctness. If a key cannot map conservatively to all potentially relevant shards, the loader must broaden the selection or report the limitation; it must not omit evidence merely to remain fast. Paths from manifests are resolved against an allowlisted package root, and hashes are checked before records are trusted. No package field becomes an import specifier.</p>
+
+<h2>The result protocol</h2>
+<p><code>eslm-runtime-result-v1</code> reports the original and normalized input, parsed query, task frame, selected plan, status, answer, semantic values, provenance, reasoning method and depth, session context, language route, used KB versions, unresolved subgoals, and memory policy. <code>SOLVED</code> means the requested contract was met. <code>UNPARSED</code> means the language or task could not be compiled. Other detailed internal statuses and gaps distinguish missing knowledge, capability, trust, or resources.</p>
+<p>A textual answer is only one view of this object. Evaluation scores semantic fields and diagnostics, not terminal decoration. Batch mode writes one structured result per input. Interactive mode maintains session context but uses the same engine and result protocol.</p>
+
+<h2>Security and determinism</h2>
+<p>The runtime has no dependency on Codex, an LLM service, or network data. It does not execute strings from documents, benchmarks, manifests, or shards. Canonical validation rejects unknown record types, invalid identifiers, dangling references, unsafe rules, missing provenance, and malformed contexts. Compilation sorts records and writes stable JSON so equal inputs and compiler versions produce equal content hashes.</p>
+<p>Determinism includes failure behavior: the same package set, task, runtime version, budgets, and session state must produce the same plan choice and semantic result. Timestamps belong in build or execution receipts where they describe an event; they do not participate in canonical shard identity.</p>
+
+<h2>Reviewer trace</h2>
+<p>For a runtime change, begin at the task contract, identify the owning layer, follow all data crossing into that layer, and verify both successful and failing paths. For a package change, compare source and packet hashes, canonical record validation, compiled manifest and shard hashes, query routing, proof provenance, negative controls, and regression results. For a new method, inspect its descriptor, applicability checks, bounded execution, proof obligations, failure form, and domain-independence. The exact contracts are maintained in <a href="specsLoader.html?spec=DS002-architecture-and-core-kb-boundary.md">DS002</a>, <a href="specsLoader.html?spec=DS006-kb-packages-catalog-routing-and-cache.md">DS006</a>, and <a href="specsLoader.html?spec=DS008-task-planning-methods-and-results.md">DS008</a>.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

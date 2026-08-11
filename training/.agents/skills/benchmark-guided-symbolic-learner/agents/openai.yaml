@@ -1,0 +1,4 @@
+interface:
+  display_name: Benchmark-Guided Symbolic Learner
+  short_description: Diagnose trace clusters and gate reusable KB or core improvements.
+  default_prompt: Validate the assignment, establish a baseline, classify failures, propose one KB-or-core hypothesis, challenge it on fresh and metamorphic evidence, and write a research note.
