@@ -1,0 +1,18 @@
+{
+  "protocol": "slr-bench-development-failure-clusters-v1",
+  "sourceSplit": "official-validation",
+  "tested": 200,
+  "failures": 74,
+  "statusCounts": { "UNKNOWN": 10, "RESOURCE_LIMIT": 64 },
+  "clusters": [
+    { "cluster": "outside-finite-conjunctive-language", "evidence": "The 45 extended-reference rows use overlapping combinations of universal quantification, collection, negation, inequality, disjunction, counting, extrema, or arithmetic. The current candidate nevertheless finds a validation-exact conjunctive separator for 12 of them; that does not claim recovery of the reference construction." },
+    { "cluster": "bounded-conjunctive-search", "evidence": "Forty-one of 155 plain-conjunction reference rows do not finish with a validation-exact rule under the declared eight-literal, six-variable, 25,000-candidate, and 250,000-match-step policy. They remain in the denominator and return UNKNOWN or RESOURCE_LIMIT rather than being discarded." }
+  ],
+  "sourceVisibleRuleInventory": {
+    "train": { "rows": 18053, "plainConjunction": 13575, "extended": 4478, "selfRecursiveTargets": 0, "forall": 1422, "findall": 1195, "negation": 407, "inequality": 1825, "arithmetic": 1428, "disjunction": 1703, "extremum": 117 },
+    "validation": { "rows": 200, "plainConjunction": 155, "extended": 45, "selfRecursiveTargets": 0, "forall": 15, "findall": 11, "negation": 4, "inequality": 18, "arithmetic": 13, "disjunction": 20, "extremum": 2 },
+    "countsOverlap": "Operator-family counts overlap because one rule may use several constructions."
+  },
+  "freshCasesInspected": 0,
+  "copiedFailureRows": 0
+}

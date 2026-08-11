@@ -1,0 +1,40 @@
+{
+  "format": "eslm-logicbench-fresh-aggregate-v1",
+  "protocol": "logicbench-pinned-fresh-aggregate-v1",
+  "executedAt": "2026-08-11T12:56:29.046Z",
+  "sourceSetSha256": "88c20f31a1c56ffc00a68aa2cf42a8a52f2547dcfee223be8e20a1cd022be078",
+  "dependencySetSha256": "8a4893516e5ddd8752a395ee1eeb2750a164a396c5efed490837c53db0786d24",
+  "tested": 2020,
+  "available": 2020,
+  "correct": 217,
+  "accuracy": 0.10742574257425742,
+  "codingAgentInvocations": 0,
+  "modes": {
+    "BQA": {
+      "tested": 1520,
+      "correct": 204,
+      "accuracy": 0.13421052631578947,
+      "statuses": { "SOLVED": 300, "UNPARSED": 1220 },
+      "families": {
+        "first_order_logic": { "tested": 520, "correct": 107 },
+        "non_monotonic_logic": { "tested": 440, "correct": 34 },
+        "propositional_logic": { "tested": 560, "correct": 63 }
+      }
+    },
+    "MCQA": {
+      "tested": 500,
+      "correct": 13,
+      "accuracy": 0.026,
+      "statuses": { "SOLVED": 15, "UNPARSED": 415, "UNKNOWN": 62, "UNDERDETERMINED": 8 },
+      "families": {
+        "first_order_logic": { "tested": 180, "correct": 1 },
+        "non_monotonic_logic": { "tested": 160, "correct": 10 },
+        "propositional_logic": { "tested": 160, "correct": 2 }
+      },
+      "malformedSourceCases": 1
+    }
+  },
+  "disclosure": "Only aggregate and bounded family counts were retained. Protected questions, choices, answers, and per-item outcomes are absent from this receipt.",
+  "claim": "This is the first one-shot fresh ESLM protocol result for the pinned source and frozen candidate. It is not the official LogicBench model-prompt protocol or an official leaderboard score.",
+  "diagnosisBoundary": "No fresh item or failure text was inspected. The aggregates show that the development adapter did not generalize to most evaluation surfaces, especially MCQA, but they cannot authorize item-specific repair. Any later change begins a new experiment and requires a new untouched pool."
+}

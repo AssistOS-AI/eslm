@@ -1,0 +1,19 @@
+{
+  "format": "eslm-source-manifest-v1",
+  "sourceId": "clutrr-official-relation-algebra-d045fae",
+  "sourceVersion": "d045fae289d3746503677ceed7631c999202501e",
+  "sourceUri": "https://github.com/facebookresearch/clutrr",
+  "license": "CC BY-NC 4.0",
+  "intendedUse": "Non-commercial research and evaluation under the upstream license.",
+  "redistribution": "This package contains only reviewed declarative metadata; cached source datasets remain ignored and are not redistributed.",
+  "artifacts": [
+    {
+      "path": "clutrr/store/relations_store.yaml",
+      "sha256": "c2b9e2723aea7007abb7418e97f294fa696a75c0466d0195c21d78c96c33363d"
+    },
+    {
+      "path": "clutrr/store/rules_store.yaml",
+      "sha256": "122b57241d1cba17e6def0c246007e3e6a9b3c8c654290fecaca3e1fde5bf14a"
+    }
+  ]
+}

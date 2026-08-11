@@ -1,0 +1,16 @@
+{
+  "format": "eslm-benchmark-core-change-decision-v1",
+  "benchmark": "ReClor",
+  "decision": "no-generic-core-promotion",
+  "researchCandidateFiles": ["src/reasoning/categorical-argument-validation.mjs", "src/benchmark-adapters/categorical-argument-projection.mjs"],
+  "registeredCoreFilesChanged": [],
+  "reason": "A bounded proof-producing categorical candidate validator was implemented and challenged, but zero complete ReClor training or validation records satisfy its strict projection preconditions. Core Guardian therefore rejects registry and engine promotion; the module remains an unregistered adapter-called research candidate.",
+  "controlsExecuted": [
+    "complete entity and predicate renaming with nonce vocabulary",
+    "answer-candidate permutation with oracle meaning preserved by candidate identity",
+    "meaning-changing premise contrast",
+    "label replacement leaves the visible task byte-for-byte unchanged"
+  ],
+  "protectedEvidenceOpened": false,
+  "nextAdmissibleEvidence": "Add independently specified conditional, relational, ordering, cardinality, and argument-role projections without dropping clauses, then require at least two complete source cases with independently verified witnesses before reconsidering registration."
+}

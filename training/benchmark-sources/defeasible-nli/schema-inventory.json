@@ -1,0 +1,46 @@
+{
+  "format": "eslm-defeasible-nli-schema-inventory-v1",
+  "sourceSetSha256": "0a3258f0221ef2fbfdedb2dd0466220ab8ca6e9bd3bc981b25191b126c3c97bd",
+  "sharedFields": [
+    "DataSource",
+    "AssignmentIdAnon",
+    "WorkerIdAnon",
+    "Hypothesis",
+    "Update",
+    "UpdateType",
+    "UpdateTypeImpossible",
+    "UpdateTypeImpossibleReason"
+  ],
+  "familyFields": {
+    "atomic": ["Premise", "AtomicEventId", "AtomicEventRelationId", "AtomicInference", "AtomicRelationType"],
+    "snli": ["Premise", "SNLIPairId"],
+    "social": ["SocialChemSituationUID", "SocialChemSituation", "SocialChemROT", "UpdateTypeOption"]
+  },
+  "files": [
+    {"family":"atomic","split":"train","rows":39036,"eligible":35002,"impossible":4034,"bytes":18784118,"sha256":"d47f4852b634d3212c9beb442d9ba7f5348256b972aa662eede0e8b8fc98344e"},
+    {"family":"atomic","split":"dev","rows":4310,"eligible":3840,"impossible":470,"bytes":2067733,"sha256":"eabae7870c588d070ac7e4177ec9062dcf74da25a21afd063cdd2e8d046b1bfc"},
+    {"family":"atomic","split":"test","rows":4654,"eligible":4138,"impossible":516,"bytes":2237197,"sha256":"8315f9e4864c3e191635e96d00d07786dcd0a15aded9a8cdea742bdb53daeca8"},
+    {"family":"snli","split":"train","rows":93860,"eligible":88674,"impossible":5186,"bytes":37467246,"sha256":"aeb3302c9b828b01120bd0c952079c9be9b3aea13e5b4fd68e27335d83c71760"},
+    {"family":"snli","split":"dev","rows":1888,"eligible":1785,"impossible":103,"bytes":765939,"sha256":"34a0be2e4ea4b7533c8e32984c9ead0dcf05962620fceb7b543cfcaa9aee084e"},
+    {"family":"snli","split":"test","rows":1972,"eligible":1837,"impossible":135,"bytes":791612,"sha256":"081d0b7a7a563b15a590fffdc4c0741c956e93c93def0cc77def326603f6904a"},
+    {"family":"social","split":"train","rows":80330,"eligible":77016,"impossible":3314,"bytes":44363770,"sha256":"698347642b50d620ee451c6fe443f7e01731f2ee404ad7c83c2bf4f6e8b792af"},
+    {"family":"social","split":"dev","rows":9810,"eligible":9343,"impossible":467,"bytes":5398034,"sha256":"2dba853f241d0b88b6d30a20dc7e74ffd594e3e086a41c1f60144b1871b8bd47"},
+    {"family":"social","split":"test","rows":9860,"eligible":9439,"impossible":421,"bytes":5431786,"sha256":"312f305e7ccf8df2cdb72ccf85aa23f8c32896f751f3a44ef91c74c98615bcd7"}
+  ],
+  "aggregate": {
+    "train": {"rows":213226,"eligible":200692,"impossible":12534},
+    "dev": {"rows":16008,"eligible":14968,"impossible":1040},
+    "test": {"rows":16486,"eligible":15414,"impossible":1072}
+  },
+  "eligibleDevelopmentLabels": {
+    "atomic": {"strengthener":1937,"weakener":1903},
+    "snli": {"strengthener":903,"weakener":882},
+    "social": {"strengthener":4822,"weakener":4521}
+  },
+  "anomalies": {
+    "snliTrainImpossibleRowsWithNonemptyUpdate": 2,
+    "possibleRowsWithEmptyUpdate": 0,
+    "policy": "All valid source rows remain frozen and counted. Owner-declared impossible rows are excluded only from the experimental scorer, matching the release protocol."
+  },
+  "validation": "Every line in all nine official JSONL files passed a family-specific closed schema and exact file identity check."
+}

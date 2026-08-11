@@ -1,0 +1,10 @@
+{
+  "protocol": "slr-bench-development-cycle-comparison-v1",
+  "baseline": { "tested": 200, "answered": 0, "validationExact": 0, "statusCounts": { "NO_APPLICABLE_METHOD": 200 } },
+  "candidate": { "tested": 200, "solved": 126, "witnessVerified": 126, "validationExact": 126, "statusCounts": { "SOLVED": 126, "UNKNOWN": 10, "RESOURCE_LIMIT": 64 } },
+  "delta": { "solved": 126, "validationExact": 126, "validationAccuracyPoints": 63, "invalidWitnesses": 0 },
+  "decision": "accept-generic-candidate-pending-registry-binding",
+  "freshNotTested": 1000,
+  "languageAgentInvocations": 0,
+  "corpusProgramsExecuted": 0
+}

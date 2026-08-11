@@ -1,0 +1,16 @@
+{
+  "format": "eslm-benchmark-candidate-manifest-v1",
+  "candidate": "proverqa-formula-adapter-predicate-morphology-and-surface-evidence-v2",
+  "scope": "development-only annotation-assisted formula diagnostic",
+  "dependencies": {
+    "src/benchmark-adapters/proverqa.mjs": "1d3058425d770eb2522bdf02c2cd0e89819d815709be3b6a7015146805d928db",
+    "src/benchmark-adapters/folio.mjs": "a2309bd3bebd5d1cc0687e015c76a26ee131a40531e6857c462527d2c89e37c0",
+    "src/reasoning/sat-entailment.mjs": "c570251279d6863300fefaf45e53f326d12ca6a295aeffef8067ebe3d41b14f5",
+    "src/reasoning/finite-entailment.mjs": "7870db5d68c758632347e53dbe52f5aca6b75c9664448033685015334548d91d"
+  },
+  "tests": {
+    "tests/proverqa-adapter.test.mjs": "bdb0cb2fafa2c8003320dd85535822d56e7e73b03db9b58e9d298777f3b7642f"
+  },
+  "freshExecuted": false,
+  "genericCoreChanged": false
+}

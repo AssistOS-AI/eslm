@@ -81,17 +81,17 @@ Queries run against an explicit context stack. The trace records which context s
 
 ### 9. Canonical serialization
 
-Canonical KB records should use a schema-valid, streamable representation. Newline-delimited JSON is acceptable for development and inspection. A CBOR sequence or equivalent typed binary stream is preferable for large canonical packages. The representation must remain declarative, deterministic and independent of runtime memory addresses.
+Canonical KB records use a schema-valid, streamable representation whose decoded records preserve the logical fields
+defined here. The representation must remain declarative, deterministic, and independent of runtime memory addresses.
+DS019 exclusively owns the portable on-disk format, streaming pipeline, and any later profiled encoding change.
 
 The canonical form is not the high-performance query engine. It is the reproducible source from which compiled dictionaries, shards and indexes are built.
 
-### 1. Purpose
-
-This appendix defines the minimum canonical fields required for interoperable KB packages. The notation is illustrative JSON data, not executable JavaScript. Implementations may serialize the same typed records as JSONL, CBOR sequences or another schema-valid stream.
+The following schemas define the minimum canonical fields required for interoperable KB packages. The notation is illustrative JSON data, not executable JavaScript. Implementations may serialize the same typed records as JSONL, CBOR sequences or another schema-valid stream.
 
 Every record contains `recordType`, `recordId`, `kbNamespace`, `schemaVersion` and `provenanceRefs`. Optional fields are omitted only when their meaning is genuinely absent, not when extraction failed silently.
 
-### 2. Term record
+### 10. Term record
 
 ```json
 {
@@ -109,7 +109,7 @@ Every record contains `recordType`, `recordId`, `kbNamespace`, `schemaVersion` a
 
 `termKind` is one of entity, concept, predicate, role, eventType, unit, scalarType, literalType or lexicalSense. A term record defines identity and type. Labels and language forms are stored as lexemes rather than overloaded into identity.
 
-### 3. Lexeme record
+### 11. Lexeme record
 
 ```json
 {
@@ -131,7 +131,7 @@ Every record contains `recordType`, `recordId`, `kbNamespace`, `schemaVersion` a
 
 A lexeme may denote several senses. Ambiguous mappings are represented as several lexeme-sense records or explicit candidate lists with priors. The parser, not the KB compiler, selects a contextually admissible sense.
 
-### 4. Unary and binary assertion records
+### 12. Unary and binary assertion records
 
 ```json
 {
@@ -157,7 +157,7 @@ The `arguments` field supports unary and binary assertions and MAY support direc
 
 `epistemicStatus` is one of asserted, strict, default, likely, possible, unlikely, contradicted or unknown. The allowed status set may be extended only through a schema version and core semantics.
 
-### 5. Event and role records
+### 13. Event and role records
 
 ```json
 {
@@ -189,7 +189,7 @@ The `arguments` field supports unary and binary assertions and MAY support direc
 
 Role edges are independently indexable by event, role and filler. The event record does not contain an opaque argument object that would prevent selective queries.
 
-### 6. Semantic frame record
+### 14. Semantic frame record
 
 ```json
 {
@@ -209,7 +209,7 @@ Role edges are independently indexable by event, role and filler. The event reco
 
 Semantic frames are declarative lexical and ontological data. The generic semantic-composition mechanism that instantiates frames belongs in `src`.
 
-### 7. Rule record
+### 15. Rule record
 
 ```json
 {
@@ -237,7 +237,7 @@ Semantic frames are declarative lexical and ontological data. The generic semant
 
 The rule schema is data. `semantics` selects an interpreter already implemented in `src`, such as strict, default, causal, temporal or constraint. No field may contain executable source text. Variables and operators are validated against the core rule schema.
 
-### 8. Constraint record
+### 16. Constraint record
 
 ```json
 {
@@ -256,7 +256,44 @@ The rule schema is data. `semantics` selects an interpreter already implemented 
 
 Constraint kinds are interpreted by trusted core operators. Unsupported kinds fail validation rather than being evaluated dynamically.
 
-### 9. Context record
+The current compiler implements two additional constraint kinds used to configure an existing generic method without turning policy into code. `property-value-domain` contains a `predicate` string and a non-empty, deterministically sorted `values` array of non-empty strings. It declares the admissible source-local property vocabulary. It does not assert a value for an entity and it does not authorize selection of an evaluation answer.
+
+`induction-policy` contains a `predicate`, `enabled: true`, Boolean `implicitQuestionTrigger`, positive integer `minSupport`, `minCoverage` in `(0, 1]`, and optional `selection` in `all`, `latest-support`, or `latest-member`. The optional selection defaults to `all`. Projection places the policy under the runtime reasoning configuration keyed by predicate. Package merging unions property domains, unions enabled predicate lists, and rejects incompatible policies for the same predicate. Inductive conclusions retain their non-strict status and remain distinguishable from source assertions.
+
+```json
+{
+  "recordType": "constraint",
+  "recordId": "constraint:example:color-induction",
+  "kbNamespace": "example",
+  "schemaVersion": "1",
+  "constraintKind": "induction-policy",
+  "predicate": "color",
+  "enabled": true,
+  "implicitQuestionTrigger": true,
+  "minSupport": 2,
+  "minCoverage": 0.5,
+  "selection": "all",
+  "provenanceRefs": ["prov:source:policy-4"]
+}
+```
+
+Both the repository validator and the portable validator copied into the document-to-KB skill enforce these fields. A candidate that uses an unknown kind, disables a policy while retaining its record, supplies an empty domain, uses an out-of-range threshold, or names an unsupported selection fails before compilation.
+
+The compiler also implements `typed-relation-algebra`. This constraint declares an `algebraId`, a non-empty relation
+inventory, reciprocal inverse classes, and a bounded composition table. Every relation has a stable identifier and a
+semantic class; optional target features refine a semantic class into a surface answer only when the queried endpoint
+has compatible evidence. Every inverse and composition operand must name a declared semantic class, inverse mappings
+must be reciprocal, composition entries must be unique, and result classes must be declared. The record configures the
+trusted relation-algebra executor; it contains no traversal code, benchmark row, person identity, or expected answer.
+
+A provider-specific canonical profile may preserve a richer construction inventory when the generic record vocabulary
+has no lossless representation. Such a profile must remain bounded, schema-validated declarative data and must declare
+its relation direction, polarity, inverse mappings, implications, state changes, comparisons, affordances, and numeric
+semantics explicitly. Its source-specific identity, field inventory, and current package state belong beside the
+provider and in package receipts, not in this logical schema. The profile is not executable content and does not waive
+later migration when generic records gain equivalent meaning.
+
+### 17. Context record
 
 ```json
 {
@@ -273,7 +310,7 @@ Constraint kinds are interpreted by trusted core operators. Unsupported kinds fa
 
 Contexts permit source viewpoints, session facts, counterfactual worlds and version overlays without overwriting baseline records.
 
-### 10. Provenance record
+### 18. Provenance record
 
 ```json
 {
@@ -294,7 +331,7 @@ Contexts permit source viewpoints, session facts, counterfactual worlds and vers
 
 The exact timestamp format follows the project convention. Reproducible identifiers must not depend only on the timestamp.
 
-### 11. Alignment and retraction records
+### 19. Alignment and retraction records
 
 ```json
 {
@@ -325,23 +362,42 @@ The exact timestamp format follows the project convention. Reproducible identifi
 
 Retractions do not erase provenance. They alter record visibility under explicit context and version policies.
 
-### 12. Canonical invariants
+### 20. Canonical invariants
 
 Every referenced term must be declared locally or imported through a manifest dependency. Every rule must be safe under its declared semantics. Every persistent semantic record must have provenance. Confidence must declare a policy. Context and temporal qualifiers must not be encoded inside predicate names. Records must be deterministic, streamable and free of executable payloads.
 
 ## Decisions & Questions
 
-### Question #1: Why separate term identity from labels?
+### Question #1: Why is term identity separate from labels?
 
 Response: Labels are language-specific, ambiguous, and mutable. Namespace-qualified term identity remains stable while lexeme records express language, morphology, frame, and sense alternatives.
 
-### Question #2: Why represent events separately from facts?
+### Question #2: Why are events represented separately from facts?
 
 Response: Event identity permits roles, time, modality, causal links, later reference, and state-transition semantics. Flattening events into opaque triples loses those obligations.
 
-### Question #3: What is authoritative when canonical and compiled forms disagree?
+### Question #3: May a provider-specific canonical ontology remain outside the generic record vocabulary?
 
-Response: Canonical records define meaning. The compiled package is rejected and rebuilt because it is a disposable optimization.
+Response: Relation constructions, argument-order rules, implication templates, and bounded compatibility policies do
+not all have lossless generic record forms in the current compiler. A documented, schema-validated declarative profile
+preserves their meaning without inventing executable KB code or misrepresenting them as ordinary facts. The profile
+remains subject to hashes, budgets, provenance, package validation, and trusted interpretation.
+
+### Question #4: Which generic records should represent richer goals, preconditions, effects, and causal conflicts?
+
+Options:
+
+1. Extend event and role records with typed precondition, effect, goal, and conflict edges. This keeps event identity
+   central but requires explicit scope, priority, and temporal qualification for each edge.
+2. Introduce separate state-transition, goal, causal-support, and contradiction record classes linked to events. This
+   makes reasoning inputs more explicit but enlarges the canonical vocabulary and reference graph.
+3. Retain provider-specific declarative profiles until independent sources demonstrate a stable lossless common model.
+   This avoids premature abstraction but prevents generic packages from exchanging the richer records directly.
+
+Selection requires cross-source mappings, renamed event and participant controls, signed contradiction examples,
+temporal and context qualification, provider-order invariance, and replayable witnesses that distinguish strict,
+default, abductive, and ranked conclusions. Until selection, provider-specific profiles remain declarative and no
+surface frame overlap is promoted as causal or goal evidence.
 
 ## Conclusion
 

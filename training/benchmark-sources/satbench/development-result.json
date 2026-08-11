@@ -1,0 +1,73 @@
+{
+  "format": "eslm-satbench-development-result-v1",
+  "executedAt": "2026-08-11",
+  "evidenceState": "complete-development-visible-evaluation",
+  "benchmark": "SATBench",
+  "track": "source-annotated-formula-symbolic",
+  "source": {
+    "codeRevision": "3c93c5b6ee89c563fff279bdf286845d8b7cbe36",
+    "datasetRevision": "186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9",
+    "datasetSha256": "d32ee8ca8ccee4ee3dcb322e174d4cbe5ffebbd1b76dcdb702d397afd34294b5",
+    "availableOfficialRecords": 2100,
+    "developmentPool": 420,
+    "freshPool": 1680
+  },
+  "partition": {
+    "seed": "eslm-satbench-clause-stratified-partition-v1",
+    "membershipSha256": "c1317f7ca944583464d34f4830a1c840b510d1c506a38531323584c4bbee415f",
+    "policy": "Twenty-eight answer-blind stable-hash members from each of the 15 official num_clauses strata."
+  },
+  "execution": {
+    "tested": 420,
+    "available": 420,
+    "correct": 420,
+    "accuracy": 1,
+    "witnessValid": 420,
+    "directSymbolic": 420,
+    "languageAgentInvocations": 0,
+    "methodId": "method:core:scalable-boolean-entailment",
+    "statusCounts": { "SOLVED": 420 },
+    "witnessKinds": {
+      "satisfying-assignment": 214,
+      "dpll-inconsistency-certificate": 206
+    }
+  },
+  "strata": {
+    "easy-SAT": { "tested": 118, "correct": 118, "accuracy": 1 },
+    "easy-UNSAT": { "tested": 106, "correct": 106, "accuracy": 1 },
+    "medium-SAT": { "tested": 37, "correct": 37, "accuracy": 1 },
+    "medium-UNSAT": { "tested": 47, "correct": 47, "accuracy": 1 },
+    "hard-SAT": { "tested": 59, "correct": 59, "accuracy": 1 },
+    "hard-UNSAT": { "tested": 53, "correct": 53, "accuracy": 1 }
+  },
+  "resourceWitnessMaxima": {
+    "fullVariables": 165,
+    "fullClauses": 393,
+    "queryVariables": 149,
+    "queryClauses": 298,
+    "searchNodes": 5787,
+    "clauseInspections": 4175912,
+    "propagations": 20758,
+    "decisions": 2905,
+    "conflicts": 2881,
+    "maxDepth": 27,
+    "sourcePremises": 50
+  },
+  "adapterSemantics": {
+    "projection": "Each official signed-integer CNF clause becomes an or-formula over generic semantic atoms; all clauses become strict premises.",
+    "decision": "A complete-context model is SAT only after direct validation against every source clause. A complete-context inconsistency is UNSAT only after the independent DPLL certificate verifier accepts it.",
+    "oracle": "The satisfiable Boolean and source sat_reason or unsat_reason remain in a separate host-only object and are joined after the prediction exists.",
+    "sourceAnomalies": "Nine records have a natural-language condition count different from num_clauses. They are retained and do not affect the official clauses projection."
+  },
+  "frozenDependencies": {
+    "node": "v22.23.1",
+    "src/benchmark-adapters/satbench.mjs": "f03235b2f97e8ebf87c6fbbbe1b6601bb30bdbe9582844cbe8ae781a9c939566",
+    "tests/satbench-adapter.test.mjs": "a927c7673d0e1e985d2ab59980a1b8f09065edfe2ed0fe24b4efad465f7a9f4b",
+    "src/reasoning/sat-entailment.mjs": "c570251279d6863300fefaf45e53f326d12ca6a295aeffef8067ebe3d41b14f5",
+    "src/reasoning/finite-entailment.mjs": "7870db5d68c758632347e53dbe52f5aca6b75c9664448033685015334548d91d",
+    "training/benchmark-sources/satbench/source-manifest.json": "2b6dc9cd2fb5f9bb5c6a62e46dd0224771627f6c3f5e0142ad6035d70de855e2",
+    "training/benchmark-sources/satbench/partition-manifest.json": "b5c9005ba10f42818ef8daf65624b4ca5a2b88dbee3b12ce2dc4b0160bac888e",
+    "training/benchmark-sources/satbench/core-reuse-review.json": "1b7c1442e5e26b0b0def726673ae86c27301a5c321527ebd12e85e35c81236e0"
+  },
+  "claimBoundary": "This is a comprehensive execution of the 420 development-visible members on the source-annotated formula track. The authors' official prediction prompt provides scenario, natural-language conditions, and question without the clauses annotation. This receipt is therefore not an official natural-language SATBench score, a leaderboard submission, or evidence of direct parsing of the generated puzzle prose."
+}

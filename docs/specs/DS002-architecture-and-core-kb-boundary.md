@@ -26,15 +26,15 @@ The central question for every learned artifact is not where it is easiest to pu
 
 A new mechanism belongs in `src` when its behavior is independent of the vocabulary and topic of the benchmark. Passive-voice semantic-role inversion, quantifier scope, temporal state supersession, unification, backtracking and proof search are representative examples.
 
-A method implemented in `src` must publish a machine-readable capability descriptor. The descriptor identifies accepted input types, produced output types, preconditions, cost estimates, soundness or completeness properties and the proof artifacts the method can emit. The planner uses these descriptors rather than hard-coded benchmark names.
+DS008 owns the planner-facing capability descriptor and DS015 owns the executable semantics, completeness boundary,
+uncertainty behavior, and witnesses of each method. This specification determines placement in trusted code; it does
+not duplicate either contract.
 
 ### 3. What belongs in a KB
 
-A KB contains declarative knowledge. This includes entities, concepts, types, relations, lexical forms, synonyms, event frames, domain ontologies, assertions, defaults, exceptions, causal tendencies, constraints, domain-specific composition rules and mappings from surface language to existing semantic predicates.
-
-A KB may contain a declarative rule such as a safe Horn clause or a typed default, because the executable semantics of that rule are implemented once by the core. A KB may not contain JavaScript, Java, native code, shell commands, dynamically evaluated expressions or arbitrary callbacks.
-
-A domain-specific workflow may also be represented declaratively as a plan whose steps reference registered methods from `src`. The plan is data. The methods are code. A KB cannot define the implementation of a new method merely by embedding source code.
+A KB contains declarative knowledge whose complete logical record contract is defined by DS005. Its package remains
+inert under DS006. A domain plan may reference registered methods through the DS008 plan contract, but neither a record
+nor a plan can define method implementation or acquire code authority.
 
 ### 4. Decision test
 
@@ -59,9 +59,9 @@ A new CNL form must not be added merely because one source document uses an unus
 
 The runtime may register many KBs. Some KBs are foundational, such as a common ontology, general lexicon or units system. Others are domain-specific, source-specific, project-specific or session-specific.
 
-KB composition is explicit. A KB manifest declares namespaces, dependencies, imported concepts, compatibility requirements and trust metadata. Conflicting assertions are not silently collapsed. They remain attributed to contexts and sources and are resolved by a declared policy or returned as a conflict.
-
-Updates should normally be represented as immutable overlays. An overlay can add, retract, supersede or qualify records from an earlier version without rewriting the complete KB. Periodic compaction may produce a new immutable baseline.
+DS006 exclusively defines manifest dependency resolution, namespace compatibility, immutable overlays, and compaction.
+DS009 defines conflict preservation and trust-policy effects. The architectural requirement here is that composition
+remain explicit and cannot give one KB a private runtime.
 
 ### 7. Promotion from KB to core
 
@@ -77,15 +77,22 @@ The desired long-term shape is a compact, highly tested core; rich but declarati
 
 ### Runtime phase boundaries
 
-The deployed path is language front-end → accepted Semantic IR → task frame → catalog discovery → shard and method planning → bounded execution → proof verification → result realization. Each boundary returns typed data and diagnostics. The runtime does not discover training files, invoke a coding agent, download a source, or execute a KB payload.
-
-Construction workflows register sources, prepare authorized packets, run coding agents, validate canonical records, compile immutable optimizations, evaluate candidates, and publish a new immutable KB version only after review. Evaluation may access a holdout according to its pool contract, but must not expose that evidence to the agent that builds the candidate.
+The deployed path is language front-end → accepted Semantic IR → task frame → catalog discovery → shard and method
+planning → bounded execution → proof verification → result realization. DS003, DS008, DS020, DS015, and DS009 own
+those typed boundaries in order. DS004 owns construction and promotion; DS017 owns evaluation-pool isolation. The
+runtime does not discover training files, invoke a coding agent, download a source, or execute a KB payload.
 
 ### Capability descriptors
 
-Every reusable method must publish a machine-readable descriptor containing stable method identity, accepted semantic input types, output types, preconditions, effects, soundness and completeness scope, supported uncertainty semantics, proof or witness kind, cost estimate, resource behavior, and implementation version. The planner selects capabilities through these descriptors rather than through benchmark IDs or dataset names.
+DS008 defines the machine-readable descriptor consumed by planning. DS015 defines the semantics of every method bound to
+one. Registration is permitted only when executable code and its independent witness tests exist; a descriptor alone
+does not establish a capability.
 
-The initial registry should include direct lookup, safe Horn deduction, graph path search, temporal transition execution, constraint evaluation, default reasoning, abductive candidate generation, and deterministic ranking only when those methods actually exist. A descriptor is not evidence that an implementation exists; registration and tests must reference the executable method.
+### Generality proof for the boundary
+
+The rename test in Section 4 decides architectural placement. DS004 owns promotion evidence, DS015 owns method-level
+generality and falsification tests, and DS017 owns adapter-policy and oracle controls. A failed control keeps the
+artifact in provenance-bearing source policy or an adapter hypothesis rather than trusted generic code.
 
 ## Decisions & Questions
 
@@ -93,11 +100,11 @@ The initial registry should include direct lookup, safe Horn deduction, graph pa
 
 Response: Rename all domain vocabulary and identities. If the artifact remains useful as an algorithm or semantic operation, it is a core candidate. If it states source, domain, lexical, ontological, or workflow knowledge, it belongs in a KB.
 
-### Question #2: Can a KB define a workflow?
+### Question #2: May a KB define a domain workflow?
 
 Response: Yes, as a declarative plan whose steps and type constraints reference registered method IDs. It cannot provide the implementation of those methods.
 
-### Question #3: What happens to legacy code that embeds domain facts?
+### Question #3: How is legacy code that embeds domain facts treated?
 
 Response: It is demoted into canonical KB records and interpreted by a generic mechanism. This reduces the trusted code surface and makes cross-source regression meaningful.
 

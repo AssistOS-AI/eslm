@@ -1,0 +1,27 @@
+{
+  "format": "eslm-logicbench-source-manifest-v1",
+  "source": "https://github.com/Mihir3009/LogicBench",
+  "sourceRevision": "c014153303c98de4d5f09d41c3a235cd869be5c8",
+  "archive": {
+    "path": "training/.cache/benchmarks/logicbench/source/c014153303c98de4d5f09d41c3a235cd869be5c8.tar.gz",
+    "bytes": 584313,
+    "sha256": "11c04b6c09a5b0a60dd73da9c3c356d89d9228b6212cb38f0e61e360a1582de5"
+  },
+  "sourceSetSha256": "88c20f31a1c56ffc00a68aa2cf42a8a52f2547dcfee223be8e20a1cd022be078",
+  "license": "MIT",
+  "development": {
+    "directory": "LogicBench(Aug)",
+    "visibility": "development-visible",
+    "files": 25,
+    "contexts": 3752,
+    "cases": 12908
+  },
+  "fresh": {
+    "directory": "LogicBench(Eval)",
+    "visibilityBeforeFreeze": "schema-and-aggregate-only",
+    "BQA": { "files": 25, "contexts": 500, "cases": 1520 },
+    "MCQA": { "files": 25, "contexts": 500, "cases": 500, "schemaAnomalies": 1 }
+  },
+  "physicalReadPolicy": "The official per-stratum JSON files are source-native shards. They are read and released sequentially; no valid source row is rejected because of file or corpus size.",
+  "freshInspectionBoundary": "Before candidate freeze, evaluation text, choices, answers, and item outcomes were not printed or inspected. Only field shapes, counts, hashes, and the existence of one empty choice were recorded."
+}

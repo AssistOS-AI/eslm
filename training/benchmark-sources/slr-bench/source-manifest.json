@@ -1,0 +1,62 @@
+{
+  "protocol": "slr-bench-official-source-manifest-v1",
+  "benchmarkId": "aiml-tuda-slr-bench-v1-all",
+  "owner": "AIML-TUDA",
+  "officialDataset": {
+    "url": "https://huggingface.co/datasets/AIML-TUDA/SLR-Bench",
+    "revision": "cecc0aa2602943ead28a4ea74c7a8f3c91264cbf",
+    "config": "v1-All",
+    "access": "public-ungated",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "readmeBytes": 27801,
+    "readmeSha256": "9df02605af1b5628aae8d84b5a3482479d72c93f68946e7b81ae721cc9aef964"
+  },
+  "paper": {
+    "title": "SLR: Automated Synthesis for Scalable Logical Reasoning",
+    "url": "https://aclanthology.org/2026.acl-long.16/",
+    "pdfUrl": "https://aclanthology.org/2026.acl-long.16.pdf",
+    "localCache": "training/.cache/benchmarks/slr-bench/paper/2026.acl-long.16.pdf",
+    "bytes": 2406621,
+    "sha256": "879760be80f98f66c31809875a442cd38c5ade31364d6de35c20bd920a84376e"
+  },
+  "rawParquet": {
+    "localRoot": "training/.cache/benchmarks/slr-bench/source/v1-All",
+    "shards": [
+      { "file": "test-00000-of-00001.parquet", "split": "test", "bytes": 12229345, "sha256": "8f19a68e9d84edb9ca3015804e342aa4a0f43c85d13f9b88694adbe2d79f9548" },
+      { "file": "train-00000-of-00003.parquet", "split": "train", "bytes": 6425086, "sha256": "b27b594ad2fbb251c8bd491cb3805ba4ef4ebe570eb03e7337b4911ea771b093" },
+      { "file": "train-00001-of-00003.parquet", "split": "train", "bytes": 52243650, "sha256": "b905e239e054adb65df2178d93537186a0440870451673ceb6ae26170f199149" },
+      { "file": "train-00002-of-00003.parquet", "split": "train", "bytes": 186692632, "sha256": "446cbcd7aae0e844fd1b9f238a7b8cff89379fd396e9ff9f4f89a8ced4bf1449" },
+      { "file": "validation-00000-of-00001.parquet", "split": "validation", "bytes": 2479845, "sha256": "3b60f3f90726a94fa27de66864e848800a24edba3c8ee68ed5bdf69bc6a5e18d" }
+    ],
+    "bytes": 260070558,
+    "verification": "Every local file matches the official Hugging Face LFS object SHA-256 and byte length."
+  },
+  "officialGenerator": {
+    "url": "https://github.com/ml-research/ScalableLogicalReasoning",
+    "revision": "3b46979ccdf9bb1c624809cfc140fe7c5af0f778",
+    "archiveUrl": "https://github.com/ml-research/ScalableLogicalReasoning/archive/3b46979ccdf9bb1c624809cfc140fe7c5af0f778.tar.gz",
+    "localArchive": "training/.cache/benchmarks/slr-bench/generator/3b46979ccdf9bb1c624809cfc140fe7c5af0f778.tar.gz",
+    "archiveBytes": 756896,
+    "archiveSha256": "aae8bf43afa70e578e78248039557a572a1c61161df70581e5b64283f52cfd30",
+    "license": "MIT",
+    "licenseSha256": "efc9d4946ac5766af17002d87267aba8336f8f558ad63410081be5a097a45feb"
+  },
+  "officialSymbolicJudge": {
+    "url": "https://huggingface.co/spaces/AIML-TUDA/VerifiableRewardsForScalableLogicalReasoning",
+    "revision": "79ef0851bd9c52f7a50aebf0f39db924d13840b9",
+    "localGitArchive": "training/.cache/benchmarks/slr-bench/generator/reward-79ef0851bd9c52f7a50aebf0f39db924d13840b9.tar",
+    "archiveBytes": 51200,
+    "archiveSha256": "b9c5b7fc29b009378e3e5f58bf021b1897080d0b73beff02181e333b733358db",
+    "mainSourceSha256": "c725a5a55bd969ee54f149dc94902b7882e56383aa1d049b5977321e2c5d68b4",
+    "licenseEvidence": "The official metric source carries an Apache License 2.0 header."
+  },
+  "completeRetention": {
+    "rows": 19253,
+    "levels": 20,
+    "splits": { "train": 18053, "validation": 200, "test": 1000 },
+    "cachePolicy": "ignored-immutable-source-and-derived-streaming-projection",
+    "unofficialMirrorsUsed": false,
+    "sizeBasedRejections": 0
+  }
+}

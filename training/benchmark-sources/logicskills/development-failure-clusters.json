@@ -1,0 +1,37 @@
+{
+  "format": "eslm-benchmark-failure-clusters-v1",
+  "benchmark": "LogicSkills",
+  "evidenceBoundary": "The complete 1,200-member development partition only. The 300 fresh members and their oracles were not opened.",
+  "availableSourceRows": 1500,
+  "testedDevelopmentRows": 1200,
+  "clusters": [
+    {
+      "stage": "language-semantic-composition",
+      "task": "symbolization",
+      "tested": 480,
+      "solved": 288,
+      "remaining": 192,
+      "cause": "The strict lexicon-driven compiler rejects controlled clauses whose complete quantifier, relative-clause, coordination, or predicate-inflection structure is outside its verified fragment.",
+      "policy": "No opaque clause, unresolved frame, or partially parsed formula is emitted. The denominator retains every valid source row."
+    },
+    {
+      "stage": "reasoning-method-selection",
+      "task": "validity",
+      "tested": 480,
+      "attempted": 0,
+      "correct": null,
+      "cause": "The current registered methods do not prove unrestricted validity for the benchmark's two-variable first-order fragment and the development candidate does not infer an answer from bounded model search.",
+      "policy": "NO_APPLICABLE_METHOD is retained. Absence of a candidate is not reported as zero-percent validity accuracy."
+    },
+    {
+      "stage": "reasoning-execution",
+      "task": "countermodel",
+      "tested": 240,
+      "solved": 240,
+      "remaining": 0,
+      "cause": "No remaining development failure: every result is independently replayed in the returned finite structure."
+    }
+  ],
+  "languageAgentInvocations": 0,
+  "answerMemorizationAudit": "No benchmark identifier, row identifier, source hash, expected formula, validity index, candidate position, or example predicate occurs in the candidate module's control flow."
+}

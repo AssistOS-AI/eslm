@@ -1,0 +1,68 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Declarative finite spatial vector and extent-inequality composition",
+  "benchmark": "Development-visible StepGame and SpaRP property regimes",
+  "decision": "implement-two-generic-typed-methods",
+  "independentExamples": [
+    {
+      "description": "Three nonce objects linked by two declared integer displacement vectors require vector addition and sign classification; an unrelated component must not affect the result.",
+      "expectedBehavior": "Return the declaratively named output class and an ordered replayable edge path."
+    },
+    {
+      "description": "Three renamed extended objects separated along two renamed dimensions require transitive boundary inequalities while overlap on an unmentioned dimension must not fabricate separation.",
+      "expectedBehavior": "Return only relations whose endpoint inequalities have an explicit graph path, with one witness per relation."
+    }
+  ],
+  "inputTypes": [
+    "declarative finite vector-relation system",
+    "typed vector facts and relation query",
+    "declarative finite extent-relation system",
+    "typed multi-relation extent facts and relation query"
+  ],
+  "outputTypes": ["declared semantic relation values", "ordered vector path witness", "inequality path witness per output relation"],
+  "preconditions": [
+    "all dimensions, relation identifiers, vectors, polarities, facts, and endpoints validate",
+    "the task declares exact summation, opposed-step invalidation, or orthogonal-overlap policy explicitly",
+    "facts, entities, dimensions, graph edges, and path depth remain within core per-task bounds"
+  ],
+  "invariants": [
+    "core control flow never branches on benchmark, dataset, row, hash, expected answer, or source relation vocabulary",
+    "inverse vector traversal is derived from declared vectors",
+    "extent output is emitted only when the matching endpoint inequality is reachable",
+    "disconnected distractors cannot enter a query witness",
+    "every solved result is independently replayable from the accepted task"
+  ],
+  "uncertaintySemantics": "Disconnected endpoints are UNKNOWN; insufficient qualitative or extent evidence is UNDERDETERMINED; incompatible constraints are INCONSISTENT_CONTEXT; undeclared output signatures are NO_APPLICABLE_METHOD; bound exhaustion is RESOURCE_LIMIT; malformed tasks are UNPARSED.",
+  "proofBehavior": "Vector results contain the exact ordered edges used to reconstruct the displacement state. Extent results contain one ordered inequality path for every returned relation. Separate verifiers rebuild the accepted task, replay the paths, and reject omitted, duplicated, altered, or unsupported witnesses.",
+  "resourceBounds": {
+    "vector": { "dimensions": 8, "facts": 10000, "entities": 10000, "pathDepth": 64 },
+    "extent": { "dimensions": 4, "facts": 10000, "entities": 10000, "constraintEdges": 100000 },
+    "datasetPolicy": "These are per-example execution bounds. Source adapters stream every source row and never reject a dataset file because of byte size."
+  },
+  "failureStatuses": ["UNPARSED", "UNKNOWN", "UNDERDETERMINED", "INCONSISTENT_CONTEXT", "NO_APPLICABLE_METHOD", "RESOURCE_LIMIT"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "none; vector systems and extent systems are passed as validated declarative task metadata, and no source fact is installed in the generic core",
+  "renameTestPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "forbiddenDispatchAuditPassed": true,
+  "guardianControls": {
+    "entityRenaming": "nonce node identifiers",
+    "predicateRenaming": "nonce relation and dimension identifiers",
+    "valueRenaming": "declarative vectors and polarities map to nonce output values",
+    "ordering": "fact reversal preserves results while query reversal changes direction",
+    "distractors": "disconnected component injected",
+    "negativeControls": "mixed-direction extent chain abstains; incompatible cycles fail; bounded paths do not search past policy"
+  },
+  "forbiddenDispatchAudit": {
+    "benchmarkNamesInCore": 0,
+    "datasetIdsInCore": 0,
+    "recordIdsInCore": 0,
+    "expectedAnswersInCore": 0,
+    "sourceDirectionWordsInCore": 0
+  },
+  "implementationIdentity": {
+    "spatialVectorSha256": "7f0245df63ce73ed215d2b96967e01c5cc9011fe04c870a5542c55c3e26532f2",
+    "spatialExtentSha256": "e8013f51d2ddb01cc6799b496b10ec0cc5da288d60254175e7f274ecf7f947c6"
+  },
+  "remainingGap": "This earlier checkpoint did not cover PS1. The later generic method, complete development evidence, and promoted descriptor are recorded in core-change-proposal-ps1.json and development-result.json."
+}

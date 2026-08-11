@@ -1,0 +1,22 @@
+{
+  "protocol": "blimp-feature-acceptability-fresh-v1",
+  "runPolicy": "single aggregate run after candidate freeze",
+  "membership": "65930206f3cfc9f01582a1aadc53d220ef7e7b98f7e237e67aeef688e0d4851d",
+  "total": 13400,
+  "correct": 11767,
+  "ties": 1227,
+  "reverse": 406,
+  "accuracy": 0.8781343283582089,
+  "agentNormalizations": 0,
+  "lowestStructuralClusters": {
+    "wh_questions_subject_gap_long_distance": { "total": 200, "correct": 68, "ties": 16, "reverse": 116 },
+    "adjunct_island": { "total": 200, "correct": 117, "ties": 47, "reverse": 36 },
+    "animate_subject_trans": { "total": 200, "correct": 130, "ties": 70, "reverse": 0 },
+    "ellipsis_n_bar_1": { "total": 200, "correct": 131, "ties": 62, "reverse": 7 },
+    "irregular_past_participle_verbs": { "total": 200, "correct": 137, "ties": 63, "reverse": 0 },
+    "ellipsis_n_bar_2": { "total": 200, "correct": 140, "ties": 57, "reverse": 3 },
+    "distractor_agreement_relative_clause": { "total": 200, "correct": 144, "ties": 50, "reverse": 6 },
+    "drop_argument": { "total": 200, "correct": 149, "ties": 48, "reverse": 3 }
+  }
+}
+

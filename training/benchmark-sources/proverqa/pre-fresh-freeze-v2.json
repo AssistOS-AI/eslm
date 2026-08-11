@@ -1,0 +1,30 @@
+{
+  "format": "eslm-proverqa-pre-fresh-freeze-v2",
+  "frozenAt": "2026-08-11T22:15:00+03:00",
+  "candidate": "proverqa-formula-adapter-predicate-morphology-and-surface-evidence-v2",
+  "supersedes": "training/benchmark-sources/proverqa/pre-fresh-freeze.json",
+  "abortedAttempt": "training/benchmark-sources/proverqa/fresh-attempt-1-aborted.json",
+  "changeSinceFirstFreeze": "Output-only correction of an undefined aggregate-receipt property shorthand. Semantic task construction, inference, oracle join, scoring, counters, and all development results are unchanged.",
+  "development": {
+    "tested": 300,
+    "correct": 300,
+    "witnessesValid": 300,
+    "receiptSha256": "d296e45055e5baaa32c4b7815d6f46dee59d1d18661e9de0d98f97788408f84f"
+  },
+  "fresh": {
+    "members": 1200,
+    "membershipSha256": "06d3e3a2257edd975e4c49af2b63468c3a6020ee2ca95a5e5ae1c393165b66a1",
+    "visibilityBeforeAggregateRetry": "No semantic or aggregate outcome escaped the aborted attempt.",
+    "permittedOutput": "aggregate and declared difficulty/answer counts only"
+  },
+  "behaviorDependencies": {
+    "src/benchmark-adapters/proverqa.mjs": "1d3058425d770eb2522bdf02c2cd0e89819d815709be3b6a7015146805d928db",
+    "src/benchmark-adapters/folio.mjs": "a2309bd3bebd5d1cc0687e015c76a26ee131a40531e6857c462527d2c89e37c0",
+    "src/reasoning/sat-entailment.mjs": "c570251279d6863300fefaf45e53f326d12ca6a295aeffef8067ebe3d41b14f5",
+    "src/reasoning/finite-entailment.mjs": "7870db5d68c758632347e53dbe52f5aca6b75c9664448033685015334548d91d",
+    "tests/proverqa-adapter.test.mjs": "bdb0cb2fafa2c8003320dd85535822d56e7e73b03db9b58e9d298777f3b7642f",
+    "training/benchmark-sources/proverqa/source-manifest.json": "3e481a163ead897b6a17aac2e531f1e137ae83d3ec03634c8900941fc16c14eb",
+    "training/benchmark-sources/proverqa/partition-manifest.json": "c124c9580bac2cfe3cd8e1ddfef94ce47d610c43c8ba8ec7699b7a9895e5465a"
+  },
+  "postExecutionPolicy": "No behavior dependency may change in response to the aggregate retry. The opened members cannot become a repair list or a later fresh partition."
+}

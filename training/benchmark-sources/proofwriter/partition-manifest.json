@@ -1,0 +1,35 @@
+{
+  "format": "eslm-proofwriter-partition-manifest-v1",
+  "sourceId": "proofwriter-v2020.12.3",
+  "primaryDevelopmentTrack": {
+    "assumption": "OWA",
+    "kind": "main",
+    "variants": ["depth-0", "depth-1", "depth-2", "depth-3", "depth-5"],
+    "rulebases": 6128,
+    "availableQuestions": 50844,
+    "visibility": "development-visible",
+    "oracle": "held by the host scorer and omitted from returned label-free cases"
+  },
+  "developmentSourceFiles": [
+    { "path": "OWA/depth-0/meta-dev.jsonl", "rulebases": 2700, "questions": 10070, "sha256": "1d30894f32e54449e90316e357fa24f77dc02e8627b5d1fd2055ddc7a476d7aa" },
+    { "path": "OWA/depth-1/meta-dev.jsonl", "rulebases": 1318, "questions": 10188, "sha256": "b3783a1e63075f3c4f51f289096d65dcc3e5c956b73c5049c748549c3f3b6cd4" },
+    { "path": "OWA/depth-2/meta-dev.jsonl", "rulebases": 909, "questions": 10094, "sha256": "be0eb087a242c137004ff8744e76c91a29b0052d6899a2eaeac5711427fc0b1e" },
+    { "path": "OWA/depth-3/meta-dev.jsonl", "rulebases": 719, "questions": 10302, "sha256": "37954755dd4048a38f242cad183f32668e11ed1d69bff4aedbb9fad1dd9eca46" },
+    { "path": "OWA/depth-5/meta-dev.jsonl", "rulebases": 482, "questions": 10190, "sha256": "1a2e13c9e57c535da46c22622cc46185fd1a13ce49522660eda1eed38509db98" }
+  ],
+  "samplePolicy": {
+    "protocol": "proofwriter-owa-main-depth-stratified-development-v1",
+    "strata": "official maximum-depth variant crossed with the development-visible true, false, and Unknown answer",
+    "selection": "twenty smallest SHA-256 keys per stratum under proofwriter-development-v1",
+    "tested": 300,
+    "available": 50844,
+    "comprehensive": false
+  },
+  "semanticConvention": "In the OWA release, + is a positive literal, - is an explicit negative literal, and ~ in a rule antecedent denotes the source's negative condition, interpreted as hard negation for this official OWA track. The CWA negation-as-failure track is separate and is not scored by this receipt.",
+  "isolation": {
+    "train": "available for a future training-visible packet but unused by this baseline",
+    "development": "schema, logical forms, natural text, and oracle may be inspected for diagnosis",
+    "test": "host-only schema inventory; no case or label was opened for development",
+    "codingAgent": "not invoked and receives no benchmark row or label"
+  }
+}

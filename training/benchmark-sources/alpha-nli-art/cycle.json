@@ -1,0 +1,10 @@
+{
+  "format": "eslm-learning-cycle-v1",
+  "dataset": "alpha-nli-art-official-iclr2020",
+  "acceptedCheckpoint": "stage-a-core-before-alpha-nli-art",
+  "hypothesis": "A generic bounded narrative-bridge ranker could compare explicit causal, temporal, goal, participant, and state support for alternative middle events once those relations are available as typed evidence.",
+  "status": "source-integrated-core-proposal-deferred",
+  "developmentOpened": true,
+  "freshOpened": false,
+  "languageAgentUsed": false
+}

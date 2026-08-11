@@ -1,0 +1,15 @@
+{
+  "format": "eslm-learning-comparison-v1",
+  "eligible": true,
+  "scope": "adapter-local-policy-development-only",
+  "deltas": {
+    "overallAccuracy": 0.01333333333333342,
+    "regressionAccuracy": 0,
+    "metamorphicConsistency": 0,
+    "proofValidity": 0,
+    "abstentionPrecision": 0,
+    "executionFailures": 0
+  },
+  "hardFailures": [],
+  "promotion": "The adapter policy is retained for development diagnostics. No runtime or generic-core promotion occurred, and fresh evidence remains sealed."
+}

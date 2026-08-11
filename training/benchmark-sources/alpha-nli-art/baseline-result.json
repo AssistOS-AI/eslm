@@ -1,0 +1,12 @@
+{
+  "format": "eslm-learning-evaluation-v1",
+  "protocol": "alpha-nli-art-complete-official-development-direct-symbolic-baseline-v1",
+  "tested": 1532,
+  "answered": 0,
+  "correct": 0,
+  "accuracyOnAnswered": null,
+  "statusCounts": {"NO_APPLICABLE_METHOD":1532},
+  "freshExecuted": false,
+  "languageAgentInvocations": 0,
+  "interpretation": "All development tasks reached the generic engine as label-free typed bridge selections. The engine declined every task because no validated bridge method is registered."
+}

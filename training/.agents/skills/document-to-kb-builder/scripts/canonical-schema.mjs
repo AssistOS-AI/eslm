@@ -68,6 +68,27 @@ export function validateCanonicalRecord(record) {
   } else if (record.recordType === 'plan') {
     requireString(record, 'goalPattern');
     requireValue(Array.isArray(record.steps) && record.steps.length > 0, `${record.recordId} requires steps.`);
+  } else if (record.recordType === 'constraint') {
+    requireString(record, 'constraintKind');
+    if (record.constraintKind === 'property-value-domain') {
+      requireString(record, 'predicate');
+      requireValue(Array.isArray(record.values) && record.values.length > 0
+        && record.values.every((value) => typeof value === 'string' && value.length > 0),
+      `${record.recordId} property-value-domain requires non-empty string values.`);
+    } else if (record.constraintKind === 'induction-policy') {
+      requireString(record, 'predicate');
+      requireValue(record.enabled === true, `${record.recordId} induction policy must be explicitly enabled.`);
+      requireValue(typeof record.implicitQuestionTrigger === 'boolean',
+        `${record.recordId} induction-policy requires implicitQuestionTrigger.`);
+      requireValue(Number.isInteger(record.minSupport) && record.minSupport > 0,
+        `${record.recordId} induction-policy requires positive integer minSupport.`);
+      requireValue(typeof record.minCoverage === 'number' && record.minCoverage > 0 && record.minCoverage <= 1,
+        `${record.recordId} induction-policy requires minCoverage in (0, 1].`);
+      requireValue(['all', 'latest-support', 'latest-member'].includes(record.selection ?? 'all'),
+        `${record.recordId} induction-policy has unsupported selection.`);
+    } else {
+      requireValue(false, `${record.recordId} has unsupported constraintKind ${record.constraintKind}.`);
+    }
   }
   return record;
 }

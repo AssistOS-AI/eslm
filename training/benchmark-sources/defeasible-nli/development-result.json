@@ -1,0 +1,20 @@
+{
+  "format": "eslm-defeasible-nli-development-result-v1",
+  "evidenceRegime": "complete-official-development-split-excluding-owner-declared-impossible-rows",
+  "runtimeProfile": "direct-symbolic-no-language-agent",
+  "officialSourceRows": 16008,
+  "tested": 14968,
+  "answered": 0,
+  "correct": 0,
+  "accuracyOnAnswered": null,
+  "statusCounts": {"NO_APPLICABLE_METHOD":14968},
+  "byFamily": {
+    "atomic": {"tested":3840,"answered":0,"correct":0},
+    "snli": {"tested":1785,"answered":0,"correct":0},
+    "social": {"tested":9343,"answered":0,"correct":0}
+  },
+  "excludedImpossible": {"atomic":470,"snli":103,"social":467},
+  "languageAgentInvocations": 0,
+  "normalizationCandidates": 0,
+  "test": {"executed":false,"visibility":"evaluator-only-no-loader-exported"}
+}

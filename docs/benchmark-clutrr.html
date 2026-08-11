@@ -1,0 +1,22 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CLUTRR protocol — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / <a href="evaluation.html">Evaluation</a> / CLUTRR</p>
+<h1>CLUTRR: compositional kinship relations</h1>
+<p class="lead">CLUTRR tests whether a system can compose known family relations across a chain and infer the requested relation between two people, including chain lengths that stress systematic relational composition.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  G[Typed family graph] --> A[Relation algebra]
+  A --> Q[Ordered query]
+  Q --> O[Relation or ambiguity]</pre><figcaption>The current route starts from validated structured edges. The algebra composes those types for the ordered endpoints and preserves ambiguity when the graph does not identify one label.</figcaption></figure>
+
+<h2>What enters the current symbolic method</h2>
+<p>The current probe uses validated structured evidence from the source: typed story edges, edge types, gender metadata, node mapping, and the ordered query endpoints. It does not claim unrestricted extraction of those relations from every narrative rendering. The <code>clutrr-kinship-algebra</code> package declares relation classes, inverses, endpoint refinements, and compositions. Trusted generic code applies that algebra to the graph.</p>
+
+<h2 id="protocol">Current ESLM protocol</h2>
+<p>The development sample contains 108 cases, with 12 cases at every relation-chain depth from 2 through 10. Those 108 were selected from 1,146 validated structured rows in the listed source files. The expected label stays outside the reasoning input. A returned relation earns a point only when it equals the host-side label. The run is development-visible because sampled evaluation rows and their aggregate failures informed implementation.</p>
+
+<h2 id="ambiguous">What AMBIGUOUS means</h2>
+<p><strong>AMBIGUOUS</strong> means the available symbolic evidence licenses more than one output label and provides no invariant basis for choosing one. It is not the same as <code>UNKNOWN</code>: the graph supports a constrained set of kinship results, but cannot distinguish members of that set. Forced-label benchmark scoring counts the abstention as a failure even though preserving ambiguity is safer than guessing.</p>
+<p>The observed ambiguity is unusually strong. Some projected graphs are isomorphic after renaming every person while preserving edge types, genders, and query order, yet the official labels differ between a direct and an in-law relation. A deterministic method invariant under entity renaming must return the same output for the same typed structure, so it cannot match all conflicting labels without additional observable evidence. The exact proof and its scope are documented on the <a href="exceptions-issues.html#clutrr-non-identifiability">exceptions and issues page</a>.</p>
+
+<h2>Scope of the result</h2>
+<p>The score supports typed graph composition across the sampled depths. It does not establish arbitrary kinship prose parsing, and it does not authorize resolving the four ambiguous cases from person names, row identifiers, answer frequency, or candidate order. A future protocol may add source evidence that distinguishes the labels; until then the honest result retains the ambiguity.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

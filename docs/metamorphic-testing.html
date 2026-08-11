@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Metamorphic testing — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Foundations / Metamorphic testing</p>
+<h1>Metamorphic templates, generated examples, and regression smoke</h1>
+<p class="lead">Metamorphic testing checks a relation between executions when a useful oracle is easier to state for the transformation than for an isolated new sentence. ESLM uses deterministic templates and nonce values to prove that a mechanism follows semantic structure instead of memorizing names, source rows, answer positions, or familiar wording.</p>
+
+<h2>The test contract</h2>
+<p>A metamorphic template defines a source case <em>x</em>, a transformation <em>T</em>, and an expected relation between the results <em>R(x)</em> and <em>R(T(x))</em>. A meaning-preserving transformation requires the same semantic value and a correspondingly renamed trace. A meaning-changing transformation requires a predictable change, such as an inverse relation, a different queried container, or loss of a derivation. Both forms are necessary: preservation alone can hide a constant answer, while change tests alone can hide fragile parsing.</p>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  B[Base case] --> T[Declared transform]
+  T --> X[Transformed case]
+  B --> C[Compare results]
+  X --> C</pre><figcaption>The template owns the expected relationship between two executions. It does not inject either answer into the runtime. The comparison checks values, statuses, and where required the reasoning trace.</figcaption></figure>
+
+<h2>Implemented template families</h2>
+<div class="table-wrap"><table><thead><tr><th>Transformation</th><th>Required relationship and defect it detects</th></tr></thead><tbody>
+<tr><td>Entity and predicate renaming</td><td>Replace every content name with fresh nonce forms while preserving roles. The result and trace must change only through the same renaming. This detects rules tied to people, animals, places, objects, or benchmark vocabulary.</td></tr>
+<tr><td>Alpha-renaming and statement reordering</td><td>Rename variables and reorder independent premises. Logical conclusions must remain stable. This detects dependence on surface position or a particular variable spelling.</td></tr>
+<tr><td>Distractor insertion</td><td>Add a well-formed but irrelevant fact or event. The answer must remain unchanged and the distractor must not appear as proof support. This detects uncontrolled lexical overlap.</td></tr>
+<tr><td>Direction and argument reversal</td><td>Swap relation endpoints or ask for the inverse direction. The output must become the declared inverse when one exists, rather than remain constant. This detects symmetric treatment of directional relations.</td></tr>
+<tr><td>Premise removal or polarity change</td><td>Remove a required premise, negate it, or move it to an incompatible context. A former proof must disappear, become contradicted, or become unknown according to policy. This detects overgeneration.</td></tr>
+<tr><td>State-operation permutation</td><td>Reorder dependent moves, change the moved entity, or query another container. The final state must change exactly as execution order requires. This detects bag-of-sentences state handling.</td></tr>
+<tr><td>Chain extension and shortening</td><td>Add a composable relation step or remove one. The composed relation or supported depth must change predictably. This detects fixed-hop and answer-frequency shortcuts.</td></tr>
+<tr><td>Candidate-order swap</td><td>Swap two preference or continuation candidates while preserving their content. The selected candidate identity must follow the content, not the first or second position.</td></tr>
+<tr><td>Quantity and comparison substitution</td><td>Replace values with new ordered nonce quantities and update only the relations implied by that ordering. This detects memorized numbers and accidental lexical preferences.</td></tr>
+<tr><td>Unsupported-form control</td><td>Generate a request deliberately outside the declared grammar or capability set. The runtime must return the expected structured failure rather than fabricate an answer.</td></tr>
+</tbody></table></div>
+
+<h2>How <code>/examples</code> and <code>/smoke</code> use the corpus</h2>
+<p>The interactive regression corpus contains 4,096 deterministic generated cases across twelve structural groups and 26 templates. <code>/examples [PAGE] [SEED]</code> displays 24 cases per page. Each entry shows the actual input, its template identifier, its metamorphic relation, and its capability group. Most are direct controlled-language utterances; two are explicit typed-task regressions for a nonce Boolean implication chain and traditional categorical subalternation. The page header states the page number, total page count, absolute case range, catalog size, and the exact next-page command. Page 1 is the default; <code>/examples 2</code> opens the next page, and adding the same seed reproduces the same catalog order. The final page contains the remaining cases rather than repeating earlier examples.</p>
+<p><code>/smoke [COUNT] [SEED]</code> executes cases from the same generated catalog through a fresh offline regression runtime containing the generic core and QUICK fixture package, with Language Agent assistance disabled. It does not inherit public KBs, session facts, or the interactive normalization wrapper, so a previous load or unload command cannot change the regression oracle or skip QUICK cases. Each executed case compares the actual structured status and semantic values with its expected contract. The full default count is 4,096. To keep a complete run readable, the command prints the input, expected result, actual runtime result, and pass or failure state for at least one case from every template shape and for every failure; every other executed case still contributes to the final passed, failed, and skipped totals.</p>
+<p>The two commands serve different review needs. <code>/examples</code> exposes breadth and lets a programmer choose a representative input for manual investigation. <code>/smoke</code> is regression execution and protects already implemented behavior after changes. Neither command substitutes for a public benchmark: generated cases are project-owned software tests whose templates were inspired by capability families, not external benchmark rows.</p>
+
+<h2>Acceptance discipline</h2>
+<p>A benchmark-guided fix must add a motivating positive case, at least one renamed or nonce case, a meaning-changing contrast, and a case that must remain unknown or unsupported when applicable. The test must assert semantic results and the relevant reasoning trace. A change fails review if the template generator contains the source record identifier, expected answer string, fixed person or relation copied from the evaluation item, or a branch on benchmark identity.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

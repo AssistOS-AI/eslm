@@ -1,0 +1,26 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Declarative English feature-profile acceptability analysis",
+  "independentExamples": [
+    "Agreement and valency over nonce nouns and predicates",
+    "Binding, polarity licensing, and filler-gap constraints under open-class renaming"
+  ],
+  "inputTypes": ["validated eslm-english-feature-profile-v1", "UTF-8 sentence pair"],
+  "outputTypes": ["violation trace", "weighted acceptability", "pair preference or explicit tie"],
+  "preconditions": ["profile schema validates", "all executable behavior remains trusted source code"],
+  "invariants": [
+    "no benchmark identity dispatch",
+    "no case IDs, labels, source sentences, or paradigm keys in the generic core",
+    "pair reversal reverses a non-tied preference",
+    "equivalent feature-preserving renaming preserves preference"
+  ],
+  "uncertaintySemantics": "Ambiguous or unsupported analyses produce a tie or fewer violations; they do not invent lexical facts.",
+  "proofBehavior": "Every penalty is represented by a typed violation with its family and controller/target offsets.",
+  "resourceBounds": "Finite token scan, finite declarative lexeme lookup, no network, no subprocess, and no recursion over source content.",
+  "failureStatuses": ["profile validation error", "tie", "preferred-left", "preferred-right"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "No runtime KB migration; development evidence compiles into a separate declarative feature profile.",
+  "renameTestPassed": true,
+  "forbiddenDispatchAuditPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"]
+}

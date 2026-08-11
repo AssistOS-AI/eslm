@@ -65,7 +65,7 @@ export async function prepareAgentWorkspace({ projectRoot, packetPath, outputDir
   const packet = await readFile(resolve(packetPath));
   const packetValue = JSON.parse(packet.toString('utf8'));
   if (packetValue.split !== 'train' || packetValue.leakagePolicy !== 'agent-visible') {
-    throw new Error('Codex training requires an agent-visible train packet.');
+    throw new Error('Coding Agent training requires an agent-visible train packet.');
   }
   const workspace = resolve(outputDirectory);
   await mkdir(workspace, { recursive: true });
@@ -145,6 +145,6 @@ export async function runCodexTraining({ workspace, dryRun = false, codexCommand
   await writeFile(join(workspace, 'agent-events.jsonl'), stdout, 'utf8');
   await writeFile(join(workspace, 'agent-stderr.txt'), stderr, 'utf8');
   await writeFile(join(workspace, 'execution-receipt.json'), `${JSON.stringify(receipt, null, 2)}\n`, 'utf8');
-  if (exitCode !== 0) throw new Error(`Codex training failed with exit code ${exitCode}.`);
+  if (exitCode !== 0) throw new Error(`Coding Agent training failed with exit code ${exitCode}.`);
   return receipt;
 }

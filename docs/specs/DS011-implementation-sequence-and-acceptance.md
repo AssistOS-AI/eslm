@@ -1,105 +1,89 @@
 ---
 id: DS011
-title: Implementation Sequence, Corpus Gates, and Acceptance
+title: Implementation Sequence and System Acceptance
 status: in-progress
 owner: roadmap
-summary: Defines the vertical implementation order, corpus-specific architecture gates, acceptance criteria, profiling obligations, and system-level release conditions.
+summary: Defines stable vertical capability stages, their acceptance evidence, ordering dependencies, release conditions, and the separation between roadmap state and mutable benchmark results.
 ---
 
-# DS011 Implementation Sequence, Corpus Gates, and Acceptance
+# DS011 Implementation Sequence and System Acceptance
 
 ## Introduction
 
-The complete architecture is implemented through vertical capabilities that each run from language to result and establish a regression baseline. Later stages may be specified in detail before implementation, but they must not be presented as current behavior until their acceptance evidence exists.
+ESLM is implemented as vertical capabilities that run from language or typed input to an evidence-bearing result. This specification defines the stable ordering and acceptance gates. It does not contain the current benchmark inventory, percentages, cache states, or a narrative snapshot of implemented modules; those mutable facts belong to generated status and evaluation reports.
 
 ## Core Content
 
-### 1. Implementation strategy
+### 1. Vertical implementation rule
 
-The system should be built as a sequence of vertical capabilities rather than as a complete speculative platform. Each stage must produce an executable path from text to result and a regression baseline.
+A stage is accepted only when its representation, executable path, success and failure behavior, resource bounds, tests, documentation, and proportionate evaluation evidence agree. Declaring a type, method descriptor, command placeholder, adapter state, or roadmap card does not establish implementation.
 
-### 2. Stage A: contracts and narrow CNL
+Later stages may be specified and prototyped before earlier stages are complete. Such slices remain individually named and do not promote the enclosing stage until all stage criteria pass.
 
-The first stage fixes the Semantic IR, result statuses, KB logical schema and `src` versus KB boundary. It implements atomic CNL, universal and existential categorical forms, simple implications, negation and direct questions.
+### 2. Stage A: contracts and controlled language
 
-A small benchmark set such as LogicBench, IIBench, RuleTaker or ProofWriter establishes parsing, reasoning and proof traces. The KB may initially use an in-memory or embedded-database backend.
+Stage A fixes Semantic IR, task and result schemas, status meanings, the generic-core versus declarative-KB boundary, direct controlled-language parsing, exact retrieval, safe Horn deduction, provenance, and deterministic package compilation.
 
-Acceptance requires deterministic rebuild, no executable KB code, direct symbolic parsing metrics and valid proofs on the supported fragment.
+Acceptance requires a complete executable path from supported text to semantic values and proof, explicit `UNPARSED` and `UNKNOWN`, deterministic rebuild, no executable KB content, direct-language measurements, nonce generalization, and tests for package, parser, planner, and result boundaries.
 
 ### 3. Stage B: document-to-KB construction
 
-The second stage implements source registration, span-preserving segmentation, semantic extraction, entity handling, provenance, canonical serialization and the Document-to-KB Builder skill.
+Stage B implements DS014 source registration, structural spans, semantic extraction, conservative identity, events, rules, provenance, canonical serialization, document-oriented indexes, citations, and the repository-owned document-to-KB workflow.
 
-Acceptance requires rebuilding a KB from documents, traceable source spans, schema and contradiction validation, and a query suite that survives recompilation.
+Acceptance requires rebuilding a KB from a frozen distributable document, complete span accounting, validated record and reference graphs, contradictions and unresolved spans reported, canonical-to-compiled equivalence, eager/lazy query equivalence, and held-out cross-section questions whose answers cite every contributing source span.
 
-### 4. Stage C: compiled shards and dynamic loading
+### 4. Stage C: scalable physical knowledge
 
-The third stage implements manifests, dictionary coding, access-path indexes, shard summaries, registration, routing and bounded caches. The same query suite runs against exhaustive and lazy modes.
+Stage C implements DS018 corpus gates, DS019 streaming compilation, DS020 exact query-directed routing, and DS021 versioned caches. The logical source inventory remains complete while dictionaries, access paths, blocks, and shards bound physical work.
 
-Acceptance requires semantic equivalence, no false-negative routing, deterministic checksums and memory-bounded execution on a KB larger than available memory.
+Acceptance requires an end-to-end profile on a KB larger than the configured retention budget, bounded compiler memory, reconciled source counts, deterministic shard hashes, cold and warm query profiles, no false-negative routing, and semantic equivalence among canonical, exhaustive compiled, and lazy compiled execution.
 
-### 5. Stage D: event, temporal and relational reasoning
+### 5. Stage D: event, temporal, spatial, and relational state
 
-The fourth stage adds event frames, roles, temporal order, state updates, spatial composition and reference candidates. bAbI, CLUTRR and StepGame-like tasks become primary regressions.
+Stage D adds reusable event frames and roles, reference candidates, state transitions, temporal relations, spatial relations, and typed relation composition. Methods consume semantic structures and declarative algebras rather than benchmark vocabulary.
 
-Acceptance requires metamorphic language tests, unseen chain-length tests and stable direct symbolic coverage.
+Acceptance requires witnessed state and path execution, meaning-preserving and meaning-changing language tests, unseen entity and relation vocabularies, greater composition depths, ambiguity and inconsistency controls, and explicit limits for interval, concurrency, and discourse phenomena not yet supported.
 
-### 6. Stage E: task planning and constraints
+### 6. Stage E: planning, constraints, and scalable proof search
 
-The fifth stage implements the capability registry, task-frame decomposition, AND/OR planning, CSP or SAT integration and explicit capability-gap reporting. ZebraLogic, SATBench and SLR-Bench-like tasks exercise search and planning.
+Stage E implements multi-goal task decomposition, AND/OR alternatives, query-directed proof planning, reusable CSP and SAT methods, recursive and arithmetic constraints, countermodels, proof DAGs, and capability-gap diagnosis.
 
-Acceptance requires correct distinction between missing knowledge, no applicable method and resource exhaustion.
+Acceptance requires exact distinction among missing knowledge, no applicable method, underdetermination, inconsistency, and resource exhaustion; valid assignments or proofs; scaling curves; irrelevant-evidence invariance; and source cases that previously exceeded finite enumeration completing through a general scalable method rather than a larger hardcoded constant.
 
-### 7. Stage F: defaults, uncertainty and commonsense
+### 7. Stage F: defaults, exceptions, abduction, and commonsense
 
-The sixth stage introduces declarative defaults, exceptions, graded claims, abduction and commonsense KBs. Defeasible NLI, CommonsenseQA, SocialIQA, PIQA and alphaNLI provide evaluation.
+Stage F adds explicit default and exception semantics, conflict priority, skeptical and credulous queries where declared, causal and goal relations, guarded abduction, calibrated abstention, and independently sourced commonsense packages.
 
-Acceptance requires no conversion of defeasible knowledge into strict facts, calibrated abstention and traceable hypotheses.
+Acceptance requires strict and defeasible conclusions to remain distinguishable, counterevidence and alternatives to remain visible, provider order invariance, source provenance for every contribution, fresh transfer across domains, and no conversion of plausible continuation or explanation into strict truth.
 
-### 8. Stage G: richer CNL and optional LLM fallback
+### 8. Stage G: broader language and external normalization minimization
 
-The final language stage expands relative clauses, embedded clauses, complex coordination and discourse reference. The optional LLM path is added only with anchor preservation and reparse validation.
+Stage G expands relative and embedded clauses, coordination, quantifier scope, modality, reference, discourse, and multilingual preservation. DS013 remains an optional operator boundary that translates or simplifies only after direct `UNPARSED` and never performs reasoning.
 
-FOLIO, ProverQA, WinoGrande, ReClor and LogiQA measure the language frontier. Acceptance requires explicit route metrics and no hidden LLM answering.
+Acceptance requires construction-level direct coverage, semantic-preservation contrasts, ambiguity behavior, route-specific accuracy, declining Language Agent candidate rate as generic CNL grows, and zero hidden external calls in the deployed runtime and canonical direct evaluations.
 
-### 9. System-level acceptance
+### 9. Corpus and benchmark ordering
 
-A release candidate must rebuild all KBs, pass core unit tests, pass benchmark regressions, preserve direct symbolic performance, validate compiled-query equivalence, report honest failure statuses and reproduce its evaluation from fixed versions and seeds.
+Knowledge sources enter through DS016 and complete DS018 before large compilation. Their physical build and runtime use must meet DS019–DS021. WordNet- and ATOMIC-scale existing providers do not waive these requirements for the next larger source.
 
-The package is ready for comparison with existing small LLMs only after fresh shadow performance stabilizes and the final symbolic system is frozen.
+Benchmark work is ordered by prerequisite capabilities rather than dates: isolated logical and categorical primitives; multi-hop proofs and planning; formalization and first-order language; relation and spatial composition; SAT and CSP search; defaults and abduction; then expert-authored long arguments. The typed research catalog records the current queue and state. Advancing a catalog row requires DS017 adapter evidence and DS010 execution evidence, not a change to this roadmap specification.
 
-### Corpus architecture gate
+### 10. Release acceptance
 
-Every new public knowledge source begins with an immutable source manifest, deterministic stratified probe, source-to-record semantic mapping, scope and inference policy, resource budget, streaming Node.js adapter, shard and access-path design, and canonical-to-compiled equivalence plan. Sources above 50 MB compressed or expected to exceed 100,000 records cannot enter exhaustive compilation until this gate is reviewed.
+A release candidate rebuilds every repository-managed KB, validates registered packages, passes unit, integration, metamorphic, security, documentation, evaluation, and benchmark-regression checks, preserves direct symbolic behavior, and reproduces generated reports from frozen inputs. Every empirical claim names its protocol and current artifact.
 
-The probe samples by stable hash within meaningful strata rather than reading only a source prefix. It accounts for record kind, relation, language, upstream source, license, weight or rank, datatype, qualifier, time, space, text length, parse outcome, malformed cases, conflicts, ambiguity, cycles, and oversized values. Every observed stratum is mapped, preserved as evidence, quarantined, or rejected by an explicit profile policy.
-
-Profiling covers source read, decompression, parsing, schema validation, normalization, deduplication, dictionaries, semantic mapping, anomaly handling, sharding, indexes, provenance, emission, validation, registration, cold loading, representative query, negative query, deep proof, ambiguity, and overlay execution. A gate fails when memory tracks the complete decoded source without a declared external partition, throughput collapses without explanation, one query loads unrelated domains, a session fact triggers whole-KB closure, alias ambiguity is discarded, or profiling cannot identify the cost.
-
-### Source order and benchmark tracks
-
-Lexical knowledge begins with Open English WordNet using sense-preserving terms and taxonomy rules. Event and social commonsense follows through ATOMIC with participant roles and explicitly defeasible relations. Filtered English ConceptNet follows only with relation-specific semantics, source-overlap accounting, defaults, and exceptions. A bounded GeoNames countries-and-capitals profile follows with typed place identity, coordinates, and administrative containment. Wikidata is limited to future dated thematic packs; a complete dump is not a target.
-
-Controlled benchmarks proceed in parallel as diagnostics. Logic and proof tasks establish the narrow CNL and strict reasoning core. bAbI, CLUTRR, and StepGame test event and relational execution. SATBench, ZebraLogic, and SLR-Bench test planning and constraints. Defeasible and commonsense suites test uncertainty. FOLIO, ProverQA, WinoGrande, ReClor, and LogiQA push the language boundary only after the required semantic operators exist.
-
-### Reset baseline
-
-The repository reset begins again at Stage A under the declarative-KB architecture. Cached source archives may be reused only after their checksums are verified against new source manifests. Old prepared datasets, candidates, work ledgers, executable model modules, and executable KB modules are not accepted checkpoints. Historical result files may be retained only when clearly marked as pre-reset evidence and excluded from current implementation claims.
+A release may contain explicit capability gaps and benchmark exceptions. It may not claim completion merely because a visible development sample is perfect, because unsupported cases were dropped, because a Language Agent answered them, or because a benchmark-specific branch reproduces labels.
 
 ## Decisions & Questions
 
-### Question #1: Why reset rather than migrate executable KB modules?
+### Question #1: When is an implementation stage accepted?
 
-Response: The former representation violates the new non-executable KB invariant. Recompiling from verified source archives through the new canonical schema provides a reviewable semantic baseline and avoids preserving accidental module-specific behavior.
+Response: Only when every acceptance obligation for that stage has executable evidence. Bounded slices from later stages remain useful and documented, but do not imply completion of the entire stage.
 
-### Question #2: What is the first accepted release after reset?
+### Question #2: Why do the benchmark queue and architecture stages remain separate?
 
-Response: A Stage A vertical slice with canonical KB records, manifest registration, direct symbolic parsing for the stated fragment, at least direct lookup and safe Horn reasoning, structured results, honest failure, deterministic compilation, and tests for all boundaries.
-
-### Question #3: When can the project claim a later stage?
-
-Response: Only when its executable path, success and failure tests, profiling, documentation, and relevant benchmark or source evidence all satisfy the stage acceptance contract.
+Response: Source acquisition and adapter validation can proceed before a general solver exists, and one benchmark can exercise several stages. Keeping the queue in the typed catalog prevents cached data or an adapter from being mistaken for an accepted architectural capability.
 
 ## Conclusion
 
-The roadmap permits ambitious language, knowledge, planning, and uncertainty goals while forcing every release to remain executable, measurable, and honest about incomplete stages.
+The implementation sequence preserves a usable vertical system at every checkpoint while keeping ambitious future capabilities measurable. Stage claims depend on complete acceptance evidence rather than current prose or benchmark optimism.

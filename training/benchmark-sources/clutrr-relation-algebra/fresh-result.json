@@ -1,0 +1,24 @@
+{
+  "format": "eslm-clutrr-fresh-result-v1",
+  "runPolicy": "single aggregate run after candidate freeze",
+  "candidateDigest": "e75b2f1d68d4ff04f35114bbd45c7c8c527fd34bde1f32adf6421aedf187985a",
+  "sourceArchiveSha256": "9350c52ffa32d91d87e6b30123421e4b82ebb2cd819181d3333bdde2b07dbb90",
+  "membershipSha256": "1877c4df76349fa0a9eada5bccae94cc95180a45b949daab8dcce269d951ef6c",
+  "evaluationCount": 1,
+  "total": 12,
+  "correct": 10,
+  "accuracy": 0.8333333333333334,
+  "statusCounts": {
+    "SOLVED": 10,
+    "AMBIGUOUS": 2
+  },
+  "agentCalls": 0,
+  "caseOutcomesRetained": false,
+  "sourceSentencesRetained": false,
+  "caseIdentifiersRetained": false,
+  "caseLabelsRetained": false,
+  "postEvaluationBehaviorChanges": false,
+  "unscoredSourceMembers": 4,
+  "blocker": "The frozen adapter rejected four noise-variant members before scoring because their structured edge and relation cardinalities differ. No post-freeze repair was made.",
+  "claimBoundary": "This is one aggregate fresh result from the reserved independent archive. It covers the one member accepted by the frozen structured adapter and is not a complete official benchmark score."
+}

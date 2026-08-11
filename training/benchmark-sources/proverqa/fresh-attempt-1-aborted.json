@@ -1,0 +1,10 @@
+{
+  "format": "eslm-proverqa-fresh-attempt-aborted-v1",
+  "attemptedAt": "2026-08-11T22:12:00+03:00",
+  "preFreshFreeze": "training/benchmark-sources/proverqa/pre-fresh-freeze.json",
+  "outcome": "no-aggregate-returned",
+  "failure": "ReferenceError while constructing the aggregate receipt: the local counter casesWithPredicateReconciliation was serialized under an undefined shorthand name.",
+  "visibility": "The command printed no case, identifier, formula, sentence, answer, reasoning trace, witness, per-case result, aggregate score, or stratum count.",
+  "behaviorChangePermitted": "Output-only identifier correction from casesWithReconciliation to casesWithPredicateReconciliation. Formula adaptation, predicate reconciliation, entailment, oracle join, scoring, and counters remain unchanged.",
+  "retryPolicy": "A new freeze binds the output-only correction before one aggregate-producing retry. The failed attempt cannot guide semantic adaptation because no evaluation outcome escaped."
+}

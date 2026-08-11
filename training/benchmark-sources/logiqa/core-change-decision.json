@@ -1,0 +1,17 @@
+{
+  "format": "eslm-benchmark-core-change-decision-v1",
+  "benchmark": "LogiQA",
+  "decision": "no-generic-core-promotion",
+  "researchCandidateFiles": ["src/reasoning/categorical-argument-validation.mjs", "src/benchmark-adapters/categorical-argument-projection.mjs"],
+  "registeredCoreFilesChanged": [],
+  "reason": "A bounded proof-producing categorical candidate validator was implemented and challenged, but zero complete English LogiQA training or development records satisfy its strict projection preconditions. Core Guardian therefore rejects registry and engine promotion; the module remains an unregistered adapter-called research candidate.",
+  "controlsExecuted": [
+    "complete entity and predicate renaming with nonce vocabulary",
+    "answer-candidate permutation with oracle meaning preserved by candidate identity",
+    "meaning-changing premise contrast",
+    "label replacement leaves the visible task byte-for-byte unchanged",
+    "decorative option-prefix disagreement does not change owner-defined physical-slot semantics"
+  ],
+  "protectedEvidenceOpened": false,
+  "nextAdmissibleEvidence": "Add independently specified conditional, relational, ordering, cardinality, and argument-role projections without dropping clauses or candidates, preserve Chinese as a separate language profile, then require at least two complete source cases with independently verified witnesses before reconsidering registration."
+}

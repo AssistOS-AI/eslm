@@ -1,0 +1,25 @@
+{
+  "protocol": "iibench-public-test-partition-v1",
+  "sourceSplit": "official-public-test-only",
+  "reason": "The official release contains no train or development split. A local label-blind partition freezes development-visible evidence before any capability work and retains an untouched fresh pool.",
+  "policy": "Within each visible stratum, order rows by SHA-256 of seed, source filename, and source ID. The first ceiling(20 percent) is fresh, while every stratum with more than one row retains at least one development row. Truth labels and generation answers are not partition inputs.",
+  "seed": "iibench-public-test-partition-v1",
+  "visibleStrata": {
+    "immediateInference": ["source filename", "category", "premise form"],
+    "syllogism": ["source filename", "condition", "category"]
+  },
+  "membershipSha256": "87d9f688b60475fa40f63c8092c294cbaa8c26cd2ce1d3061fc194a343fb4791",
+  "available": 5284,
+  "development": 4196,
+  "fresh": 1088,
+  "strata": 167,
+  "bySourceFile": {
+    "AEIO_truth.jsonl": { "available": 1100, "development": 864, "fresh": 236 },
+    "Conversion_generation.jsonl": { "available": 1300, "development": 1028, "fresh": 272 },
+    "Obversion_generation.jsonl": { "available": 1200, "development": 960, "fresh": 240 },
+    "Contraposition_generation.jsonl": { "available": 1300, "development": 1040, "fresh": 260 },
+    "Syllogism_generation.jsonl": { "available": 384, "development": 304, "fresh": 80 }
+  },
+  "developmentVisibility": "The adapter may expose only input fields. Oracle fields remain inside the host scorer.",
+  "freshVisibility": "Fresh inputs and oracle are not exported to synthesis and the fresh pool has not been evaluated."
+}

@@ -1,0 +1,33 @@
+{
+  "protocol": "stepgame-complete-schema-inventory-v1",
+  "sourceRevision": "6d859381dfd518cae3f073b268aaa323bf4dcf04",
+  "recordSchema": {
+    "root": "JSON object per JSONL line",
+    "requiredFields": ["story", "question", "label", "k_hop"],
+    "story": "non-empty array of NUL-free English source sentences",
+    "question": "source question with two named agents",
+    "label": "host-only member of the declared nine-relation answer domain",
+    "k_hop": "integer encoded by the source as a decimal string"
+  },
+  "splits": {
+    "train": { "rows": 50000, "acceptedFacts": 144635, "sourceIssueOccurrences": 5365, "byHop": { "1": 10000, "2": 10000, "3": 10000, "4": 10000, "5": 10000 } },
+    "validation": { "rows": 5000, "acceptedFacts": 14442, "sourceIssueOccurrences": 558, "byHop": { "1": 1000, "2": 1000, "3": 1000, "4": 1000, "5": 1000 } },
+    "test": { "rows": 100000, "acceptedFacts": 1049286, "sourceIssueOccurrences": 31996, "byHop": { "1": 10000, "2": 10000, "3": 10000, "4": 10000, "5": 10000, "6": 10000, "7": 10000, "8": 10000, "9": 10000, "10": 10000 } }
+  },
+  "templateCatalog": {
+    "usablePatterns": 213,
+    "unsupportedOfficialTemplates": 1,
+    "unsupportedTemplate": {
+      "generatorFunction": "object1_upleft_object2",
+      "templateSha256": "fdbe1ec96804050a95200e8730d980b1536a65301297b2afe6f15e58f1fb4906",
+      "reason": "The official template omits one entity placeholder and therefore cannot encode a binary relation."
+    },
+    "ambiguityPolicy": "A sentence is accepted only if all matching official templates imply the same ordered typed relation. Zero matches are UNMATCHED_TEMPLATE; more than one distinct implication is AMBIGUOUS_TEMPLATE. Neither condition is repaired from the answer label."
+  },
+  "splitIsolation": {
+    "train": "available for source profiling and development-visible analysis",
+    "validation": "complete development pool; host oracle used only after inference",
+    "test": "schema- and source-profiled without scoring, label aggregation, or solver execution",
+    "languageAgentInvocations": 0
+  }
+}

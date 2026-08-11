@@ -1,0 +1,24 @@
+{
+  "format": "eslm-logicskills-countermodel-pre-fresh-freeze-v1",
+  "frozenAt": "2026-08-11T19:20:00+03:00",
+  "scope": "The countermodel subtrack only. Fresh symbolization and validity inputs and all answer fields remain unopened.",
+  "developmentEvidence": {
+    "tested": 240,
+    "verifiedCountermodels": 240,
+    "accuracy": 1,
+    "languageAgentInvocations": 0
+  },
+  "partitionMembershipSha256": "0468b85e544b38396ddd0f7476468cf2dc0124e618b150b660e4db9b04805a6a",
+  "dependencies": {
+    "src/benchmark-adapters/logicskills.mjs": "9592b8bf3980cb116d96288e217a1d731558db7aba4d77709852c25e6643ce85",
+    "src/language/compact-fol.mjs": "a194c7e4ac067021725e31e49b54b31c80e6c89413c5b2c48c56aac476161270",
+    "src/reasoning/finite-first-order-model.mjs": "e707181ca2d75d87f84e7c26cae4ac99f1650c1769ee22bc6fe2ad0c6a92fcae",
+    "src/reasoning/sat-entailment.mjs": "c570251279d6863300fefaf45e53f326d12ca6a295aeffef8067ebe3d41b14f5",
+    "src/runtime/engine.mjs": "e813a570adf186d093651ff41b600f4f59ebeca7fdad0d692e7108b6a5a47d01",
+    "tests/logicskills-adapter.test.mjs": "74d19007ff2427362fb6ac5a2cc8912ab904ef4bbe42a37b13eafca493705891",
+    "tests/finite-first-order-model.test.mjs": "1e798593f90c616d75ba8fe7d89fb4d1af75923d7c6324a78f0f1a0bd8c4c073",
+    "training/benchmark-sources/logicskills/partition-manifest.json": "435fd2b6c9c0157b2632f448f57837ec1d7f9750a867f38f0df6772ac7769e89",
+    "training/benchmark-sources/logicskills/source-manifest.json": "0c922241da19048446027df04441d7c7893ca5defd9ac0a4db3dcfb2e354fab2"
+  },
+  "postRunRule": "No countermodel parser, grounding, search, decoding, verification, task construction, or dispatch behavior may change after the aggregate is opened while retaining the fresh claim."
+}

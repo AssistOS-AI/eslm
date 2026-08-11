@@ -1,0 +1,70 @@
+{
+  "protocol": "sparc-sparp-official-source-manifest-v1",
+  "benchmarkId": "ukplab-sparp-1.1.0",
+  "officialDataset": {
+    "url": "https://huggingface.co/datasets/UKPLab/sparp",
+    "revision": "2706ed464416758c67a09716ed0262c880ee6bdd",
+    "version": "1.1.0",
+    "access": "public-ungated",
+    "license": "CC-BY-SA-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "readmeBytes": 8847,
+    "readmeSha256": "a632f4d64423a29205c7be901c498bab8152ff11bd95aa974392f5b0cfba0a57"
+  },
+  "officialRepository": {
+    "url": "https://github.com/UKPLab/acl2024-sparc-and-sparp",
+    "revision": "b4568a8030976941cb0037fb6399d48f893d8fa4",
+    "license": "Apache-2.0",
+    "licenseBytes": 11357,
+    "licenseSha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "readmeBytes": 6283,
+    "readmeSha256": "b56ccc557a518378f2abf680b6d984284b00b528b2881592c2c47c6f1653e511"
+  },
+  "paper": {
+    "title": "SpaRC and SpaRP: Spatial Reasoning Characterization and Path Generation for Understanding Spatial Reasoning Capability of Large Language Models",
+    "url": "https://aclanthology.org/2024.acl-long.261/",
+    "doi": "10.18653/v1/2024.acl-long.261",
+    "authors": "Md Imbesat Hassan Rizvi, Xiaodan Zhu, and Iryna Gurevych",
+    "venue": "ACL 2024"
+  },
+  "contentAddressedArtifacts": [
+    { "sha256": "e3e58a0273572566115cf33148a35c564deab79da4d98497879470d4f68057be", "bytes": 312796721, "paths": ["SpaRP (StepGame)/PS2/test.json", "sparp/SpaRP (StepGame)/PS2/test.json"] },
+    { "sha256": "83e55d5ac965d6ea4a007d8f2cee29761d229f4abbfde8976bccbdc3e1f62537", "bytes": 91057466, "paths": ["SpaRP (StepGame)/PS2/train.json", "sparp/SpaRP (StepGame)/PS2/train.json"] },
+    { "sha256": "6d9f3125004b4526d9c79ffc8c52e2b200d3964df7c5872d8b98ae1ac8a55453", "bytes": 9089091, "paths": ["SpaRP (StepGame)/PS2/val.json", "sparp/SpaRP (StepGame)/PS2/val.json"] },
+    { "sha256": "df04a03d575462e7f92ba281060a5ac8f9deb3b59623205fc79dbf6f1e00d008", "bytes": 222966187, "paths": ["SpaRP (StepGame)/PS3/test.json", "sparp/SpaRP (StepGame)/PS3/test.json"] },
+    { "sha256": "e1cc27dbfbfabbecce99e8af3a6de3262e850472a7f7ed89cabed88a384ad51d", "bytes": 79152880, "paths": ["SpaRP (StepGame)/PS3/train.json", "sparp/SpaRP (StepGame)/PS3/train.json"] },
+    { "sha256": "e0213fa119714de9612707535e9b183f4fc4cb630f82828bc0731e5890a045a1", "bytes": 7866514, "paths": ["SpaRP (StepGame)/PS3/val.json", "sparp/SpaRP (StepGame)/PS3/val.json"] },
+    { "sha256": "ce87eec371bcedefc914e71ab44eb588826e4d3c88110c519ce0c5daec5af994", "bytes": 150600619, "paths": ["SpaRP (StepGame)/PS4/test.json", "sparp/SpaRP (StepGame)/PS4/test.json"] },
+    { "sha256": "f86393dee453d13d2f1bdb5861fb6c6786615665533afb0ab46400a01bd938fb", "bytes": 60867758, "paths": ["SpaRP (StepGame)/PS4/train.json", "sparp/SpaRP (StepGame)/PS4/train.json"] },
+    { "sha256": "1d15816e8162611f387c89e2f2f2feccaced74452cc71d9d7c9f176def3a3d2b", "bytes": 6169191, "paths": ["SpaRP (StepGame)/PS4/val.json", "sparp/SpaRP (StepGame)/PS4/val.json"] },
+    { "sha256": "08dcfa3eadce81da9f8e8017d39b0343951dc9a14557caf9adaa9a03559f9600", "bytes": 8252681, "paths": ["SpaRP-PS1 (SpaRTUN)/test.json", "sparp/SpaRP-PS1 (SpaRTUN)/test.json"] },
+    { "sha256": "0886bf6ed20559a56147038a254912503e98e50a8fb934bd20ce4aca5f8af3d0", "bytes": 54515517, "paths": ["SpaRP-PS1 (SpaRTUN)/train.json", "sparp/SpaRP-PS1 (SpaRTUN)/train.json"] },
+    { "sha256": "19c39746c4a8ed284e39d5b109933e84dd4335dd3b22720895e5a14e00a2dd09", "bytes": 7782886, "paths": ["SpaRP-PS1 (SpaRTUN)/val.json", "sparp/SpaRP-PS1 (SpaRTUN)/val.json"] },
+    { "sha256": "8ddad3ec6670a3db7cbfa4f044f02ca08bfc3bb37aeb811fb6c633c25d385386", "bytes": 7556356, "paths": ["small-sparp/SpaRP (StepGame)/PS2/test.json"] },
+    { "sha256": "63c71182884cc5ba1b59599e78f338a0277488ac03a8375bc31deb9daa161504", "bytes": 11550836, "paths": ["small-sparp/SpaRP (StepGame)/PS2/train.json"] },
+    { "sha256": "f93b5af6551fe8bdabed5aaeaa374823b476954f412c1d27c0bc6b1205ea91a8", "bytes": 2811267, "paths": ["small-sparp/SpaRP (StepGame)/PS2/validation.json"] },
+    { "sha256": "505ac8874090a077bea6923cd0071fde5986bae32ceb6e37b654ac0944d4ec4a", "bytes": 7212920, "paths": ["small-sparp/SpaRP (StepGame)/PS3/test.json"] },
+    { "sha256": "10de24c99c04d398cc603b317db554b1a646468efc0cc47c6b54fd58c4cb29af", "bytes": 10929201, "paths": ["small-sparp/SpaRP (StepGame)/PS3/train.json"] },
+    { "sha256": "a24ace8d17339ad9d5b9a2658c531c38d9f5ebf8f49e26f529070681dc60981f", "bytes": 2660404, "paths": ["small-sparp/SpaRP (StepGame)/PS3/validation.json"] },
+    { "sha256": "e35a60db7581ab085d6965b83fccd5099491a2967123e4e284334ac6c20f1d28", "bytes": 7114536, "paths": ["small-sparp/SpaRP (StepGame)/PS4/test.json"] },
+    { "sha256": "ba9ef2c4a7245357a7b764666170c6527b6bb087295cb662c54598856779e7d1", "bytes": 10832406, "paths": ["small-sparp/SpaRP (StepGame)/PS4/train.json"] },
+    { "sha256": "5ee947cb1488f45e92b8215455840c6888d28c5a3ceda5f0243ea9a6a3a8aebf", "bytes": 2640524, "paths": ["small-sparp/SpaRP (StepGame)/PS4/validation.json"] },
+    { "sha256": "82954467123e060cd112ee245690c4e5da609aa731933448e08f4f72eb6980ea", "bytes": 7281488, "paths": ["small-sparp/SpaRP-PS1 (SpaRTUN)/test.json"] },
+    { "sha256": "589a1007b58f4bdede7a191441f703c8255a6ecb9ab42f74a4c70f18f04fd69a", "bytes": 14239455, "paths": ["small-sparp/SpaRP-PS1 (SpaRTUN)/train.json"] },
+    { "sha256": "7b95b05c9b13c338c2d7d36867f2a991caf7883d4a15db586b2709856a083bef", "bytes": 3495257, "paths": ["small-sparp/SpaRP-PS1 (SpaRTUN)/validation.json"] }
+  ],
+  "completeRetention": {
+    "uniqueArtifacts": 24,
+    "logicalDatasetPaths": 36,
+    "uniqueBytes": 1099442161,
+    "logicalBytesIncludingOfficialAliases": 2110559672,
+    "uniqueRows": 416678,
+    "fullRows": 402678,
+    "smallRows": 14000,
+    "cacheRoot": "training/.cache/benchmarks/sparp-2706ed46",
+    "storage": "Official LFS SHA-256 is the local blob name. Twelve full-data paths have byte-identical top-level and sparp/ aliases and occupy one local blob each.",
+    "streaming": "A dependency-free parser yields one object at a time from each top-level JSON array.",
+    "sizeBasedRejections": 0,
+    "discardedValidRows": 0
+  }
+}

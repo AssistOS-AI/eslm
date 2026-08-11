@@ -1,0 +1,45 @@
+{
+  "format": "eslm-benchmark-pre-fresh-freeze-v1",
+  "frozenAt": "2026-08-11",
+  "benchmark": "ZebraLogic",
+  "track": "public-clue-csp-symbolic",
+  "freshPolicy": {
+    "partitionCount": 800,
+    "partitionMembershipSha256": "6c644963f89e423620642f24363ba6a47097469891caea7133274c0ddc3caf69",
+    "execution": "One aggregate-only execution after this dependency freeze",
+    "disclosure": "No fresh puzzle text, source identifier, clue, parsed constraint, assignment, certificate, or per-case result may be returned or printed."
+  },
+  "developmentAcceptance": {
+    "tested": 200,
+    "passed": 200,
+    "independentlyVerifiedCompleteAssignments": 200,
+    "independentlyVerifiedUniquenessCertificates": 200,
+    "languageAgentInvocations": 0,
+    "resultPath": "training/benchmark-sources/zebralogic/development-result.json",
+    "resultSha256": "88b89b76b8a6c9dd3fab48f6ac69f8e7d87313aa273bd8cc1ef046bd8ef88c63"
+  },
+  "guardian": {
+    "reviewPath": "training/benchmark-sources/zebralogic/core-reuse-review.json",
+    "reviewSha256": "e771c4d7eee9365bd66b8d79d4febb264ff94adaadc57ea6f8b78d6c773831e5",
+    "decision": "Reuse the existing generic scalable Boolean method without a core, capability-registry, or runtime change.",
+    "eligibleForImplementation": true,
+    "failures": []
+  },
+  "dependencies": {
+    "training/benchmark-sources/zebralogic/source-manifest.json": "2ec3277cc9cdbcbbfa2a7f4b7f058fcac1c139e782d9d525f3d91d4f897a7ede",
+    "training/benchmark-sources/zebralogic/partition-manifest.json": "d3a938832a7c8515ea7ef468c2647a334b870798093f8295558eb8860ccf3e7b",
+    "src/benchmark-adapters/zebralogic.mjs": "9d812ebb5e095b7db00a19912d7c3f1bc029a3308c8b34c73c6dcbe46c46e4bd",
+    "src/benchmark-adapters/zebralogic-source.mjs": "fdf65ba901bd6a9afd8c061b4662556ba3f7c86d7eb80275903b63e7953d3563",
+    "tests/zebralogic-adapter.test.mjs": "db2e520b8a298ba68eaf43a3be640aa2c38386a8d6f4d63475a2b39818550a51",
+    "scripts/acquire-zebralogic.mjs": "4dd17210af99ddb671e456a04e4bfd9e9a98a05fc23ffcadbfe55bb6998a3aae",
+    "src/reasoning/sat-entailment.mjs": "c570251279d6863300fefaf45e53f326d12ca6a295aeffef8067ebe3d41b14f5",
+    "src/reasoning/finite-entailment.mjs": "7870db5d68c758632347e53dbe52f5aca6b75c9664448033685015334548d91d"
+  },
+  "verification": {
+    "focusedCoreAndAdapter": { "tested": 22, "passed": 22, "failed": 0 },
+    "repository": { "tested": 257, "passed": 257, "failed": 0 }
+  },
+  "runtime": { "node": "v22.23.1", "languageAgent": "not invoked" },
+  "oracleBoundary": "The public source has no reference assignments. Fresh success means independently verified clue satisfaction and uniqueness only; it cannot become an official private-label score.",
+  "claimBoundary": "This freeze authorizes one aggregate-only fresh execution for the public-clue CSP track. It does not authorize inspection of fresh text or a ZebraLogic leaderboard claim."
+}

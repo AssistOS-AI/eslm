@@ -15,6 +15,17 @@ test('QUICK canonical records satisfy the normative declarative schema', async (
   assert.deepEqual(validatePortableCandidate(records), { records: 14, provenance: 1 });
 });
 
+test('bAbI declarative policy satisfies both the trusted and portable constraint schema', async () => {
+  const path = `${PROJECT_ROOT}/training/KBs/babi-v1.2-language/canonical/records.jsonl`;
+  const records = parseJsonLines(await readFile(path, 'utf8'), path);
+  assert.equal(validateCanonicalRecords(records).records, 3);
+  assert.deepEqual(validatePortableCandidate(records), { records: 3, provenance: 1 });
+  const invalid = records.map((record) => record.constraintKind === 'induction-policy'
+    ? { ...record, enabled: false } : record);
+  assert.throws(() => validateCanonicalRecords(invalid), /explicitly enabled/u);
+  assert.throws(() => validatePortableCandidate(invalid), /explicitly enabled/u);
+});
+
 test('canonical rules reject an unbound head variable', () => {
   const records = [{
     recordType: 'rule', recordId: 'rule:test:unsafe', kbNamespace: 'test', schemaVersion: '1',

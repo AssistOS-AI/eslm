@@ -1,0 +1,14 @@
+{
+  "protocol": "sparp-ps1-checkpoint-comparison-v1",
+  "baseline": { "executed": 0, "availableDevelopment": 2397, "capability": "NO_APPLICABLE_METHOD" },
+  "candidate": { "executed": 2397, "exact": 2397, "macroF1": 1, "witnessVerified": 2397 },
+  "structuralDelta": {
+    "newCoreMechanism": "bounded least-fixed-point closure over declarative inverse and binary relation-composition metadata",
+    "adapterDelta": "all PS1 symbolic relations are retained as typed facts; answer vocabulary remains in the host scorer",
+    "benchmarkDispatchAdded": false,
+    "sourceVocabularyAddedToCore": false,
+    "languageAgentInvocations": 0
+  },
+  "acceptance": "accepted-for-development",
+  "freshClaim": "none"
+}

@@ -1,0 +1,52 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Reuse scalable Boolean entailment for finite-domain CSP search and uniqueness",
+  "independentExamples": [
+    "A three-house nonce puzzle with two renamed domains, equality, fixed-position, and direct-left constraints",
+    "The same finite-domain puzzle after entity and value renaming plus clue reordering",
+    "A contrast puzzle with a necessary ordering clue removed, producing more than one satisfying assignment"
+  ],
+  "inputTypes": [
+    "finite equal-cardinality domains",
+    "typed equality, position, non-position, order, adjacency, and exact-distance constraints",
+    "explicit search budgets"
+  ],
+  "outputTypes": [
+    "complete finite-domain assignment",
+    "independently checked constraint-satisfaction witness",
+    "uniqueness certificate from an unsatisfiable blocked-assignment search"
+  ],
+  "preconditions": [
+    "Every domain contains exactly one value per position and has the declared house cardinality.",
+    "Every clue is parsed into one allowlisted typed constraint and retains its source-to-constraint correspondence.",
+    "The finite-domain encoding contains exactly-one constraints for values and positions.",
+    "The unchanged scalable Boolean method uses report-only inconsistency semantics."
+  ],
+  "invariants": [
+    "A success requires a complete assignment that a separate direct constraint interpreter accepts.",
+    "A success requires the same constraint problem plus a blocking clause for the returned assignment to be independently certified unsatisfiable.",
+    "A non-unique, malformed, inconsistent, or resource-limited case never becomes a successful puzzle.",
+    "The generic Boolean core does not receive source identity, record identity, expected answers, puzzle vocabulary, or private labels.",
+    "Source and solver resource bounds never remove a retained row or reduce the declared denominator."
+  ],
+  "uncertaintySemantics": "Parser failure, resource exhaustion, inconsistent parsed constraints, and non-uniqueness remain distinct non-success statuses. None is guessed or mapped to a private reference solution.",
+  "proofBehavior": "The first generic SAT search yields a complete Boolean model, which is decoded and checked directly against every typed clue. A second search adds the negation of the complete chosen assignment; only an independently replayed unsatisfiability certificate establishes uniqueness.",
+  "resourceBounds": {
+    "inherited": "The frozen scalable Boolean method bounds semantic atoms, CNF variables, clauses, and DPLL search nodes per puzzle.",
+    "streaming": "The official source is streamed one JSONL record at a time and has no total-file-size acceptance cap.",
+    "denominator": "A per-puzzle resource limit is reported in aggregate and retains the puzzle in the tested denominator."
+  },
+  "failureStatuses": [
+    "PARSE_ERROR",
+    "INCONSISTENT_CONTEXT",
+    "INVALID_OR_NON_UNIQUE",
+    "RESOURCE_LIMIT",
+    "source schema validation error"
+  ],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "None. Source-specific surface aliases and reference cues stay inside the ZebraLogic adapter. No KB, runtime route, capability descriptor, engine module, or generic reasoning module changes.",
+  "renameTestPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "forbiddenDispatchAuditPassed": true,
+  "decision": "Reuse accepted. The existing generic Boolean solver is sufficient; only the source adapter, CSP projection, direct verifier, lifecycle controls, and receipts are added."
+}

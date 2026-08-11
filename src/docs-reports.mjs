@@ -35,15 +35,36 @@ export async function publishReport(kind) {
 export async function checkDocumentation() {
   const required = [
     'index.html', 'architecture.html', 'language.html', 'knowledge-bases.html', 'training.html',
-    'evaluation.html', 'cli.html', 'status.html', 'specsLoader.html', 'assets/site.css',
-    'assets/mermaid-loader.mjs', 'partials/header.html', 'partials/footer.html', 'partials-loader.js',
-    'specs/matrix.md',
+    'evaluation.html', 'cli.html', 'status.html', 'research-program.html', 'reasoning-methods.html',
+    'reasoning-categorical-logic.html',
+    'reasoning-deduction-and-models.html', 'reasoning-defaults-and-abduction.html',
+    'reasoning-state-time-and-relations.html', 'reasoning-narrative-and-compatibility.html',
+    'language-agent.html', 'research-decisions.html', 'specification-architecture.html',
+    'kb-storage-and-indexing.html', 'symbolic-document-kbs.html', 'sources.html', 'specsLoader.html',
+    'benchmark-logicbench.html', 'benchmark-iibench.html', 'benchmark-proofwriter.html',
+    'benchmark-prontoqa.html', 'benchmark-folio.html', 'assets/site.css',
+    'assets/mermaid-loader.mjs', 'assets/public-benchmark-dashboard.mjs', 'assets/status-dashboard.mjs',
+    'partials/header.html', 'partials/footer.html', 'partials-loader.js', 'results/latest-public-benchmark-probes.json',
+    'results/current-status.json', 'specs/matrix.md',
   ];
   const missing = [];
   for (const path of required) {
     try { await access(join(PROJECT_ROOT, 'docs', path)); } catch { missing.push(path); }
   }
   if (missing.length) throw new Error(`Missing documentation files: ${missing.join(', ')}`);
+  const publicReport = JSON.parse(await readFile(join(PROJECT_ROOT, 'docs/results/latest-public-benchmark-probes.json'), 'utf8'));
+  if (publicReport.format !== 'eslm-public-benchmark-probe-report-v1' || !Array.isArray(publicReport.rows) || publicReport.rows.length === 0) {
+    throw new Error('Latest public benchmark report must use the supported format and contain rows.');
+  }
+  for (const row of publicReport.rows) {
+    if (typeof row.id !== 'string' || !row.evidenceState) throw new Error('Every public benchmark row needs an id and evidence state.');
+    if (row.total === null && (row.correct !== null || row.accuracy !== null)) throw new Error(`${row.id} has a score without a denominator.`);
+  }
+  const roadmapStatus = JSON.parse(await readFile(join(PROJECT_ROOT, 'docs/results/current-status.json'), 'utf8'));
+  if (roadmapStatus.format !== 'eslm-current-roadmap-status-v1' || !Array.isArray(roadmapStatus.coverage?.areas)) {
+    throw new Error('Current status must contain the supported roadmap coverage artifact.');
+  }
+  if ('benchmarkPortfolio' in roadmapStatus) throw new Error('Roadmap status must not duplicate the public benchmark report.');
   const htmlFiles = (await readdir(join(PROJECT_ROOT, 'docs'))).filter((file) => file.endsWith('.html'));
   for (const file of htmlFiles) {
     const html = await readFile(join(PROJECT_ROOT, 'docs', file), 'utf8');
@@ -67,5 +88,12 @@ export async function checkDocumentation() {
   }
   const header = await readFile(join(PROJECT_ROOT, 'docs/partials/header.html'), 'utf8');
   if ((header.match(/<details>/gu) ?? []).length !== 4) throw new Error('Shared navigation must contain four grouped menus.');
+  const home = await readFile(join(PROJECT_ROOT, 'docs/index.html'), 'utf8');
+  if ((home.match(/<section(?:\s|>)/gu) ?? []).length !== 3) throw new Error('Home page must contain exactly three substantive sections.');
+  if (!home.includes('data-public-benchmark-dashboard')) throw new Error('Home page must render the public benchmark report client-side.');
+  const dashboard = await readFile(join(PROJECT_ROOT, 'docs/assets/public-benchmark-dashboard.mjs'), 'utf8');
+  if (!dashboard.includes("['Benchmark and result', 'Evidence, diagnosis, and next action']") || !dashboard.includes("executed ? '✓' : '—'")) {
+    throw new Error('Public benchmark dashboard must keep the two-column layout and first-column execution mark.');
+  }
   return { checked: required.length, htmlFiles: htmlFiles.length, missing };
 }

@@ -1,0 +1,62 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Traditional categorical opposition, immediate transformations, and bounded syllogistic model entailment",
+  "independentExamples": [
+    "A nonce universal proposition whose contradictory and subaltern propositions receive different truth statuses",
+    "A fully renamed proposition transformed by conversion, obversion, and contraposition with complement-depth normalization",
+    "A two-premise three-term nonce syllogism whose conclusion is checked over every finite categorical population"
+  ],
+  "inputTypes": [
+    "validated A/E/I/O categorical propositions",
+    "declared immediate-inference operation",
+    "one or two premises with explicit complement depth and existential-import metadata"
+  ],
+  "outputTypes": [
+    "True, False, or Undetermined opposition judgment",
+    "transformed categorical proposition or declared invalid operation",
+    "entailed categorical proposition with exhaustive finite-model witness"
+  ],
+  "preconditions": [
+    "forms are one of A, E, I, or O",
+    "terms and complement depths validate",
+    "syllogisms contain two premises, three atomic terms, and one shared middle term",
+    "the traditional existential-import policy is explicit"
+  ],
+  "invariants": [
+    "control flow uses forms, term identity, complement parity, transformation type, and declared existential commitments only",
+    "all finite categorical populations satisfying the premises are considered",
+    "a conclusion is returned only when it holds in every satisfying population",
+    "invalid immediate operations and underdetermined conclusions remain explicit",
+    "benchmark identity, row identity, source strings, gold forms, and answer position do not enter the core"
+  ],
+  "uncertaintySemantics": "Opposition may be Undetermined; inconsistent premises return INCONSISTENT_CONTEXT; no common categorical consequence returns UNDERDETERMINED; resource or schema violations fail visibly.",
+  "proofBehavior": "Immediate operations return the input and output proposition structures. Syllogisms return the atomic term order, satisfying-model count, selected conclusion form, and declared existential-import policy.",
+  "resourceBounds": {
+    "syllogismPremises": 2,
+    "atomicTerms": 4,
+    "populationEnumeration": "all non-empty subsets of finite Boolean term valuations",
+    "networkCalls": 0,
+    "externalAgentCalls": 0
+  },
+  "failureStatuses": [
+    "UNKNOWN",
+    "UNDERDETERMINED",
+    "INCONSISTENT_CONTEXT",
+    "schema-validation-error"
+  ],
+  "tests": [
+    "unit",
+    "metamorphic",
+    "contrastive",
+    "regression"
+  ],
+  "kbMigration": "No package migration. The method consumes typed task data and optional adapter-supplied transformation provenance; no KB schema or domain assertion changes.",
+  "renameTestPassed": true,
+  "forbiddenDispatchAuditPassed": true,
+  "renamedDimensions": [
+    "entity",
+    "predicate",
+    "value",
+    "ordering"
+  ]
+}

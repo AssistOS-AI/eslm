@@ -1,0 +1,3739 @@
+{
+  "format": "eslm-corpus-probe-v1",
+  "corpus": "conceptnet-5.7.0-en",
+  "status": "probe-complete-gate-review-required",
+  "source": {
+    "release": "5.7.0",
+    "officialUrl": "https://conceptnet.s3.amazonaws.com/downloads/2019/edges/conceptnet-assertions-5.7.0.csv.gz",
+    "license": "CC BY-SA 4.0; per-assertion license and source metadata retained",
+    "sha256": "accd65fe94038584295574ddc26e1500c1919c8c4532bf771811cafd0948af7e",
+    "compressedBytes": 497963447
+  },
+  "inventory": {
+    "rows": 34074917,
+    "schemaMalformed": 0,
+    "nonConceptEndpoints": 9744937,
+    "metadataFailures": 0,
+    "englishToEnglishRows": 3423004,
+    "policyCoveredEnglishRows": 623030,
+    "policyCoverageRate": 0.1820126415277341,
+    "maximumMetadataBytes": 49700,
+    "relations": {
+      "RelatedTo": 9130311,
+      "Synonym": 6702880,
+      "FormOf": 3834594,
+      "DerivedFrom": 1049465,
+      "HasContext": 809728,
+      "IsA": 611423,
+      "EtymologicallyRelatedTo": 593998,
+      "SymbolOf": 388960,
+      "EtymologicallyDerivedFrom": 282703,
+      "AtLocation": 108891,
+      "Causes": 90029,
+      "UsedFor": 80136,
+      "MotivatedByGoal": 72657,
+      "HasSubevent": 72061,
+      "Antonym": 65910,
+      "DistinctFrom": 64856,
+      "CapableOf": 54188,
+      "SimilarTo": 43478,
+      "PartOf": 43002,
+      "NotDesires": 25754,
+      "HasPrerequisite": 25411,
+      "CausesDesire": 24899,
+      "Desires": 24887,
+      "HasProperty": 21718,
+      "HasA": 17734,
+      "MadeOf": 16525,
+      "HasFirstSubevent": 15858,
+      "MannerOf": 12886,
+      "DefinedAs": 11187,
+      "ReceivesAction": 6045,
+      "ObstructedBy": 5077,
+      "dbpedia/genre": 3824,
+      "HasLastSubevent": 3370,
+      "NotUsedFor": 3137,
+      "dbpedia/genus": 2937,
+      "InstanceOf": 2416,
+      "dbpedia/influencedBy": 1273,
+      "dbpedia/occupation": 1043,
+      "dbpedia/language": 916,
+      "dbpedia/field": 643,
+      "dbpedia/knownFor": 607,
+      "dbpedia/product": 519,
+      "dbpedia/capital": 459,
+      "Entails": 405,
+      "CreatedBy": 391,
+      "NotCapableOf": 329,
+      "NotHasProperty": 327,
+      "dbpedia/leader": 84,
+      "LocatedNear": 49
+    },
+    "englishRelations": {
+      "RelatedTo": 1703582,
+      "FormOf": 378859,
+      "DerivedFrom": 325374,
+      "HasContext": 232935,
+      "IsA": 230137,
+      "Synonym": 222156,
+      "UsedFor": 39790,
+      "EtymologicallyRelatedTo": 32075,
+      "SimilarTo": 30280,
+      "AtLocation": 27797,
+      "HasSubevent": 25238,
+      "HasPrerequisite": 22710,
+      "CapableOf": 22677,
+      "Antonym": 19066,
+      "Causes": 16801,
+      "PartOf": 13077,
+      "MannerOf": 12715,
+      "MotivatedByGoal": 9489,
+      "HasProperty": 8433,
+      "ReceivesAction": 6037,
+      "HasA": 5545,
+      "CausesDesire": 4688,
+      "dbpedia/genre": 3824,
+      "HasFirstSubevent": 3347,
+      "DistinctFrom": 3315,
+      "Desires": 3170,
+      "dbpedia/genus": 2937,
+      "NotDesires": 2886,
+      "HasLastSubevent": 2874,
+      "DefinedAs": 2173,
+      "InstanceOf": 1480,
+      "dbpedia/influencedBy": 1273,
+      "dbpedia/occupation": 1043,
+      "dbpedia/language": 916,
+      "dbpedia/field": 643,
+      "dbpedia/knownFor": 607,
+      "MadeOf": 545,
+      "dbpedia/product": 519,
+      "dbpedia/capital": 459,
+      "Entails": 405,
+      "NotCapableOf": 329,
+      "NotHasProperty": 327,
+      "CreatedBy": 263,
+      "dbpedia/leader": 84,
+      "EtymologicallyDerivedFrom": 71,
+      "LocatedNear": 49,
+      "SymbolOf": 4
+    },
+    "languagePairs": {
+      "en->en": 3423004,
+      "fr->fr": 3062789,
+      "de->de": 1078946,
+      "la->la": 926848,
+      "ja->en": 708448,
+      "es->es": 682387,
+      "it->it": 593392,
+      "zh->en": 538483,
+      "zh->zh": 491882,
+      "ru->ru": 480208,
+      "fi->en": 357824,
+      "fr->en": 324271,
+      "it->en": 297262,
+      "pt->pt": 282427,
+      "ja->de": 272584,
+      "ja->ja": 251157,
+      "fi->fi": 210586,
+      "es->en": 207282,
+      "de->en": 199633,
+      "ms->en": 175410,
+      "pt->en": 174412,
+      "en->fr": 173914,
+      "ja->nl": 167340,
+      "nl->nl": 166893,
+      "ru->en": 158924,
+      "bg->bg": 149658,
+      "sv->sv": 146130,
+      "th->en": 145040,
+      "pl->pl": 125037,
+      "la->en": 119390
+    },
+    "datasets": {
+      "/d/wiktionary/en": 12116973,
+      "/d/wiktionary/fr": 5180433,
+      "/d/wiktionary/de": 1667668,
+      "/d/wordnet/3.1": 1289815,
+      "/d/dbpedia/en": 1271522,
+      "/d/jmdict": 896843,
+      "/d/cc_cedict": 415387,
+      "/d/emoji": 383522,
+      "/d/conceptnet/4/zh": 357479,
+      "/d/conceptnet/4/en": 226284,
+      "/d/verbosity": 162297,
+      "/d/kyoto_yahoo": 133333,
+      "/d/opencyc": 88237,
+      "/d/conceptnet/4/pt": 77645,
+      "/d/conceptnet/4/ja": 58751,
+      "/d/conceptnet/4/hu": 1973,
+      "/d/conceptnet/4/nl": 1650,
+      "/d/conceptnet/4/es": 100,
+      "/d/conceptnet/4/it": 48,
+      "/d/conceptnet/4/fr": 19,
+      "/d/conceptnet/4/ko": 1
+    },
+    "licenses": {
+      "cc:by-sa/4.0": 21549446,
+      "cc:by/4.0": 2780534
+    },
+    "weightBands": {
+      "1..<2": 19713969,
+      "2..<5": 2482998,
+      "<1": 2121570,
+      ">=5": 11443
+    }
+  },
+  "stratifiedProbe": {
+    "policy": "three stable-hash-minimum rows per observed English relation and weight band",
+    "strata": {
+      "Antonym:<1": [
+        {
+          "hash": "00156537c9fe41e88afa583b076c399184414852e293eeabbcd2c5a3b59157f4",
+          "relation": "Antonym",
+          "start": "flora",
+          "end": "fauna",
+          "weight": 0.518,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "001643d87c491d43964bac4187333e3f4b1f4b4d616d5a8b48063c5376c2f828",
+          "relation": "Antonym",
+          "start": "free",
+          "end": "prison",
+          "weight": 0.23,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00282aa160b434139dfab8029d640e8b7eae038dccea163c0f2882071f1028af",
+          "relation": "Antonym",
+          "start": "eat",
+          "end": "up",
+          "weight": 0.353,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "Antonym:1..<2": [
+        {
+          "hash": "00180404f52308442e17e04af1ad1a7ac77e97f619645cd50c70d3361a7faefc",
+          "relation": "Antonym",
+          "start": "homosocial",
+          "end": "heterosocial",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "001a8b83fe09a7fd56e2bf2381a9b589acec4992aa9f7e5fdc4e4bf5790dc250",
+          "relation": "Antonym",
+          "start": "fall",
+          "end": "get_up",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "001bd85355c133ac35c16cdd52c95daddc71c2424d34bebb9a15c67526f529d9",
+          "relation": "Antonym",
+          "start": "edited",
+          "end": "unedited",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "Antonym:2..<5": [
+        {
+          "hash": "003059a8305ddef959de52b98e1ceae248ef1446f79c3bc6633e55a806969aad",
+          "relation": "Antonym",
+          "start": "pass_by_value",
+          "end": "pass_by_reference",
+          "weight": 2,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0098f43e58f42b8e22824b50235c9b6af1570f43e877664180fe7711cea0308d",
+          "relation": "Antonym",
+          "start": "logical",
+          "end": "illogical",
+          "weight": 2,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "00a3358bd006972f032ac94ff297507a4586d095cda1ca8c496df90489e0c80e",
+          "relation": "Antonym",
+          "start": "altruistic",
+          "end": "egoistic",
+          "weight": 2,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "AtLocation:<1": [
+        {
+          "hash": "001565bad4f3c3b4f6ea45fcd099c08fa30b453f2e55b92ad2db02f13d144174",
+          "relation": "AtLocation",
+          "start": "mount_pinatubo",
+          "end": "tarlac",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "001e97587237d2fa56422b876683c5714e13a064a41724b6d6b6047063258e03",
+          "relation": "AtLocation",
+          "start": "lollapalooza",
+          "end": "colombia",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "003afd40801641b62ea257d3f288de4c4a12fdba6e6ee4c1cfae438558c2c65e",
+          "relation": "AtLocation",
+          "start": "ikea",
+          "end": "leiden",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "AtLocation:>=5": [
+        {
+          "hash": "00202239b7f78cd76e33677ec2923e4621c0e26161870948a25e5e95bfca7686",
+          "relation": "AtLocation",
+          "start": "wallet",
+          "end": "purse",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        },
+        {
+          "hash": "009d35fb97d15f8ee27ca4c7977245d982b56a9f31dd4210ff9a27fe83f01478",
+          "relation": "AtLocation",
+          "start": "bee",
+          "end": "meadow",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 7
+        },
+        {
+          "hash": "00ab24b2d428cbf2cd76155bd28bc743d91ff34bf8b06a8420b73cbea4bd72f5",
+          "relation": "AtLocation",
+          "start": "moon",
+          "end": "space",
+          "weight": 6.325,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 11
+        }
+      ],
+      "AtLocation:1..<2": [
+        {
+          "hash": "0003ed1addabdc74e4e9428b4666b9b66c95180928627f4c098ba683f795c7d2",
+          "relation": "AtLocation",
+          "start": "horse",
+          "end": "throat",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0004eedcd10cf77658c3c913d6d21c392cf97a9798b81ef371469466dafbd662",
+          "relation": "AtLocation",
+          "start": "castor_oil",
+          "end": "medicine_chest",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0008bdcb1bd732db514873e72a0d7592c798a8161f056d3c7b0a1bc9edeca965",
+          "relation": "AtLocation",
+          "start": "mammoth",
+          "end": "painting",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "AtLocation:2..<5": [
+        {
+          "hash": "0003ccbffe746c93cd6080f04618213d610d26498956340c2eef93ada2b03882",
+          "relation": "AtLocation",
+          "start": "grease",
+          "end": "fast_food_restaurant",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 4
+        },
+        {
+          "hash": "001fdf88a82f8cae2ee0b9ff7156bbdc8e4e3919080832e158cc7701ab368006",
+          "relation": "AtLocation",
+          "start": "on_street",
+          "end": "street_corner",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "0022d7a7f035f97fd71c20a6549c6eb1f4b95926289e17373859b15b8e8b90c2",
+          "relation": "AtLocation",
+          "start": "fancy_wall_calendars",
+          "end": "bookstore",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "CapableOf:>=5": [
+        {
+          "hash": "05b3e513e0a7bd9e6392dfac587a019f539a87b7ae2c5da3171ca4eca8c7388e",
+          "relation": "CapableOf",
+          "start": "male",
+          "end": "father_child",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 6
+        },
+        {
+          "hash": "0983d2dce5af7df9a43e5f6a9aa004b167dbc8b754549a1d65842695c6c8540d",
+          "relation": "CapableOf",
+          "start": "apple",
+          "end": "fall_from_tree",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        },
+        {
+          "hash": "09fa6f4832db183f3f2a97d41c05238120be7bf7defd370dc6029da08c848a9a",
+          "relation": "CapableOf",
+          "start": "comb",
+          "end": "part_hair",
+          "weight": 9.381,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 14
+        }
+      ],
+      "CapableOf:1..<2": [
+        {
+          "hash": "000463041640b1f13c827f542d570f269e6f9fb0a3ebcfcdf3f9c0f475486d47",
+          "relation": "CapableOf",
+          "start": "hurricane",
+          "end": "destroy_small_coastal_town",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000bb7749ce2dd22fadcd8bddbff44d3eb49ce4ff6cf44d6787652ba8aa60bd2",
+          "relation": "CapableOf",
+          "start": "californians",
+          "end": "garden_all_year_round",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000c2ca9977da5fc8d471b18761eb4cdba4729afdc2b800c3db692c208aa632e",
+          "relation": "CapableOf",
+          "start": "liars",
+          "end": "promise",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "CapableOf:2..<5": [
+        {
+          "hash": "00167eab8eb899b28614fe70acc767586637a6fd99cf31241e90c8781fd3b3c4",
+          "relation": "CapableOf",
+          "start": "teenagers",
+          "end": "lift_pus_from_zits",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "002566c6bc28c50a4d3c3dbb4f42df14e34da6256f4e8cffab355f51494706f8",
+          "relation": "CapableOf",
+          "start": "political_party",
+          "end": "back_candidate",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "004a95a4ffd201d9ec4fb2be8e2baf5a59607b435a43cedb3f5a7feccab0c466",
+          "relation": "CapableOf",
+          "start": "detectives",
+          "end": "tail_suspects",
+          "weight": 3.464,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 4
+        }
+      ],
+      "Causes:>=5": [
+        {
+          "hash": "04b936db01e137fd28af3c0ba5db57c2a2000bc1b806c7117cd138fead60a28b",
+          "relation": "Causes",
+          "start": "waiting_in_line",
+          "end": "boredom",
+          "weight": 6.325,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 11
+        },
+        {
+          "hash": "056b36fc8196d380f607960a0c16b620d3dcaeac84edb681ac68edd9fbb27408",
+          "relation": "Causes",
+          "start": "falling",
+          "end": "injuries",
+          "weight": 5.657,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 9
+        },
+        {
+          "hash": "056b7183e63d71d7adbbe3fe18557daf8cc96456d8131772542b5606972bda49",
+          "relation": "Causes",
+          "start": "smoking",
+          "end": "cancer",
+          "weight": 5.657,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 12
+        }
+      ],
+      "Causes:1..<2": [
+        {
+          "hash": "00049df74c3fedf5901da69c50eb36fa61f1aa675f1b759f7dd1b55ec1de9696",
+          "relation": "Causes",
+          "start": "convicting_suspect_for_crime",
+          "end": "pain",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000829186f69756081c8b3e88b7116769d80ca17660d37091ff7f7b6d6b7304f",
+          "relation": "Causes",
+          "start": "lighting_fire",
+          "end": "burning_fuel",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000becaaf53ff6cf0b195d5f06c4f53fea312c1c393cc59d6073ad3d6b290598",
+          "relation": "Causes",
+          "start": "watering_plant",
+          "end": "helping_grow",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "Causes:2..<5": [
+        {
+          "hash": "002c8bbb7e616a65a936e0d41df5aaa91f7833ce754621441880825cadb11747",
+          "relation": "Causes",
+          "start": "procreating",
+          "end": "twins",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "00569a71555921b6a9e0f8e2d5f430fee59cd710e6e2a3efa760a8439aae8ff5",
+          "relation": "Causes",
+          "start": "doing_crossword_puzzle",
+          "end": "headache",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "00807809ce731596d8ea3b65dc780e49e138ccf3680e5530a947046022fa6a25",
+          "relation": "Causes",
+          "start": "buying_fresh_fruits_and_vegetables",
+          "end": "healthyness",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "CausesDesire:>=5": [
+        {
+          "hash": "2bcd00b6f9f2f1c935f27581d836fe1bf7d684ae5bcc4faac9e8169ae678d317",
+          "relation": "CausesDesire",
+          "start": "cold",
+          "end": "light_fire",
+          "weight": 6.928,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 13
+        },
+        {
+          "hash": "6c19e5a84dc77dccd8fbf69ae852436e7b6c2a6c251b3c7f18c85e1787ba150b",
+          "relation": "CausesDesire",
+          "start": "love",
+          "end": "forgive",
+          "weight": 6.928,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 14
+        },
+        {
+          "hash": "8561b6b162c7a056f1c0a289d91ec2b4617aa4a683fe0ea90db07bc713319c09",
+          "relation": "CausesDesire",
+          "start": "drinking",
+          "end": "urinate",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 9
+        }
+      ],
+      "CausesDesire:1..<2": [
+        {
+          "hash": "0001590f0cf1d583e66ea826de9f9d4c043219ee1d8dc0ff7d969bf565f44356",
+          "relation": "CausesDesire",
+          "start": "wondering",
+          "end": "remember",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0001a38ffcc9563cb82bd9bf2f86199b7caee1bfc50f3979853b3a22f5b25429",
+          "relation": "CausesDesire",
+          "start": "cold_weather",
+          "end": "chop_firewood",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "001aa0021730b15627f1c8eeb3d9d911c1de509177f0696072e62b6512efbc05",
+          "relation": "CausesDesire",
+          "start": "desire",
+          "end": "invest_money_or_energy",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "CausesDesire:2..<5": [
+        {
+          "hash": "00633fb8d6d8e0b9fbc84942abd85b8a9cff7abcaddd075503ef8790cb8c1ee7",
+          "relation": "CausesDesire",
+          "start": "wanting",
+          "end": "get",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "00d21c7a4de2daf4e2f9413ceb7e6711fe3b483f5f94784a21ad4612b98e3dfa",
+          "relation": "CausesDesire",
+          "start": "being_judge",
+          "end": "hear_testimony",
+          "weight": 3.464,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 4
+        },
+        {
+          "hash": "010b9612bfb247f599a385de740941d0b372490e1df3962d918da8ba596be002",
+          "relation": "CausesDesire",
+          "start": "curiosity",
+          "end": "learn",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "CreatedBy:>=5": [
+        {
+          "hash": "2e1d6571df346573b437e4fcf452b90f50c29da86052ca2a4988be9e95bb2e7a",
+          "relation": "CreatedBy",
+          "start": "program",
+          "end": "programmer",
+          "weight": 6.633,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 12
+        },
+        {
+          "hash": "710cbd6a79179920a809b983149fb5eb0f1f4bf0c67a29ebb1d4532d288fea8d",
+          "relation": "CreatedBy",
+          "start": "book",
+          "end": "writer",
+          "weight": 6.928,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 13
+        }
+      ],
+      "CreatedBy:1..<2": [
+        {
+          "hash": "0194cd1b2f662cd7cba1db94b352949b4563b9436846c915412e6e3683ba1957",
+          "relation": "CreatedBy",
+          "start": "light",
+          "end": "lamps",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "01a692e30611407d54fe38d08427fc76b1fad4f6f882770317d9c52f27ad6ce1",
+          "relation": "CreatedBy",
+          "start": "television",
+          "end": "people",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "01bedfe6177326c96cab3ef4cacfcb9c4fb42c223f7ea77670d3d56518942f96",
+          "relation": "CreatedBy",
+          "start": "enterprise_mobility",
+          "end": "provisioning_mobility_related_services_throughout_enterprise",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "CreatedBy:2..<5": [
+        {
+          "hash": "02826c238273cee3fdebe5f73497f047648fd58ded7c30c20f0a14b8bca8473a",
+          "relation": "CreatedBy",
+          "start": "clone",
+          "end": "lab",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "03cca0c2419b80c507e7c5bf97abdaa86bcc0ba91b85f428bb8247c3866c3f42",
+          "relation": "CreatedBy",
+          "start": "baby",
+          "end": "sex",
+          "weight": 4.899,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 7
+        },
+        {
+          "hash": "086bb935d549f91999f117bc68af64e8d5f0c20ba6cbdd6e42393ef26ddfd526",
+          "relation": "CreatedBy",
+          "start": "zombie",
+          "end": "animating_flesh_of_dead_person",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "dbpedia/capital:<1": [
+        {
+          "hash": "007b2299eddd474fe9bf50e6c3120b8862dcf572a5ecf010bfee8fc634e1697c",
+          "relation": "dbpedia/capital",
+          "start": "georgia",
+          "end": "atlanta",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "009b73cf1689b40c8cf4fc561b5d2f2a953e158962912e0e031c087278a5bc84",
+          "relation": "dbpedia/capital",
+          "start": "chad",
+          "end": "n'djamena",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00be29cb1d01d224175e69ea38128b3e25e64e74997ce6641ed1c9d22c13acfd",
+          "relation": "dbpedia/capital",
+          "start": "austrasia",
+          "end": "metz",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/field:<1": [
+        {
+          "hash": "006e231d98e5029e220d966e458000cae08cafec776f13512695a3ec2b6e59ee",
+          "relation": "dbpedia/field",
+          "start": "francisco_goya",
+          "end": "printmaking",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "008df7a466a88e21c639f68220c6eca1a2d4071a15914ecf0fe53b0579d6a30f",
+          "relation": "dbpedia/field",
+          "start": "steven_pinker",
+          "end": "experimental_psychology",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "01bf592ec3e9524aaaea976f26b72a6f0e39a0db4c4d814f86049db83a4642a6",
+          "relation": "dbpedia/field",
+          "start": "henri_pitot",
+          "end": "hydraulics",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/genre:<1": [
+        {
+          "hash": "004592235fe9f02cf0b9921336f9876c3894dafeebca34e392e668a74f7648b7",
+          "relation": "dbpedia/genre",
+          "start": "irma",
+          "end": "folk_music",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "005dd31bffdf66142e4457603f0ef577d81b87e379b2ac4673e9a221d7fd33ec",
+          "relation": "dbpedia/genre",
+          "start": "yuri",
+          "end": "rhythm_and_blues",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0067c14cdc1e8c940a01248e733dc2f3565bacfeb84732296a83e0f9451d97c5",
+          "relation": "dbpedia/genre",
+          "start": "virgil",
+          "end": "epic_poetry",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/genre:1..<2": [
+        {
+          "hash": "a83c3b0f1096ed460dd40a7540c67b423b20a6ca20fd22d6bb8912efa066d40d",
+          "relation": "dbpedia/genre",
+          "start": "twins",
+          "end": "new_wave_music",
+          "weight": 1,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/genus:<1": [
+        {
+          "hash": "0005c38fb0ddd4da8df5b47ff54e739b5007ac8dc3e44956209d88634f64d49a",
+          "relation": "dbpedia/genus",
+          "start": "hibiscus_trionum",
+          "end": "hibiscus",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0007a05861fd9ca8ae37f426559e94cb634e5288671c3266146e7cc70f9efeb4",
+          "relation": "dbpedia/genus",
+          "start": "papaver_somniferum",
+          "end": "papaver",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000919524a8264b0bd66848d6313bbd03dcd46efa74c5020008d78e8f9bd6631",
+          "relation": "dbpedia/genus",
+          "start": "erect_crested_penguin",
+          "end": "crested_penguin",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/influencedBy:<1": [
+        {
+          "hash": "0011d3a0e1ad309ec783f50129908ad6e1642c08e3fe0e1dc0e8717ef0943455",
+          "relation": "dbpedia/influencedBy",
+          "start": "vladimir_nabokov",
+          "end": "jules_verne",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "004002ac411e1fd9073b6586d5f03996294051df0a944008892c075f6dcae849",
+          "relation": "dbpedia/influencedBy",
+          "start": "edgar_lee_masters",
+          "end": "mark_twain",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "007fd619593b0ff73392e283ac15998e6b1c30f8a1fd085bafaa1a0d945c99f3",
+          "relation": "dbpedia/influencedBy",
+          "start": "malcolm_lowry",
+          "end": "herman_melville",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/influencedBy:1..<2": [
+        {
+          "hash": "ec79ec4f751c3115b31594a7dab11b0e308e0a862a666375053eb7f150f8022c",
+          "relation": "dbpedia/influencedBy",
+          "start": "c",
+          "end": "c",
+          "weight": 1,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/knownFor:<1": [
+        {
+          "hash": "00451e783109f70face7bb18b6f4f90e5fca638adc5f01f3040c0e76ce4b143a",
+          "relation": "dbpedia/knownFor",
+          "start": "daniel_bernoulli",
+          "end": "kinetic_theory",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0095bd4f3b3813b0278e48b4f92d6451e5353e3a6cc40ee2b94fc9b4474ef0c5",
+          "relation": "dbpedia/knownFor",
+          "start": "percival_lowell",
+          "end": "asteroid",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00e79d31bd9102bedaa1ae31ecaff28568410ffa4c1dacc3f50cdada590934d6",
+          "relation": "dbpedia/knownFor",
+          "start": "virginia_woolf",
+          "end": "lighthouse",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/language:<1": [
+        {
+          "hash": "008d8bee3ddfa8a2d646867cfaba636064924efbf642fa149ca129df764e68f4",
+          "relation": "dbpedia/language",
+          "start": "lilypond",
+          "end": "italian_language",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "01a3bbd7d27d9b9c3efefa7102ca1a846e6bba9e8834cf37b99dfe99f5747dce",
+          "relation": "dbpedia/language",
+          "start": "turks_and_caicos_islands",
+          "end": "english_language",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "02de79bf8882cb70d797a369d9e19bfe29ea323fd6e9dde8ae419f6e5a5e54be",
+          "relation": "dbpedia/language",
+          "start": "iraqi_kurdistan",
+          "end": "arabic",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/leader:<1": [
+        {
+          "hash": "034a062c843d6eae71fddfafc2e9bc4bbb364f76b58f3cf9f6807b80c40f4bc1",
+          "relation": "dbpedia/leader",
+          "start": "american_samoa",
+          "end": "democratic_party",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "03aadd1351d505692b6a6fc96ab2799d44f735837177f52d3b337a67fde9fb2e",
+          "relation": "dbpedia/leader",
+          "start": "american_samoa",
+          "end": "barack_obama",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "06107f8001b131468db21573183c08af7e3dda41462de7306c3dd5cd373679fa",
+          "relation": "dbpedia/leader",
+          "start": "cayman_islands",
+          "end": "member_of_parliament",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/occupation:<1": [
+        {
+          "hash": "0039f179a718434808a9a883ec33a4ced9e359d3e61768fbce23e4d6752f8cf3",
+          "relation": "dbpedia/occupation",
+          "start": "joan_didion",
+          "end": "memoir",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "009eda7b2e0ad2efc521cc189a007acc9aa30fc750e8e21572cd84192861569a",
+          "relation": "dbpedia/occupation",
+          "start": "artie_shaw",
+          "end": "composer",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00b1aaa944a549cf9e4eda738884a7abf097517d558508367c4e1974717b5f3b",
+          "relation": "dbpedia/occupation",
+          "start": "goofy",
+          "end": "economist",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "dbpedia/product:<1": [
+        {
+          "hash": "00809e1113abac44683b8f9213bd19c22cd846bfbf5732795d8568d0c24a30ac",
+          "relation": "dbpedia/product",
+          "start": "viacom",
+          "end": "radio",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "01863b2088b45a2a0ce222c2c57772ea496655b1fee7f77275eb1cd887f68241",
+          "relation": "dbpedia/product",
+          "start": "samsung",
+          "end": "construction",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "020861bf80a2ce5ff1c705d07ee474d8391e266d3ea8bfe001578d7bf48c8ba5",
+          "relation": "dbpedia/product",
+          "start": "toyota",
+          "end": "bank",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "DefinedAs:1..<2": [
+        {
+          "hash": "0001a814100627e4214c3942a328a4a8ed780e72d34339c5fb8f5da57034b28a",
+          "relation": "DefinedAs",
+          "start": "john_pearse",
+          "end": "proprietor_of_peninsula_projectiles",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000766ee455f561dcdd80762c0c0e32175968183759c803431ea0c57ff45bf9f",
+          "relation": "DefinedAs",
+          "start": "massachusetts_state_bird",
+          "end": "chickadee",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00452de8b0d4cfe8fa62ada144fb77c323be835d5069ebf02ba4ae93414e1527",
+          "relation": "DefinedAs",
+          "start": "family",
+          "end": "foundation_of_islamic_society",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "DefinedAs:2..<5": [
+        {
+          "hash": "026b5df93faab0d7ad5b1462f0fee579ed97ddfa9c51a42ebb80aaaeae4160cb",
+          "relation": "DefinedAs",
+          "start": "genocide",
+          "end": "killing_of_specific_group",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        },
+        {
+          "hash": "02dfe255319dc740ec9e136eed82e7f511e2a0716deeb4f8b7449841f2c357ff",
+          "relation": "DefinedAs",
+          "start": "os",
+          "end": "operating_system",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "03f4d72dc58a534693a00ebea5591ae0b3a005fd66eca21edb6b035f9c6cf554",
+          "relation": "DefinedAs",
+          "start": "suicide",
+          "end": "act_of_killing_yourself",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "DerivedFrom:1..<2": [
+        {
+          "hash": "00000e1b9df97a10f75bb934fbf01178da04616a1e79330fba021d856f85c6f9",
+          "relation": "DerivedFrom",
+          "start": "strong_radical",
+          "end": "radical",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00013b7043454c994e9a285940cf8e539df3b6caec035cbecb5bc6bbe248df4e",
+          "relation": "DerivedFrom",
+          "start": "carboxykinase",
+          "end": "kinase",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0001eef1d743d2c291259d68f12184328eae2e0418dae16b713d878feb61312c",
+          "relation": "DerivedFrom",
+          "start": "hemapophysis",
+          "end": "apophysis",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "DerivedFrom:2..<5": [
+        {
+          "hash": "0058d0fac9937253e5aa74c63f5053bf7397b760dbb7a138b3c5ba37e3c42471",
+          "relation": "DerivedFrom",
+          "start": "endlessness",
+          "end": "endless",
+          "weight": 2,
+          "dataset": "/d/wiktionary/de",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "00968aacd9a504cc83497d4e562a0f52d0bdfa541adf09458b7fb2d2d827dbf6",
+          "relation": "DerivedFrom",
+          "start": "covetous",
+          "end": "covet",
+          "weight": 2,
+          "dataset": "/d/wiktionary/de",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "012a9d0b2174311a3069fcc2c3c8a689a1ec969513a5aa4630d8f54f947173ec",
+          "relation": "DerivedFrom",
+          "start": "telephone_book",
+          "end": "telephone",
+          "weight": 2,
+          "dataset": "/d/wiktionary/de",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "Desires:>=5": [
+        {
+          "hash": "147aa3604e82cc2c4acf1de9e4faade5215ac6714fb71d83fc3e4629ec4ab9fd",
+          "relation": "Desires",
+          "start": "dogs",
+          "end": "chew_bones",
+          "weight": 5.657,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 9
+        },
+        {
+          "hash": "74cc727db03ae0490c6ca3df6a73a39793715776aff8c6341ff83c438233a3f9",
+          "relation": "Desires",
+          "start": "children",
+          "end": "play_with_toys",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 10
+        },
+        {
+          "hash": "9516084b3555b8f1caf65b6eda776613df5ebe26765cc1ee39f81baf3d407ee7",
+          "relation": "Desires",
+          "start": "person",
+          "end": "own_house",
+          "weight": 6.325,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 13
+        }
+      ],
+      "Desires:1..<2": [
+        {
+          "hash": "000ff6fb0ab109ae1d5149b15b37a2c21fcf7fbbb6a76026068b99e891253479",
+          "relation": "Desires",
+          "start": "person_aften",
+          "end": "peers_to_judge",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0028198f6f6e2ff11e6b0fdb923184840867a76f676860cb052c3220fca43143",
+          "relation": "Desires",
+          "start": "adrenaline_junkies",
+          "end": "jump_off_high_places",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00589066a3ab5f944606d0bd3ddf0542d382f11ba09c336d74984d3977c8bcab",
+          "relation": "Desires",
+          "start": "person",
+          "end": "touch_soft_skin",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "Desires:2..<5": [
+        {
+          "hash": "00c2e4b70606d06cb33be3a3d601935142d5886ce860453fb4202528d53c8ad2",
+          "relation": "Desires",
+          "start": "person",
+          "end": "patient_spouse",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "011c7a0e84c68069e38e51d8ebeae3bcd1e57674defbf0e6f47d34e5fd222401",
+          "relation": "Desires",
+          "start": "person",
+          "end": "receive_gifts",
+          "weight": 4,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 4
+        },
+        {
+          "hash": "01f0b8f5d4f39754c902e392a63e4c273b979eb82ad04e2ed7e0b3a17555c872",
+          "relation": "Desires",
+          "start": "kids",
+          "end": "play",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        }
+      ],
+      "DistinctFrom:<1": [
+        {
+          "hash": "002281451e00918abc5da2328d17e7663e9c21172a74933390661e56d2759abd",
+          "relation": "DistinctFrom",
+          "start": "among",
+          "end": "between",
+          "weight": 0.102,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "002d7d0d687191ce9fcc71f49276b531b4584e8e89f6cd628843376d78944e84",
+          "relation": "DistinctFrom",
+          "start": "animal",
+          "end": "bug",
+          "weight": 0.112,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0057e166024cab355a92548ba4d677e78a7e9091ba87c07f7bf2139c32b7c575",
+          "relation": "DistinctFrom",
+          "start": "next",
+          "end": "first",
+          "weight": 0.309,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "DistinctFrom:1..<2": [
+        {
+          "hash": "00c7bd957347d969609170b002c80a049341ae7dd469dccd167642099de6ad60",
+          "relation": "DistinctFrom",
+          "start": "lackadaisical",
+          "end": "interested",
+          "weight": 1,
+          "dataset": "/d/wiktionary/de",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00d2a7f39a885850988a696e1c0b7eb5cf7054f0bcc8a7bb4dd4acc4edb96359",
+          "relation": "DistinctFrom",
+          "start": "we're",
+          "end": "she's",
+          "weight": 1,
+          "dataset": "/d/wiktionary/de",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00d2c9da50dcf199ea0b8faba879de6c4d38f5d4e4b7e37b06871cc9b1e8b443",
+          "relation": "DistinctFrom",
+          "start": "grandpa",
+          "end": "grandma",
+          "weight": 1,
+          "dataset": "/d/wiktionary/de",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "DistinctFrom:2..<5": [
+        {
+          "hash": "002ffba332a90bbd5338c9ece049acfffc521bb94578866660096d7a17b7a1f4",
+          "relation": "DistinctFrom",
+          "start": "me",
+          "end": "you",
+          "weight": 2.395,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "004a19ce566bbead75210372e4e8c670ef31c0b9c55d998b10e56e9b1b25b248",
+          "relation": "DistinctFrom",
+          "start": "off",
+          "end": "on",
+          "weight": 2.223,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "02003f5ad9c4f525786209962d911d3c2ff2ca4e7694dde6711b8a82b746b7d2",
+          "relation": "DistinctFrom",
+          "start": "man",
+          "end": "female",
+          "weight": 2.29,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "Entails:2..<5": [
+        {
+          "hash": "0027a728775855c6bcf555dcf40f40deff6fa99dc9185aa200416724f97d590f",
+          "relation": "Entails",
+          "start": "check_out",
+          "end": "buy",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "004924e3d7b7c8d87acccf624899afa672c95df8a7e48c745b25ad50cfa309e1",
+          "relation": "Entails",
+          "start": "listen",
+          "end": "hear",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0052d3329607a38f33e3c56a6fb612331455c145a66cf1dd0cd42fe507a3eae7",
+          "relation": "Entails",
+          "start": "digest",
+          "end": "consume",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "EtymologicallyDerivedFrom:1..<2": [
+        {
+          "hash": "00751aeef3f33e290f9efdc98ecde143ce7e5e308880ca3fbda9680bc0a96c7c",
+          "relation": "EtymologicallyDerivedFrom",
+          "start": "allele",
+          "end": "allelomorph",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "01397acfe8730b43ddd5b0a412f88265a98467e05f53c744b88b9413dd18021f",
+          "relation": "EtymologicallyDerivedFrom",
+          "start": "tala",
+          "end": "dollar",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "048bc902bbc2f9b94aa35500d65a8ba80f59a7f08c56ae030bbab87f32a439b7",
+          "relation": "EtymologicallyDerivedFrom",
+          "start": "omurice",
+          "end": "rice",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "EtymologicallyRelatedTo:<1": [
+        {
+          "hash": "000404f968254c7e2586e4325e1b94b8ce541a17f4c72bfd8656bbb4c1457754",
+          "relation": "EtymologicallyRelatedTo",
+          "start": "sunday_name",
+          "end": "name",
+          "weight": 0.25,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0004c087626f0186cfcfe06c91cbdb6a3f4efa2fa4c80244043f205d94bbd779",
+          "relation": "EtymologicallyRelatedTo",
+          "start": "unflocked",
+          "end": "flock",
+          "weight": 0.25,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00055163ba185d353f4644c97ce181dc84dabd93987aaec106ce0eebbb4132b5",
+          "relation": "EtymologicallyRelatedTo",
+          "start": "bluster",
+          "end": "blow",
+          "weight": 0.25,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "EtymologicallyRelatedTo:1..<2": [
+        {
+          "hash": "63d6ccd4faf59ee9ec4433a3437dc0f76922b321f8d530752366a128c6ef5462",
+          "relation": "EtymologicallyRelatedTo",
+          "start": "admiral",
+          "end": "amir",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "FormOf:1..<2": [
+        {
+          "hash": "00003e76cfaf098c2577de64ab4934a97eadf7489f526200618a535f5ba26d4b",
+          "relation": "FormOf",
+          "start": "tibetans",
+          "end": "tibetan",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00004b72eef22c0593b5d895658869f7cc35186619fc83c73f84d7aa42af10e3",
+          "relation": "FormOf",
+          "start": "repricing",
+          "end": "reprice",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00005babe3948e1fb17e3ecc76c54b2db71e0d49916a655d705645467794f983",
+          "relation": "FormOf",
+          "start": "amrheins",
+          "end": "amrhein",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "FormOf:2..<5": [
+        {
+          "hash": "000dddee32d209f5e9b9aed58b5ca257fb4a9a15709618798a5e6a55c7e516a4",
+          "relation": "FormOf",
+          "start": "s's",
+          "end": "s",
+          "weight": 2,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00202caf2f029ad0bd6d859c5c882f291325d13d637ad449a386ec9d286e25e0",
+          "relation": "FormOf",
+          "start": "chesnuts",
+          "end": "chesnut",
+          "weight": 2,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0020cf737ac98e4c4bdb5cb0e9d1e20beaf2768952abc76b8ee0deddda59b783",
+          "relation": "FormOf",
+          "start": "yagers",
+          "end": "yager",
+          "weight": 2,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "HasA:>=5": [
+        {
+          "hash": "0d8c4af7042c297e38d9fa14aba2c136aa438f3c69a19696f279facfcb0aee66",
+          "relation": "HasA",
+          "start": "oceans",
+          "end": "salt_water",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 10
+        },
+        {
+          "hash": "2947e36c61774fad2a3d4efa8f2b177407efd1d52028599b8641a53df5e900b7",
+          "relation": "HasA",
+          "start": "car",
+          "end": "seats",
+          "weight": 6.325,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 11
+        },
+        {
+          "hash": "2a8db60fa4030c6bee858e7792da9943d72dc1bc9ef81a7e7ecc3a96667d9db0",
+          "relation": "HasA",
+          "start": "ducks",
+          "end": "bill",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        }
+      ],
+      "HasA:1..<2": [
+        {
+          "hash": "00148e1545d7011898d4b3bd58692fbc68696ef20ff6ee73d6f3a962069a8e15",
+          "relation": "HasA",
+          "start": "many_offices",
+          "end": "canteens",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "002cf2cb5589f4aff2d518044bbf10f61339c7745b80445e35f905440b270040",
+          "relation": "HasA",
+          "start": "fish",
+          "end": "gills_which_allow_breathing_water",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0033fed14e05e3bfe3718f1df79e4cfd158d69346fb17c8e2d27d2963abebea7",
+          "relation": "HasA",
+          "start": "wood",
+          "end": "cellulose",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "HasA:2..<5": [
+        {
+          "hash": "00577795f87d8e7c5583e2bd44f7d078307a04280d2487562542e5f73eaa2989",
+          "relation": "HasA",
+          "start": "visa_cards",
+          "end": "credit_limits",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "0131f1ae1c3c9fcef3f258194dc48245e88db615a13ac46992430c0b95ac4ec5",
+          "relation": "HasA",
+          "start": "earth",
+          "end": "single_moon",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "016c1c453e06963e94f1a6411d052b08717d04ece07cbcd4cb6227830c979522",
+          "relation": "HasA",
+          "start": "cars",
+          "end": "engine",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "HasContext:1..<2": [
+        {
+          "hash": "0001160584767a727fc5bb710fb79076e41193d62b50ae5a972b073e5715b6e6",
+          "relation": "HasContext",
+          "start": "chitotriose",
+          "end": "carbohydrate",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000131af178ab9b6030f1dbd5ba1e44311de1144250dcb3fdc332df685cb4744",
+          "relation": "HasContext",
+          "start": "farnesol",
+          "end": "organic_compound",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00014f3e3da9f18eb7bcd81423da858a1aa2e39fd92463697039781afd2d9a3c",
+          "relation": "HasContext",
+          "start": "gimboid",
+          "end": "derogatory",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "HasContext:2..<5": [
+        {
+          "hash": "001a419e6e1e984f3dda5d6c572a76d5ce3658d8eb2c8c6aa6bde6f284268b54",
+          "relation": "HasContext",
+          "start": "amphoteric",
+          "end": "chemistry",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0034ff295740f847cb71440653f66f6da85dc7fe87acf390327bfc908403aa68",
+          "relation": "HasContext",
+          "start": "complex",
+          "end": "psychoanalysis",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0039751db54d0ac95b842df01806a419cc85e5570a86a7467ba8e826ba8ed5db",
+          "relation": "HasContext",
+          "start": "victoria_plum",
+          "end": "united_kingdom",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "HasFirstSubevent:>=5": [
+        {
+          "hash": "298e6e56ff2ccedd8042356658aab79ec8761dca983aec4037e3455d15f8b7c2",
+          "relation": "HasFirstSubevent",
+          "start": "wake_up",
+          "end": "open_eyes",
+          "weight": 6.325,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 7
+        },
+        {
+          "hash": "de4745eb44b8b7585b5ef21cc15db6fac976e21a6bc8979490ba07d20d9e918b",
+          "relation": "HasFirstSubevent",
+          "start": "attend_lecture",
+          "end": "sit",
+          "weight": 5.657,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 9
+        },
+        {
+          "hash": "df5f5d3468422bde5b0d975b3d414c633af358edea14884fd268e84231b343a5",
+          "relation": "HasFirstSubevent",
+          "start": "skate",
+          "end": "put_skates_on",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 10
+        }
+      ],
+      "HasFirstSubevent:1..<2": [
+        {
+          "hash": "000c84428cd7a393de338ac1fa5eaff38a7ad6aca68fc0ca247eac6eb9ebc513",
+          "relation": "HasFirstSubevent",
+          "start": "urinate",
+          "end": "find_facility",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0021d87b8f6cefd28d53787c3598b27bf895be84a6de12820ea1acad4881ce75",
+          "relation": "HasFirstSubevent",
+          "start": "communicate",
+          "end": "speak",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "003eac86e671a2be7fe9658741d3e01821c47b5e2317b526e8a705f373180fb2",
+          "relation": "HasFirstSubevent",
+          "start": "hear_news",
+          "end": "pay_attention",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "HasFirstSubevent:2..<5": [
+        {
+          "hash": "006e69def8b4f8cd71e3e63020296d23acbebab94e0cf916c80c6870114f5ed7",
+          "relation": "HasFirstSubevent",
+          "start": "wage_war",
+          "end": "attack_enemy",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00fd06572ccf594316158bdf28500bcbe4e26a4e97586db99b44dde017cf9e8e",
+          "relation": "HasFirstSubevent",
+          "start": "hike",
+          "end": "stretch",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "01169e4256ed94842ff67848d577d71fe14d725fbac732496161da3031f0b52b",
+          "relation": "HasFirstSubevent",
+          "start": "have_lunch",
+          "end": "evaluate_hunger",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "HasLastSubevent:>=5": [
+        {
+          "hash": "18f19fd45342e0f2dce53a7fa7594b8c1074e0a6a836f8d853388592c03f6347",
+          "relation": "HasLastSubevent",
+          "start": "watch_tv",
+          "end": "turn_tv_off",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        },
+        {
+          "hash": "8a67332221ec2cbd313c456f5b4acd505c19a9205c41889ff437b241cf2db01b",
+          "relation": "HasLastSubevent",
+          "start": "do_exercises",
+          "end": "do_cool_down",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 10
+        },
+        {
+          "hash": "8e154c04d06cad31d64b8b167730395a54cd28a215205519973553356685fdfb",
+          "relation": "HasLastSubevent",
+          "start": "bathe",
+          "end": "dry_off",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 10
+        }
+      ],
+      "HasLastSubevent:1..<2": [
+        {
+          "hash": "001714fdcc31467d2109ad314ae99400334b1e777bb0e53a77cce6122b0e8cf9",
+          "relation": "HasLastSubevent",
+          "start": "purchase_cellular_phone",
+          "end": "pay_for_puchase",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "008e347c760cf9f017de79eaa57eb9241ee6fbf5f213115ea76f166a3eb01a7a",
+          "relation": "HasLastSubevent",
+          "start": "find_information",
+          "end": "use",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00b3e2e2bc023e451fedd4f78e9a05574f03eafcc9edd42b9b1e93a812e64dd2",
+          "relation": "HasLastSubevent",
+          "start": "watch_television_show",
+          "end": "switch_off_tv",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "HasLastSubevent:2..<5": [
+        {
+          "hash": "002d43eedee63ab208d44a9e5096d2f57c21f104dbe0022a3c56a17cd9d0b922",
+          "relation": "HasLastSubevent",
+          "start": "compete_against",
+          "end": "say_won",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "02c2b94242da2169de6a07fd82c9ed375af890140cd35c91b8aa2733c63e11d7",
+          "relation": "HasLastSubevent",
+          "start": "play_soccer",
+          "end": "leave_field",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "02ffaab4e2867b7b7f30b7bd2cc9c6d37281068eecfe2137d79a87bb4c690dfa",
+          "relation": "HasLastSubevent",
+          "start": "express_how_funny",
+          "end": "laugh",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "HasPrerequisite:>=5": [
+        {
+          "hash": "00556c9455bb113924621fd0fd03d75ebb518305eca5622d6a30b6a9f59dac38",
+          "relation": "HasPrerequisite",
+          "start": "cut_hair",
+          "end": "go_to_barber",
+          "weight": 6.325,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 7
+        },
+        {
+          "hash": "024a89956112d4911f616dec22aea118322f0d8df864fa85903dce09bfd81f89",
+          "relation": "HasPrerequisite",
+          "start": "see_movie",
+          "end": "go_to_cinema",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        },
+        {
+          "hash": "0333d0130d7751e8a0130d09de74f335921b9ccf9ca2f31c86f964c8e254bcac",
+          "relation": "HasPrerequisite",
+          "start": "sleeping",
+          "end": "closing_eyes",
+          "weight": 8,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 16
+        }
+      ],
+      "HasPrerequisite:1..<2": [
+        {
+          "hash": "0004a6a49a8ebfdd1f04f0049f0d676d98ac10364f560a069b5f2b243e80f034",
+          "relation": "HasPrerequisite",
+          "start": "knowing_how_stock_market_performed",
+          "end": "index",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000b62f994d59a35097e6bbbd9bc31450da126c06cccaf0d543383e10540546d",
+          "relation": "HasPrerequisite",
+          "start": "wrestle",
+          "end": "do_on_soft_surface",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00115a3f241a3dd7d66d870cae5ef0bcafca2c019b6852e42899f20fba7b40cd",
+          "relation": "HasPrerequisite",
+          "start": "having_lunch",
+          "end": "cooking_or_buying_food_for_lunch",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "HasPrerequisite:2..<5": [
+        {
+          "hash": "0001ee278b7607f3eac6b2c942e6e5245f32661ae4e2fdcf8021afd1a3d95ee3",
+          "relation": "HasPrerequisite",
+          "start": "go_to_mall",
+          "end": "get_money",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        },
+        {
+          "hash": "000f143f9d7a665ec2c22a60ee762be69495807e588db8c92eccf789710cdd2d",
+          "relation": "HasPrerequisite",
+          "start": "pay_cash",
+          "end": "carry_cash",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        },
+        {
+          "hash": "001211f1661349936b84750528ae2305337d5e84af4b348bb38681829aef6329",
+          "relation": "HasPrerequisite",
+          "start": "walk_dog",
+          "end": "hook_leash_to_collar",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        }
+      ],
+      "HasProperty:>=5": [
+        {
+          "hash": "0ac75086fda095327b0bc470d2b2267f40235cd73ce9d77d96777c0e873c66fe",
+          "relation": "HasProperty",
+          "start": "people",
+          "end": "weird",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 6
+        },
+        {
+          "hash": "17ec71af9048a5efa01271a8423b9686a259203fd27e5a015a83dac54aa4ec6b",
+          "relation": "HasProperty",
+          "start": "water",
+          "end": "essential_to_all_life",
+          "weight": 5.657,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 11
+        },
+        {
+          "hash": "2ebcf6ca9775e48fa42d68631d0b8dc4dd7f49c1e5e46e39d02873b438db12ef",
+          "relation": "HasProperty",
+          "start": "needle",
+          "end": "sharp",
+          "weight": 6.325,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 11
+        }
+      ],
+      "HasProperty:1..<2": [
+        {
+          "hash": "000a4fa5287dd0f384893b7273a6cf13513efad41ea42be5b0e37f2eb3df71c3",
+          "relation": "HasProperty",
+          "start": "in_australia_voting",
+          "end": "compulsory",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0013342bd019ea373d65b834ef4bf7d985ce77512ec9aec5cfd37748e633de75",
+          "relation": "HasProperty",
+          "start": "intergovernmental_panel_on_climate_change",
+          "end": "abbreviated_to_ipcc",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "001a1214929def54ff77e039164fcbdda32eee554f8e5de0707b16ee50dc984b",
+          "relation": "HasProperty",
+          "start": "sentence",
+          "end": "confusing",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "HasProperty:2..<5": [
+        {
+          "hash": "001eb205872e21d08703873452dd03e6af958b8d4bf8c080fb55f2b1dbc8f281",
+          "relation": "HasProperty",
+          "start": "chess_pawns",
+          "end": "expendable",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "00579b53e5f490e8f4e0535de3fa7ffd41db6fa1dc0daff8aadfa44a3883319e",
+          "relation": "HasProperty",
+          "start": "find_underwater",
+          "end": "water",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "0065edc970698ad35d8c3000582335ea822711f56a8f02bdab01e1374804f93c",
+          "relation": "HasProperty",
+          "start": "rain",
+          "end": "wet",
+          "weight": 4.472,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 6
+        }
+      ],
+      "HasSubevent:>=5": [
+        {
+          "hash": "002b60d94e76194fa6e34e2a65ff3a7555043512c2d2f77a912f52e7e4127f56",
+          "relation": "HasSubevent",
+          "start": "going_for_swim",
+          "end": "getting_water_in_nose",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        },
+        {
+          "hash": "0096568d7abf25c3576cac77e81ab181d4b154322b5ceed74c45cadd8ca3fdf5",
+          "relation": "HasSubevent",
+          "start": "skate",
+          "end": "falling_down",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 10
+        },
+        {
+          "hash": "03cf56c807fe655e3187cad5644576707cdc44db637b701cd37f1c2e802efa30",
+          "relation": "HasSubevent",
+          "start": "chew_food",
+          "end": "swallow",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        }
+      ],
+      "HasSubevent:1..<2": [
+        {
+          "hash": "000069289b5970722943710bc07b2d84c40555492c62266bd27dda2e9c049426",
+          "relation": "HasSubevent",
+          "start": "judge",
+          "end": "condemn_or_condone",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0000a7a1f009c70c2c957b17c35a3a4107b4b423361e278853aec3210da79d59",
+          "relation": "HasSubevent",
+          "start": "driving",
+          "end": "raising_passenger_window",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0004db3165d89b77b206db428ad074cb67748004b22396959c4290d2867d30f2",
+          "relation": "HasSubevent",
+          "start": "laugh_at_joke",
+          "end": "spreading_saliva",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "HasSubevent:2..<5": [
+        {
+          "hash": "000fcb5b79845d7274cb39fd8155d19d3475b9eb91b9121ac60126b54d544ab7",
+          "relation": "HasSubevent",
+          "start": "making_bread",
+          "end": "knead_dough",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "001cb5c467367a2cd82d1f361f747394957df46bd4e517d72a11fc62e59853ff",
+          "relation": "HasSubevent",
+          "start": "entertaining",
+          "end": "tell_stories",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "001d27c818795efa822e420805cc7d5414ab40f94c54294f082c2e5d4cc85328",
+          "relation": "HasSubevent",
+          "start": "play_game",
+          "end": "compete",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "InstanceOf:<1": [
+        {
+          "hash": "0025f7360c463e8474b780150b514aa5887d7d3c14a6a76faf38d6109e22b524",
+          "relation": "InstanceOf",
+          "start": "dead_letters",
+          "end": "album",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0032c757dcbb3aea67d1923e84078b9dc23a7b7c1cf2b443ee7a5d63b312fe6d",
+          "relation": "InstanceOf",
+          "start": "m101_howitzer",
+          "end": "howitzer",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0032ee33cd3ffed47aae59da4df8f88a515f20e8d5a21057d658f572c0210729",
+          "relation": "InstanceOf",
+          "start": "pollee",
+          "end": "division",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "InstanceOf:1..<2": [
+        {
+          "hash": "0f9d376c76d10c1b57a7c108ceb44dcc58bba67df397f04894da874b2137f99b",
+          "relation": "InstanceOf",
+          "start": "yerevan",
+          "end": "city",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "ba7a29268421b6953f68d4b49c1e8049e53ea7b5c0ded110d094ca2bb51df348",
+          "relation": "InstanceOf",
+          "start": "banana",
+          "end": "fruit",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "IsA:<1": [
+        {
+          "hash": "0001a19260433770ed12ec062132167ae04c1bdde0cff83c55bbad5113ba35a0",
+          "relation": "IsA",
+          "start": "berkut",
+          "end": "military_unit",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0002d7ebf6edc4a8c5f0005ed6b2fc7327abda17e84f009fea5b639781fa8fa3",
+          "relation": "IsA",
+          "start": "cirrhosis",
+          "end": "disease",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0002ff2a6d04ec3e66ec62b40de89ba89609651b705bf735d87eb3a77bd67f47",
+          "relation": "IsA",
+          "start": "hindi",
+          "end": "language",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "IsA:>=5": [
+        {
+          "hash": "03571f01bc8b95a355be6918a6549b0d4f403d9f6050ae1b7c10860b121aaf07",
+          "relation": "IsA",
+          "start": "green",
+          "end": "color",
+          "weight": 6.325,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        },
+        {
+          "hash": "03d7edc3de6a1c66c71a5b26a491645d60c3d9aad976d0fde83efa33d7c8bdaa",
+          "relation": "IsA",
+          "start": "football",
+          "end": "sport",
+          "weight": 8,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 17
+        },
+        {
+          "hash": "05feda48f987f7622947266510003afb8c74c10218279ce7f5097c5f92ee6e02",
+          "relation": "IsA",
+          "start": "baseball",
+          "end": "game",
+          "weight": 7.746,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 16
+        }
+      ],
+      "IsA:1..<2": [
+        {
+          "hash": "00001a6fea1cc1737dafe9dcd354781176e590261473f8e0052a3904de886de2",
+          "relation": "IsA",
+          "start": "pair_of_chopsticks",
+          "end": "shaped_thing",
+          "weight": 1,
+          "dataset": "/d/opencyc",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0002db33025642ba4b51d86419690a6e426069dd047dbf9ecf3561d0f215ce40",
+          "relation": "IsA",
+          "start": "resource_pool",
+          "end": "computational_system",
+          "weight": 1,
+          "dataset": "/d/opencyc",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0002f82321a6b7c844db9d2ac73d21fa1d7af897c291f5cde2f3d55cfcdb0a20",
+          "relation": "IsA",
+          "start": "cream",
+          "end": "cream",
+          "weight": 1,
+          "dataset": "/d/opencyc",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "IsA:2..<5": [
+        {
+          "hash": "00005464294a69287b6ac22ebbfdeb4f4c36788cdc509eaa7766a3d7eb574d77",
+          "relation": "IsA",
+          "start": "genus_maxillaria",
+          "end": "monocot_genus",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0002e6fb5a560ba98368aaf8c3f2c26c5f5b0ba8dc1047f3edff5477060f31f8",
+          "relation": "IsA",
+          "start": "telecast",
+          "end": "broadcast",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0003422f8a8e0bc4415716e2197d0d5d112d99ad53b11cce598d3cd18a444317",
+          "relation": "IsA",
+          "start": "chili_powder",
+          "end": "flavorer",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "LocatedNear:1..<2": [
+        {
+          "hash": "0ed2bed95b02a6c3f051b22ec6ef32a05aa7020f730858b2748b35e28ceb5eca",
+          "relation": "LocatedNear",
+          "start": "pickle",
+          "end": "picnic",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "163c0cffcc2df8ac4aacbfcf6526767e8b9709c1293563b8165caff5bc8a6e6e",
+          "relation": "LocatedNear",
+          "start": "shoe",
+          "end": "foot",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "1bb637d7b0adfc75b75536b061c3875843e04a1e0587cf7c4e3fae1ba86bc212",
+          "relation": "LocatedNear",
+          "start": "trash",
+          "end": "trash_bin",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "LocatedNear:2..<5": [
+        {
+          "hash": "757e8c0a85b27f60c1cc08a36123801997411a10f38fc101680938db55a94626",
+          "relation": "LocatedNear",
+          "start": "chair",
+          "end": "table",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "bf79d7ef867bc11efe48902797153051ebd68e19135be15ab6e2619aa0f768ea",
+          "relation": "LocatedNear",
+          "start": "shore",
+          "end": "ocean",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "MadeOf:1..<2": [
+        {
+          "hash": "011af11141ae554ad38b3a7eb70510dfed31b3b8a319c77657a71811757a977a",
+          "relation": "MadeOf",
+          "start": "computer_monitor",
+          "end": "glass",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "01f0949a664e84833cfa27de33a50326dbb21d4c8f25fec890124f4d4c4dcc2d",
+          "relation": "MadeOf",
+          "start": "laptops",
+          "end": "plastic",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "036b1c9bdd38ea613de94a33092640bc5dd7857dbaa1a96501f638ee808b0d03",
+          "relation": "MadeOf",
+          "start": "news_column",
+          "end": "words",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "MadeOf:2..<5": [
+        {
+          "hash": "0149092bb0fa97478c7b2674e24c738619d238b697be2ece2ef90dd67a614aa3",
+          "relation": "MadeOf",
+          "start": "u.f.o",
+          "end": "alien_material",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0348424fe48efed7e134bd0dc3c79a78b07f054a83e55e0eb38dddbe52737bb5",
+          "relation": "MadeOf",
+          "start": "wine",
+          "end": "fruit",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "06efb6ec72bfef2f2315c79c5f9f2be9bee08ed8c97cfe78c8ab36ca9828dc4b",
+          "relation": "MadeOf",
+          "start": "pillow",
+          "end": "feathers",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "MannerOf:1..<2": [
+        {
+          "hash": "1a2209a66fdb5282614f7eee521c1225d63f3d874d4c569dda5f3cf184d8b5ca",
+          "relation": "MannerOf",
+          "start": "diff_file",
+          "end": "patch_file",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "2c734bf1ce258cdbb9380e441e6e49fa7303b3bb7a6ad805a7e021b59a668160",
+          "relation": "MannerOf",
+          "start": "drill",
+          "end": "perforate",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "32d0eb0b86c9360fdcac35a7e7c0ab4e671e36cf9cbf0c76b75eb02860bca60b",
+          "relation": "MannerOf",
+          "start": "cut_rate_sale",
+          "end": "sale",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "MannerOf:2..<5": [
+        {
+          "hash": "0006af28d83a423bce0b050060335026ddbd332de6eec61586c98c187d6d3492",
+          "relation": "MannerOf",
+          "start": "rotate",
+          "end": "grow",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000e322db8dd7f9c9bee867465f1be9664590f191c198fb897e82ca706db3e8a",
+          "relation": "MannerOf",
+          "start": "body_guard",
+          "end": "protect",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0011485fdb26097a565fb5e5966204f6bb581c4d962a5bf3412dc964fe6d8b77",
+          "relation": "MannerOf",
+          "start": "extort",
+          "end": "take",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "MotivatedByGoal:>=5": [
+        {
+          "hash": "22f0ef72b19455e082c56748eca799977da43a0fdcda0b728d95a9708a19b217",
+          "relation": "MotivatedByGoal",
+          "start": "propose_to_woman",
+          "end": "love",
+          "weight": 6.928,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 17
+        },
+        {
+          "hash": "33c06726d93a3a5f2fa6d93cbac4deb69dbc109c76dbd8c33740fe78d67b4963",
+          "relation": "MotivatedByGoal",
+          "start": "compete",
+          "end": "win",
+          "weight": 6.633,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 11
+        },
+        {
+          "hash": "34ddb5fbdb2e13b8aa04a650447123223a5bb60ebbf13f89467197f80d42eeab",
+          "relation": "MotivatedByGoal",
+          "start": "work",
+          "end": "need_money",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 9
+        }
+      ],
+      "MotivatedByGoal:1..<2": [
+        {
+          "hash": "00092b430a5ec4d8be05471cf79d18b2f9ab8c26bb286fd334c2412964f2fadc",
+          "relation": "MotivatedByGoal",
+          "start": "make_shopping_list",
+          "end": "organized",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000ac867aa22e07e42f0ffc61cf759ac210434cb96123a56109c1dc98f2a44ac",
+          "relation": "MotivatedByGoal",
+          "start": "clean_clothing",
+          "end": "looks_nicer_when_clean",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0010d14fedade20e8f24e79e69ed2f57d5ac561f0762325e201850ed86fed732",
+          "relation": "MotivatedByGoal",
+          "start": "take_breather",
+          "end": "dancing_can_strenuous",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "MotivatedByGoal:2..<5": [
+        {
+          "hash": "001b934b8796def11757bf8147c14baddf49a956b333fd1f4fe49482bd4bc6fd",
+          "relation": "MotivatedByGoal",
+          "start": "have_friends_over",
+          "end": "lonely",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "0039d3167495973a4479066b0c78e60d59e76a70470e83ca57080d1e81e9aab5",
+          "relation": "MotivatedByGoal",
+          "start": "eat_quickly",
+          "end": "were_late_for_appointment",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        },
+        {
+          "hash": "00479fff0236c467ce75d35edff3040027b14d9cebb83c5d256a8a0494ad5a8d",
+          "relation": "MotivatedByGoal",
+          "start": "kiss",
+          "end": "show_affection",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        }
+      ],
+      "NotCapableOf:>=5": [
+        {
+          "hash": "b555e0fc8d8fb0cead3db602e09f9b1164b9b0273a9ebb250c5dba65796aec91",
+          "relation": "NotCapableOf",
+          "start": "atheists",
+          "end": "believe_in_god",
+          "weight": 6.325,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        }
+      ],
+      "NotCapableOf:1..<2": [
+        {
+          "hash": "0049b554c0d2f1d7d0b1b4d07d4562edc59db7945e3338d256eac8750e35d2c4",
+          "relation": "NotCapableOf",
+          "start": "human_beings",
+          "end": "drink_gasoline",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "01ad79578d2ba7d1b42f613090635503c98b95c72e6d5060d989f0785c7fcb1b",
+          "relation": "NotCapableOf",
+          "start": "most_people",
+          "end": "live_underground",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "024d0589220876a0bd576d004e56c0bf74ed72a08a9208de9c0555816527261a",
+          "relation": "NotCapableOf",
+          "start": "death_and_privacy",
+          "end": "mix",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "NotCapableOf:2..<5": [
+        {
+          "hash": "0e2906217f16ad2ccec2755ac6dc7f419c46f1e566d9e1c540c709f040201f94",
+          "relation": "NotCapableOf",
+          "start": "fish",
+          "end": "live_on_land",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "176719360a40cd70838658f3d7609cd948d63583cee1e294b61c041476ab35fa",
+          "relation": "NotCapableOf",
+          "start": "most_men",
+          "end": "wear_dresses",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "188a4529320af1bc01d79c6f5ee310ad327d4ef04b05e49627c2afa876210ffd",
+          "relation": "NotCapableOf",
+          "start": "rabbits",
+          "end": "eat_meat",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "NotDesires:>=5": [
+        {
+          "hash": "5b729c2ccb02b4518b107eec6056a113316b5c514c955d968516146392a9fdc2",
+          "relation": "NotDesires",
+          "start": "person",
+          "end": "break_leg",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 7
+        },
+        {
+          "hash": "95bfca6c57dfc14d022d2c885341f44e2ba67d5d276cb9d2ce1e627bb0d2f9c6",
+          "relation": "NotDesires",
+          "start": "person",
+          "end": "diseased",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 12
+        },
+        {
+          "hash": "a875190f3cfcfaf0cbb1d6b0c4ee48c7c55b3a0ad4f8c0edf1af4768eed2c7c6",
+          "relation": "NotDesires",
+          "start": "person",
+          "end": "lose_friends",
+          "weight": 6.633,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 11
+        }
+      ],
+      "NotDesires:1..<2": [
+        {
+          "hash": "0012ae5397f88e0f3591c7c59582afcb119d3f83cc2d346d3566a85066e057c0",
+          "relation": "NotDesires",
+          "start": "cat",
+          "end": "take_bath",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00198aa84e5f7f1d732d0c36ccf50cd5b6f751dac37c882199d08efae9848d93",
+          "relation": "NotDesires",
+          "start": "person",
+          "end": "forgotten_on_birthday",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "001e3e6653590c7213225b99a5bfc961afe4f4599a9f6f1ac4dbfb0a9a2c636e",
+          "relation": "NotDesires",
+          "start": "person",
+          "end": "loose_keys",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "NotDesires:2..<5": [
+        {
+          "hash": "000ff43b6c5f2a23ea5265a6d79804547858c3a95458356cec36e7f812a078aa",
+          "relation": "NotDesires",
+          "start": "person",
+          "end": "polluted_air",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "00c24025713e0a76e063df549396e464c36432ffd6fe7607bcbea42a3fc088de",
+          "relation": "NotDesires",
+          "start": "person",
+          "end": "parents_to_die",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "03579842ac00434dc301eb5294ba0441285de06a025c816c93bb6a642440fca1",
+          "relation": "NotDesires",
+          "start": "person",
+          "end": "under_pressure",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "NotHasProperty:1..<2": [
+        {
+          "hash": "00fa908c822190880190e45fa5cecf162073288842fc9a6f2a5d6994a6df1a86",
+          "relation": "NotHasProperty",
+          "start": "soccer",
+          "end": "very_popular_in_usa",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "015606431a0c7417f3eb3191b9b2a2fdfda6180d74975be9e825282541664e64",
+          "relation": "NotHasProperty",
+          "start": "hair_gel",
+          "end": "good_to_eat",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "023a992e643bc678cfe75e3592e46f3df2261a49ad3e7da332b9fefe1f688e92",
+          "relation": "NotHasProperty",
+          "start": "doing_little_sport",
+          "end": "very_helpful_for_getting_in_shape",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "NotHasProperty:2..<5": [
+        {
+          "hash": "240fa2f8b3c0599e253ae94442caa081fd9bc5d511f6cf96ad899bef00c046d6",
+          "relation": "NotHasProperty",
+          "start": "hot_dog",
+          "end": "alive",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "39377255a2b8f6632f626aa30daecede99de93155a50914856cc0289bf5422ce",
+          "relation": "NotHasProperty",
+          "start": "ignorance",
+          "end": "knowing",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "3fbb79f52d39132c9020be96eb8926440213323766521d6317fbff023f8f7066",
+          "relation": "NotHasProperty",
+          "start": "floppy",
+          "end": "rigid",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "PartOf:<1": [
+        {
+          "hash": "001ddba4a476c6239e8d2bdcb75be406d25477e2bfac254ca24311c635f75325",
+          "relation": "PartOf",
+          "start": "fenland",
+          "end": "england",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "003bf279988e2b60112f03827c9f7e85a63fcf07b6a29d1213b45a27f14e49bf",
+          "relation": "PartOf",
+          "start": "olomouc_district",
+          "end": "olomouc",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0087c058b9004a98a016a9f4cf7f4785c900de1e013714a3cefd09d4e7e163ee",
+          "relation": "PartOf",
+          "start": "rabbit",
+          "end": "winnie_pooh",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "PartOf:>=5": [
+        {
+          "hash": "06a0a1167cda3c797062e9986c9af805c3ce5a318e99b034a8641705e2ff9f7c",
+          "relation": "PartOf",
+          "start": "monitor",
+          "end": "computer",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 10
+        },
+        {
+          "hash": "1e294f1b5a5276908096b6ce32eed2d8adc3ee6366066888d218ec0bb55b19b0",
+          "relation": "PartOf",
+          "start": "bark",
+          "end": "tree",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        },
+        {
+          "hash": "1e3886ca4a8245eb2baf3064a10990d59efec88d4c460a67148440c9f7ebb02b",
+          "relation": "PartOf",
+          "start": "death",
+          "end": "life",
+          "weight": 6,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 9
+        }
+      ],
+      "PartOf:1..<2": [
+        {
+          "hash": "0007406402fb9d811535053a41a8b1ce1d29e343f5ed75ae13410d60f035d3e8",
+          "relation": "PartOf",
+          "start": "radiator",
+          "end": "automobile",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0037e15fa618f1a1178e2c4aedd0b82363f9c7d9db01da87146c77776e2781a7",
+          "relation": "PartOf",
+          "start": "horn",
+          "end": "auto",
+          "weight": 1,
+          "dataset": "/d/wiktionary/fr",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00680276637aa9a65fa973c77e7f195bb8fd9b00834d86e2f4886ad33468f851",
+          "relation": "PartOf",
+          "start": "boston",
+          "end": "mass",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "PartOf:2..<5": [
+        {
+          "hash": "000a41d42fae940bf6f39fa9eda6b96a366bdd80206f5e91b56f893acf8e64dc",
+          "relation": "PartOf",
+          "start": "zygomatic_process",
+          "end": "cheekbone",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0013d094289867d9313d224fc5d1cde12b0a0b4a30160423b6772a23753aef5d",
+          "relation": "PartOf",
+          "start": "maneuver",
+          "end": "military_training",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00148f61484b25e2c03809657d8f44e03a82821b44d2d65a1395cc2d143e8207",
+          "relation": "PartOf",
+          "start": "point",
+          "end": "cone",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "ReceivesAction:>=5": [
+        {
+          "hash": "0562eec125eb665a80facdeb9f7b941ef9ed2fbd60ed8937902d88965d2d91d0",
+          "relation": "ReceivesAction",
+          "start": "water",
+          "end": "boiled",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        },
+        {
+          "hash": "4720eff670be2bf284d8a564558b08088cccfe6d88052251fc5dacc39da22419",
+          "relation": "ReceivesAction",
+          "start": "books",
+          "end": "read",
+          "weight": 10.198,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 27
+        },
+        {
+          "hash": "7030331de22a9dc49ea5eed5528627b24644399dca09feda915aa9c2fd3b197b",
+          "relation": "ReceivesAction",
+          "start": "cars",
+          "end": "driven",
+          "weight": 6.633,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 10
+        }
+      ],
+      "ReceivesAction:1..<2": [
+        {
+          "hash": "0004e7a46cd7d771e187ce0d53d47fcdd43b39bc0da2b82d5a0d0264c6256808",
+          "relation": "ReceivesAction",
+          "start": "assure",
+          "end": "insured",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0010431e5e01c234a247d86f85c9e323f85b01c7ed16074b95cb85b9a1644638",
+          "relation": "ReceivesAction",
+          "start": "candle",
+          "end": "found_in_store",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0011e213f7ac5d37c12eddf6110c6e55508a4c0bedaf2a7e53b68ae284f8a16e",
+          "relation": "ReceivesAction",
+          "start": "hamburger",
+          "end": "ground_up_beef",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "ReceivesAction:2..<5": [
+        {
+          "hash": "00904d63bfbcaa6c30dffdfedcb7cbfddf0985a9e41103aed87080dda414ed96",
+          "relation": "ReceivesAction",
+          "start": "xylophones",
+          "end": "made_out_of_wood",
+          "weight": 2,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "01b9c0e0614a4ad29aac0dfa29f1986aef1bc19599a85f8ec5dc4ebfda6bc44f",
+          "relation": "ReceivesAction",
+          "start": "computer",
+          "end": "made_out_of_metal",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        },
+        {
+          "hash": "02649d8f5b295fd7cd4d46deed2d7b48388109125d01f40a64f9cd37b62d1e95",
+          "relation": "ReceivesAction",
+          "start": "newspaper",
+          "end": "printed_on_large_sheets_of_paper",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        }
+      ],
+      "RelatedTo:<1": [
+        {
+          "hash": "000006b21265890695404aada4ee124a485606252b8290cdbe23883444e2a7e8",
+          "relation": "RelatedTo",
+          "start": "board",
+          "end": "building_things",
+          "weight": 0.222,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0000a91a065a799c5d718b212fa18b52feb0e377d39ffda53757ff4e9ce89eb4",
+          "relation": "RelatedTo",
+          "start": "limit",
+          "end": "damper",
+          "weight": 0.212,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0000aae450686f76d6d34c31974434bbf3029c81e6e14716df9de794d124763b",
+          "relation": "RelatedTo",
+          "start": "christmas",
+          "end": "mass",
+          "weight": 0.487,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "RelatedTo:>=5": [
+        {
+          "hash": "0053d92b9412adbce6d7fcd96c2a37392766768480982c669109bb809975137c",
+          "relation": "RelatedTo",
+          "start": "wool",
+          "end": "hair",
+          "weight": 5.335,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "0098161e8dc34f5f1dc6c8beb3677a93e115fa8452eba3bd0eca27ff07d30e1f",
+          "relation": "RelatedTo",
+          "start": "home",
+          "end": "living",
+          "weight": 6.448,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "011e0bc15bc2f919436ef8b4c865813f99977e048ae6e0356d05e848dd162087",
+          "relation": "RelatedTo",
+          "start": "cotton",
+          "end": "material",
+          "weight": 7.547,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "RelatedTo:1..<2": [
+        {
+          "hash": "000005bf70e64a9213c7b838007946b0b6bc663327b0edcc4dff61adba3e1222",
+          "relation": "RelatedTo",
+          "start": "gay_friendliness",
+          "end": "quality",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000005f681e50f85852d593e71b2b75de5a9c3cabf23dc8b0bfc3a03e8e01efa",
+          "relation": "RelatedTo",
+          "start": "process_server",
+          "end": "equivalent",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00000f915cbcbc9517afe2103dba88e729090f060f8c004558a63e7abc137c08",
+          "relation": "RelatedTo",
+          "start": "common_shrew",
+          "end": "sorex_araneus",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "RelatedTo:2..<5": [
+        {
+          "hash": "000b0e7284a099b8126351b8b33a621adf588e309f4e3022acd260eb587f563f",
+          "relation": "RelatedTo",
+          "start": "drink",
+          "end": "thirst",
+          "weight": 4.542,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "001d6175983eeef76aecf1556723829f6a38f795595b11aacb31f151bc34306e",
+          "relation": "RelatedTo",
+          "start": "smell",
+          "end": "sniff",
+          "weight": 2.099,
+          "dataset": "/d/verbosity",
+          "license": "cc:by/4.0",
+          "sourceCount": 2
+        },
+        {
+          "hash": "001ef26b22353fddcbd582a75ecbcbe212894c1650b5310a6c6d5b4ab39b71a5",
+          "relation": "RelatedTo",
+          "start": "confectionary",
+          "end": "confectory",
+          "weight": 2,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 2
+        }
+      ],
+      "SimilarTo:<1": [
+        {
+          "hash": "0181381434e777dab5ae23522c8cdac17fa324bf70e58d5401a2a28a0378b2ee",
+          "relation": "SimilarTo",
+          "start": "eid_al_adha",
+          "end": "umrah",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "039c22bdbf85c44a0946a57a20863f0c75fe4676e0d14344518dbe236d031953",
+          "relation": "SimilarTo",
+          "start": "halloween",
+          "end": "samhain",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0c3bc68dce597ab87a7791c95f04ddbbe72c2519a4f3e3e9243b22bcc5fd7570",
+          "relation": "SimilarTo",
+          "start": "new_year's_day",
+          "end": "new_year's_eve",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "SimilarTo:1..<2": [
+        {
+          "hash": "00050be37a0ba6463c66d7a47347ab27a5bc946354c5c0b78ddeccddd8afe78a",
+          "relation": "SimilarTo",
+          "start": "tr",
+          "end": "nr",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00094ddd94b4e53b22d08b3e5722042923059e7ed5aa03bdd472d0b1f778c828",
+          "relation": "SimilarTo",
+          "start": "hydroiodic_acid",
+          "end": "iodane",
+          "weight": 1,
+          "dataset": "/d/wiktionary/fr",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000a9548e38f58b8a8e97144bc33ea5d840333b2a2f09128757998e989fea8ac",
+          "relation": "SimilarTo",
+          "start": "european_option",
+          "end": "bermudan_option",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "SimilarTo:2..<5": [
+        {
+          "hash": "000b507e497233dc0fff867d2fdd1ca5c3e85b9862d80d759d73aa6d5a38c601",
+          "relation": "SimilarTo",
+          "start": "civil_libertarian",
+          "end": "liberal",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000baaa05ab1c63aa6f8b7f29ecdbd54e1825203e517b11c6e38542c17b5c632",
+          "relation": "SimilarTo",
+          "start": "monogenic",
+          "end": "inheritable",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00110319e7155a3c0f221bf6f5c262450c1b39d40c9a008b2e581210f869b211",
+          "relation": "SimilarTo",
+          "start": "auriculated",
+          "end": "eared",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "SymbolOf:1..<2": [
+        {
+          "hash": "2a0fff9e0d453a1ba949104d15f17ec7d2a978fcda526c95a3e1dbe25cf47a3d",
+          "relation": "SymbolOf",
+          "start": "giving_rose",
+          "end": "love",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "606573ec268e85b0fd8dfab818dffd1ca755da699b83291652f448a1b33086ba",
+          "relation": "SymbolOf",
+          "start": "trophy",
+          "end": "victory",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "c94e28d8e5a4972b6ec4daeb38589a340a9f18893d77afabdd84067e5566e439",
+          "relation": "SymbolOf",
+          "start": "four_leaf_clover",
+          "end": "luck",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "Synonym:<1": [
+        {
+          "hash": "00001005291ed711b7ee79368c9881f9b64a94cd2dd98527241305f030c6b4a7",
+          "relation": "Synonym",
+          "start": "civetone",
+          "end": "civetone",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00012ba2223c612eb6285f5dfdda4423bfb1fd8aff84495e4cf048854740ef38",
+          "relation": "Synonym",
+          "start": "one_eyed_jacks",
+          "end": "one_eyed_jacks",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0004469481bd56ee7b0f1dc30dae48aecdbda55010f2518eae68250988528913",
+          "relation": "Synonym",
+          "start": "levee",
+          "end": "levee",
+          "weight": 0.5,
+          "dataset": "/d/dbpedia/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "Synonym:1..<2": [
+        {
+          "hash": "00016ab8c1443689c82caed55b397b9e2d6c543d0ce93567713a23d3aa98b609",
+          "relation": "Synonym",
+          "start": "equivocal",
+          "end": "shifty",
+          "weight": 1,
+          "dataset": "/d/wiktionary/fr",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00016d99479dc71c2436125bc2ce88a3b2776b5e2726d350a5fd1dcd969073f8",
+          "relation": "Synonym",
+          "start": "mercurial_finger",
+          "end": "ear_finger",
+          "weight": 1,
+          "dataset": "/d/wiktionary/en",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0003c4ff3b8e5a6a5ef4b319ee3d21e148be061ba691f5c8d23597cffaa6712a",
+          "relation": "Synonym",
+          "start": "geodesy",
+          "end": "geodetics",
+          "weight": 1,
+          "dataset": "/d/wiktionary/fr",
+          "license": "cc:by-sa/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "Synonym:2..<5": [
+        {
+          "hash": "00004f9e34b858a614f6a43ef29a91208c20bcb5eb19be59884ec6cd042c2921",
+          "relation": "Synonym",
+          "start": "ornament",
+          "end": "decoration",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "0000bc9eb50b066df0d819da04dfb2cc16dc266c32113879dc640d01ed460ae2",
+          "relation": "Synonym",
+          "start": "hydrochoerus_hydrochaeris",
+          "end": "capybara",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00019dbabab243216dbc132a47339eab4d145caf3a7006520a3cb692d8f69e8a",
+          "relation": "Synonym",
+          "start": "latency",
+          "end": "rotational_latency",
+          "weight": 2,
+          "dataset": "/d/wordnet/3.1",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "UsedFor:>=5": [
+        {
+          "hash": "006f9467481e37d842cf880359760542f6e73a6b7b60166adebd64bb20b34a70",
+          "relation": "UsedFor",
+          "start": "computers",
+          "end": "work",
+          "weight": 6.928,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 13
+        },
+        {
+          "hash": "0205b05580d3032a801b84e0fd529271d4650583ccd30ddfb84bd4f765c931d0",
+          "relation": "UsedFor",
+          "start": "airplane",
+          "end": "traveling",
+          "weight": 5.292,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 8
+        },
+        {
+          "hash": "02a3e1a9b195e8b83ae5a34deda2fa2f07cb0cdef759480cc040e6208ee5cfcd",
+          "relation": "UsedFor",
+          "start": "pool",
+          "end": "swiming",
+          "weight": 6.928,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 13
+        }
+      ],
+      "UsedFor:1..<2": [
+        {
+          "hash": "0000562e74d55523f59ed180f9fbf573d9ea17523086945da2fda9aebf334011",
+          "relation": "UsedFor",
+          "start": "toy_marble",
+          "end": "play_game",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "000140b2507324ac9e2151651b80a49e4539c1459a49f177828a4294a7e32ed9",
+          "relation": "UsedFor",
+          "start": "minibar",
+          "end": "serve_alcohol_to_guests",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        },
+        {
+          "hash": "00030277ae54c849df56fa75332090deda74add77fde6f1cc459d9f4a1608492",
+          "relation": "UsedFor",
+          "start": "playing_harp",
+          "end": "making_beautiful_music",
+          "weight": 1,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 1
+        }
+      ],
+      "UsedFor:2..<5": [
+        {
+          "hash": "00155732751559120766b315e090fc9a46e6a86fadce4ecc36dcd83e1bef343b",
+          "relation": "UsedFor",
+          "start": "mountain",
+          "end": "climbing",
+          "weight": 4.899,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 6
+        },
+        {
+          "hash": "00192d1a8d3e653871ff5de5f90f7a898ddb0c9debf87e30f2a0f47c47fd4eed",
+          "relation": "UsedFor",
+          "start": "column",
+          "end": "hold_up_roof",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        },
+        {
+          "hash": "001f4d1f874c128c89cf1f43cf6418c2f91e2c765c9aba558eb40e93af45ecaa",
+          "relation": "UsedFor",
+          "start": "library",
+          "end": "storing_books",
+          "weight": 2.828,
+          "dataset": "/d/conceptnet/4/en",
+          "license": "cc:by/4.0",
+          "sourceCount": 3
+        }
+      ]
+    }
+  },
+  "semanticMapping": {
+    "IsA": {
+      "family": "taxonomy",
+      "direction": "forward",
+      "inference": "transitive-with-cycle-guard"
+    },
+    "InstanceOf": {
+      "family": "taxonomy",
+      "direction": "forward",
+      "inference": "instance-to-class"
+    },
+    "PartOf": {
+      "family": "mereology",
+      "direction": "forward",
+      "inference": "declared-edge-only"
+    },
+    "HasA": {
+      "family": "mereology",
+      "direction": "forward",
+      "inference": "declared-edge-only"
+    },
+    "UsedFor": {
+      "family": "purpose",
+      "direction": "forward",
+      "inference": "defeasible-edge"
+    },
+    "CapableOf": {
+      "family": "capability",
+      "direction": "forward",
+      "inference": "defeasible-edge"
+    },
+    "AtLocation": {
+      "family": "location",
+      "direction": "forward",
+      "inference": "defeasible-edge"
+    },
+    "HasProperty": {
+      "family": "property",
+      "direction": "forward",
+      "inference": "defeasible-edge"
+    },
+    "MadeOf": {
+      "family": "material",
+      "direction": "forward",
+      "inference": "declared-edge-only"
+    },
+    "Causes": {
+      "family": "causal",
+      "direction": "forward",
+      "inference": "defeasible-edge"
+    },
+    "MotivatedByGoal": {
+      "family": "intentional",
+      "direction": "forward",
+      "inference": "defeasible-edge"
+    },
+    "ReceivesAction": {
+      "family": "affordance",
+      "direction": "forward",
+      "inference": "defeasible-edge"
+    },
+    "Antonym": {
+      "family": "lexical-opposition",
+      "direction": "symmetric",
+      "inference": "declared-edge-only"
+    },
+    "Synonym": {
+      "family": "lexical-equivalence",
+      "direction": "symmetric",
+      "inference": "declared-edge-only"
+    }
+  },
+  "scope": {
+    "include": "English-to-English assertions in the allowlisted relation policy with finite positive weight and parseable source metadata.",
+    "exclude": "Non-English endpoints, non-concept endpoints, malformed metadata, non-positive weights, and relations without a reviewed semantic policy.",
+    "provenance": "Retain relation, normalized endpoint URIs, dataset, license, sources, weight, and source-row identity."
+  },
+  "physicalPlan": {
+    "adapter": "stream gzip line-by-line; never materialize the source archive",
+    "canonicalShape": "typed relation edge plus weight and provenance",
+    "shards": "relation family, then stable subject-name bucket; independent reverse index where query direction requires it",
+    "runtime": "query-directed immutable shard reads under byte-accounted LRU cache",
+    "equivalence": "compare a frozen stratified canonical sample against every compiled access path before promotion"
+  },
+  "resourceBudget": {
+    "maximumCompressedSourceBytes": 600000000,
+    "maximumCompilerRssBytes": 805306368,
+    "targetShardBytes": 16777216,
+    "maximumRetainedEnglishEdges": 20000000
+  },
+  "profile": {
+    "elapsedMilliseconds": 115510.235405,
+    "rowsPerSecond": 294994.78449270845,
+    "peakRssBytes": 175513600,
+    "rssDeltaBytes": 40091648
+  },
+  "gateReview": {
+    "sourceFrozen": true,
+    "schemasValidated": true,
+    "stratificationPresent": true,
+    "semanticPolicyExplicit": true,
+    "streamingAdapterDemonstrated": true,
+    "compactShardPlanPresent": true,
+    "queryDirectedPlanPresent": true
+  }
+}

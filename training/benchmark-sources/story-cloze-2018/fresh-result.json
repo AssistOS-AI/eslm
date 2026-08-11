@@ -1,0 +1,26 @@
+{
+  "format": "eslm-story-cloze-fresh-result-v1",
+  "partitionDigest": "df208d36029d86c020cbc7ec49cf7937f8cac785230fdeab6f222968b61180b1",
+  "preFreshFreeze": "training/benchmark-sources/story-cloze-2018/pre-fresh-freeze.json",
+  "evaluationCount": 1,
+  "total": 314,
+  "correct": 189,
+  "accuracy": 0.6019108280254777,
+  "omissions": 13,
+  "rankCorrect": 195,
+  "rankAccuracy": 0.6210191082802548,
+  "ties": 13,
+  "statusCounts": {
+    "DEFEASIBLE": 301,
+    "UNKNOWN": 13
+  },
+  "providerEvidenceRecords": 133,
+  "elapsedMilliseconds": 21703,
+  "usedKbVersions": [
+    "atomic-2020"
+  ],
+  "testSplitUsed": false,
+  "caseOutcomesRetained": false,
+  "postEvaluationBehaviorChanges": false,
+  "claimBoundary": "This is one aggregate evaluation on the precommitted fresh subset of the delivered Winter 2018 validation artifact. It is not the official label-free test score. The remaining failures were not inspected and cannot guide changes to this frozen result."
+}

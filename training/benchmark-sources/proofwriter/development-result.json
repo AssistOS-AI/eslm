@@ -1,0 +1,56 @@
+{
+  "format": "eslm-proofwriter-development-baseline-v1",
+  "protocol": "proofwriter-owa-main-depth-stratified-development-v1",
+  "sourceId": "proofwriter-v2020.12.3",
+  "evidenceRegime": "development-visible source logical form with a separate direct-language diagnostic",
+  "runtimeProfile": "direct-symbolic-no-coding-agent",
+  "coverage": {
+    "tested": 300,
+    "available": 50844,
+    "comprehensive": false,
+    "selection": "20 cases for each of 15 depth-by-answer strata"
+  },
+  "logicalFormTrack": {
+    "correct": 300,
+    "accuracy": 1,
+    "proofWitnessesValid": 300,
+    "proofWitnessValidityRate": 1,
+    "byDepth": {
+      "0": { "tested": 60, "correct": 60 },
+      "1": { "tested": 60, "correct": 60 },
+      "2": { "tested": 60, "correct": 60 },
+      "3": { "tested": 60, "correct": 60 },
+      "5": { "tested": 60, "correct": 60 }
+    },
+    "scoring": {
+      "true": "the query literal occurs in the independently computed safe-Horn closure",
+      "false": "the polarity-inverted query literal occurs in that closure",
+      "Unknown": "neither polarity is derivable under the open-world assumption",
+      "inconsistent": "both polarities are derivable; the adapter reports an inconsistency instead of coercing an answer"
+    }
+  },
+  "directNaturalLanguageDiagnostic": {
+    "tested": 300,
+    "statusCounts": { "UNPARSED": 300 },
+    "theoryStatementsRejectedByCurrentFrontend": 4100,
+    "minimumRejectedStatementsInOneCase": 3,
+    "maximumRejectedStatementsInOneCase": 25,
+    "codingAgentInvocations": 0,
+    "interpretation": "This is a frontend diagnostic, not a second accuracy score. The same current core solves the selected logical programs, but the controlled-English session compiler does not yet convert ProofWriter's generic attributes, binary predicates, explicit negation, and general rules into that program."
+  },
+  "unscoredTracks": [
+    "CWA main classification with negation as failure",
+    "staged implication enumeration",
+    "single-fact abduction",
+    "NatLang and depth-3ext variants",
+    "birds-electricity test-only variants",
+    "all official test files"
+  ],
+  "missingCapabilityFamilies": [
+    "direct controlled-English compilation for arbitrary declared unary and binary predicates",
+    "direct controlled-English compilation for explicit negative facts, premises, and conclusions",
+    "a first-class three-valued runtime query contract that distinguishes false from open-world unknown",
+    "ProofWriter-compatible proof realization from runtime provenance and support edges",
+    "staged implication enumeration and single-fact abduction adapters with their own exact scorers"
+  ]
+}

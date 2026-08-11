@@ -1,0 +1,16 @@
+{
+  "format": "eslm-learning-failures-v1",
+  "developmentFailures": 1532,
+  "earliestFailureStage": "method-selection",
+  "clusters": [
+    {"count":1532,"traceEvidence":"Every task carries operation select-narrative-bridge and the engine returns NO_APPLICABLE_METHOD before candidate scoring.","requirements":["bridge-aware temporal task semantics","typed participant and reference continuity","causal and enabling-condition evidence","goal and intention evidence","state-transition compatibility","explicit contradiction and tie handling","feature and provenance witness"],"status":"open-generic-language-knowledge-and-method-gap"}
+  ],
+  "unquantifiedDownstreamRequirements": "Because execution stops at method selection, the current run cannot honestly assign cases to causal, temporal, social, goal, lexical, or knowledge subclusters. Such counts require a future label-free semantic compiler and trace-producing candidate method.",
+  "rejectedRepairs": [
+    "Applying the existing continuation ranker to a candidate after the second observation, because that reverses the benchmark's temporal position and changes the task.",
+    "Lexical-overlap, candidate-length, sentiment, negation, or candidate-position rules, because none establishes that a middle event makes both observations jointly plausible.",
+    "Returning the development majority label or dispatching on dataset, split, task IDs, story IDs, row order, source hashes, candidate text, or expected answers."
+  ],
+  "freshFailures": null,
+  "freshReason": "The official test split was not adapted, predicted, scored, or exposed through a loader."
+}

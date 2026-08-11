@@ -1,0 +1,29 @@
+{
+  "format": "eslm-alpha-nli-art-typed-evidence-development-result-v1",
+  "evidenceRegime": "complete-official-development-with-host-only-preference-oracle",
+  "available": 1532,
+  "tested": 1532,
+  "answered": 826,
+  "unknown": 706,
+  "correct": 440,
+  "coverage": 0.5391644908616188,
+  "accuracyOnAnswered": 0.5326876513317191,
+  "witnessValid": 826,
+  "statusCounts": {
+    "DEFEASIBLE": 826,
+    "UNKNOWN": 706
+  },
+  "languageAgentInvocations": 0,
+  "fresh": {
+    "executed": false,
+    "available": 3059,
+    "visibility": "sealed-official-test-split-no-loader-exported"
+  },
+  "behaviorFiles": {
+    "src/reasoning/typed-evidence-comparison.mjs": "0eee21160bd3067a6accbf228a5a3b16508486d452829288fc6a63a53bf0f0ea",
+    "src/reasoning/typed-event-evidence.mjs": "01ae67b2e5777ac637eecf79bf4382ac9515f42d726f464535bcdfdcf6c80a53",
+    "src/benchmark-adapters/alpha-nli-art.mjs": "daf4fc5c9ea5bf0907f667b6a4761c2e393f3f7659a3d96cff179b23208f0e3d"
+  },
+  "decision": "reject-automatic-frame-overlap-as-a-narrative-bridge-selector",
+  "decisionEvidence": "The complete development aggregate is near chance on answered binary cases. Surface frame overlap does not supply the causal, temporal, goal, state-transition, or contradiction relations required for an abductive bridge."
+}

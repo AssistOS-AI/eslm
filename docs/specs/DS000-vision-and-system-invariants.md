@@ -47,11 +47,15 @@ This separation is the primary architectural invariant. It prevents each dataset
 
 ### 4. System lifecycle
 
-The lifecycle begins with source documents or benchmark examples. A coding agent uses a small set of skills to interpret these sources, exercise the existing CNL and reasoning core, classify failures and populate or improve a KB. When failures reveal a genuinely reusable missing language form or reasoning method, the agent may propose a change to `src`. Such a proposal is accepted only after focused tests, metamorphic tests, fresh samples and all relevant regression suites pass.
+The lifecycle begins with authorized evidence, produces reviewed declarative knowledge or a genuinely generic mechanism,
+and ends in a typed result whose derivation or exact inability remains inspectable. The lifecycle never permits a source,
+benchmark, agent response, package, or cache state to acquire executable authority by passing into a later phase.
 
-The resulting KB is compiled into immutable runtime shards and registered in a lightweight catalog. Registration does not imply that the facts are fully loaded into memory. At runtime the task is parsed, candidate concepts and methods are identified, relevant KBs and shards are selected, and additional shards are loaded only as the proof or search frontier expands.
-
-The runtime must preserve the distinction between lack of knowledge and lack of method. If the relevant facts are absent, it reports missing knowledge. If the facts are present but no registered algorithm can solve the required subproblem, it reports a capability gap. If parsing is unsafe, it reports an interpretation problem or invokes the optional linguistic fallback under the constraints defined in DS003 and DS009.
+DS004 exclusively defines benchmark-guided learning and promotion. DS006 defines package registration and immutable
+identity. DS020 defines query-directed routing. DS009 defines the distinction among interpretation, knowledge, method,
+conflict, and resource failures. DS013 defines the optional operator normalization profile. Those specifications carry
+the operational algorithms, receipts, and exceptional paths; this specification requires that their composition
+preserve the system identity and invariants above.
 
 ### 5. Research data produced by the architecture
 
@@ -81,15 +85,17 @@ The language-competence hypothesis is weakened if modest spelling and paraphrase
 
 ## Decisions & Questions
 
-### Question #1: Why retain the term language model?
+### Question #1: What does the term language model mean for ESLM?
 
 Response: The artifact does more than store facts: it compiles supported language into explicit semantics, maintains discourse and task state, selects knowledge and reasoning methods, and realizes results. The term remains qualified by a capability boundary and never implies unrestricted next-token modeling.
 
-### Question #2: May deployed inference call a coding agent or LLM?
+### Question #2: May an agent or LLM hold authority in deployed inference?
 
-Response: No. A coding agent and an optional normalization LLM belong to explicitly declared construction or language-normalization workflows. Symbolic inference executes only trusted core mechanisms over declarative knowledge and validated task structures.
+Response: No. The deployed runtime and every symbolic inference method remain offline and agent-free. DS004 owns the
+separate training-agent authority and DS013 owns the separate operator normalization authority; neither can execute
+inference, access runtime proof state, or bypass host parsing and validation.
 
-### Question #3: What takes priority when an older experiment conflicts with this vision?
+### Question #3: Which authority wins when an older experiment conflicts with this vision?
 
 Response: This specification and the consolidated DS set take priority. Earlier measurements may remain as historical evidence only when their protocol is still interpretable; their executable-KB architecture does not constrain the new declarative-KB implementation.
 

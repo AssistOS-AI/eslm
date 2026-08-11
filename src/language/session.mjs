@@ -38,6 +38,12 @@ function singularClass(value, model) {
       : normalized.endsWith('s') ? normalized.slice(0, -1) : normalized);
 }
 
+function propertyPredicate(surface, value, model) {
+  const requested = normalizedPhrase(surface).replaceAll(' ', '_');
+  return Object.entries(model.reasoning?.propertyValues ?? {}).find(([predicate, values]) =>
+    predicate.replaceAll(' ', '_') === requested && values.includes(value))?.[0];
+}
+
 function assertionFrom(text, model, entities, ruleNumber) {
   const normalized = normalizedPhrase(text);
   let match;
@@ -52,6 +58,24 @@ function assertionFrom(text, model, entities, ruleNumber) {
       source: `session:rule:${ruleNumber + 1}`,
       sourceText: text,
       session: true,
+    };
+  }
+  if ((match = normalized.match(/^(.+?) (?:went(?: back)?|travelled|traveled|moved|journeyed) to (?:the )?(.+?)(?: there)?$/u))) {
+    return {
+      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'located_in',
+      object: ensureEntity(match[2], 'place', model, entities), sourceText: text, transition: 'move',
+    };
+  }
+  if ((match = normalized.match(/^(.+?) (?:grabbed|got|took|picked up) (?:a |an |the )?(.+?)(?: there)?$/u))) {
+    return {
+      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'owns',
+      object: ensureEntity(match[2], 'object', model, entities), sourceText: text, transition: 'acquire',
+    };
+  }
+  if ((match = normalized.match(/^(.+?) (?:dropped|left|discarded|put down) (?:a |an |the )?(.+?)(?: there)?$/u))) {
+    return {
+      kind: 'transition', transition: 'release', subject: ensureEntity(match[1], 'entity', model, entities),
+      object: ensureEntity(match[2], 'object', model, entities), sourceText: text,
     };
   }
   if ((match = normalized.match(/^(.+?) (?:is (?:located )?(?:in|at)|can be found (?:in|at)|stays (?:in|at)|occupies) (.+)$/u))) {
@@ -78,11 +102,18 @@ function assertionFrom(text, model, entities, ruleNumber) {
       value: match[2], sourceText: text,
     };
   }
-  if ((match = normalized.match(/^(?:the )?color of (.+?) is ([a-z][a-z0-9_-]*)$/u))
-    || (match = normalized.match(/^(.+?) (?:has color|is colored) ([a-z][a-z0-9_-]*)$/u))) {
-    return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'color',
-      value: match[2], sourceText: text,
+  if ((match = normalized.match(/^(?:the )?([a-z][a-z0-9_-]*) of (.+?) is ([a-z][a-z0-9_-]*)$/u))) {
+    const predicate = propertyPredicate(match[1], match[3], model);
+    if (predicate) return {
+      subject: ensureEntity(match[2], 'entity', model, entities), predicate,
+      value: match[3], sourceText: text,
+    };
+  }
+  if ((match = normalized.match(/^(.+?) has ([a-z][a-z0-9_-]*) ([a-z][a-z0-9_-]*)$/u))) {
+    const predicate = propertyPredicate(match[2], match[3], model);
+    if (predicate) return {
+      subject: ensureEntity(match[1], 'entity', model, entities), predicate,
+      value: match[3], sourceText: text,
     };
   }
   if ((match = normalized.match(/^(.+?) (?:owns|has|carries) (?:a |an |the )?(.+)$/u))) {
@@ -133,6 +164,7 @@ export function compileSessionEpisode(text, model, context = {}) {
   const rules = (previous.rules ?? []).map((rule) => ({
     ...rule, when: rule.when.map((premise) => [...premise]), then: [...rule.then],
   }));
+  const history = (previous.history ?? []).map((event) => ({ ...event }));
   const segments = splitEpisode(text);
   const final = segments.at(-1) ?? '';
   const finalWords = normalizedPhrase(final).split(' ');
@@ -146,25 +178,13 @@ export function compileSessionEpisode(text, model, context = {}) {
     const number = Number.parseInt(fact.id.match(/^session:f(\d+)$/u)?.[1] ?? '-1', 10);
     return Math.max(highest, number + 1);
   }, 0);
-  for (const segment of statementSegments) {
-    const assertion = assertionFrom(segment, model, entities, rules.length);
-    if (!assertion) {
-      unsupportedStatements.push(segment);
-      continue;
-    }
-    if (assertion.kind === 'rule') {
-      const duplicate = rules.some((rule) => JSON.stringify(rule.when) === JSON.stringify(assertion.when)
-        && JSON.stringify(rule.then) === JSON.stringify(assertion.then));
-      if (!duplicate) {
-        rules.push(assertion);
-        learnedRules.push(assertion);
-      }
-      continue;
-    }
+  let nextEventNumber = history.reduce((highest, event) => Math.max(highest, (event.sequence ?? -1) + 1), 0);
+  const currentLocation = (subject) => facts.findLast((fact) => fact.subject === subject && fact.predicate === 'located_in');
+  const addFact = (assertion) => {
     const duplicate = facts.some((fact) => fact.subject === assertion.subject
       && fact.predicate === assertion.predicate
       && (fact.object ?? fact.value) === (assertion.object ?? assertion.value));
-    if (duplicate) continue;
+    if (duplicate && assertion.predicate !== 'located_in') return undefined;
     if (assertion.predicate === 'located_in') {
       facts = facts.filter((fact) => !(fact.session && fact.subject === assertion.subject
         && fact.predicate === 'located_in'));
@@ -181,10 +201,60 @@ export function compileSessionEpisode(text, model, context = {}) {
     facts.push(fact);
     learned.push(fact);
     nextFactNumber += 1;
+    if (fact.predicate === 'located_in') {
+      history.push({
+        id: `session:event:${nextEventNumber}`, sequence: nextEventNumber,
+        subject: fact.subject, predicate: fact.predicate, object: fact.object,
+        factId: fact.id, provenance: fact.provenance, sourceText: fact.sourceText,
+      });
+      nextEventNumber += 1;
+    }
+    return fact;
+  };
+  for (const segment of statementSegments) {
+    const assertion = assertionFrom(segment, model, entities, rules.length);
+    if (!assertion) {
+      unsupportedStatements.push(segment);
+      continue;
+    }
+    if (assertion.kind === 'rule') {
+      const duplicate = rules.some((rule) => JSON.stringify(rule.when) === JSON.stringify(assertion.when)
+        && JSON.stringify(rule.then) === JSON.stringify(assertion.then));
+      if (!duplicate) {
+        rules.push(assertion);
+        learnedRules.push(assertion);
+      }
+      continue;
+    }
+    if (assertion.kind === 'transition' && assertion.transition === 'release') {
+      facts = facts.filter((fact) => !(fact.session && fact.subject === assertion.subject
+        && fact.predicate === 'owns' && fact.object === assertion.object));
+      const location = currentLocation(assertion.subject);
+      if (location) addFact({
+        subject: assertion.object, predicate: 'located_in', object: location.object,
+        sourceText: assertion.sourceText,
+      });
+      continue;
+    }
+    addFact(assertion);
+    if (assertion.transition === 'move') {
+      const carriedObjects = facts.filter((fact) => fact.subject === assertion.subject && fact.predicate === 'owns');
+      for (const possession of carriedObjects) addFact({
+        subject: possession.object, predicate: 'located_in', object: assertion.object,
+        sourceText: assertion.sourceText,
+      });
+    }
+    if (assertion.transition === 'acquire') {
+      const location = currentLocation(assertion.subject);
+      if (location) addFact({
+        subject: assertion.object, predicate: 'located_in', object: location.object,
+        sourceText: assertion.sourceText,
+      });
+    }
   }
   return {
     question: hasQuestion ? final.replace(/[.!?]+$/u, '').trim() : undefined,
-    session: { entities, facts, rules },
+    session: { entities, facts, rules, history },
     learned,
     learnedRules,
     unsupportedStatements,

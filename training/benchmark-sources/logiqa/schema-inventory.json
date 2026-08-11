@@ -1,0 +1,25 @@
+{
+  "format": "eslm-logiqa-source-inventory-v1",
+  "sourceRows": 17356,
+  "semanticCasesPerLanguage": 8678,
+  "nativeSourceShards": [
+    {"language":"en","split":"train","path":"Train.txt","rows":7376,"bytes":6281272,"sha256":"7d5bb1f58278e33b395744cd2ad8d7600faa0b3c4d615c659a44ec1181d759fa","duplicateVisibleTasks":13,"optionPrefixAnomalies":775},
+    {"language":"en","split":"development","path":"Eval.txt","rows":651,"bytes":550021,"sha256":"4c49e6753b7262c001506b9151135abf722247035ab075dad93acdea5789c01f","duplicateVisibleTasks":0,"optionPrefixAnomalies":20},
+    {"language":"en","split":"test","path":"Test.txt","rows":651,"bytes":559060,"sha256":"359acb78c37802208f7fde9e2f6574b8526527c63d6a336f90a53f1932cb4701","visibility":"sealed-evaluator-only-content-not-opened"},
+    {"language":"zh","split":"train","path":"zh_train.txt","rows":7376,"bytes":4727198,"sha256":"29bcf6a15ac72729548cb4345afa2a0c70816aea13d77a5827385c18fd041466","duplicateVisibleTasks":52,"optionPrefixAnomalies":1220},
+    {"language":"zh","split":"development","path":"zh_eval.txt","rows":651,"bytes":438544,"sha256":"8d5375b94568222e0e37e8305ae5603f23721c1937c4bdeeb041e275f218c4cf","duplicateVisibleTasks":0,"optionPrefixAnomalies":6},
+    {"language":"zh","split":"test","path":"zh_test.txt","rows":651,"bytes":451802,"sha256":"74883e3f634cc5d5fd24a7218e6094e80d376f296419ba8be7287a1142311d9d","visibility":"sealed-evaluator-only-content-not-opened"}
+  ],
+  "recordSchema": {
+    "physicalLines": 8,
+    "line1": "blank separator",
+    "line2": "lower-case answer letter a through d, retained only in the host oracle",
+    "line3": "passage",
+    "line4": "question",
+    "lines5Through8": "four physical answer slots",
+    "optionPrefixPolicy": "A visible A/B/C/D prefix is presentation data. The owner README defines the four physical lines as the options, so a swapped, missing, comma, space, full-width, or lower-case prefix is retained as an anomaly and never changes label-to-slot semantics."
+  },
+  "validation": "English and Chinese train and development files are streamed record by record through the owner-defined eight-line schema. Test content is deliberately not parsed under the protected-split instruction; each test file's byte length and SHA-256 are frozen.",
+  "semanticProjection": "The current development execution covers all 651 English evaluation records. The 651 Chinese development records remain validated and preserved outside the current English language profile rather than being discarded or reported as failures.",
+  "sizePolicy": "All six official language/split files are retained as native source shards. No valid row is removed because of byte size, duplication, prefix anomaly, current language profile, or missing reasoning capability."
+}

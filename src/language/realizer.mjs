@@ -47,7 +47,7 @@ export function realize(query, answer, model) {
   const joined = list(names);
   if (query.intent === 'location') return `${subject} is in ${joined}.`;
   if (query.intent === 'owner') return `${joined} owns ${object}.`;
-  if (query.intent === 'color') return `${subject} is ${joined}.`;
+  if (query.intent === 'property-value') return `${subject}'s ${query.predicate.replaceAll('_', ' ')} is ${joined}.`;
   if (query.intent === 'possessions') return `${subject} owns ${joined}.`;
   if (query.intent === 'contents') return `${joined} is there.`;
   if (query.intent === 'fear-object') return `${subject} is afraid of ${joined}.`;

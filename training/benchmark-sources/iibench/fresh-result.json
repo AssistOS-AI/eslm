@@ -1,0 +1,36 @@
+{
+  "protocol": "iibench-categorical-core-fresh-v1",
+  "measuredAt": "2026-08-11T17:47:00+03:00",
+  "sourceSplit": "official-public-test-reclassified-fresh",
+  "partitionMembershipSha256": "87d9f688b60475fa40f63c8092c294cbaa8c26cd2ce1d3061fc194a343fb4791",
+  "preFreshFreeze": "training/benchmark-sources/iibench/pre-fresh-freeze.json",
+  "runtimeProfile": "direct-symbolic-no-language-agent",
+  "tested": 1088,
+  "correct": 1071,
+  "accuracy": 0.984375,
+  "statusCounts": {
+    "ANSWERED": 1088
+  },
+  "testedBySourceFile": {
+    "AEIO_truth.jsonl": 236,
+    "Conversion_generation.jsonl": 272,
+    "Obversion_generation.jsonl": 240,
+    "Contraposition_generation.jsonl": 260,
+    "Syllogism_generation.jsonl": 80
+  },
+  "correctBySourceFile": {
+    "AEIO_truth.jsonl": 236,
+    "Conversion_generation.jsonl": 272,
+    "Obversion_generation.jsonl": 240,
+    "Contraposition_generation.jsonl": 260,
+    "Syllogism_generation.jsonl": 63
+  },
+  "soundSyllogismConclusions": 80,
+  "strictGoldEquivalentSyllogismConclusions": 63,
+  "strongerSubalternationAlternatives": 17,
+  "normalizationCandidates": 0,
+  "languageAgentInvocations": 0,
+  "retainedEvidence": "Aggregate and source-family counts only. No fresh text, identifiers, labels, predictions, or item-level failures were retained or inspected.",
+  "postEvaluationBehaviorChanges": false,
+  "lifecycle": "This fresh partition is exhausted for later candidates. Any semantic change requires a new untouched partition."
+}

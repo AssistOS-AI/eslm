@@ -1,0 +1,25 @@
+{
+  "format": "eslm-benchmark-source-manifest-v1",
+  "id": "logiqa-official-2020-11-25",
+  "upstreamOwner": "Jian Liu, Leyang Cui, Hanmeng Liu, Dandan Huang, Yile Wang, and Yue Zhang",
+  "repositoryUrl": "https://github.com/lgw863/LogiQA-dataset",
+  "paperUrl": "https://arxiv.org/abs/2007.08124",
+  "revision": "ff6c4cbca47627b3ac2da94a29fa28204a167b41",
+  "revisionDate": "2020-11-25T15:27:23+08:00",
+  "cache": "training/.cache/benchmarks/logiqa/source/ff6c4cbca47627b3ac2da94a29fa28204a167b41",
+  "credentialsRequired": false,
+  "networkAtRuntime": false,
+  "sourceRows": 17356,
+  "semanticCasesPerLanguage": 8678,
+  "sourceSetSha256": "0be28ab9ca6d9beb163ccdc5f84234143f1490c76be3064c7dad08c7c5cbae0a",
+  "datasetLicense": "no-explicit-dataset-license-identifier",
+  "licenseEvidence": "The official data repository publishes the English and Chinese files and a citation, but it contains no LICENSE file and its pinned README states no dataset license.",
+  "usePolicy": "Local academic research and evaluation; no redistribution of source rows pending authoritative rights clarification.",
+  "citation": "Jian Liu, Leyang Cui, Hanmeng Liu, Dandan Huang, Yile Wang, and Yue Zhang. LogiQA: A Challenge Dataset for Machine Reading Comprehension with Logical Reasoning. IJCAI 2020.",
+  "redistribution": "Only ESLM-authored adapters, aggregate inventories, digests, and non-row receipts are committed. The complete Git checkout remains in the ignored local cache.",
+  "splitLifecycle": {
+    "train": "English and Chinese training-visible",
+    "development": "English and Chinese development-visible with host-only oracle; only English is executed in the current profile",
+    "test": "English and Chinese evaluator-only files sealed; immutable byte identities checked; content not opened by the adapter; no loader exported"
+  }
+}

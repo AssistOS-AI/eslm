@@ -1,0 +1,36 @@
+{
+  "manifestType": "knowledgeBasePackage",
+  "format": "eslm-kb-package-v1",
+  "schemaVersion": "1",
+  "kbId": "clutrr-kinship-algebra",
+  "kbVersion": "1.0.0",
+  "namespace": "clutrr-kinship-algebra",
+  "languages": [
+    "en"
+  ],
+  "domains": [
+    "family-relations"
+  ],
+  "capabilities": [
+    "typed-relation-algebra",
+    "bounded-relation-composition"
+  ],
+  "trustLevel": "source-reviewed",
+  "benchmarkEligible": false,
+  "license": "CC BY-NC 4.0",
+  "canonicalSource": {
+    "path": "../canonical/records.jsonl",
+    "file": "records.jsonl",
+    "checksum": "sha256:6937b2aac4184a855eff537a9d530f1be7eaf483c17e2aaa411b05797ac3b4fe",
+    "recordCount": 3
+  },
+  "compiler": {
+    "version": "eslm-kb-compiler-v1",
+    "configurationHash": "sha256:ada3afe8b7eb79b8a1d7427c6695255bd943488bc1bf794463ec85d753965d21"
+  },
+  "counts": {
+    "constraint": 1,
+    "provenance": 2
+  },
+  "shardDirectoryRef": "shards.json"
+}

@@ -1,0 +1,16 @@
+{
+  "format": "eslm-learning-evaluation-v1",
+  "protocol": "proverqa-annotation-assisted-development-before-predicate-reconciliation-v1",
+  "tested": 300,
+  "correct": 295,
+  "metrics": {
+    "overallAccuracy": 0.9833333333333333,
+    "regressionAccuracy": 1,
+    "metamorphicConsistency": 1,
+    "proofValidity": 1,
+    "abstentionPrecision": 1,
+    "executionFailures": 0
+  },
+  "freshExecuted": false,
+  "languageAgentInvocations": 0
+}

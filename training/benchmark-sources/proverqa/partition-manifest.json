@@ -1,0 +1,22 @@
+{
+  "format": "eslm-proverqa-evaluation-partition-v1",
+  "sourceLifecycle": "fixed-public-development-set-repartitioned-before-adaptation",
+  "seed": "proverqa-public-evaluation-partition-v1",
+  "policy": "Sort SHA-256(seed, official difficulty level, source ID) independently inside easy, medium, and hard. The first 100 members of each level are development-visible; the remaining 400 are sealed fresh members.",
+  "available": 1500,
+  "development": {
+    "records": 300,
+    "byLevel": { "easy": 100, "medium": 100, "hard": 100 },
+    "membershipSha256": "0bee25db86afcb947e519721db5ad8771ba769277a6d480d5d5187847dd872af"
+  },
+  "fresh": {
+    "records": 1200,
+    "byLevel": { "easy": 400, "medium": 400, "hard": 400 },
+    "membershipSha256": "06d3e3a2257edd975e4c49af2b63468c3a6020ee2ca95a5e5ae1c393165b66a1",
+    "executed": true,
+    "visibility": "opened once by the aggregate-only evaluator after the v2 freeze; no cases or per-case outcomes were returned"
+  },
+  "completeMembershipSha256": "5de79e39983cc3578cc9de6bd75b52221343e215fddd2d0509920f5749cfc013",
+  "labelBlind": true,
+  "languageAgentPermitted": false
+}

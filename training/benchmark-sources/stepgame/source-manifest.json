@@ -1,0 +1,46 @@
+{
+  "protocol": "stepgame-official-source-manifest-v1",
+  "benchmarkId": "stepgame-corrected-2024-03-04",
+  "officialDataset": {
+    "url": "https://huggingface.co/datasets/ZhengyanShi/StepGame",
+    "revision": "6d859381dfd518cae3f073b268aaa323bf4dcf04",
+    "access": "public-ungated",
+    "license": "MIT",
+    "readme": { "bytes": 2062, "sha256": "6ef49fc1bd2ab2369d06f22a3014304c75d6cd7b09dc5b3b7cffcc02a0988ea0" },
+    "files": [
+      { "split": "train", "path": "train.jsonl", "rows": 50000, "bytes": 12624082, "sha256": "774b73385c1a6995e121e87f16be790355555c4c18c01eb42464e28c6ea3482c" },
+      { "split": "validation", "path": "valid.jsonl", "rows": 5000, "bytes": 1269689, "sha256": "90c7efa0de6bd2a03c9813beaf94e910be803da0e1f08e38557c21b1ad49b5a9" },
+      { "split": "test", "path": "test.jsonl", "rows": 100000, "bytes": 61771409, "sha256": "8fd1a61d36257322752f39e412d7aff1a187a555a30414a10c1bae66acd112bc" }
+    ]
+  },
+  "officialRepository": {
+    "url": "https://github.com/ShiZhengyan/StepGame",
+    "revision": "5e6aff1563a6d7f46ee1f1aeff98b94e68c29005",
+    "license": "MIT",
+    "licenseBytes": 1071,
+    "licenseSha256": "c5d19ea1072dacdfc6c308fe5297135b9fba300f36b867369ae9f0cbbc374023",
+    "readmeBytes": 4454,
+    "readmeSha256": "c4a70674e950b9ed153d90f6333362b5d203e99ac240fc9255969f807dec59ac",
+    "generator": {
+      "path": "Code/template.py",
+      "bytes": 15558,
+      "sha256": "c9ff684b7674a2c8c11af6d584619c24786d704d6eaa031d28d50e3983db0c02"
+    }
+  },
+  "identityDecision": "The corrected March 2024 Hugging Face release is the selected data identity. The official repository is frozen separately because its inert generator templates define the source language used by the adapter.",
+  "completeRetention": {
+    "rows": 155000,
+    "bytes": 75665180,
+    "cacheRoot": "training/.cache/benchmarks/stepgame",
+    "streaming": "Every JSONL split is read one line at a time; no split is loaded as one JSON value.",
+    "sourceNativeShards": 3,
+    "sizeBasedRejections": 0,
+    "discardedValidRows": 0
+  },
+  "citation": {
+    "title": "StepGame: A New Benchmark for Robust Multi-Hop Spatial Reasoning in Texts",
+    "authors": "Zhengxiang Shi, Qiang Zhang, and Aldo Lipani",
+    "venue": "AAAI 2022",
+    "doi": "10.1609/aaai.v36i10.21383"
+  }
+}

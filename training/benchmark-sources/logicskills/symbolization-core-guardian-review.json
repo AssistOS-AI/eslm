@@ -1,0 +1,33 @@
+{
+  "format": "eslm-core-change-guardian-review-v1",
+  "proposal": "symbolization-core-change-proposal.json",
+  "mechanicalAudit": {
+    "eligibleForImplementation": true,
+    "failures": []
+  },
+  "verdict": "accept-development-candidate-defer-runtime-registration",
+  "acceptedScope": "The new module may remain an unregistered research candidate invoked by the label-isolating LogicSkills development adapter.",
+  "registrationBlockers": [
+    "Only 288 of 480 development symbolizations enter the verified fragment; 192 complete sentences still abstain.",
+    "The formula-equivalence checker is deliberately sound but incomplete and is not a complete first-order decision procedure.",
+    "No fresh symbolization member was opened, so this iteration supplies no unseen aggregate for registration.",
+    "A registered language method would require DS015, capability metadata, engine integration, HTML explanation, and wider cross-source regressions, all outside this delegated change boundary."
+  ],
+  "generalityEvidence": [
+    "Full constant, predicate, class, relation-frame, and surface vocabulary renaming preserves the typed formula.",
+    "Lexicon reordering preserves the formula.",
+    "Conditional reversal changes the formula and therefore fails the meaning-changing contrast.",
+    "Tampered source digests fail witness verification.",
+    "Opaque predicates, ambiguous coordination, and incomplete quantified objects abstain rather than emitting a partial formula.",
+    "English and Carroll-language development strata both produce verified correct formulas."
+  ],
+  "forbiddenRelaxations": [
+    "Do not accept an unresolved content word from lexical resemblance.",
+    "Do not drop an unsupported relative clause or candidate conjunct.",
+    "Do not compare the generated string directly with the reference string.",
+    "Do not infer a validity answer from failure to find a model in one bounded domain.",
+    "Do not branch on source IDs, expected formulas, answer indices, or candidate positions."
+  ],
+  "freshBoundary": "The fresh partition remains unopened and no previous fresh aggregate is reused as evidence for this changed language behavior.",
+  "languageAgentInvocations": 0
+}

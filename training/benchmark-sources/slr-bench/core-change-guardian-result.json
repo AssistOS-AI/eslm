@@ -1,0 +1,6 @@
+{
+  "protocol": "core-change-guardian-audit-result-v1",
+  "proposal": "core-change-proposal.json",
+  "eligibleForImplementation": true,
+  "failures": []
+}

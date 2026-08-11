@@ -1,0 +1,91 @@
+{
+  "format": "eslm-story-cloze-development-result-v2",
+  "partitionDigest": "df208d36029d86c020cbc7ec49cf7937f8cac785230fdeab6f222968b61180b1",
+  "sourceSha256": "1e8f4987664c12889426465481d998f843ad844cc97ba5d99f30c9032329664b",
+  "evidenceVisibility": "development-visible validation subset only",
+  "developmentCases": 1257,
+  "testSplitUsed": false,
+  "freshPartitionOpened": false,
+  "freshLabelsUsed": false,
+  "priorFreshResultUsedForCalibration": false,
+  "behaviorVersionBoundary": "This development cycle follows the earlier frozen fresh evaluation. The changed behavior has no new fresh score and makes no claim about that partition.",
+  "cycles": [
+    {
+      "name": "development-calibrated structural policy without semantic provider evidence",
+      "correct": 720,
+      "total": 1257,
+      "accuracy": 0.5727923627684964,
+      "rankCorrect": 749,
+      "rankAccuracy": 0.5958631662688942,
+      "omissions": 60
+    },
+    {
+      "name": "provider-neutral evidence with one undifferentiated development weight",
+      "correct": 732,
+      "total": 1257,
+      "accuracy": 0.5823389021479713,
+      "rankCorrect": 756,
+      "rankAccuracy": 0.6014319809069212,
+      "omissions": 53
+    },
+    {
+      "name": "typed causal, goal, social, event, state, and contradiction evidence",
+      "correct": 734,
+      "total": 1257,
+      "accuracy": 0.5839299920445505,
+      "rankCorrect": 758,
+      "rankAccuracy": 0.6030230708035004,
+      "omissions": 53,
+      "statusCounts": {
+        "DEFEASIBLE": 1204,
+        "UNKNOWN": 53
+      },
+      "providerEvidenceRecords": 473,
+      "providerEvidenceByKb": {
+        "atomic-2020": 424,
+        "conceptnet-5.7.0-en": 49,
+        "world-relations-1.0": 0
+      },
+      "semanticFamilyRecords": {
+        "causal": 102,
+        "goal": 233,
+        "social": 47,
+        "event": 80,
+        "state": 11,
+        "contradiction": 0
+      },
+      "featureWeights": {
+        "provider-causal": 500,
+        "provider-goal": 1000,
+        "provider-social": 250,
+        "provider-event": 750,
+        "provider-state": 500,
+        "provider-contradiction": 0
+      },
+      "elapsedMilliseconds": 9230,
+      "usedKbVersions": [
+        "world-relations-1.0",
+        "atomic-2020",
+        "conceptnet-5.7.0-en"
+      ]
+    }
+  ],
+  "calibration": {
+    "method": "bounded coordinate search over aggregate development accuracy and rank accuracy",
+    "candidateWeights": [
+      0,
+      100,
+      250,
+      500,
+      750,
+      1000,
+      1250,
+      1500,
+      2000
+    ],
+    "cyclesToStability": 3,
+    "caseOutcomesRetained": false,
+    "answerMemorization": false
+  },
+  "claimBoundary": "This is a development-only diagnostic, not an official Story Cloze test score and not a new fresh result. Provider relations improve aggregate ranking modestly; the remaining gap cannot be repaired honestly with answer-specific branches, candidate order, exact strings, or hidden labels."
+}

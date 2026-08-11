@@ -1,0 +1,8 @@
+{
+  "format": "eslm-learning-cycle-v1",
+  "dataset": "proverqa-official-2025-06-11",
+  "acceptedCheckpoint": "scalable-boolean-entailment-before-proverqa-adaptation",
+  "hypothesis": "Official formula annotation variants can be reconciled by a label-blind, source-local predicate morphology policy while the existing generic Boolean method remains unchanged.",
+  "status": "adapter-policy-accepted-development-only",
+  "freshOpened": false
+}

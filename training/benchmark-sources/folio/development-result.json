@@ -1,0 +1,87 @@
+{
+  "format": "eslm-folio-development-baseline-v2",
+  "protocol": "folio-v0.0-complete-validation-development-v2",
+  "executedAt": "2026-08-11T18:07:52Z",
+  "sourceSetSha256": "5157453a3938447308d9df627418cbbeb1e363894bad2c8fcffe5b7f3dcfad1a",
+  "evidenceRegime": "development-visible-official-fol-annotations-and-separate-direct-language-diagnostic",
+  "runtimeProfile": "direct-symbolic-no-language-agent",
+  "tested": 204,
+  "available": 204,
+  "comprehensive": true,
+  "formulaTrack": {
+    "tested": 204,
+    "correct": 161,
+    "accuracy": 0.7892156862745098,
+    "statuses": {
+      "SOLVED": 175,
+      "UNSUPPORTED_FORMULA": 5,
+      "INCONSISTENT_CONTEXT": 24
+    },
+    "methods": {
+      "finite-enumeration": 146,
+      "not-executed": 5,
+      "scalable-boolean-entailment": 53
+    },
+    "byLabel": {
+      "True": { "tested": 72, "correct": 59 },
+      "False": { "tested": 63, "correct": 48 },
+      "Unknown": { "tested": 69, "correct": 54 }
+    },
+    "maxAtoms": 16
+  },
+  "naturalLanguage": {
+    "tested": 204,
+    "correct": 4,
+    "accuracy": 0.0196078431372549,
+    "parsedSentences": 545,
+    "totalSentences": 1292,
+    "sentenceCompilationRate": 0.4218266253869969,
+    "statuses": { "SOLVED": 9, "UNSUPPORTED": 182, "AMBIGUOUS": 13 },
+    "contract": "All natural-language premises and the conclusion must compile before a complete case executes. Unsupported and ambiguous sentences are not dropped."
+  },
+  "naturalLanguageQuery": {
+    "tested": 204,
+    "correct": 75,
+    "accuracy": 0.36764705882352944,
+    "languageCompiled": 108,
+    "languageCompilationRate": 0.5294117647058824,
+    "executionSolved": 98,
+    "solvedAccuracy": 0.7653061224489796,
+    "statuses": {
+      "SOLVED": 98,
+      "UNSUPPORTED": 76,
+      "AMBIGUOUS": 20,
+      "INCONSISTENT_CONTEXT": 10
+    },
+    "methods": {
+      "finite-enumeration": 93,
+      "scalable-boolean-entailment": 15,
+      "not-executed": 96
+    },
+    "contract": "The natural-language conclusion is compiled against the predicate and constant vocabulary declared by the official premise annotations. Neither conclusion-FOL nor the answer label is an input to prediction."
+  },
+  "semanticAudit": {
+    "officialAnnotationsParseable": 1279,
+    "candidateSentencesParsed": 541,
+    "exactSentenceFormulas": 383,
+    "exactSentenceFormulaRate": 0.29945269741985925,
+    "exactQueryFormulas": 73,
+    "exactQueryFormulaRate": 0.35784313725490197,
+    "exactCompleteCases": 4,
+    "interpretation": "This development-only host audit compares candidate typed formulas with official annotations. A mismatch remains a mismatch; the annotation never repairs the candidate and is not used as an answer."
+  },
+  "runtimeFrontend": {
+    "tested": 0,
+    "parsed": 0,
+    "directSymbolicRate": null,
+    "statuses": {},
+    "unsupportedStatementHistogram": {},
+    "scoring": "Not executed in this language-candidate iteration; the deployed Stage A engine and registry were intentionally unchanged.",
+    "normalizationAttempts": 0,
+    "languageAgentInvocations": 0
+  },
+  "fresh": {
+    "executed": false,
+    "reason": "No untouched labeled split is present in the pinned official source."
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "protocol": "slr-bench-source-inventory-v1",
+  "release": "aiml-tuda-slr-bench-v1-all",
+  "rows": 19253,
+  "validationProgramFacts": 13999345,
+  "idScope": "split-local",
+  "uniqueNumericIds": 18053,
+  "crossSplitRepeatedIds": 1200,
+  "fields": [
+    "id", "prompt", "ground-truth rule", "validation program", "symbols",
+    "curriculum level", "curriculum tier", "rule sampling", "rule complexity",
+    "background sampling", "problem size", "vocabulary predicates",
+    "vocabulary car constants", "validation_program_shortcuts"
+  ],
+  "splits": [
+    {
+      "split": "train",
+      "rows": 18053,
+      "facts": 13207666,
+      "preparedShards": 74,
+      "shardSetSha256": "9c2cf68594666070c041020ee8597d2cb58a3a1c5d961131f8938cf5eb977172",
+      "reconstructedPayloadSha256": "d6e684b3e488e7ea4fa4805fd65c2083f05248ea144ef1107b2547dd1602976e",
+      "levelCounts": [26, 234, 793, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
+      "tierCounts": { "basic": 3053, "easy": 5000, "medium": 5000, "hard": 5000 }
+    },
+    {
+      "split": "validation",
+      "rows": 200,
+      "facts": 133018,
+      "preparedShards": 1,
+      "shardSetSha256": "402ce7b2cc6ed40fd49fc79712be28a5ca2d6df7967b1bb5127c566a9334b5d1",
+      "reconstructedPayloadSha256": "3c2ea8a450cef7b8bbd0bffcd19f0c49f33c9802bf5d4edd89447a4f6cff5f2a",
+      "levelCountEach": 10,
+      "tierCountEach": 50
+    },
+    {
+      "split": "test",
+      "rows": 1000,
+      "facts": 658661,
+      "preparedShards": 4,
+      "shardSetSha256": "c5b33056eaca59b805dc00154b7525d437a3b7fd673d57da03eb928c66ab83ff",
+      "reconstructedPayloadSha256": "ac894c3be1e73fe6bd88e8f4c3a5ca2214843803a8bd84758fbdae86c3c65f59",
+      "levelCountEach": 50,
+      "tierCountEach": 250
+    }
+  ],
+  "preparedSourceSetSha256": "fcee672daeaebac25d26b40170945de6b41fe4c6b19275392e8df97edf6d92d0",
+  "validation": {
+    "mode": "streaming-jsonl-and-inert-ground-program-parser",
+    "acceptedRows": 19253,
+    "rejectedRows": 0,
+    "allTwentyLevelsPresent": true,
+    "unexpectedFieldsAllowed": false,
+    "corpusProgramsExecuted": 0,
+    "sizeBasedRejections": 0
+  }
+}

@@ -35,6 +35,15 @@ An `event` requires `eventType` and `contextRef`. A `roleEdge` requires `eventRe
 
 ## Alignment, retraction, plan, and constraint
 
-An `alignment` requires `left`, `relation`, and `right`. A `retraction` requires `targetRecord` and `contextRef`. A `plan` requires `goalPattern` and non-empty `steps`. A `constraint` has no additional compiler-required field yet, so include a declared constraint kind and fully declarative operands; never encode an expression or callback string.
+An `alignment` requires `left`, `relation`, and `right`. A `retraction` requires `targetRecord` and `contextRef`. A `plan` requires `goalPattern` and non-empty `steps`.
+
+A `constraint` requires `constraintKind`. The implemented `property-value-domain` kind requires `predicate` and a non-empty `values` array of strings. It declares the finite source-local answer vocabulary for a named property; it does not assert that any entity has any listed value. The implemented `induction-policy` kind requires `predicate`, `enabled` explicitly equal to `true`, Boolean `implicitQuestionTrigger`, positive integer `minSupport`, numeric `minCoverage` greater than zero and no greater than one, and optional `selection` equal to `all`, `latest-support`, or `latest-member`. It configures the trusted induction method for that predicate. It is defeasible policy data, not a strict fact and not permission to copy benchmark answers.
+
+```json
+{"recordType":"constraint","recordId":"constraint:example:color-domain","kbNamespace":"example","schemaVersion":"1","constraintKind":"property-value-domain","predicate":"color","values":["blue","green"],"provenanceRefs":["prov:example:source"]}
+{"recordType":"constraint","recordId":"constraint:example:color-induction","kbNamespace":"example","schemaVersion":"1","constraintKind":"induction-policy","predicate":"color","enabled":true,"implicitQuestionTrigger":true,"minSupport":2,"minCoverage":0.5,"selection":"all","provenanceRefs":["prov:example:source"]}
+```
+
+No constraint may encode an expression, callback, code fragment, item identifier, question hash, or answer lookup table. Unsupported kinds fail both the portable validator and the trusted host validator.
 
 Run `node skill/scripts/validate-candidate.mjs candidate` from the isolated workspace. A successful portable validation is necessary but does not promote the candidate; the host repeats canonical validation and deterministic compilation.

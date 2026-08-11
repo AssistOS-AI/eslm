@@ -1,0 +1,20 @@
+{
+  "format": "eslm-logiqa-training-projection-diagnostic-v1",
+  "protocol": "logiqa-complete-official-english-training-categorical-projection-diagnostic-v1",
+  "evidenceRegime": "complete official English training split with host-only oracle; training evidence only",
+  "claimBoundary": "Training-visible compiler and witness diagnostic; not development, Chinese, test, or leaderboard evidence.",
+  "available": 7376,
+  "tested": 7376,
+  "answered": 0,
+  "correct": null,
+  "benchmarkAccuracy": null,
+  "statusCounts": {"NO_APPLICABLE_METHOD":7376},
+  "categoricalMethodAttempts": 0,
+  "projectionFailureCounts": {"candidate-semantics":1,"question-operation":7216,"premise-semantics":159},
+  "projectionDiagnosticCounts": {"unsupported categorical predication":8,"question does not declare a supported proof obligation":7216,"missing categorical quantifier":149,"compound or unbounded categorical term":3},
+  "recognizedOperationCounts": {"select-sufficient-premise":1,"select-entailed-candidate":159},
+  "witnessBearing": 0,
+  "witnessVerified": 0,
+  "languageAgentInvocations": 0,
+  "interpretation": "The strict compiler recognized 160 training question operations. One explicit sufficient-premise passage reached candidate compilation, but at least one candidate remained outside the monadic fragment; scoring a subset of candidates would violate the task. The remaining recognized cases failed complete-passage compilation. No partial interpretation was executed."
+}

@@ -1,0 +1,10 @@
+{
+  "protocol": "sparp-ps1-development-baseline-v1",
+  "checkpoint": "before-declarative-qualitative-relation-closure",
+  "availableDevelopment": 2397,
+  "tested": 0,
+  "status": "NO_APPLICABLE_METHOD",
+  "reason": "The prior adapter retained only a directional vector projection. That projection could not preserve PS1 topology, containment, qualitative distance, depth direction, or multi-label closure without semantic loss.",
+  "scoreClaim": "none; zero executed cases is a capability diagnostic, not zero-percent accuracy",
+  "languageAgentInvocations": 0
+}

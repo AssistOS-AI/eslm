@@ -1,0 +1,23 @@
+{
+  "format": "eslm-folio-partition-manifest-v1",
+  "sourceSetSha256": "5157453a3938447308d9df627418cbbeb1e363894bad2c8fcffe5b7f3dcfad1a",
+  "trainingVisible": {
+    "file": "folio-train.jsonl",
+    "records": 1004,
+    "use": "schema, formula-language, and natural-language development only",
+    "limitation": "The pinned v0.0 train records do not contain conclusion-FOL, so they are not scored by the official-formula baseline."
+  },
+  "development": {
+    "file": "folio-validation.jsonl",
+    "records": 204,
+    "selection": "complete official validation file",
+    "strata": { "True": 72, "False": 63, "Unknown": 69 },
+    "oracle": "The adapter returns a label-free pool. Labels are read only inside the host scorer and are not returned by loadFolioDevelopmentPool."
+  },
+  "fresh": {
+    "records": 0,
+    "state": "not-run-no-local-labeled-split",
+    "reason": "The official pinned v0.0 README states that the test set is unreleased. Both locally labeled files are development-visible, so reserving either after inspection would not create untouched evidence."
+  },
+  "codingAgent": "No Coding Agent is used by source validation, formula adaptation, direct-language coverage, or scoring. Development labels must not enter synthesis packets."
+}

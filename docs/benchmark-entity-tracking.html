@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Entity Tracking protocol — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / <a href="evaluation.html">Evaluation</a> / Entity Tracking</p>
+<h1>Entity Tracking: executing container-state changes</h1>
+<p class="lead">Entity Tracking asks which objects remain in a queried container after a sequence of additions, removals, and moves. It tests persistent identity and state updates rather than factual recall.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  O[Ordered operations] --> S[Container state]
+  S --> Q[Final query]
+  Q --> C[Exact contents]</pre><figcaption>Add, remove, and move operations update one explicit state in order. The final query reads that state and returns an exact set rather than completing text by similarity.</figcaption></figure>
+
+<h2>Representation and execution</h2>
+<p>The reviewed adapter projects each bounded story into allowlisted operations. The generic state-transition method applies those operations in order and records the resulting container contents. This representation lets tests rename every object and container, insert irrelevant operations, reverse a movement, or query a different container without adding source vocabulary to the state engine.</p>
+
+<h2 id="protocol">Current ESLM protocol</h2>
+<p>The latest development probe executes 100 deterministically selected cases from a 20,020-row development artifact. Selection cycles across different operation counts so the sample is not only the shortest stories. The scorer compares the final unordered contents required by the masked span. Every required entity must appear and no extra entity may be returned.</p>
+<p>The score shown on the home page therefore means that the stated number of selected structured cases produced the exact final set. It does not mean that every available development row ran, that other splits ran, or that unrestricted event prose can be converted into operations. Those are separate coverage questions. The current numerator, denominator, and tested-versus-available counts are read from the replaceable public-probe JSON rather than copied into this stable protocol page.</p>
+
+<h2>Failure interpretation</h2>
+<p>A wrong set indicates an operation, ordering, binding, or output-projection error. <code>UNPARSED</code> would indicate that the adapter could not construct the declared operation sequence. <code>UNKNOWN</code> would indicate that the sequence was understood but lacked the state needed for a determinate answer. The published sample is development evidence and must be accompanied by nonce objects, changed operation order, removal controls, and queries whose correct result is empty.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

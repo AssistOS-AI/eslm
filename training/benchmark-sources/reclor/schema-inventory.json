@@ -1,0 +1,23 @@
+{
+  "format": "eslm-reclor-source-inventory-v1",
+  "sourceRows": 6138,
+  "visibleValidatedRows": 5138,
+  "nativeSourceShards": [
+    {"path":"train.json","rows":4638,"bytes":4962601,"sha256":"e9b92a11e5d89e0966aadee7b35773d48e5d6ec86c03ba5f6011acd475d04157","visibility":"training-visible","labelCounts":{"0":1171,"1":1170,"2":1154,"3":1143},"duplicateVisibleTasks":0},
+    {"path":"val.json","rows":500,"bytes":545706,"sha256":"49a43973d7cf00d5e0d645daad864efca8e10497ced241f32afa4bd260233159","visibility":"development-visible","labelCounts":{"0":117,"1":129,"2":129,"3":125},"duplicateVisibleTasks":0},
+    {"path":"test.json","rows":1000,"bytes":1080957,"sha256":"94f568119bc30696459db950da4489c7f6b41a1865bca0b5f44368cf4588ed36","visibility":"sealed-evaluator-only-content-not-opened"}
+  ],
+  "auxiliaryFiles": [
+    {"path":"question_type_names.json","bytes":287,"sha256":"ab8eb9909ba91c2382c35dc1c04d4c28263e9985420f692556b0ea0a406cb015"},
+    {"path":"source_list.txt","bytes":540,"sha256":"5bc64dfe30ed38dfefe97946ec3614449a78acd45ae1536381e5ec5231912ec3"},
+    {"path":"use_items.txt","bytes":659,"sha256":"bd80d35fc4bd7db8b19ecfb25880fea3fc586b26fee0d979f8f5854b4451c865"}
+  ],
+  "recordSchema": {
+    "fields": ["context", "question", "answers", "label", "id_string"],
+    "answers": "exactly four non-empty strings",
+    "label": "integer 0 through 3, retained only in the host oracle",
+    "id": "split-local stable join key; never a semantic input to a method"
+  },
+  "validation": "Train and validation are read sequentially one object at a time from their native JSON arrays and validated against a closed schema. Test content is deliberately not parsed under the protected-split instruction; its delivered byte length and SHA-256 are frozen.",
+  "sizePolicy": "The complete official archive is retained. Native split files are physical source shards, and no valid source row is removed because of byte size, row count, text length, duplication, or current capability coverage."
+}

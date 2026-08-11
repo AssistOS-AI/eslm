@@ -1,0 +1,25 @@
+{
+  "format": "eslm-corpus-source-gate-v1",
+  "source": "defeasible-nli-official-compound-2020",
+  "decision": "approved-for-streaming-adapter-and-bounded-development-evaluation",
+  "completeDatasetPayloadBytes": 117307435,
+  "completeDatasetRows": 245720,
+  "sampling": {
+    "seed": "defeasible-nli-dev-evidence-v1",
+    "method": "SHA-256 rank within each source family; sampled rows were used only for development failure taxonomy",
+    "testRowsInspected": 0
+  },
+  "semanticScope": [
+    "event consequences and prerequisites",
+    "natural-image descriptions and circumstantial hypotheses",
+    "social and moral rules with contextual exceptions"
+  ],
+  "streamingProfile": {
+    "operation": "validate every JSONL record and hash every source byte without materializing the corpus",
+    "wallClockMilliseconds": 1083.167091,
+    "maximumResidentSetBytes": 111845376,
+    "hostObservation": "2026-08-11 local development run; performance is observational, not a conformance threshold"
+  },
+  "storagePlan": "The immutable archive and extracted JSONL files stay under training/.cache. The adapter streams a selected official split and retains only visible task objects required by the requested development run.",
+  "sizePolicy": "No valid row or file is rejected because of byte size or row count. Exact hashes, streaming validation, split routing, and bounded in-memory task materialization control resources."
+}

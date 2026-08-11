@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SATBench protocol — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation / SATBench</p>
+<h1>SATBench: Boolean search, assignments, and unsatisfiability certificates</h1>
+<p class="lead">SATBench asks whether generated propositional constraint systems are satisfiable. ESLM's completed track consumes the official machine-readable CNF annotation and evaluates the generic SAT method. It is a fresh symbolic result, but it is not the authors' natural-language-only prompt score.</p>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  C[Signed CNF clauses] --> T[Tseitin encoding]
+  T --> D[Deterministic DPLL]
+  D -->|SAT| A[Checked assignment]
+  D -->|UNSAT| U[Replayed conflict certificate]</pre><figcaption>Both answers require constructive evidence. The verifier checks the source clauses independently of the search decision.</figcaption></figure>
+
+<h2 id="protocol">What is tested</h2>
+<p>The official source contains 2,100 cases balanced between satisfiable and unsatisfiable instances, with 5 through 90 variables and easy, medium, and hard groupings. Every row is retained. The label-blind partition reserves 420 cases for development and seals 1,680 for one fresh execution. No file or valid case is rejected because of its size; the JSONL source is streamed and resource use is recorded separately from semantic acceptance.</p>
+<p>Each signed integer literal becomes a generic Boolean atom or its negation, each source clause becomes a disjunction, and the complete constraint set becomes strict premises. Deterministic DPLL uses unit propagation and bounded search. For satisfiable inputs, the output contains a total assignment and a separate verifier checks every original clause. For unsatisfiable inputs, the output contains a split/conflict certificate and a separate replay verifies that both branches close. A bare <code>SAT</code> or <code>UNSAT</code> label is insufficient.</p>
+
+<h2 id="outcomes">How to read the fresh result</h2>
+<p>All 420 development cases passed before the adapter, generic solver, verifier, tests, source identity, and partition membership were frozen. The fresh evaluator then opened the 1,680 protected members once and returned only aggregates: no puzzle, clause, identifier, assignment, certificate, label, or per-case outcome left the evaluator. All 1,680 fresh cases passed and every witness was independently valid. The dashboard displays that exact tested/available denominator and the zero Language Agent count from the live JSON report.</p>
+<p>The result applies to the <strong>source-annotated formula track</strong>. The authors' public prediction protocol supplies a scenario, natural-language conditions, and a question without the <code>clauses</code> annotation. Consequently, 100% here means complete fresh execution of the frozen symbolic track; it must not be reported as a natural-language leaderboard score. A future English constraint compiler needs its own development boundary and a new untouched evaluation source.</p>
+
+<h2>Why the method is reusable</h2>
+<p>The reasoner exposes Boolean formulas, assignments, conflicts, and budgets; it has no benchmark dispatch and does not know SATBench fields. Clause order and variable renaming are invariant, while removing a conflicting clause changes an unsatisfiable instance into a satisfiable one in contrast tests. The same method already supports query-directed entailment in PrOntoQA. This is an algorithmic capability—<a href="https://en.wikipedia.org/wiki/DPLL_algorithm">DPLL search</a> with independently checked evidence—not a table of benchmark answers.</p>
+
+<h2>Source and citation</h2>
+<p>The dataset and code revisions are pinned on the <a href="sources.html">source registry</a>. The official dataset card declares Apache-2.0. The benchmark publication is <a href="https://aclanthology.org/2025.emnlp-main.1716/">SATBench: Benchmarking the Reasoning Capability of Large Language Models in Satisfiability Problems</a> (EMNLP 2025). Source checksums remain in the secondary manifest rather than widening the homepage table.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

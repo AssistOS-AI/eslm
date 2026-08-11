@@ -1,0 +1,133 @@
+{
+  "format": "eslm-benchmark-adapter-probe-report-v1",
+  "createdAt": "2026-08-11T08:49:26Z",
+  "evidenceRole": "pre-change-baseline-retained-for-learning-lineage",
+  "supersededCurrentReport": "docs/results/latest-public-benchmark-probes.json",
+  "interpretation": "This file preserves the first adapter baseline before generic state and declarative induction changes. It is not the current homepage status. The current direct probe must be read from supersededCurrentReport.",
+  "runtime": {
+    "modelId": "eslm-core-stage-a",
+    "repositoryCommit": "ede71a0c6202d239ff73c2e1d4a33088fcb6a252",
+    "workingTreeState": "uncommitted adapter probe; rerun after shared-core integration before publication"
+  },
+  "claimBoundary": "These are deterministic development-visible adapter probes, not complete public benchmark scores. BLiMP has no official train/test split; the inspected stable-hash sample is development evidence. bAbI scoring uses official training cases only. Official test text and labels were not emitted into this report or used for diagnosis.",
+  "sources": [
+    {
+      "id": "blimp-git-3e56b06f",
+      "source": "https://github.com/alexwarstadt/blimp",
+      "version": "git:3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+      "license": "CC BY 4.0",
+      "archiveSha256": "cbada5cc59b41798f0f0a6b2525166c7a1d82c4a40ed726c78810b898e1979f6",
+      "validatedFileSetSha256": "f9425c4947e2d85bf58ab8b312f6acbe02dc9d017803ff65565b7395b4721e69",
+      "validation": {
+        "paradigmFiles": 67,
+        "cases": 67000,
+        "requiredPairsPerParadigm": 1000,
+        "schemaErrors": 0
+      },
+      "probe": {
+        "policy": "stable-hash-per-paradigm",
+        "seed": "eslm-blimp-probe-v1",
+        "sampledCases": 134,
+        "casesPerParadigm": 2,
+        "protocol": "blimp-full-sentence-symbolic-preference-v1",
+        "correct": 11,
+        "accuracy": 0.08208955223880597,
+        "ties": 98,
+        "agentNormalizations": 0,
+        "agentNormalizationRate": 0,
+        "fieldBreakdown": {
+          "syntax": { "total": 52, "correct": 8, "ties": 29, "accuracy": 0.15384615384615385 },
+          "morphology": { "total": 36, "correct": 1, "ties": 31, "accuracy": 0.027777777777777776 },
+          "syntax_semantics": { "total": 26, "correct": 0, "ties": 22, "accuracy": 0 },
+          "semantics": { "total": 18, "correct": 2, "ties": 14, "accuracy": 0.1111111111111111 },
+          "syntax/semantics": { "total": 2, "correct": 0, "ties": 2, "accuracy": 0 }
+        },
+        "linguisticsTermBreakdown": {
+          "island_effects": { "total": 16, "correct": 0, "ties": 14 },
+          "anaphor_agreement": { "total": 4, "correct": 0, "ties": 4 },
+          "s-selection": { "total": 4, "correct": 2, "ties": 2 },
+          "argument_structure": { "total": 14, "correct": 2, "ties": 9 },
+          "determiner_noun_agreement": { "total": 16, "correct": 1, "ties": 13 },
+          "subject_verb_agreement": { "total": 12, "correct": 0, "ties": 10 },
+          "ellipsis": { "total": 4, "correct": 0, "ties": 4 },
+          "control_raising": { "total": 10, "correct": 0, "ties": 6 },
+          "quantifiers": { "total": 8, "correct": 2, "ties": 4 },
+          "irregular_forms": { "total": 4, "correct": 0, "ties": 4 },
+          "npi_licensing": { "total": 14, "correct": 0, "ties": 14 },
+          "binding": { "total": 14, "correct": 0, "ties": 14 },
+          "filler_gap_dependency": { "total": 14, "correct": 4, "ties": 0 }
+        },
+        "failureInterpretation": "The Stage A grammar score ties on 98 of 134 pairs and does not implement BLiMP's construction-specific acceptability semantics. The 11 correct preferences are a heuristic baseline and do not establish grammatical competence."
+      }
+    },
+    {
+      "id": "babi-en-10k-v1.2",
+      "source": "https://github.com/facebookarchive/bAbI-tasks",
+      "version": "1.2",
+      "license": "CC BY 3.0 Unported",
+      "archiveSha256": "84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c",
+      "validatedFileSetSha256": "7be97714e9d0e4c250b0eb2ea8ebd7a17fcacbdea582048825be41e5bd24fefc",
+      "validation": {
+        "files": 8,
+        "cases": 44000,
+        "trainCasesPerTask": 10000,
+        "testCasesPerTask": 1000,
+        "tasks": [2, 3, 15, 16],
+        "schemaErrors": 0,
+        "fileDigests": {
+          "task2Train": "d4074c0c5d54f70ce2f538056ce2b6ef6a313da336da4245f1a24f1298e37ef3",
+          "task2Test": "eff93fb9cd81ba02eb765772cf7cc269769ed44ec71cbbbc19cfb16ee5eba0f6",
+          "task3Train": "d125e8d2987ef764d107bf9f23223bfd166400581c1ace418533b540fd19592f",
+          "task3Test": "17795c977100baf8188f386522ae301b62d6c1a13efc01b3aea781e588b4d57f",
+          "task15Train": "0a86673f7fafa484f8ee394048f03de19405bdc40b58f21086969efad2862010",
+          "task15Test": "32b77e117fe9acf5f94906684e3b5206de0108e646c76e1da3e022896ec7ee94",
+          "task16Train": "27fef347ce0b25dd148efea2b15f154926e0e9069d4ea6ab9cfca3add492ab35",
+          "task16Test": "4a11e55366f2a5a859b5a81f683ee23801bdbe71ef984e51adb976bd053e8dcf"
+        }
+      },
+      "probe": {
+        "policy": "stable-hash-per-task-train-visible",
+        "seed": "eslm-babi-probe-v1",
+        "sampledCases": 100,
+        "casesPerTask": 25,
+        "protocol": "babi-direct-symbolic-semantic-values-v1",
+        "correct": 25,
+        "accuracy": 0.25,
+        "agentNormalizations": 0,
+        "agentNormalizationRate": 0,
+        "casesWithUnsupportedStatements": 75,
+        "unsupportedStatementCaseRate": 0.75,
+        "taskBreakdown": {
+          "2": { "name": "two-supporting-facts", "total": 25, "correct": 0, "accuracy": 0 },
+          "3": { "name": "three-supporting-facts", "total": 25, "correct": 0, "accuracy": 0 },
+          "15": { "name": "basic-deduction", "total": 25, "correct": 25, "accuracy": 1 },
+          "16": { "name": "basic-induction", "total": 25, "correct": 0, "accuracy": 0 }
+        },
+        "unsupportedStatementBreakdown": {
+          "task2": {
+            "movementEventVariants": 280,
+            "possessionTransitionVariants": 128,
+            "verbCounts": {
+              "went": 109, "travelled": 59, "moved": 57, "journeyed": 55,
+              "grabbed": 24, "picked": 17, "got": 17, "took": 16,
+              "dropped": 16, "put": 15, "left": 14, "discarded": 9
+            }
+          },
+          "task3": {
+            "movementEventVariants": 714,
+            "possessionTransitionVariants": 396,
+            "verbCounts": {
+              "went": 295, "journeyed": 147, "travelled": 138, "moved": 134,
+              "grabbed": 56, "picked": 56, "got": 55, "left": 49,
+              "discarded": 48, "took": 46, "dropped": 44, "put": 42
+            }
+          },
+          "task16": {
+            "bareColorPropertyStatements": 100
+          }
+        },
+        "failureInterpretation": "Task 15's generic categorical rule and class-membership path is fully successful on this development probe. Tasks 2 and 3 require state-changing movement forms and temporal location updates that Stage A does not parse. Task 16 requires reusable class-property induction and property-language support that the empty core does not currently enable. These are generic Stage D and induction gaps, not missing answer facts."
+      }
+    }
+  ]
+}

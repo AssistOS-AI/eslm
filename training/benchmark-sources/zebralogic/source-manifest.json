@@ -1,0 +1,70 @@
+{
+  "format": "eslm-benchmark-source-manifest-v1",
+  "benchmark": "ZebraLogic",
+  "source": {
+    "officialDataset": "https://huggingface.co/datasets/allenai/ZebraLogicBench",
+    "publicDatasetRevision": "2f94a445d7079f20146f5443e2606049de8543e0",
+    "publicArtifacts": {
+      "gridMode": {
+        "cachePath": "training/.cache/benchmarks/zebralogic/public-source/grid-mode-test-2f94a445d7079f20146f5443e2606049de8543e0.parquet",
+        "bytes": 324151,
+        "sha256": "0886953f65988c2c14965192e8df0abf345dd84a31657bdb4f78fdf004907bc6",
+        "rows": 1000
+      },
+      "multipleChoiceMode": {
+        "cachePath": "training/.cache/benchmarks/zebralogic/public-source/mc-mode-test-2f94a445d7079f20146f5443e2606049de8543e0.parquet",
+        "bytes": 818445,
+        "sha256": "272fb982d41e364d920f204fd942abc2cf7e380e530e110756e2ae92dffe091b",
+        "rows": 3259
+      },
+      "datasetCard": {
+        "cachePath": "training/.cache/benchmarks/zebralogic/public-source/README-2f94a445d7079f20146f5443e2606049de8543e0.md",
+        "bytes": 951,
+        "sha256": "98a0c085168937f2549f869e4a20867d8b314a3a83cc7872cad485ce8bd0a47c"
+      }
+    },
+    "derivedNodeReadableArtifacts": {
+      "method": "The acquisition script streams the Hugging Face datasets-server rows only while the dataset API reports the pinned public revision, then rechecks that revision after both configurations complete.",
+      "gridMode": {
+        "cachePath": "training/.cache/benchmarks/zebralogic/derived/grid_mode-2f94a445d7079f20146f5443e2606049de8543e0.jsonl",
+        "bytes": 1540170,
+        "sha256": "a35f4a86b003f4134b4701cd83fef56964c39628d26715e26db68bafbfb229f1",
+        "rows": 1000
+      },
+      "multipleChoiceMode": {
+        "cachePath": "training/.cache/benchmarks/zebralogic/derived/mc_mode-2f94a445d7079f20146f5443e2606049de8543e0.jsonl",
+        "bytes": 5199347,
+        "sha256": "8a3e3ba9b9036485e6acca38a533a0625d86470e40d2ea1b92d09993dd69e383",
+        "rows": 3259
+      }
+    },
+    "officialEvaluationRepository": "https://github.com/yuchenlin/ZeroEval",
+    "evaluationCodeRevision": "8c1485edf12c6efb5f69135a562927c5ad484059",
+    "evaluationCodeArchive": {
+      "cachePath": "training/.cache/benchmarks/zebralogic/official-code/ZeroEval-8c1485edf12c6efb5f69135a562927c5ad484059.tar.gz",
+      "bytes": 185069568,
+      "sha256": "52f7eb308141b9d43f1759735e861eb26782e9dff765fa0e5315f75df6a54720",
+      "entries": 545
+    },
+    "paper": "https://arxiv.org/abs/2502.01100",
+    "generatorAvailability": "The paper describes the CSP generator and clue families, but the pinned official ZeroEval repository contains evaluation and analysis code, not the puzzle generator. No separate official generator repository is linked by the paper, dataset card, or evaluation repository.",
+    "license": {
+      "evaluationCode": "Apache-2.0",
+      "evaluationCodeLicenseSha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "dataset": "not declared by the pinned public or private dataset card",
+      "status": "research cache retained; redistribution and broader reuse require upstream license clarification"
+    }
+  },
+  "oracleSource": {
+    "dataset": "https://huggingface.co/datasets/allenai/ZebraLogicBench-private",
+    "revision": "9f39ef490ae924437376657205025f26c0bd1af3",
+    "access": "gated-auto; this environment has no authorized Hugging Face token and receives HTTP 401 for the parquet artifacts",
+    "publicRedaction": "All 1,000 public grid solutions contain only placeholder cells, and the 3,259 public multiple-choice rows omit the answer field.",
+    "actionUrl": "https://huggingface.co/datasets/allenai/ZebraLogicBench-private",
+    "effect": "An official-label score is unavailable until a user accepts the gated terms and provides an authorized local Hugging Face token or immutable local copy. Computed CSP assignments may still be checked against every public clue and for uniqueness, but they are not official private labels."
+  },
+  "retention": {
+    "policy": "Both complete public configurations are retained. The adapter streams the 1,000-row grid JSONL one record at a time and never rejects an artifact because of its total byte size.",
+    "resourcePolicy": "Per-puzzle semantic bounds can yield an explicit RESOURCE_LIMIT without deleting the row or reducing any declared denominator."
+  }
+}

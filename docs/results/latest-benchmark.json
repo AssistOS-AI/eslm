@@ -1,7 +1,7 @@
 {
-  "format": "eslm-benchmark-report-v1",
+  "format": "eslm-benchmark-report-v2",
   "protocol": "eslm-native-v1",
-  "createdAt": "2026-08-11T07:13:03.041Z",
+  "createdAt": "2026-08-11T18:22:44.579Z",
   "dataset": {
     "path": "tests/fixtures/benchmark.jsonl",
     "sha256": "4a2a7550718ef09315e83b1ac31eafdc7dea854378f8bbb803f1dfd177a38cb5"
@@ -16,27 +16,54 @@
   "total": 5,
   "correct": 5,
   "accuracy": 1,
+  "language": {
+    "directSymbolicCases": 5,
+    "directSymbolicRate": 1,
+    "specialAnalysisCases": 0,
+    "specialAnalysisRate": 0,
+    "externalInvocations": 0,
+    "cacheHits": 0,
+    "acceptedNormalizations": 0,
+    "rejectedNormalizations": 0,
+    "directAccuracy": 1,
+    "normalizedAccuracy": null,
+    "routes": {
+      "direct-symbolic": 5
+    }
+  },
   "results": [
     {
       "id": "qa-capability",
       "pass": true,
       "actual": [
         true
-      ]
+      ],
+      "status": "SOLVED",
+      "languageRoute": "direct-symbolic",
+      "normalizationAttempted": false,
+      "normalizationExternalInvocation": false
     },
     {
       "id": "qa-classification",
       "pass": true,
       "actual": [
         true
-      ]
+      ],
+      "status": "SOLVED",
+      "languageRoute": "direct-symbolic",
+      "normalizationAttempted": false,
+      "normalizationExternalInvocation": false
     },
     {
       "id": "qa-rule-depth",
       "pass": true,
       "actual": [
         true
-      ]
+      ],
+      "status": "SOLVED",
+      "languageRoute": "direct-symbolic",
+      "normalizationAttempted": false,
+      "normalizationExternalInvocation": false
     },
     {
       "id": "preference-question-order",
@@ -44,7 +71,10 @@
       "actual": [
         1.42,
         0.16999999999999998
-      ]
+      ],
+      "status": "SCORED",
+      "languageRoute": "direct-symbolic",
+      "normalizationAttempted": false
     },
     {
       "id": "preference-copula-order",
@@ -52,7 +82,10 @@
       "actual": [
         1.67,
         0.5
-      ]
+      ],
+      "status": "SCORED",
+      "languageRoute": "direct-symbolic",
+      "normalizationAttempted": false
     }
   ]
 }

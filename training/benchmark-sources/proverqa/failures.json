@@ -1,0 +1,15 @@
+{
+  "format": "eslm-learning-failures-v1",
+  "developmentFailures": 1,
+  "clusters": [
+    {
+      "stage": "source-annotation-lexical-identity",
+      "count": 1,
+      "diagnosis": "The reference derivation requires treating a shorter predicate identifier and a longer modifier-bearing identifier as the same concept. The conservative equal-cardinality policy does not assert that identity.",
+      "rejectedRepair": "Subset-style token merging also conflates related-but-distinct predicates in another development context and makes that context classically inconsistent.",
+      "status": "open-engineering-gap-not-impossibility"
+    }
+  ],
+  "freshFailures": null,
+  "freshReason": "Fresh oracle not opened."
+}

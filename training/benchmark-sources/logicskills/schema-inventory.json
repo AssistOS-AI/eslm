@@ -1,0 +1,48 @@
+{
+  "protocol": "logicskills-source-inventory-v1",
+  "release": "logicskills-arxiv-2602.06533v2",
+  "rows": 1500,
+  "recordFields": ["id", "task", "language", "input", "answer"],
+  "files": [
+    {
+      "file": "symbolization.jsonl",
+      "task": "symbolization",
+      "rows": 600,
+      "bytes": 543883,
+      "sha256": "ed6852718994bf5701b4862a633b584230965637f9ba2d66637fe019dbb59131",
+      "languages": { "english": 300, "carroll": 300 },
+      "visibleInput": ["id", "task", "language", "input"],
+      "hostOnlyOracle": "non-empty canonical formula string; official correctness is semantic equivalence"
+    },
+    {
+      "file": "validity.jsonl",
+      "task": "validity",
+      "rows": 600,
+      "bytes": 525604,
+      "sha256": "ea1e44be1aba5356ceb3f4d352c1b6f62ba77bed8ce31b6d358b365a8dff8a54",
+      "languages": { "english": 300, "carroll": 300 },
+      "visibleInput": ["id", "task", "language", "input"],
+      "hostOnlyOracle": "single-element array containing an integer candidate index from 1 through 6"
+    },
+    {
+      "file": "countermodel.jsonl",
+      "task": "countermodel",
+      "rows": 300,
+      "bytes": 287379,
+      "sha256": "cb9c7e6080fd1379e3347d923344390029e3cf02b12f9216ec28b0cd10c963fd",
+      "languages": { "formal": 300 },
+      "visibleInput": ["id", "task", "language", "input"],
+      "hostOnlyOracle": "none; answer is null and correctness requires semantic model verification"
+    }
+  ],
+  "sourceSetSha256": "c9c6f3c90503edb8cba5c723b9517778b8267990738a4e7ea9a3b283b031e1c4",
+  "validation": {
+    "mode": "streaming-closed-schema",
+    "validRowsPreserved": 1500,
+    "rejectedRows": 0,
+    "duplicateIds": 0,
+    "sizeBasedRejections": 0,
+    "unknownFieldsAllowed": false,
+    "sourceStringsExecuted": false
+  }
+}

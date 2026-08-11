@@ -1,0 +1,51 @@
+{
+  "format": "eslm-blimp-feature-candidate-freeze-v1",
+  "frozenAt": "2026-08-11T00:00:00Z",
+  "source": {
+    "url": "https://github.com/alexwarstadt/blimp",
+    "version": "git:3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+    "license": "CC BY 4.0",
+    "archiveSha256": "cbada5cc59b41798f0f0a6b2525166c7a1d82c4a40ed726c78810b898e1979f6"
+  },
+  "partition": {
+    "seed": "eslm-blimp-development-fresh-v1",
+    "developmentIdSha256": "ccbb95847a8a4b8499963420fad3a6feb8cc58752ff098b56dc9559bedeae439",
+    "freshIdSha256": "65930206f3cfc9f01582a1aadc53d220ef7e7b98f7e237e67aeef688e0d4851d",
+    "development": 53600,
+    "fresh": 13400,
+    "paradigms": 67
+  },
+  "candidate": {
+    "featureProfileSha256": "c507d9fbb7c43487bd29e18f395b7f11a6fa867c0d3ad31662a64b0bbb2913ab",
+    "development": {
+      "total": 53600,
+      "correct": 47389,
+      "ties": 4594,
+      "reverse": 1617,
+      "accuracy": 0.8841231343283582
+    },
+    "baseline": {
+      "protocol": "blimp-full-sentence-symbolic-preference-v1",
+      "total": 53600,
+      "correct": 6294,
+      "ties": 38168,
+      "accuracy": 0.11742537313432835
+    }
+  },
+  "frozenFiles": {
+    "src/language/feature-profile.mjs": "1e84c0267ddff4a99be2947bec2ae35837cde828fc461dfcb7b74bf6a0c670e8",
+    "src/language/feature-grammar.mjs": "c459b32c3cb6132c9b97e73658872db1571f1fe4d83f10b1ce925ce3a43eefd6",
+    "src/language/feature-grammar-comparison.mjs": "f73bb1b3ca3710c22ce4a7cdeb9ae51aed2676dfed9404fdbdb13c1294f78adc",
+    "src/benchmark-adapters/blimp-feature-profile.mjs": "d24949549ee739f9ef3e4e1dd832a5160c4fa9668a6ae7a92853368de721e7b3",
+    "src/benchmark-adapters/blimp-partition.mjs": "2e1c9ae3cfef03f9baea68d99ca9b9e2272bfbf4b5c94a34e7ea0a354d3d32c9",
+    "src/benchmark-adapters/blimp-babi.mjs": "75685e986858746b481bc7c4418563540ad6d21151601577b029f569d8cd5444"
+  },
+  "gates": {
+    "freshLabelsInspectedBeforeFreeze": false,
+    "freshSentencesInspectedBeforeFreeze": false,
+    "benchmarkIdentityDispatchInCore": false,
+    "sentenceOrAnswerMemorization": false,
+    "agentNormalizations": 0
+  }
+}
+

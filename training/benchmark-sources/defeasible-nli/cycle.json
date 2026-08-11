@@ -1,0 +1,10 @@
+{
+  "format": "eslm-learning-cycle-v1",
+  "dataset": "defeasible-nli-official-compound-2020",
+  "acceptedCheckpoint": "stage-a-core-before-defeasible-nli",
+  "hypothesis": "A generic preferred-update comparison might cover the benchmark once premise, hypothesis, update, defaults, conflicts, and priorities are available as typed symbolic inputs.",
+  "status": "source-integrated-core-proposal-deferred",
+  "developmentOpened": true,
+  "testOpened": false,
+  "languageAgentUsed": false
+}

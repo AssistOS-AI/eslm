@@ -1,0 +1,29 @@
+{
+  "format": "eslm-benchmark-candidate-comparison-v1",
+  "baseline": {
+    "scope": "Stable-hash sample of Tasks 2, 3, 15, and 16",
+    "tested": 100,
+    "correct": 100,
+    "source": "The superseding public development receipt; the older probe-report.json retains the pre-change 25/100 lineage."
+  },
+  "candidate": {
+    "scope": "Complete official English 10k training inventory for all twenty task families",
+    "tested": 200000,
+    "correct": 199872,
+    "witnessesVerified": 200000,
+    "ambiguous": 128,
+    "perfectTaskFamilies": 19
+  },
+  "regressionControls": {
+    "focusedTests": 14,
+    "focusedPassed": 14,
+    "renameControls": "passed",
+    "nonceControls": "passed",
+    "operationOrderControls": "passed",
+    "meaningChangingContrasts": "passed",
+    "tamperedWitnessControls": "passed",
+    "forbiddenDispatchAudit": "passed",
+    "languageAgentInvocations": 0
+  },
+  "decision": "Eligible for shared integration review after capability-registry, engine, DS015, documentation, and global-regression synchronization. The Task-5 ambiguity exception remains explicit and must not be repaired by oracle leakage."
+}

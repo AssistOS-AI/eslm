@@ -1,0 +1,93 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "proposalId": "core:finite-episodic-world:v1",
+  "title": "Finite typed episodic-world execution with replayable operation witnesses",
+  "independentExamples": [
+    "Discrete state and possession histories exercised independently by location, predecessor, counting, set, and coreference families.",
+    "Declarative edge, vector, transitive-order, and path execution exercised independently by relation, position, size, and route families.",
+    "Typed event-role and motive queries exercised independently by transfer and motivation families."
+  ],
+  "inputTypes": ["finite-episodic-world-task-v1"],
+  "outputTypes": ["typed-semantic-values", "operation-witness"],
+  "preconditions": [
+    "finite typed operation sequence",
+    "bounded semantic identifiers",
+    "declared relation inverses and vector policies when used",
+    "source policy separated from the executor"
+  ],
+  "invariants": [
+    "Insertion order among equal-sequence unrelated edges cannot select an answer.",
+    "Only declared inverses, transitive relations, vector mappings, induction selection, and motive goals are applied.",
+    "Several semantically valid event-role values cannot be reduced by row identity or answer position.",
+    "Every returned operation reference belongs to the accepted task or its declared policy identity."
+  ],
+  "uncertaintySemantics": "Strict state and relation execution, explicit possible state, source-declared induction, and AMBIGUOUS multi-value event queries.",
+  "proofBehavior": "Each result names the accepted operations that establish it; the verifier reconstructs the typed task, recomputes the complete semantic value and status, and rejects unsupported or altered references.",
+  "resourceBounds": { "operations": 10000, "pathDepth": 128, "identifierCharacters": 128 },
+  "failureStatuses": ["UNPARSED", "UNKNOWN", "AMBIGUOUS", "RESOURCE_LIMIT"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "No package migration is required. Existing records and registered methods remain compatible; shared review chooses orchestration or decomposition before registry binding.",
+  "renameTestPassed": true,
+  "forbiddenDispatchAuditPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering", "relation", "event-role"],
+  "candidateSource": "src/reasoning/episodic-world.mjs",
+  "methodDescriptor": {
+    "methodId": "method:core:finite-episodic-world",
+    "capabilities": [
+      "finite-state-history",
+      "finite-relation-transitions",
+      "typed-event-role-query",
+      "declarative-relation-closure",
+      "finite-vector-propagation",
+      "witness-production"
+    ],
+    "inputTypes": ["finite-episodic-world-task-v1"],
+    "outputTypes": ["typed-semantic-values", "operation-witness"],
+    "preconditions": [
+      "finite typed operation sequence",
+      "bounded semantic identifiers",
+      "declared relation inverses and vector policies when used",
+      "source policy separated from the executor"
+    ],
+    "soundness": "sound for the declared finite operation and query semantics",
+    "completeness": "complete for validated operations within operation and path bounds; ambiguity is preserved rather than tie-broken",
+    "uncertaintySemantics": "strict state and relation execution plus explicit possible state, source-declared induction, and AMBIGUOUS multi-value event queries",
+    "proofKind": "replayable operation identifier witness",
+    "costModel": "bounded linear state scans plus bounded breadth-first relation or vector traversal",
+    "implementationVersion": "candidate-1"
+  },
+  "semanticContract": {
+    "inputs": "An ordered finite sequence of typed state, relation, edge, event, class, rule, and property operations; one typed query; and optional declarative policy metadata.",
+    "outputs": "A solved semantic value set, an explicit ambiguity set, an unknown result, or a validation/resource failure with operation evidence.",
+    "effects": "None. Execution is deterministic, side-effect free, offline, and does not mutate KB or session state.",
+    "invariants": [
+      "Insertion order among equal-sequence unrelated edges cannot select an answer.",
+      "Only declared inverses, transitive relations, vector mappings, induction selection, and motive goals are applied.",
+      "Several semantically valid event-role values cannot be reduced by row identity or answer position.",
+      "Every returned operation reference belongs to the accepted task or its declared policy identity."
+    ],
+    "scope": "Finite discrete episodes, not unrestricted discourse, interval logic, metric geometry, causal discovery, probabilistic inference, or open-ended planning.",
+    "resourceBounds": {
+      "operations": 10000,
+      "pathDepth": 128,
+      "identifierCharacters": 128
+    },
+    "failureStatuses": ["UNPARSED", "UNKNOWN", "AMBIGUOUS", "RESOURCE_LIMIT"]
+  },
+  "responsibilityBoundary": {
+    "adapter": "Validates documented external syntax, resolves source-local coreference, and emits typed operations plus provenance-bearing vocabulary and policy.",
+    "method": "Executes only typed operations and generic query kinds.",
+    "planner": "Selects the method only for an accepted finite-episode task and preserves its witness and status.",
+    "oracle": "Joins expected semantic values after execution; source support annotations never enter the task."
+  },
+  "generalityEvidence": {
+    "independentExamples": "All twenty source families exercise overlapping subsets of one typed representation; state and relation mechanisms are shared across several families.",
+    "completeRename": "Entities, predicates, relation IDs, state values, vector dimensions, and event roles are replaced by nonce identifiers in focused tests.",
+    "orderControl": "Reordered independent edges preserve the same path and semantic value.",
+    "contrastControl": "Reversing a requested vector relation changes true to false.",
+    "negativeControl": "Tampered values and nonexistent witness references fail independent verification.",
+    "forbiddenDispatch": "The generic candidate contains no benchmark, dataset, task-family, story, row, expected-answer, or answer-position branch."
+  },
+  "migration": "No KB package requires migration. Existing state, temporal, container, vector, and relation methods remain valid. Shared review should decide whether this candidate becomes an orchestration method over them or is decomposed before registration.",
+  "evaluationReceipt": "all-20-candidate-result.json"
+}

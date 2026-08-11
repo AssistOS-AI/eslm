@@ -1,0 +1,8 @@
+{
+  "format": "eslm-learning-pool-manifest-v1",
+  "working": { "records": 300, "visibility": "development-visible", "membershipSha256": "0bee25db86afcb947e519721db5ad8771ba769277a6d480d5d5187847dd872af" },
+  "regression": { "tests": ["tests/proverqa-adapter.test.mjs", "tests/sat-entailment.test.mjs", "tests/folio-adapter.test.mjs", "tests/core-generality.test.mjs"] },
+  "fresh": { "records": 1200, "visibility": "sealed-membership-only", "membershipSha256": "06d3e3a2257edd975e4c49af2b63468c3a6020ee2ca95a5e5ae1c393165b66a1", "executed": false },
+  "aggregateShadow": { "available": false },
+  "testSplit": { "available": false, "note": "The pinned source publishes train plus one 1,500-row development/evaluation set, not a separate test file." }
+}

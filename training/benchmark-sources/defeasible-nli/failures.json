@@ -1,0 +1,32 @@
+{
+  "format": "eslm-learning-failures-v1",
+  "developmentFailures": 14968,
+  "earliestFailureStage": "semantic-compilation-and-knowledge",
+  "clusters": [
+    {
+      "family": "atomic",
+      "count": 3840,
+      "requirements": ["event-frame grounding", "causal and prerequisite defaults", "agent goal and affect state", "exception-sensitive update comparison"],
+      "status": "open-generic-language-and-knowledge-gap"
+    },
+    {
+      "family": "snli",
+      "count": 1785,
+      "requirements": ["entity and event reference", "attribute and circumstance compatibility", "commonsense alternatives", "graded support comparison"],
+      "status": "open-generic-language-and-knowledge-gap"
+    },
+    {
+      "family": "social",
+      "count": 9343,
+      "requirements": ["norm and action roles", "exception and justification conditions", "perspective and modality", "non-monotonic preference comparison"],
+      "status": "open-generic-language-and-knowledge-gap"
+    }
+  ],
+  "rejectedRepairs": [
+    "Lexical polarity and negation heuristics because the same surface cue can strengthen, weaken, or be irrelevant depending on roles and world knowledge.",
+    "Family-specific majority labels because they do not execute reasoning and are not invariant under meaning-changing controls.",
+    "A task-operation branch that returns one of the answer labels without a typed semantic representation and proof-bearing comparison."
+  ],
+  "testFailures": null,
+  "testReason": "The official test split and oracle were not loaded or executed."
+}

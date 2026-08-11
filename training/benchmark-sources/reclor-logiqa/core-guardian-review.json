@@ -1,0 +1,25 @@
+{
+  "format": "eslm-core-guardian-review-v1",
+  "proposal": "core-change-proposal.json",
+  "mechanicalProposalAudit": {"eligibleForImplementation":true,"failures":[]},
+  "verdict": "reject-registration-defer-candidate",
+  "genericAlgorithmSound": true,
+  "promotionEvidenceSufficient": false,
+  "reasons": [
+    "The typed algorithm passes synthetic nonce, full-rename, ordering, candidate-permutation, semantic-contrast, inconsistency, resource, and replay-verifier tests.",
+    "Across 4,638 ReClor training, 500 ReClor validation, 7,376 English LogiQA training, and 651 English LogiQA development cases, zero complete records satisfy every projection precondition.",
+    "There are therefore no two independent source examples demonstrating useful direct-language coverage, as required for a generic registered method.",
+    "Registering an engine operation or capability descriptor now would expand trusted runtime surface without an executable public-source use case and would require forbidden DS/registry/engine changes."
+  ],
+  "rejectedRelaxations": [
+    {"change":"Ignore passage sentences that fail categorical parsing.","failure":"An ignored conditional, exception, ordering rule, or causal claim can reverse which candidate follows; the opaque-premise control requires NO_APPLICABLE_METHOD."},
+    {"change":"Execute only candidates that parse.","failure":"Removing opaque candidates changes uniqueness and can promote a false answer; the partial-candidate control rejects the complete task."},
+    {"change":"Treat compound neither/nor, and/or, or relational candidates as one atomic predicate.","failure":"This erases conjunction, disjunction, and argument structure, so the returned conflict is not a proof of the source candidate."},
+    {"change":"Use lexical overlap or answer position when semantic projection fails.","failure":"Full vocabulary renaming and candidate permutation destroy the heuristic while preserving meaning."},
+    {"change":"Infer a missing conclusion boundary from the expected answer.","failure":"This crosses the oracle boundary and fails when the same visible passage is paired with a different label."}
+  ],
+  "coreRegistrationChanged": false,
+  "engineChanged": false,
+  "protectedEvidenceOpened": false,
+  "nextGate": "Implement typed conditional, relational, cardinality, ordering, and argument-role language projections with their own proof semantics. Re-run visible clustering and require at least two independent complete source cases before reconsidering registration."
+}

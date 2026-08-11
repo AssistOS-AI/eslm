@@ -26,6 +26,7 @@ export function taskFrameFromQuery(query, options = {}) {
 }
 
 function capabilityFor(query) {
+  if (query.reasoning === 'temporal-predecessor') return 'temporal-predecessor';
   if (query.reasoning === 'induction') return 'induction';
   if (query.reasoning === 'abduction') return 'abduction';
   return 'deduction';

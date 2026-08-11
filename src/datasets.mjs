@@ -65,7 +65,7 @@ export const DATASET_CATALOG = Object.freeze({
 });
 
 function datasetDirectory(id) {
-  return join(PROJECT_ROOT, 'training/datasets', id);
+  return join(PROJECT_ROOT, 'training/.cache/datasets/prepared', id);
 }
 
 async function existingArchive(path, expectedSha256) {
@@ -238,5 +238,14 @@ export async function datasetStatus(id) {
     ? join(PROJECT_ROOT, definition.archiveCache)
     : join(directory, 'cache', basename(new URL(definition.source).pathname));
   try { diskBytes = (await stat(archivePath)).size; } catch {}
-  return { id, definition, cached: Boolean(cache), prepared: Boolean(prepared), diskBytes, cache, preparedManifest: prepared };
+  return {
+    id,
+    definition,
+    storageRoot: relative(PROJECT_ROOT, directory),
+    cached: Boolean(cache),
+    prepared: Boolean(prepared),
+    diskBytes,
+    cache,
+    preparedManifest: prepared,
+  };
 }

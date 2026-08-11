@@ -1,0 +1,21 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "benchmark": "ProverQA",
+  "decision": "no-generic-core-change",
+  "renameTest": "The existing scalable Boolean entailment method already operates only on formula structure and renamed semantic atoms. All 300 development tasks executed with independently verified witnesses.",
+  "adapterPolicy": {
+    "name": "predicate-morphology-and-surface-evidence-v2",
+    "scope": "official formula annotations inside one case",
+    "input": "predicate identifiers plus their aligned source statements; no answer, reasoning trace, benchmark row rank, or source ID",
+    "rule": "Identifiers are reconciled when their same-arity normalized token-root signatures agree symmetrically. A signature that omits exactly one content root may also align only when it already has at least two content roots and the omitted root occurs in every source statement supporting the shorter identifier.",
+    "reason": "The official annotations sometimes use inflectional or derivational variants for the same predicate in one context. This is source annotation repair, not a new logical inference rule."
+  },
+  "forbiddenDispatchAudit": {
+    "genericCoreChanged": false,
+    "benchmarkNamesInCore": 0,
+    "recordIdsInCore": 0,
+    "expectedAnswersInCore": 0,
+    "sourcePredicateConstantsInCore": 0
+  },
+  "remainingGap": "All 300 development-visible annotation-assisted tasks now pass with independently verified witnesses. Direct natural-language derivation of the annotations remains unimplemented, and the sealed 1,200-case partition remains untouched."
+}

@@ -1,0 +1,20 @@
+{
+  "protocol": "logicskills-public-evaluation-partition-v1",
+  "sourceLifecycle": "fixed-public-evaluation-set",
+  "reason": "LogicSkills is published as one fixed 1,500-item evaluation set and is not intended for training. A local label-blind partition provides bounded development evidence while retaining a fresh public-evaluation subset that cannot influence capability changes.",
+  "policy": "Within each task and language stratum, sort by SHA-256 of the fixed seed, source filename, and source ID. The first 20 percent is fresh. Answer fields and input text are not partition inputs.",
+  "seed": "logicskills-public-evaluation-partition-v1",
+  "membershipSha256": "0468b85e544b38396ddd0f7476468cf2dc0124e618b150b660e4db9b04805a6a",
+  "available": 1500,
+  "development": 1200,
+  "fresh": 300,
+  "strata": [
+    { "task": "countermodel", "language": "formal", "available": 300, "development": 240, "fresh": 60 },
+    { "task": "symbolization", "language": "carroll", "available": 300, "development": 240, "fresh": 60 },
+    { "task": "symbolization", "language": "english", "available": 300, "development": 240, "fresh": 60 },
+    { "task": "validity", "language": "carroll", "available": 300, "development": 240, "fresh": 60 },
+    { "task": "validity", "language": "english", "available": 300, "development": 240, "fresh": 60 }
+  ],
+  "developmentVisibility": "Only id, task, language, input, and output contract are returned to a development consumer. Reference formulas and validity indices remain host-only.",
+  "freshVisibility": "The partition was frozen before execution. A later frozen candidate executed only the 60-member countermodel stratum under an aggregate-only protocol. The 240 symbolization and validity members remain unopened; no fresh item or oracle is exported to synthesis."
+}

@@ -1,0 +1,70 @@
+{
+  "format": "eslm-prontoqa-development-result-v2",
+  "executedAt": "2026-08-11",
+  "evidenceState": "complete-development-visible-evaluation",
+  "benchmark": "PrOntoQA-OOD",
+  "source": {
+    "revision": "0a6412b6fddf46324a1cb96e066dd7b3d89b87d6",
+    "datasetSha256": "0becba04e1e1eb80593709c6a3db2a46badd5587a29587ffaeb68ed5068c9de9",
+    "availableOfficialTestExamples": 7900,
+    "developmentPool": 1580,
+    "developmentMembershipSha256": "4d61f3a3be0fda34fac8d29b46ffd3bfefc8060ba478e933f91d0760c601bc09",
+    "sealedFreshPool": 6320
+  },
+  "frozenStratifiedSample": {
+    "membershipSha256": "5bd6fb91a0191c53148f5a7e5fbfee6276613ac3b950ed837bd8282a4b2bf8a3",
+    "tested": 158,
+    "correct": 158,
+    "accuracy": 1,
+    "witnessValid": 158,
+    "statusCounts": { "SOLVED": 158 }
+  },
+  "completeDevelopment": {
+    "tested": 1580,
+    "available": 1580,
+    "correct": 1580,
+    "accuracy": 1,
+    "witnessValid": 1580,
+    "directSymbolic": 1580,
+    "codingAgentInvocations": 0,
+    "normalizationInvocations": 0,
+    "statusCounts": { "SOLVED": 1580 },
+    "witnessKinds": {
+      "query-directed-dpll-entailment": 1569,
+      "classical-explosion-entailment": 11
+    }
+  },
+  "byRuleFamily": {
+    "AndElim": { "tested": 340, "correct": 340, "accuracy": 1 },
+    "AndIntro": { "tested": 440, "correct": 440, "accuracy": 1 },
+    "Composed": { "tested": 180, "correct": 180, "accuracy": 1 },
+    "ModusPonens": { "tested": 20, "correct": 20, "accuracy": 1 },
+    "OrElim": { "tested": 140, "correct": 140, "accuracy": 1 },
+    "OrIntro": { "tested": 100, "correct": 100, "accuracy": 1 },
+    "ProofByContra": { "tested": 80, "correct": 80, "accuracy": 1 },
+    "ProofsOnly": { "tested": 280, "correct": 280, "accuracy": 1 }
+  },
+  "resourceWitnessMaxima": {
+    "fullVariables": 86,
+    "fullClauses": 148,
+    "queryVariables": 77,
+    "queryClauses": 134,
+    "searchNodes": 23,
+    "clauseInspections": 5150,
+    "propagations": 96,
+    "decisions": 21,
+    "conflicts": 3,
+    "maxDepth": 21,
+    "totalPremises": 25,
+    "relevantPremises": 23,
+    "omittedPremises": 3
+  },
+  "method": {
+    "id": "method:core:scalable-boolean-entailment",
+    "semantics": "Classical propositional entailment with an explicit per-task inconsistency policy.",
+    "execution": "Deterministic Tseitin CNF, complete-context satisfiability check, sound transitive query-relevance closure, bounded DPLL search, and independent certificate or countermodel replay.",
+    "inconsistency": "The source adapter explicitly selects classical explosion because the official generated proof calculus includes proof by contradiction. Eleven development contexts are inconsistent before the query is considered; their solved results carry replayable inconsistency certificates instead of hiding that condition.",
+    "proofBoundary": "Every semantic result is independently verified. The official natural-language reference proof remains host-only and no claim of textual proof-step equivalence is made."
+  },
+  "claimBoundary": "This is a comprehensive deterministic execution of all 1,580 development-visible members, plus the predeclared 158-case stratified view. It is not an untouched fresh result or an official leaderboard score. No fresh text, proof, label, or per-case outcome was opened for this receipt."
+}

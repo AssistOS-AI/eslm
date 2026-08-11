@@ -66,6 +66,18 @@ export function projectCanonicalRecords(records, packageManifests = []) {
       ],
       source: record.provenanceRefs[0],
     }));
+  const constraints = records.filter((record) => record.recordType === 'constraint');
+  const propertyValues = Object.fromEntries(constraints
+    .filter((record) => record.constraintKind === 'property-value-domain')
+    .map((record) => [record.predicate, [...new Set(record.values)].sort()]));
+  const inductionPolicies = constraints.filter((record) => record.constraintKind === 'induction-policy');
+  const relationAlgebras = Object.fromEntries(constraints
+    .filter((record) => record.constraintKind === 'typed-relation-algebra')
+    .map((record) => [record.algebraId, {
+      schema: 'typed-relation-algebra-v1', algebraId: record.algebraId,
+      relations: record.relations, inverses: record.inverses, compositions: record.compositions,
+    }]));
+  const inductionPredicates = [...new Set(inductionPolicies.map((record) => record.predicate))].sort();
   const model = {
     manifest: {
       format: 'eslm-runtime-projection-v1',
@@ -81,9 +93,22 @@ export function projectCanonicalRecords(records, packageManifests = []) {
     lexicon: { variants: {}, constructions: [] },
     reasoning: {
       deduction: { maxRounds: 8 },
-      induction: { enabled: false, predicates: [], implicitPredicates: [], minSupport: 3, minCoverage: 0.7 },
+      induction: {
+        enabled: inductionPolicies.length > 0,
+        predicates: inductionPredicates,
+        implicitPredicates: inductionPolicies.filter((record) => record.implicitQuestionTrigger)
+          .map((record) => record.predicate).sort(),
+        minSupport: 3,
+        minCoverage: 0.7,
+        byPredicate: Object.fromEntries(inductionPolicies.map((record) => [record.predicate, {
+          minSupport: record.minSupport, minCoverage: record.minCoverage,
+          selection: record.selection ?? 'all',
+        }])),
+      },
       abduction: { maxHypotheses: 4 },
       classes: { singular: { mice: 'mouse', wolves: 'wolf', cats: 'cat', sheep: 'sheep' } },
+      propertyValues,
+      relationAlgebras,
     },
   };
   model.indexes = serializedIndexes(facts);

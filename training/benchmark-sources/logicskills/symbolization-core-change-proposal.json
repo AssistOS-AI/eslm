@@ -1,0 +1,70 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Lexicon-driven controlled-language composition into typed first-order formulas",
+  "independentExamples": [
+    "A nested conditional whose consequent contains an only-if implication",
+    "A quantified relational clause with an existential or universal object",
+    "English and nonce-language clauses with completely renamed constants, predicates, classes, and relation frames"
+  ],
+  "inputTypes": [
+    "controlled natural-language sentence",
+    "declarative unary or binary predicate frames with typed placeholder arity",
+    "declarative constant surface mappings"
+  ],
+  "outputTypes": [
+    "typed function-free first-order formula AST",
+    "replayable controlled-composition witness",
+    "structured UNPARSED or RESOURCE_LIMIT status"
+  ],
+  "preconditions": [
+    "every semantic content word used by an accepted atomic predication resolves through exactly one supplied frame",
+    "predicate frames contain one subject placeholder and at most one object placeholder",
+    "the complete sentence belongs to the declared quantifier and connective fragment",
+    "lexicon, input length, composition depth, and variable supply remain within explicit bounds"
+  ],
+  "invariants": [
+    "the compiler never sees a benchmark identity, row identity, expected formula, or answer position",
+    "an unresolved atomic clause or ambiguous frame causes whole-sentence abstention rather than partial formula emission",
+    "only-if preserves antecedent-to-necessary-condition direction and unless is represented as negated-condition implication",
+    "quantifier scope and relation argument order derive from syntax and frame placeholders",
+    "the conservative equivalence checker accepts only declared sound rewrites and may reject equivalent formulas it cannot prove"
+  ],
+  "uncertaintySemantics": "UNPARSED means no safe formula was constructed for the complete sentence. RESOURCE_LIMIT means an explicit character, lexicon, depth, or variable bound was exceeded. Neither status supplies a formula.",
+  "proofBehavior": "The result hashes the normalized sentence and declarative lexicon and records a canonical formula. Verification recompiles the unchanged input and compares the typed formula. Host scoring parses the isolated reference only after prediction and uses alpha normalization, double-negation elimination, associative and commutative Boolean normalization, and explicitly guarded quantifier-lifting equivalences.",
+  "resourceBounds": {
+    "maximumSentenceCharacters": 4096,
+    "maximumCompositionDepth": 24,
+    "maximumLexiconEntries": 256,
+    "maximumFrameCharacters": 512,
+    "variableSupply": 6
+  },
+  "failureStatuses": [
+    "UNPARSED",
+    "RESOURCE_LIMIT"
+  ],
+  "tests": [
+    "unit",
+    "metamorphic",
+    "contrastive",
+    "regression"
+  ],
+  "kbMigration": "No KB schema, package, registry, planner, engine, or existing language representation changes. The candidate is invoked only by the LogicSkills development adapter pending broader language evidence and specification synchronization.",
+  "renameTestPassed": true,
+  "renamedDimensions": [
+    "entity",
+    "predicate",
+    "value",
+    "ordering"
+  ],
+  "forbiddenDispatchAuditPassed": true,
+  "candidateMethodId": "candidate:language:lexicon-controlled-fol-symbolization",
+  "developmentEvidence": {
+    "tested": 480,
+    "attempted": 288,
+    "witnessVerified": 288,
+    "semanticallyEquivalent": 288,
+    "completeTrackAccuracy": 0.6,
+    "languageAgentInvocations": 0
+  },
+  "freshPolicy": "No fresh member is opened for this candidate. Runtime registration remains deferred."
+}

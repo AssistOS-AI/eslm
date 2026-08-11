@@ -1,0 +1,13 @@
+{
+  "format": "eslm-learning-evaluation-v1",
+  "protocol": "alpha-nli-art-development-after-core-guardian-review-v1",
+  "candidate": "deferred-no-executable-candidate",
+  "tested": 1532,
+  "answered": 0,
+  "correct": 0,
+  "accuracyOnAnswered": null,
+  "statusCounts": {"NO_APPLICABLE_METHOD":1532},
+  "genericCoreChanged": false,
+  "freshExecuted": false,
+  "languageAgentInvocations": 0
+}

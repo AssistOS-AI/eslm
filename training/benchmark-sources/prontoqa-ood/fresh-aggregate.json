@@ -1,0 +1,35 @@
+{
+  "format": "eslm-prontoqa-sealed-fresh-aggregate-v1",
+  "executedAt": "2026-08-11",
+  "evidenceState": "sealed-fresh-aggregate-only",
+  "benchmark": "PrOntoQA-OOD",
+  "sourceRevision": "0a6412b6fddf46324a1cb96e066dd7b3d89b87d6",
+  "sourceDatasetSha256": "0becba04e1e1eb80593709c6a3db2a46badd5587a29587ffaeb68ed5068c9de9",
+  "preFreshFreeze": {
+    "path": "training/benchmark-sources/prontoqa-ood/pre-fresh-freeze.json",
+    "sha256": "ad0de7d6faf9863447ed341cfdd8e1fbae11baa7643b0b605d607996d1536e60"
+  },
+  "partitionMembershipSha256": "68300189c0e28fc30b0629b76c7f045dbe9571fde45fa00ea96838836f3a1ba4",
+  "tested": 6320,
+  "available": 6320,
+  "correct": 6320,
+  "accuracy": 1,
+  "witnessValid": 6320,
+  "directSymbolic": 6320,
+  "codingAgentInvocations": 0,
+  "normalizationInvocations": 0,
+  "methodId": "method:core:scalable-boolean-entailment",
+  "statusCounts": { "SOLVED": 6320 },
+  "strata": {
+    "AndElim": { "tested": 1360, "correct": 1360, "accuracy": 1 },
+    "AndIntro": { "tested": 1760, "correct": 1760, "accuracy": 1 },
+    "Composed": { "tested": 720, "correct": 720, "accuracy": 1 },
+    "ModusPonens": { "tested": 80, "correct": 80, "accuracy": 1 },
+    "OrElim": { "tested": 560, "correct": 560, "accuracy": 1 },
+    "OrIntro": { "tested": 400, "correct": 400, "accuracy": 1 },
+    "ProofByContra": { "tested": 320, "correct": 320, "accuracy": 1 },
+    "ProofsOnly": { "tested": 1120, "correct": 1120, "accuracy": 1 }
+  },
+  "oracleBoundary": "The evaluation returned aggregate counts only. It did not return or print fresh text, reference proofs, labels, stable identifiers, or per-case outcomes. Every counted success required an independently replayed symbolic witness.",
+  "claimBoundary": "This is one sealed fresh execution of all 6,320 predeclared fresh members under the frozen local adapter and reasoning dependencies. It measures semantic proof-task entailment under the official source calculus; it does not claim textual equivalence to the authors' natural-language proof traces or an official leaderboard submission."
+}

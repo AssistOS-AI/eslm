@@ -1,0 +1,46 @@
+{
+  "protocol": "sparp-current-core-development-result-v1",
+  "measuredAt": "2026-08-11T17:19:30.132Z",
+  "runtimeProfile": "direct-symbolic-no-language-agent",
+  "executionRoute": "mixed-see-configuration-records",
+  "coreRevisionBase": "ede71a0c6202d239ff73c2e1d4a33088fcb6a252",
+  "comparability": "Complete official validation-split source diagnostic for each listed configuration; no test partition was executed.",
+  "full": {
+    "ps1": {
+      "source": { "bytes": 7782886, "sha256": "19c39746c4a8ed284e39d5b109933e84dd4335dd3b22720895e5a14e00a2dd09" },
+      "executionRoute": "EslmEngine.executeTask",
+      "tested": 2397, "availableDevelopment": 2397, "solved": 2397, "witnessVerified": 2397,
+      "exact": 2397, "exactAccuracy": 1, "macroF1": 1, "maximumDerivedRelationsInOneTask": 194,
+      "byHop": { "1": { "tested": 1204, "exact": 1204 }, "2": { "tested": 787, "exact": 787 }, "3": { "tested": 361, "exact": 361 }, "4": { "tested": 45, "exact": 45 } },
+      "byTargetCount": { "1": { "tested": 1606, "exact": 1606 }, "2": { "tested": 334, "exact": 334 }, "3": { "tested": 300, "exact": 300 }, "4": { "tested": 157, "exact": 157 } }
+    },
+    "ps2": {
+      "executionRoute": "EslmEngine.executeTask",
+      "source": { "bytes": 9089091, "sha256": "6d9f3125004b4526d9c79ffc8c52e2b200d3964df7c5872d8b98ae1ac8a55453" },
+      "tested": 4976, "availableDevelopment": 4976, "solved": 4976, "witnessVerified": 4976,
+      "exact": 4907, "exactAccuracy": 0.9861334405144695, "macroF1": 0.9937031082529483,
+      "byHop": { "1": { "tested": 2947, "exact": 2947 }, "2": { "tested": 1213, "exact": 1213 }, "3": { "tested": 515, "exact": 476 }, "4": { "tested": 232, "exact": 209 }, "5": { "tested": 69, "exact": 62 } },
+      "oracleIncompatibilities": 69,
+      "interpretation": "The generic exact vector solver produces a replayable sum for all rows. Sixty-nine official targets disagree with the relation entailed by their own relation-complete quantified symbolic context; the solver does not imitate those targets."
+    },
+    "ps3": {
+      "executionRoute": "EslmEngine.executeTask",
+      "source": { "bytes": 7866514, "sha256": "e0213fa119714de9612707535e9b183f4fc4cb630f82828bc0731e5890a045a1" },
+      "tested": 4499, "availableDevelopment": 4499, "solved": 4499, "witnessVerified": 4499, "exact": 4499, "exactAccuracy": 1, "macroF1": 1,
+      "sourceIssueOccurrences": 810
+    },
+    "ps4": {
+      "executionRoute": "EslmEngine.executeTask",
+      "source": { "bytes": 6169191, "sha256": "1d15816e8162611f387c89e2f2f2feccaced74452cc71d9d7c9f176def3a3d2b" },
+      "tested": 3775, "availableDevelopment": 3775, "solved": 3775, "witnessVerified": 3775, "exact": 3775, "exactAccuracy": 1, "macroF1": 1
+    }
+  },
+  "small": {
+    "ps1": { "tested": 500, "availableDevelopment": 500, "solved": 500, "witnessVerified": 500, "exact": 500, "exactAccuracy": 1, "macroF1": 1 },
+    "ps2": { "tested": 500, "availableDevelopment": 500, "exact": 500, "witnessVerified": 500, "exactAccuracy": 1, "macroF1": 1 },
+    "ps3": { "tested": 500, "availableDevelopment": 500, "exact": 500, "witnessVerified": 500, "exactAccuracy": 1, "macroF1": 1, "sourceIssueOccurrences": 142 },
+    "ps4": { "tested": 500, "availableDevelopment": 500, "exact": 500, "witnessVerified": 500, "exactAccuracy": 1, "macroF1": 1 }
+  },
+  "freshNotTested": { "full": 238887, "small": 4000, "total": 242887 },
+  "languageAgentInvocations": 0
+}

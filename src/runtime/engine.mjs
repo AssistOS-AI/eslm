@@ -8,6 +8,18 @@ import { compileSessionEpisode, modelWithSession } from '../language/session.mjs
 import { ExecutionProfiler } from '../profiling.mjs';
 import { CapabilityRegistry, CORE_METHOD_DESCRIPTORS } from '../reasoning/capability-registry.mjs';
 import { capabilityGap, createPlan, taskFrameFromQuery } from '../reasoning/planner.mjs';
+import { answerTemporalPredecessor } from '../reasoning/temporal-state.mjs';
+import { executeContainerStateTask } from '../reasoning/container-state.mjs';
+import { selectNarrativeContinuation } from '../reasoning/continuation-selection.mjs';
+import { executeTypedRelationTask } from '../reasoning/relation-algebra.mjs';
+import { executeSpatialVectorTask } from '../reasoning/spatial-vector.mjs';
+import { executeSpatialExtentTask } from '../reasoning/spatial-extent.mjs';
+import { executeQualitativeRelationTask } from '../reasoning/qualitative-relation-closure.mjs';
+import { executeCategoricalTask } from '../reasoning/categorical-logic.mjs';
+import { decideBooleanEntailment } from '../reasoning/sat-entailment.mjs';
+import { constructFiniteFirstOrderCountermodel } from '../reasoning/finite-first-order-model.mjs';
+import { induceFiniteConjunctiveRule } from '../reasoning/finite-conjunctive-rule-induction.mjs';
+import { executeEpisodicWorldTask } from '../reasoning/episodic-world.mjs';
 
 export class EslmEngine {
   constructor(model, options = {}) {
@@ -16,7 +28,19 @@ export class EslmEngine {
     this.capabilities = new CapabilityRegistry()
       .register(CORE_METHOD_DESCRIPTORS.datalog, () => undefined)
       .register(CORE_METHOD_DESCRIPTORS.induction, () => undefined)
-      .register(CORE_METHOD_DESCRIPTORS.abduction, () => undefined);
+      .register(CORE_METHOD_DESCRIPTORS.finiteConjunctiveRuleInduction, induceFiniteConjunctiveRule)
+      .register(CORE_METHOD_DESCRIPTORS.finiteEpisodicWorld, executeEpisodicWorldTask)
+      .register(CORE_METHOD_DESCRIPTORS.abduction, () => undefined)
+      .register(CORE_METHOD_DESCRIPTORS.temporalPredecessor, () => undefined)
+      .register(CORE_METHOD_DESCRIPTORS.containerState, executeContainerStateTask)
+      .register(CORE_METHOD_DESCRIPTORS.narrativeContinuation, selectNarrativeContinuation)
+      .register(CORE_METHOD_DESCRIPTORS.typedRelationAlgebra, executeTypedRelationTask)
+      .register(CORE_METHOD_DESCRIPTORS.spatialVectorConstraints, executeSpatialVectorTask)
+      .register(CORE_METHOD_DESCRIPTORS.spatialExtentInequalities, executeSpatialExtentTask)
+      .register(CORE_METHOD_DESCRIPTORS.qualitativeRelationClosure, executeQualitativeRelationTask)
+      .register(CORE_METHOD_DESCRIPTORS.scalableBooleanEntailment, decideBooleanEntailment)
+      .register(CORE_METHOD_DESCRIPTORS.finiteFirstOrderCountermodel, constructFiniteFirstOrderCountermodel)
+      .register(CORE_METHOD_DESCRIPTORS.categoricalLogic, executeCategoricalTask);
     const profiler = new ExecutionProfiler('engine-initialization', this.profileEnabled, {
       modelId: model.manifest.modelId,
     });
@@ -131,6 +155,16 @@ export class EslmEngine {
         episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
       });
     }
+    if (query.intent === 'system-operational-status') {
+      return complete({
+        status: 'ANSWERED',
+        answer: 'I am ready. I am running as a deterministic symbolic system and waiting for a supported question or fact.',
+        values: ['ready'], provenance: [], reasoning: { method: 'system-description' }, query,
+        input: normalized, learned: episode.learned, learnedRules: episode.learnedRules,
+        context: { ...context, session: episode.session },
+        episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
+      });
+    }
     const taskFrame = taskFrameFromQuery(query, {
       assertions: episode.session.facts.map((fact) => fact.id),
       contextStack: ['context:runtime:baseline', ...(episode.session.facts.length > 0 ? ['context:session:current'] : [])],
@@ -163,6 +197,17 @@ export class EslmEngine {
         text, context, episode, activeModel, normalized, query, result, taskFrame, plan,
         status: hypotheses.length > 0 ? 'ABDUCTIVE' : 'UNKNOWN',
         reasoning: { method: 'abduction', candidateCount: hypotheses.length },
+      }, profiler));
+    }
+    if (query.reasoning === 'temporal-predecessor') {
+      const result = profiler.measureSync('reasoning.temporal-predecessor', () =>
+        answerTemporalPredecessor(query, episode.session.history), {
+        historyEvents: episode.session.history?.length ?? 0,
+      });
+      return complete(this.#response({
+        text, context, episode, activeModel, normalized, query, result, taskFrame, plan,
+        status: result.values.length > 0 ? 'ANSWERED' : 'UNKNOWN',
+        reasoning: { method: 'temporal-state-predecessor', witness: result.witness },
       }, profiler));
     }
     const inducedFacts = query.reasoning === 'induction'
@@ -263,5 +308,127 @@ export class EslmEngine {
 
   score(text) {
     return grammarScore(text, this.model);
+  }
+
+  executeTask(task) {
+    const methods = {
+      'complete-container-contents': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.containerState,
+        execute: executeContainerStateTask,
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'select-narrative-continuation': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.narrativeContinuation,
+        execute: selectNarrativeContinuation,
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'induce-symbolic-classification-rule': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.finiteConjunctiveRuleInduction,
+        execute: (value) => {
+          const result = induceFiniteConjunctiveRule(value.inductionTask);
+          return {
+            ...result,
+            values: result.status === 'SOLVED' ? [result.rule] : [],
+          };
+        },
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'execute-finite-episodic-world': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.finiteEpisodicWorld,
+        execute: (value) => executeEpisodicWorldTask(value.episodicWorldTask),
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'classify-typed-relation': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.typedRelationAlgebra,
+        execute: (value) => executeTypedRelationTask(
+          value.relationTask,
+          this.model.reasoning?.relationAlgebras?.[value.relationTask?.algebraId],
+        ),
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'spatial-vector-relation': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.spatialVectorConstraints,
+        execute: (value) => executeSpatialVectorTask(value.relationTask, value.vectorSystem),
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'spatial-extent-relations': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.spatialExtentInequalities,
+        execute: (value) => executeSpatialExtentTask(value.extentTask, value.extentSystem),
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'qualitative-spatial-relations': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.qualitativeRelationClosure,
+        execute: (value) => executeQualitativeRelationTask(value.qualitativeTask, value.qualitativeSystem),
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'judge-categorical-opposition': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.categoricalLogic,
+        execute: executeCategoricalTask,
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'transform-categorical-proposition': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.categoricalLogic,
+        execute: executeCategoricalTask,
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'derive-categorical-syllogism': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.categoricalLogic,
+        execute: executeCategoricalTask,
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'decide-boolean-entailment': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.scalableBooleanEntailment,
+        execute: (value) => {
+          const result = decideBooleanEntailment(value);
+          return {
+            ...result,
+            values: result.status === 'SOLVED' ? [result.entailed] : [],
+          };
+        },
+        route: 'direct-symbolic-task-adapter',
+      }),
+      'construct-finite-countermodel': Object.freeze({
+        descriptor: CORE_METHOD_DESCRIPTORS.finiteFirstOrderCountermodel,
+        execute: (value) => {
+          const result = constructFiniteFirstOrderCountermodel(value.argument, {
+            domainSize: value.domainSize,
+            maximumConstantAssignments: value.maximumConstantAssignments,
+            booleanBudgets: value.booleanBudgets,
+          });
+          return {
+            ...result,
+            countermodel: result.model,
+            values: result.status === 'SOLVED' ? [result.model] : [],
+          };
+        },
+        route: 'direct-symbolic-task-adapter',
+      }),
+    };
+    const method = methods[task?.operation];
+    if (!method) {
+      return { status: 'NO_APPLICABLE_METHOD', protocol: 'eslm-runtime-result-v1', values: [] };
+    }
+    const result = method.execute(task);
+    return {
+      ...result,
+      protocol: 'eslm-runtime-result-v1',
+      languageRoute: method.route,
+      taskFrame: {
+        taskId: task.taskId,
+        goals: [{
+          operation: task.operation,
+          mask: task.mask,
+          query: task.query ?? task.relationTask?.query ?? task.extentTask?.query,
+        }],
+        outputContract: {
+          kind: task.operation === 'decide-boolean-entailment' ? 'entailed-boolean'
+            : task.operation === 'construct-finite-countermodel' ? 'finite-countermodel' : 'semantic-values',
+        },
+      },
+      plan: { methodId: method.descriptor.methodId },
+      usedKbVersions: (this.model.manifest.knowledgeBases ?? []).map((kbId) => ({ kbId })),
+      unresolvedSubgoals: [],
+      model: { id: this.model.manifest.modelId, knowledgeBases: this.model.manifest.knowledgeBases ?? [] },
+    };
   }
 }

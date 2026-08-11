@@ -1,0 +1,50 @@
+{
+  "protocol": "stepgame-sparp-label-free-overlap-audit-v1",
+  "hashing": {
+    "visibleKey": "SHA-256(context text joined with one separator and question text)",
+    "symbolicKey": "SHA-256(symbolic_context text joined with one separator and symbolic_question JSON)",
+    "labelsIncluded": false,
+    "reasoningIncluded": false
+  },
+  "train": {
+    "stepgame": { "rows": 50000, "uniqueVisible": 49790 },
+    "stepgameVisibleOverlap": {
+      "ps2": { "rows": 49610, "uniqueVisible": 49401, "intersection": 49401 },
+      "ps3": { "rows": 44946, "uniqueVisible": 44737, "intersection": 44737 },
+      "ps4": { "rows": 37138, "uniqueVisible": 36929, "intersection": 36929 }
+    },
+    "symbolicOverlap": {
+      "ps2-ps3": { "leftUnique": 46073, "rightUnique": 41409, "intersection": 41409 },
+      "ps2-ps4": { "leftUnique": 46073, "rightUnique": 33601, "intersection": 33601 },
+      "ps3-ps4": { "leftUnique": 41409, "rightUnique": 33601, "intersection": 33601 }
+    }
+  },
+  "validation": {
+    "stepgame": { "rows": 5000, "uniqueVisible": 4999 },
+    "stepgameVisibleOverlap": {
+      "ps2": { "rows": 4976, "uniqueVisible": 4975, "intersection": 4975 },
+      "ps3": { "rows": 4499, "uniqueVisible": 4498, "intersection": 4498 },
+      "ps4": { "rows": 3775, "uniqueVisible": 3774, "intersection": 3774 }
+    },
+    "symbolicOverlap": {
+      "ps2-ps3": { "leftUnique": 4931, "rightUnique": 4454, "intersection": 4454 },
+      "ps2-ps4": { "leftUnique": 4931, "rightUnique": 3730, "intersection": 3730 },
+      "ps3-ps4": { "leftUnique": 4454, "rightUnique": 3730, "intersection": 3730 }
+    }
+  },
+  "test": {
+    "stepgame": { "rows": 100000, "uniqueVisible": 100000 },
+    "stepgameVisibleOverlap": {
+      "ps2": { "rows": 99299, "uniqueVisible": 99299, "intersection": 99299 },
+      "ps3": { "rows": 78690, "uniqueVisible": 78690, "intersection": 78690 },
+      "ps4": { "rows": 58582, "uniqueVisible": 58582, "intersection": 58582 }
+    },
+    "symbolicOverlap": {
+      "ps2-ps3": { "leftUnique": 99299, "rightUnique": 78690, "intersection": 78690 },
+      "ps2-ps4": { "leftUnique": 99299, "rightUnique": 58582, "intersection": 58582 },
+      "ps3-ps4": { "leftUnique": 78690, "rightUnique": 58582, "intersection": 58571 }
+    }
+  },
+  "interpretation": "The SpaRP StepGame configurations are property-controlled transformations and mostly nested subsets of the selected official StepGame content. They are not independent evidence. Result reports keep each property regime separate and never sum their rows into an independent-sample claim.",
+  "testBoundary": "Test overlap used label-free source fields only. No test target, score, answer distribution, solver output, or Language Agent was accessed."
+}

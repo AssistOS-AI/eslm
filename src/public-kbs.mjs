@@ -2,6 +2,12 @@ import { access, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { PROJECT_ROOT } from './paths.mjs';
 import { ShardCache, planPublicKnowledgeMemory } from './memory-policy.mjs';
+import {
+  atomicEventTokens, collectAtomicContinuationEvidence,
+} from './public-kb-providers/atomic-continuation.mjs';
+import { GeoNamesProvider } from './public-kb-providers/geonames.mjs';
+import { ConceptNetProvider } from './public-kb-providers/conceptnet.mjs';
+import { WorldRelationsProvider } from './public-kb-providers/world-relations.mjs';
 import { sha256 } from './util.mjs';
 
 export const PUBLIC_KB_CATALOG = Object.freeze({
@@ -17,6 +23,24 @@ export const PUBLIC_KB_CATALOG = Object.freeze({
     defaultInteractive: true, benchmarkEligible: false, priority: 2,
     estimatedEagerRssBytes: 284 * 1024 * 1024,
   }),
+  'geonames-2026': Object.freeze({
+    id: 'geonames-2026', title: 'GeoNames 2026', role: 'public geographic and country knowledge',
+    model: 'training/KBs/geonames-2026/package/manifest.json', documentation: 'knowledge-bases.html',
+    defaultInteractive: true, benchmarkEligible: false, priority: 3,
+    estimatedEagerRssBytes: 48 * 1024 * 1024,
+  }),
+  'conceptnet-5.7.0-en': Object.freeze({
+    id: 'conceptnet-5.7.0-en', title: 'ConceptNet 5.7 English', role: 'public typed everyday relational knowledge',
+    model: 'training/KBs/conceptnet-5.7.0-en/package/manifest.json', documentation: 'knowledge-bases.html',
+    defaultInteractive: true, benchmarkEligible: false, priority: 4,
+    estimatedEagerRssBytes: 220 * 1024 * 1024,
+  }),
+  'world-relations-1.0': Object.freeze({
+    id: 'world-relations-1.0', title: 'World Relations 1.0', role: 'authored semantic relations, inverses, and implications',
+    model: 'training/KBs/world-relations-1.0/package/manifest.json', documentation: 'knowledge-bases.html',
+    defaultInteractive: true, benchmarkEligible: false, priority: 0,
+    estimatedEagerRssBytes: 2 * 1024 * 1024,
+  }),
 });
 
 function normalizedLemma(value) {
@@ -30,10 +54,7 @@ function normalizedEvent(value) {
 }
 
 function eventTokens(value) {
-  return normalizedEvent(value).split(/[^a-z0-9']+/u).filter(Boolean)
-    .filter((token) => !['personx', 'persony', 'someone', 'the', 'a', 'an', 'to'].includes(token))
-    .map((token) => token.endsWith('izing') ? `${token.slice(0, -3)}e`
-      : token.length > 4 && token.endsWith('s') ? token.slice(0, -1) : token);
+  return atomicEventTokens(value);
 }
 
 function conversationalQuestion(text) {
@@ -195,9 +216,31 @@ class AtomicProvider {
     if (this.mode === 'eager') {
       this.events = model.data.events;
       this.keys = Object.keys(this.events);
+      this.eventKeyIndex = this.buildEventKeyIndex(this.keys);
     } else {
       this.cache = new ShardCache(options.cacheBytes, 9);
     }
+  }
+
+  buildEventKeyIndex(keys) {
+    const index = new Map();
+    for (const key of keys) {
+      for (const token of new Set(eventTokens(key))) {
+        if (!index.has(token)) index.set(token, []);
+        index.get(token).push(key);
+      }
+    }
+    return index;
+  }
+
+  async ensureEventKeyIndex() {
+    if (this.eventKeyIndex) return this.eventKeyIndex;
+    const keys = [];
+    for (const bucket of [...'0123456789abcdef']) {
+      keys.push(...Object.keys(await this.eventData(bucket)));
+    }
+    this.eventKeyIndex = this.buildEventKeyIndex(keys);
+    return this.eventKeyIndex;
   }
 
   async eventData(bucket) {
@@ -216,19 +259,21 @@ class AtomicProvider {
     }
     const wanted = new Set(eventTokens(exact));
     if (wanted.size === 0) return undefined;
+    const index = await this.ensureEventKeyIndex();
+    const candidateKeys = new Set([...wanted].flatMap((token) => index.get(token) ?? []));
     let best;
-    const buckets = this.mode === 'eager' ? [undefined] : [...'0123456789abcdef'];
-    for (const bucket of buckets) {
-      const events = this.mode === 'eager' ? this.events : await this.eventData(bucket);
-      for (const [key, event] of Object.entries(events)) {
-        const candidate = new Set(eventTokens(key));
-        const overlap = [...wanted].filter((token) => candidate.has(token)).length;
-        if (overlap === 0) continue;
-        const score = overlap / new Set([...wanted, ...candidate]).size;
-        if (!best || score > best.score || (score === best.score && key.length < best.key.length)) best = { key, score, event };
+    for (const key of candidateKeys) {
+      const candidate = new Set(eventTokens(key));
+      const overlap = [...wanted].filter((token) => candidate.has(token)).length;
+      const score = overlap / new Set([...wanted, ...candidate]).size;
+      if (!best || score > best.score || (score === best.score && key.length < best.key.length)
+        || (score === best.score && key.length === best.key.length && key.localeCompare(best.key) < 0)) {
+        best = { key, score };
       }
     }
-    return best?.score >= 0.5 ? best : undefined;
+    if (!best || best.score < 0.5) return undefined;
+    const events = this.mode === 'eager' ? this.events : await this.eventData(sha256(best.key)[0]);
+    return events[best.key] ? { ...best, event: events[best.key] } : undefined;
   }
 
   async answerFor(eventText, relations, label) {
@@ -244,6 +289,10 @@ class AtomicProvider {
       match: { event: event.h, score: match.score },
       provenance: selected.map((item) => ({ fact: `atomic-2020:train:${item.line}`, source: [`atomic-2020:train.tsv:${item.line}`], relation: item.relation, method: 'source-retrieval' })),
     };
+  }
+
+  async semanticEvidence(request) {
+    return collectAtomicContinuationEvidence(this, request);
   }
 
   memorySnapshot() {
@@ -294,7 +343,7 @@ async function loadShardDirectory(modelDirectory, manifest) {
   for (const shard of directory) {
     if (ids.has(shard.shardId)) throw new Error(`Duplicate public KB shard ${shard.shardId}.`);
     ids.add(shard.shardId);
-    if (!/^(?:synsets|lemmas|events)\/[a-z0-9-]+\.json$/u.test(shard.dataRef)) throw new Error(`Unsafe public KB dataRef ${shard.dataRef}.`);
+    if (!/^(?:synsets|lemmas|events|countries|names|places|forward|reverse|provenance|ontology)\/[a-z0-9-]+\.json$/u.test(shard.dataRef)) throw new Error(`Unsafe public KB dataRef ${shard.dataRef}.`);
     if (!/^sha256:[a-f0-9]{64}$/u.test(shard.checksum)) throw new Error(`Invalid checksum for public KB shard ${shard.shardId}.`);
   }
   return directory;
@@ -307,6 +356,11 @@ async function loadEagerData(id, modelDirectory, directory) {
       const value = (await readGeneratedShard(join(modelDirectory, shard.dataRef), shard.checksum)).value;
       Object.assign(shard.shardKind === 'sourceSynset' ? data.synsets : data.lemmas, value);
     }
+    return data;
+  }
+  if (id === 'geonames-2026' || id === 'conceptnet-5.7.0-en' || id === 'world-relations-1.0') {
+    const data = {};
+    for (const shard of directory) data[shard.dataRef] = (await readGeneratedShard(join(modelDirectory, shard.dataRef), shard.checksum)).value;
     return data;
   }
   const data = { events: {} };
@@ -343,6 +397,9 @@ export async function loadPublicKnowledgeBase(id, options = {}) {
   const providerOptions = { ...options, mode, modelDirectory, shardsByRef };
   if (id === 'oewn-2025') return new WordNetProvider(model, providerOptions);
   if (id === 'atomic-2020') return new AtomicProvider(model, providerOptions);
+  if (id === 'geonames-2026') return new GeoNamesProvider(model, providerOptions);
+  if (id === 'conceptnet-5.7.0-en') return new ConceptNetProvider(model, providerOptions);
+  if (id === 'world-relations-1.0') return new WorldRelationsProvider(model, providerOptions);
   throw new Error(`No runtime provider for ${id}.`);
 }
 
@@ -362,6 +419,23 @@ export async function validatePublicKnowledgeBase(id) {
     const smoke = await provider.ask('Is a dog an animal?');
     if (smoke?.values?.[0] !== true) throw new Error('Open English WordNet hypernym smoke test failed.');
     return { id, valid: true, counts: provider.manifest.counts, smoke: smoke.answer };
+  }
+  if (id === 'geonames-2026') {
+    const countryData = await provider.countryData();
+    if (Object.keys(countryData.countries).length !== provider.manifest.counts.countries) throw new Error('GeoNames country count does not match its index.');
+    const smoke = await provider.ask('What is the capital of Romania?');
+    if (smoke?.answer !== 'Bucharest') throw new Error('GeoNames capital smoke test failed.');
+    return { id, valid: true, counts: provider.manifest.counts, smoke: smoke.answer };
+  }
+  if (id === 'conceptnet-5.7.0-en') {
+    const smoke = await provider.ask('What is a knife used for?');
+    if (smoke?.status !== 'ANSWERED') throw new Error('ConceptNet purpose smoke test failed.');
+    return { id, valid: true, counts: provider.manifest.counts, smoke: smoke.answer };
+  }
+  if (id === 'world-relations-1.0') {
+    const smoke = await provider.scoreCompatibility('Pavo is to the left of Luma.', 'Luma is to the right of Pavo.');
+    if (smoke.score <= 0) throw new Error('World relation inverse smoke test failed.');
+    return { id, valid: true, counts: provider.manifest.counts, smoke: smoke.score };
   }
   const events = Object.keys(provider.events).length;
   if (events !== provider.manifest.counts.uniqueEvents) throw new Error('ATOMIC generated event count does not match its index.');

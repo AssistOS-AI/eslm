@@ -1,0 +1,38 @@
+{
+  "format": "eslm-core-change-guardian-audit-v1",
+  "proposal": "core-change-proposal-episodic-world.json",
+  "decision": "eligible-with-integration-condition",
+  "renameTest": "passed",
+  "multipleIndependentExamples": "passed",
+  "forbiddenDispatchAudit": "passed",
+  "witnessAudit": "passed on 200000/200000 development-visible executions and tamper controls",
+  "securityAudit": {
+    "network": false,
+    "childProcess": false,
+    "dynamicImport": false,
+    "eval": false,
+    "corpusExecution": false,
+    "boundedOperations": true,
+    "boundedPaths": true
+  },
+  "policyPlacement": {
+    "directionSurfaceVocabulary": "adapter",
+    "sourceInductionSelection": "adapter policy",
+    "motiveGoalMapping": "adapter policy",
+    "genericExecution": "candidate core",
+    "expectedAnswers": "host-only oracle"
+  },
+  "challengeFindings": [
+    "The candidate is a broad finite-episode coordinator and overlaps existing temporal-state, container-state, spatial-vector, and relation executors.",
+    "Shared integration must either bind it explicitly as orchestration over those methods or decompose its descriptor so the registry does not advertise duplicated semantic authorities.",
+    "The source adapter uses source-specific regular expressions and vocabulary intentionally; none of those constants appears in the generic executor.",
+    "Task-5 ambiguous rows must remain AMBIGUOUS unless the visible task contract changes. A support-line selector would be oracle leakage."
+  ],
+  "requiredBeforePromotion": [
+    "register one non-duplicative capability descriptor and bind it in the runtime engine",
+    "document exact method semantics and completeness limits in DS015",
+    "add detailed HTML explanation and update the bAbI protocol page",
+    "publish the replaceable all-20 development receipt without calling it an untouched test score",
+    "run the complete repository regression and documentation checks"
+  ]
+}

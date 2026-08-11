@@ -1,0 +1,43 @@
+{
+  "format": "eslm-clutrr-typed-evidence-impossibility-proof-v1",
+  "evidenceRegime": "development-visible aggregate structural audit",
+  "canonicalization": {
+    "queryEndpoints": "The two query endpoints receive fixed anonymous positions.",
+    "entities": "All remaining entities are alpha-renamed by structural occurrence.",
+    "relations": "Directed relation triples retain only declared relation type and anonymous endpoints.",
+    "features": "Typed endpoint features are sorted; source ordering, prose, record identifiers, and fact identifiers are removed."
+  },
+  "observedFemaleCollision": {
+    "isomorphicInputs": 3,
+    "oracleAggregate": {
+      "mother": 2,
+      "mother-in-law": 1
+    },
+    "runtimeAlternatives": [
+      "mother",
+      "mother-in-law"
+    ]
+  },
+  "maleSymmetryWitness": {
+    "developmentAmbiguities": 1,
+    "runtimeAlternatives": [
+      "father",
+      "father-in-law"
+    ],
+    "metamorphicArgument": "Changing only the target sex feature in the otherwise refinement-equivalent typed structure changes the female alternatives to their male counterparts; it does not add blood-versus-affinal evidence."
+  },
+  "proof": [
+    "A deterministic rename-invariant method is a function of the canonical typed input.",
+    "The three female development inputs have one canonical typed input but two incompatible required refinements.",
+    "One function value cannot equal both refinements; at least one member of that isomorphism class must fail a single-label oracle.",
+    "Target sex selects mother versus father, but cannot select blood parent versus parent-in-law. The same missing refinement therefore yields the father/father-in-law alternative pair under the male feature.",
+    "Selecting by source row, record identifier, prose, or expected label would add information outside the accepted task frame and violate the generic-core contract."
+  ],
+  "conclusion": "AMBIGUOUS is the sound result for these accepted typed inputs. Reaching 100% requires additional distinguishing evidence or a corrected source projection, not a row-specific core branch.",
+  "privacy": {
+    "sourceSentencesRetained": false,
+    "caseIdentifiersRetained": false,
+    "factIdentifiersRetained": false,
+    "caseLevelOutcomesRetained": false
+  }
+}

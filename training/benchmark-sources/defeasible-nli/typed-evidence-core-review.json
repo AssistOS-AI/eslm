@@ -1,0 +1,52 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Provenance-bearing typed comparison for before-and-after defeasible evidence",
+  "benchmark": "Defeasible NLI development-only research cycle",
+  "decision": "isolate-comparator-reject-automatic-source-projection",
+  "independentExamples": [
+    "A declared obstruction attacks support for a nonce courier reaching a destination after a route update.",
+    "A declared repaired-state transition supports a nonce mechanism becoming operational after maintenance."
+  ],
+  "inputTypes": [
+    "two or more opaque alternative identifiers",
+    "provenance-bearing typed support and attack records",
+    "declared family weights and minimum decision margin"
+  ],
+  "outputTypes": ["selected alternative with comparison witness", "explicit UNKNOWN with abstention witness"],
+  "preconditions": [
+    "Every evidence record names a declared alternative and an allowlisted semantic family.",
+    "Evidence direction, integer strength, provenance origin, relation, and source reference are explicit.",
+    "The evidence producer, not the comparator, establishes the semantic validity of every record."
+  ],
+  "invariants": [
+    "Alternative identifiers and evidence order do not affect scores.",
+    "An exact tie or insufficient margin returns UNKNOWN.",
+    "The method never invents causal, goal, state, contradiction, default, temporal, or participant evidence.",
+    "No source identity, row identity, vocabulary constant, or answer value participates in core control flow."
+  ],
+  "uncertaintySemantics": "No evidence, exact ties, and margins below the declared threshold abstain explicitly. They are never converted into a binary guess.",
+  "proofBehavior": "The witness freezes the normalized evidence digest, selected alternative, score margin, required margin, and evidence count; an independent verifier recomputes the result.",
+  "resourceBounds": "Two through 32 alternatives, at most 2,048 validated evidence records, bounded integer strengths and family weights, and deterministic in-memory sorting.",
+  "failureStatuses": ["UNKNOWN", "schema-validation-error", "resource-validation-error"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "None. The comparator remains an unregistered standalone module. The automatic event-frame projection is rejected, so no benchmark-derived evidence is promoted to a KB.",
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "renameTestPassed": true,
+  "forbiddenDispatchAuditPassed": true,
+  "guardianDecision": "accept-isolated-mechanism-reject-source-claim",
+  "guardianReasons": [
+    "Nonce/full-renaming, alternative and evidence permutation, semantic contrast, tie, missing-evidence, malformed-provenance, resource-bound, and tampered-witness controls pass.",
+    "The generic comparator is sound only relative to validated declared evidence and does not claim to derive commonsense evidence.",
+    "The automatic frame-overlap integration answered 5,519 of 14,968 development cases but was correct on only 2,721, so it is not eligible for runtime registration or a benchmark capability claim.",
+    "Missing causal, goal, normative, default, exception, and state-transition knowledge must remain explicit gaps rather than being replaced by lexical heuristics."
+  ],
+  "forbiddenDispatchAudit": {
+    "genericCoreChanged": true,
+    "benchmarkNamesInCore": 0,
+    "datasetIdsInCore": 0,
+    "recordIdsInCore": 0,
+    "sourceHashesInCore": 0,
+    "expectedAnswersInCore": 0,
+    "sourceEntityOrRelationConstantsInCore": 0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "format": "eslm-folio-development-candidate-freeze-v1",
+  "frozenAt": "2026-08-11T18:07:52Z",
+  "sourceSetSha256": "5157453a3938447308d9df627418cbbeb1e363894bad2c8fcffe5b7f3dcfad1a",
+  "dependencySetSha256": "b99c814b6800c4c6502149d0f7449f12b43b1da0b1aaaa2b1453df08b97f99c5",
+  "dependencies": {
+    "src/benchmark-adapters/folio.mjs": "c88a2dabb49f82e55ee29bcf32af60ecfbfc066e22a4d1ad953211ddba539c96",
+    "src/language/quantified-english.mjs": "19f7a8a302a1273b543a3fa8a967c4d876a2f321021136ff3c1d24d24a649a2d",
+    "src/reasoning/finite-entailment.mjs": "7870db5d68c758632347e53dbe52f5aca6b75c9664448033685015334548d91d",
+    "src/reasoning/sat-entailment.mjs": "c570251279d6863300fefaf45e53f326d12ca6a295aeffef8067ebe3d41b14f5",
+    "tests/folio-adapter.test.mjs": "2378eb4339717fb5374d61d481f59548645138e15a29fe3736b9da96ba2877ad",
+    "tests/quantified-english.test.mjs": "69f109b491297ec4635aa64d8a7652285f648261ecab531bd9dcd41ed01785a5"
+  },
+  "coreChangeProposalSha256": "543189fb02f786821321c27e6499d9df98105424bc925edf977bd991ca15f4dc",
+  "guardianReviewSha256": "189908ab49ac2e8523ce72e57a1ca80c188d231109094858be3c4581feaa561f",
+  "guardian": {
+    "script": "training/.agents/skills/core-change-guardian/scripts/audit-proposal.mjs",
+    "eligibleForImplementation": true,
+    "failures": [],
+    "verdict": "accept-development-candidate-defer-runtime-registration"
+  },
+  "developmentAggregate": {
+    "tested": 204,
+    "available": 204,
+    "formulaCorrect": 161,
+    "sentencesCompiled": "545/1292",
+    "exactSentenceFormulas": "383/1279",
+    "queriesCompiled": "108/204",
+    "queriesCorrect": "75/204",
+    "completeNaturalLanguageCasesCorrect": "4/204",
+    "languageAgentInvocations": 0
+  },
+  "scope": "Adapter-guided development measurement only. The generic language candidate is not registered in the deployed Stage A parser.",
+  "freshBoundary": "No fresh execution is authorized because the pinned v0.0 source contains no untouched labeled or language-only split."
+}

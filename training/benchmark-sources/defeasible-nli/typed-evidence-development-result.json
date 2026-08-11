@@ -1,0 +1,31 @@
+{
+  "format": "eslm-defeasible-nli-typed-evidence-development-result-v1",
+  "evidenceRegime": "complete-official-development-excluding-owner-declared-impossible-rows",
+  "sourceRows": 16008,
+  "tested": 14968,
+  "answered": 5519,
+  "unknown": 9449,
+  "correct": 2721,
+  "coverage": 0.36871993586317475,
+  "accuracyOnAnswered": 0.49302409856858126,
+  "witnessValid": 5519,
+  "statusCounts": {
+    "DEFEASIBLE": 5519,
+    "UNKNOWN": 9449
+  },
+  "byFamily": {
+    "atomic": { "tested": 3840, "answered": 1019, "correct": 492, "unknown": 2821 },
+    "snli": { "tested": 1785, "answered": 1286, "correct": 649, "unknown": 499 },
+    "social": { "tested": 9343, "answered": 3214, "correct": 1580, "unknown": 6129 }
+  },
+  "excludedImpossible": { "atomic": 470, "snli": 103, "social": 467 },
+  "languageAgentInvocations": 0,
+  "test": { "executed": false, "visibility": "evaluator-only-no-loader-exported" },
+  "behaviorFiles": {
+    "src/reasoning/typed-evidence-comparison.mjs": "0eee21160bd3067a6accbf228a5a3b16508486d452829288fc6a63a53bf0f0ea",
+    "src/reasoning/typed-event-evidence.mjs": "01ae67b2e5777ac637eecf79bf4382ac9515f42d726f464535bcdfdcf6c80a53",
+    "src/benchmark-adapters/defeasible-nli.mjs": "5e42889f9b403cb3837b5827654055b5a87e47ce51af54ba12d7128761137266"
+  },
+  "decision": "reject-automatic-frame-overlap-as-a-defeasible-semantic-projection",
+  "decisionEvidence": "The complete development aggregate is below chance on answered binary cases. Lexical event-frame overlap does not establish the causal, goal, normative, default, exception, or state-transition evidence required by the typed comparator."
+}

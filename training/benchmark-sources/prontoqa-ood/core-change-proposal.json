@@ -1,0 +1,55 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Generic query-directed propositional entailment with independently verifiable SAT witnesses",
+  "independentExamples": [
+    "A 96-symbol nonce implication chain with 300 satisfiable premises in disconnected semantic components",
+    "Two hundred deterministic generated theories checked against exhaustive finite-model semantics",
+    "A renamed and reordered implication theory with reversed commutative operands",
+    "An inconsistent theory evaluated under both report-only and explicit classical-explosion policies"
+  ],
+  "inputTypes": [
+    "validated finite propositional premise formulas",
+    "validated propositional query formula",
+    "explicit search resource budget",
+    "explicit inconsistency policy"
+  ],
+  "outputTypes": [
+    "entailed Boolean",
+    "query-directed DPLL unsatisfiability certificate",
+    "finite countermodel",
+    "explicit inconsistency or resource witness"
+  ],
+  "preconditions": [
+    "Formula syntax uses only atom, not, and, or, and implies operators.",
+    "The semantic atom set is finite.",
+    "Every execution uses validated positive integer resource bounds.",
+    "Classical explosion is used only when the task explicitly selects that inconsistency policy."
+  ],
+  "invariants": [
+    "The solver never branches on benchmark, dataset, record, source row, hash, expected answer, or vocabulary constants.",
+    "Every omitted query-irrelevant component is disconnected by the transitive semantic-atom incidence closure.",
+    "The complete premise set is proved satisfiable before disconnected components may be omitted from query search.",
+    "A returned countermodel satisfies every complete premise and falsifies the query.",
+    "An entailment or inconsistency result carries a replayable DPLL certificate tied to a deterministic CNF digest.",
+    "Resource exhaustion changes status, never the input denominator or retained source corpus."
+  ],
+  "uncertaintySemantics": "The default policy reports an inconsistent premise set as INCONSISTENT_CONTEXT. An explicit classical-explosion policy returns entailed with the same independently verifiable inconsistency certificate. Bounded search returns RESOURCE_LIMIT and never guesses.",
+  "proofBehavior": "Formulas are compiled by deterministic Tseitin transformation. The solver first checks the complete context. For a consistent context it constructs the transitive query dependency cone, searches that cone with the negated query, and returns either a DPLL unsatisfiability tree or a complete semantic countermodel. A separate verifier recompiles the formulas and replays the certificate or evaluates the countermodel.",
+  "resourceBounds": {
+    "defaultMaxSemanticAtoms": 4096,
+    "defaultMaxCnfVariables": 16384,
+    "defaultMaxCnfClauses": 65536,
+    "defaultMaxSearchNodes": 1000000,
+    "policy": "Bounds constrain one execution and produce a witnessed RESOURCE_LIMIT. They do not reject, delete, sample away, or reduce the denominator of any source corpus."
+  },
+  "failureStatuses": [
+    "INCONSISTENT_CONTEXT",
+    "RESOURCE_LIMIT",
+    "schema validation error for malformed formulas or budgets"
+  ],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "None. The change is a generic reasoning method over typed formula ASTs and does not add facts, source vocabulary, benchmark conventions, or executable KB payloads.",
+  "renameTestPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "forbiddenDispatchAuditPassed": true
+}

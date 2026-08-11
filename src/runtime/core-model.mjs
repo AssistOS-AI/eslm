@@ -47,6 +47,12 @@ export function validateModel(model) {
       assert(Array.isArray(values) && values.length > 0, `Property predicate ${predicate} requires values.`);
       assert(values.every((value) => typeof value === 'string'), `Property values for ${predicate} must be strings.`);
     }
+    for (const [algebraId, algebra] of Object.entries(model.reasoning.relationAlgebras ?? {})) {
+      assert(algebra?.schema === 'typed-relation-algebra-v1' && algebra.algebraId === algebraId,
+        `Invalid typed relation algebra ${algebraId}.`);
+      assert(Array.isArray(algebra.relations) && Array.isArray(algebra.inverses)
+        && Array.isArray(algebra.compositions), `Typed relation algebra ${algebraId} is incomplete.`);
+    }
     assert(Number.isInteger(model.reasoning.abduction?.maxHypotheses)
       && model.reasoning.abduction.maxHypotheses > 0, 'Abduction maxHypotheses must be a positive integer.');
   }
@@ -93,6 +99,7 @@ export async function createCoreModel(candidate) {
       induction: { enabled: false, predicates: [], implicitPredicates: [], minSupport: 3, minCoverage: 0.7 },
       abduction: { maxHypotheses: 4 },
       classes: { singular: { mice: 'mouse', wolves: 'wolf', cats: 'cat', sheep: 'sheep' } },
+      relationAlgebras: {},
     },
     indexes: serializedIndexes(facts),
   };

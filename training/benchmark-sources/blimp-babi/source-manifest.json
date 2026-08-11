@@ -1,0 +1,31 @@
+{
+  "format": "eslm-benchmark-source-registration-v1",
+  "sources": [
+    {
+      "id": "blimp-git-3e56b06f",
+      "family": "BLiMP",
+      "primarySource": "https://github.com/alexwarstadt/blimp",
+      "immutableArchive": "https://codeload.github.com/alexwarstadt/blimp/tar.gz/3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+      "version": "git:3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+      "archiveSha256": "cbada5cc59b41798f0f0a6b2525166c7a1d82c4a40ed726c78810b898e1979f6",
+      "license": "CC BY 4.0",
+      "licenseEvidence": "README.md in the pinned source archive",
+      "cachePath": "training/.cache/datasets/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/blimp.tar.gz",
+      "redistributionPolicy": "Keep the acquired archive in the ignored immutable cache; retain attribution and license metadata in published reports.",
+      "benchmarkSplitPolicy": "BLiMP publishes no train/test division. Any inspected stable-hash probe is development-visible and cannot later be claimed as untouched holdout evidence."
+    },
+    {
+      "id": "babi-en-10k-v1.2",
+      "family": "bAbI",
+      "primarySource": "https://github.com/facebookarchive/bAbI-tasks",
+      "immutableArchive": "https://s3.amazonaws.com/text-datasets/babi_tasks_1-20_v1-2.tar.gz",
+      "version": "1.2",
+      "archiveSha256": "84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c",
+      "license": "CC BY 3.0 Unported",
+      "licenseEvidence": "tasks_1-20_v1-2/LICENSE.txt in the source archive",
+      "cachePath": "training/.cache/datasets/babi-v1.2/babi_tasks_1-20_v1-2.tar.gz",
+      "redistributionPolicy": "Keep the acquired archive and extracted public cases in ignored dataset paths; preserve Facebook attribution and the included CC BY 3.0 terms.",
+      "benchmarkSplitPolicy": "Only stable-hash samples of official training cases are development-visible. Test cases may be schema-validated and scored by a frozen oracle but their text and labels must not enter agent packets or diagnosis."
+    }
+  ]
+}

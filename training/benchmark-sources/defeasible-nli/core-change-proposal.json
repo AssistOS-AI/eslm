@@ -1,0 +1,47 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Typed comparison of defeasible support before and after an update",
+  "benchmark": "Defeasible NLI",
+  "decision": "no-generic-core-change",
+  "independentExamples": [
+    "A provenance-bearing reliability fact about a nonce device could raise support for a proposition that the device will complete a task.",
+    "A newly asserted route obstruction could lower support for a nonce traveler reaching a destination while leaving unrelated propositions unchanged."
+  ],
+  "inputTypes": ["explicit proposition", "explicit background context", "typed update evidence", "declared default and priority policy"],
+  "outputTypes": ["support-increased", "support-decreased", "unchanged", "indeterminate", "proof witness"],
+  "preconditions": [
+    "Premise, hypothesis, and update have been compiled into typed propositions and relations.",
+    "Relevant defaults, conflicts, priorities, provenance, and scope are explicit.",
+    "The before and after theories have bounded, deterministic preferred-model semantics."
+  ],
+  "invariants": [
+    "The method cannot invent a domain fact or lexical relation.",
+    "Unrelated updates leave the assessed support relation unchanged.",
+    "Contradictory or incomparable preferred extensions return indeterminate rather than an arbitrary binary label.",
+    "Control flow is independent of surface vocabulary, source family, row identity, and expected output."
+  ],
+  "uncertaintySemantics": "Compare a declared ordinal support relation over preferred extensions before and after the update; do not interpret binary benchmark labels as probabilities.",
+  "proofBehavior": "A solved result would cite the compiled propositions, activated defaults, defeated defaults, priority comparisons, and the before/after support relation.",
+  "resourceBounds": "Finite grounded propositions, finite declared defaults, explicit maximum preferred extensions, and deterministic timeout or budget exhaustion status.",
+  "failureStatuses": ["UNPARSED_SEMANTICS", "MISSING_KNOWLEDGE", "CONFLICT", "INDETERMINATE", "RESOURCE_LIMIT"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "No migration because the proposed input representation and support ordering are not yet specified or implemented.",
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "renameTestPassed": false,
+  "forbiddenDispatchAuditPassed": true,
+  "guardianDecision": "defer",
+  "guardianReasons": [
+    "Development examples establish several distinct knowledge and semantic-composition gaps, not one executable typed cause.",
+    "The existing preferred-entailment method handles explicit finite defaults, but the adapter cannot soundly compile arbitrary source prose into its propositions and priorities.",
+    "Adding only the final binary comparison would leave all 14,968 cases without justified symbolic inputs and would not improve benchmark coverage.",
+    "A full rename test cannot pass until a typed representation, proof contract, and executable method exist."
+  ],
+  "forbiddenDispatchAudit": {
+    "genericCoreChanged": false,
+    "benchmarkNamesInCore": 0,
+    "recordIdsInCore": 0,
+    "sourceHashesInCore": 0,
+    "expectedAnswersInCore": 0,
+    "sourceEntityOrRelationConstantsInCore": 0
+  }
+}

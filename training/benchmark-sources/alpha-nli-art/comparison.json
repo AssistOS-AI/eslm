@@ -1,0 +1,8 @@
+{
+  "format": "eslm-learning-comparison-v1",
+  "eligible": false,
+  "baselineTested": 1532,
+  "candidateTested": 1532,
+  "deltas": {"answered":0,"correct":0,"executionFailures":0,"coreBytes":0,"languageAgentInvocations":0},
+  "promotion": "No candidate is promoted. The complete source integration, label-isolated task projection, and direct baseline are retained. A core method is deferred until bridge events and observations have adequate typed semantics and provenance-bearing causal, temporal, goal, and state knowledge."
+}

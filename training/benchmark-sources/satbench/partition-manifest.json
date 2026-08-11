@@ -1,0 +1,44 @@
+{
+  "format": "eslm-benchmark-partition-manifest-v1",
+  "benchmark": "SATBench",
+  "datasetRevision": "186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9",
+  "datasetSha256": "d32ee8ca8ccee4ee3dcb322e174d4cbe5ffebbd1b76dcdb702d397afd34294b5",
+  "partition": {
+    "version": "satbench-clause-stratified-partition-v1",
+    "seed": "eslm-satbench-clause-stratified-partition-v1",
+    "algorithm": "Construct a stable identifier by hashing the label-free official task fields. Inside each num_clauses stratum, rank by SHA-256(seed + NUL + num_clauses + NUL + stable identifier). The first 28 are development-visible and the remaining 112 are sealed fresh members.",
+    "answerBlindFields": [
+      "dims", "num_vars", "num_clauses", "clauses", "readable", "scenario",
+      "variable_mapping", "conditions", "question"
+    ],
+    "excludedOracleFields": [
+      "satisfiable", "sat_reason", "unsat_reason", "formula_equivalence_check",
+      "recovered_formula", "recovered_formula_full_text", "consistency_check_trace_history"
+    ],
+    "strata": "Each of the 15 official num_clauses values contains 140 cases and contributes exactly 28 development and 112 fresh members.",
+    "all": {
+      "count": 2100,
+      "membershipSha256": "87cbc449ca9253dafc4c71efab12f3838d19f924cdabf99e1ac68a6e074ab073"
+    },
+    "development": {
+      "count": 420,
+      "membershipSha256": "c1317f7ca944583464d34f4830a1c840b510d1c506a38531323584c4bbee415f",
+      "visibility": "The source language, official clauses annotation, satisfiability label, and source explanation may be inspected for adapter validation and development diagnosis. Visible tasks still exclude the oracle fields."
+    },
+    "fresh": {
+      "count": 1680,
+      "membershipSha256": "bff899604f6e9d0ef2dde8b43960f1d125f8cfa2d16030fd5707dacad3a1457d",
+      "visibility": "sealed membership only; no fresh-case loader, fresh text, label, explanation, identifier, or per-case outcome is exported"
+    }
+  },
+  "oracleIsolation": {
+    "visiblePool": "Contains scenario, variable mapping, conditions, question, source structural metadata, and a formula task compiled from the official clauses annotation. It contains no satisfiable label or reference reason.",
+    "hostOracle": "Contains stable ID, satisfiable Boolean, and the matching sat_reason or unsat_reason in a separate host-only object.",
+    "freshEvaluator": "May join the host oracle only after the dependency freeze and returns aggregate counts and bounded difficulty-by-label strata only."
+  },
+  "trackBoundary": {
+    "id": "source-annotated-formula-symbolic",
+    "evidence": "The official clauses annotation is mapped to a generic Boolean formula AST and solved without a Language Agent.",
+    "notClaimed": "The authors' official SAT prediction prompt supplies scenario, conditions, and question rather than the clauses array. This structural track is not an official natural-language SATBench score and is not merged with a future direct-language diagnostic."
+  }
+}

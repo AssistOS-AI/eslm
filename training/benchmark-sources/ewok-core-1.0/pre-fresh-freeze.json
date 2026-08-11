@@ -1,0 +1,27 @@
+{
+  "format": "eslm-pre-fresh-freeze-v1",
+  "benchmark": "ewok-core-1.0-analysis-snapshot",
+  "developmentResult": {
+    "correct": 110,
+    "total": 110,
+    "accuracy": 1,
+    "ties": 0,
+    "reversedPreferences": 0
+  },
+  "behaviorHashes": {
+    "src/reasoning/semantic-compatibility.mjs": "91c467daf35783cb696201fe1eac9ba521c7c5fa38a40111d3854bb4f10884dd",
+    "src/runtime/runtime.mjs": "f3c4d3fbde2a81954a45ee4509f7cd2cef2e6fd360b9321946346702709bb3b8",
+    "src/public-kb-providers/world-relations.mjs": "db260742469bb2a624e8bc51f1f8d2b0b57a77cd788be2ed3438344d38206068",
+    "training/KBs/world-relations-1.0/canonical/ontology.json": "414143a2bdca92ca514b240bd9598036c07af607ab92e560c6ec7b470ed8e79a",
+    "training/KBs/world-relations-1.0/package/ontology/all.json": "7f669ba6c8dd8c9b0d7c81da2fed4f7a8428a9b208f3a031c97ddb42d9873436",
+    "training/KBs/world-relations-1.0/package/manifest.json": "eec8cf15701288f86282ce9a655815e847af9916f794d0965b6d065d96a520d5",
+    "tests/semantic-compatibility.test.mjs": "6779b6078f6950bb7ffbce94dfdbb41ccb65580f396a8a65697c33ba42645cac"
+  },
+  "verification": {
+    "tests": "108/108 passed",
+    "coreGuardianEligible": true,
+    "forbiddenDispatchAudit": "No EWoK identifier, protected item identifier, protected sentence, person name, object name, or answer index occurs in the generic semantic compatibility core. Domain vocabulary is declarative KB metadata.",
+    "codingAgentCalls": 0
+  },
+  "postFreshRule": "After the fresh aggregate is opened, no behavior file or ontology in behaviorHashes may change while retaining the fresh claim."
+}

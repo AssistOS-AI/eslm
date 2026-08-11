@@ -1,0 +1,53 @@
+{
+  "protocol": "sparp-complete-schema-inventory-v1",
+  "sourceRevision": "2706ed464416758c67a09716ed0262c880ee6bdd",
+  "recordSchema": {
+    "root": "top-level JSON array, streamed one record at a time",
+    "requiredFieldCount": 22,
+    "optionalFields": ["instruction"],
+    "redundantOracleCheck": "targets must equal the target_choices positions selected by the binary target_scores vector",
+    "symbolicTask": "symbolic_context and symbolic_question are parsed into inert typed facts and query endpoints",
+    "nonTaskFields": "textual and symbolic reasoning remain host-only and are never executed"
+  },
+  "full": {
+    "ps1": {
+      "properties": ["extended-object", "relation-incomplete", "unquantified"],
+      "splits": { "train": { "rows": 16450, "facts": 48738 }, "validation": { "rows": 2397, "facts": 6408 }, "test": { "rows": 2316, "facts": 6550 } },
+      "unsupportedRelationFamilies": ["behind", "dc", "ec", "far", "front", "near", "ntpp", "ntppi", "po", "tpp", "tppi"],
+      "methodState": "direct-symbolic-executable-via-declarative-qualitative-relation-closure"
+    },
+    "ps2": {
+      "properties": ["point-object", "relation-complete", "quantified"],
+      "splits": { "train": { "rows": 49610, "facts": 148481 }, "validation": { "rows": 4976, "facts": 14870 }, "test": { "rows": 99299, "facts": 1069819 } },
+      "methodState": "direct-symbolic-executable"
+    },
+    "ps3": {
+      "properties": ["point-object", "relation-complete", "unquantified"],
+      "splits": {
+        "train": { "rows": 44946, "facts": 129571, "nonstandardSymbolicReasoningJson": 8713 },
+        "validation": { "rows": 4499, "facts": 12906, "nonstandardSymbolicReasoningJson": 810 },
+        "test": { "rows": 78690, "facts": 786087, "nonstandardSymbolicReasoningJson": 23375 }
+      },
+      "methodState": "direct-symbolic-executable"
+    },
+    "ps4": {
+      "properties": ["extended-object", "relation-complete", "unquantified"],
+      "splits": { "train": { "rows": 37138, "facts": 100595 }, "validation": { "rows": 3775, "facts": 10202 }, "test": { "rows": 58582, "facts": 540114 } },
+      "methodState": "direct-symbolic-executable"
+    }
+  },
+  "small": {
+    "rowsPerConfiguration": { "train": 2000, "validation": 500, "test": 1000 },
+    "rowsAcrossFourConfigurations": 14000,
+    "factsPerStepGameConfiguration": { "train": 7262, "validation": 1708, "test": 13343 },
+    "ps1Facts": { "train": 5739, "validation": 1226, "test": 2774 },
+    "ps3NonstandardSymbolicReasoningJson": { "train": 729, "validation": 142, "test": 538 }
+  },
+  "sourceIssuePolicy": "NaN tokens in the answer-bearing symbolic_reasoning field are retained and counted as NONSTANDARD_JSON. That field is never used to construct a task or verify a proof.",
+  "splitIsolation": {
+    "train": "complete label-free source profiling",
+    "validation": "complete development evaluation with host-only target joining",
+    "test": "complete schema and label-free overlap profiling; no target aggregates and no solver execution",
+    "languageAgentInvocations": 0
+  }
+}

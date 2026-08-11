@@ -1,0 +1,29 @@
+{
+  "format": "eslm-visible-input-nonfunction-proof-v1",
+  "sourceId": "babi-en-10k-v1.2",
+  "split": "train",
+  "taskFamily": 5,
+  "inspectedQuestions": 10000,
+  "ambiguousQuestions": 128,
+  "proofStatement": "For each counted question, at least two earlier visible transfer events satisfy the same agent, recipient, event type, and requested theme-role constraints but have different theme values. The question asks for one theme without a temporal boundary, ordinal, uniqueness condition, or support-line selector. Both themes therefore satisfy the visible semantic query. A deterministic single-label oracle is not a function of that query semantics unless the host-only support annotation or an additional source convention is exposed.",
+  "supportAnnotationIsolation": "Supporting-line identifiers were retained by the host oracle but were never supplied to the label-free task, adapter compiler, generic executor, or witness verifier.",
+  "structuralAudit": {
+    "ambiguousStructuralSignatures": 23,
+    "signaturesWithContradictoryGoldSelection": 5,
+    "contradictorySelections": [
+      { "eventModes": ["direct-give:value-0", "direct-give:value-1"], "goldValue0": 9, "goldValue1": 27 },
+      { "eventModes": ["pass:value-0", "direct-give:value-1"], "goldValue0": 3, "goldValue1": 21 },
+      { "eventModes": ["direct-give:value-0", "pass:value-1"], "goldValue0": 3, "goldValue1": 12 },
+      { "eventModes": ["direct-give:value-0", "direct-give:value-0", "direct-give:value-1"], "goldValue0": 1, "goldValue1": 5 },
+      { "eventModes": ["pass:value-0", "direct-give:value-0", "direct-give:value-1"], "goldValue0": 1, "goldValue1": 4 }
+    ]
+  },
+  "falsifiedSelectors": [
+    "always select the first matching event",
+    "always select the latest matching event",
+    "always prefer the direct give/hand event over pass",
+    "always prefer pass over the direct give/hand event"
+  ],
+  "acceptedBehavior": "Return AMBIGUOUS with every distinct semantically valid theme and a witness containing every matching event. Do not branch on support IDs, story IDs, row identities, expected labels, or copied values.",
+  "howToMakeSingleLabelScoringWellDefined": "Expose a question-local temporal or ordinal selector as visible input, change the answer contract to accept all valid themes, or explicitly authorize the supporting-line annotation as part of the task rather than the oracle."
+}

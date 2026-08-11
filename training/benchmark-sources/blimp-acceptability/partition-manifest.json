@@ -1,0 +1,35 @@
+{
+  "format": "eslm-grouped-development-fresh-partition-v1",
+  "source": {
+    "id": "blimp-git-3e56b06f",
+    "version": "git:3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+    "archiveSha256": "cbada5cc59b41798f0f0a6b2525166c7a1d82c4a40ed726c78810b898e1979f6"
+  },
+  "selection": {
+    "seed": "eslm-blimp-development-fresh-v1",
+    "rankInput": "sha256(seed + NUL + paradigm + NUL + caseId)",
+    "tieBreak": "caseId lexical order",
+    "withinEachParadigm": {
+      "developmentRanks": [0, 799],
+      "freshRanks": [800, 999]
+    }
+  },
+  "counts": {
+    "paradigms": 67,
+    "casesPerParadigm": 1000,
+    "developmentPerParadigm": 800,
+    "freshPerParadigm": 200,
+    "total": 67000,
+    "development": 53600,
+    "fresh": 13400
+  },
+  "membership": {
+    "canonicalization": "case IDs sorted lexically, joined with LF, and terminated by LF",
+    "developmentIdSha256": "ccbb95847a8a4b8499963420fad3a6feb8cc58752ff098b56dc9559bedeae439",
+    "freshIdSha256": "65930206f3cfc9f01582a1aadc53d220ef7e7b98f7e237e67aeef688e0d4851d"
+  },
+  "visibility": {
+    "development": "Sentence pairs, construction metadata, and preference labels may guide diagnosis and candidate work.",
+    "fresh": "No sentences, construction results, or preference labels may be inspected until the candidate and tests are frozen. The fresh aggregate is run once."
+  }
+}

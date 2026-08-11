@@ -1,0 +1,81 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Bounded declarative multi-relation closure with replayable proof trees",
+  "benchmark": "Development-visible qualitative spatial relation tasks",
+  "decision": "implement-generic-core-method",
+  "independentExamples": [
+    {
+      "description": "Two fully renamed directional facts sharing a middle entity use a declared binary composition rule to entail a third relation.",
+      "expectedBehavior": "Return the declared relation with a proof tree whose leaves are the two source facts."
+    },
+    {
+      "description": "A nonce member-to-holder relation, a holder-to-holder relation, and an inverse member relation use two declared composition rules to lift an eligible qualitative relation across containment.",
+      "expectedBehavior": "Return only relations licensed by metadata; an otherwise similar unlicensed symmetric relation remains unknown."
+    }
+  ],
+  "inputTypes": ["declarative qualitative relation system", "finite typed relation facts", "ordered relation query"],
+  "outputTypes": ["zero or more declared qualitative relation identifiers", "one replayable derivation tree per returned relation"],
+  "preconditions": [
+    "relations and reciprocal inverses validate",
+    "every composition rule references declared relation identifiers",
+    "facts and query endpoints use bounded identifiers",
+    "facts, entities, relations, rules, derivations, and proof depth remain within declared limits"
+  ],
+  "invariants": [
+    "the executor branches only on validated relation metadata and graph structure",
+    "no relation is derived without a declared inverse or binary composition step",
+    "all returned relations are complete for the bounded least fixed point",
+    "mutually exclusive query relations return INCONSISTENT_CONTEXT",
+    "every evidence leaf identifies an accepted source fact"
+  ],
+  "uncertaintySemantics": "Missing endpoints or an empty query relation set return UNKNOWN. Mutually exclusive entailed relations return INCONSISTENT_CONTEXT. Malformed systems or tasks return UNPARSED. Exhausted relation, rule, entity, fact, derivation, or proof-depth bounds return RESOURCE_LIMIT.",
+  "proofBehavior": "Asserted leaves reproduce accepted facts; inverse nodes reverse endpoints through reciprocal metadata; composition nodes identify a declared rule, intermediate entity, two premises, and result. Verification recursively replays each tree and separately recomputes the complete query closure to reject missing outputs.",
+  "resourceBounds": {
+    "facts": 10000,
+    "entities": 10000,
+    "relations": 256,
+    "compositionRules": 4096,
+    "derivedRelations": 100000,
+    "proofDepth": 128
+  },
+  "failureStatuses": ["UNPARSED", "UNKNOWN", "INCONSISTENT_CONTEXT", "RESOURCE_LIMIT"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "none; existing KB packages and reasoning methods remain unchanged, while a future package may supply this system as inert declarative metadata",
+  "renameTestPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "forbiddenDispatchAuditPassed": true,
+  "guardianControls": {
+    "fullRename": "entities, relation identifiers, inverse values, rule identifiers, and output ordering are nonce values",
+    "order": "reversing fact order preserves result and proof validity",
+    "directionContrast": "reversing query endpoints produces only declared inverse relations",
+    "distractor": "a disconnected relation component cannot enter a query proof",
+    "negativeControl": "a symmetric relation without lifting rules does not propagate through containment",
+    "witnessTamper": "an undeclared rule identifier invalidates verification"
+  },
+  "forbiddenDispatchAudit": {
+    "benchmarkNamesInCore": 0,
+    "datasetIdsInCore": 0,
+    "recordIdsInCoreControlFlow": 0,
+    "expectedAnswersInCore": 0,
+    "spatialSourceRelationConstantsInCore": 0
+  },
+  "proposedDescriptor": {
+    "propertyName": "qualitativeRelationClosure",
+    "methodId": "method:core:declarative-qualitative-relation-closure",
+    "capabilities": ["qualitative-relation-closure", "inverse-relations", "multi-relation-output", "proof-tree-production"],
+    "inputTypes": ["declarative-qualitative-relation-system", "typed-qualitative-relation-facts", "relation-query"],
+    "outputTypes": ["semantic-values", "relation-derivation-trees"],
+    "preconditions": ["validated-finite-relation-system", "finite-relation-graph", "bounded-derivation-policy"],
+    "soundness": "sound-for-declared-reciprocal-inverses-and-binary-composition-rules",
+    "completeness": "complete-for-the-bounded-least-fixed-point-of-the-declared-relation-system",
+    "uncertaintySemantics": "explicit-unknown-inconsistency-malformation-and-resource-limit",
+    "proofKind": "one-replayable-inverse-or-composition-tree-per-output-relation",
+    "costModel": "bounded-semi-naive-binary-relation-closure-v1",
+    "implementationVersion": "1"
+  },
+  "implementationIdentity": {
+    "module": "src/reasoning/qualitative-relation-closure.mjs",
+    "sha256": "6214f431c459ab905e481ed02328dcf1b989d4e3ffaf4981eb493d84b3d33e44"
+  },
+  "remainingGap": "No test or fresh claim is made. The generic descriptor and engine route are now registered; the protected official test configurations remain sealed."
+}

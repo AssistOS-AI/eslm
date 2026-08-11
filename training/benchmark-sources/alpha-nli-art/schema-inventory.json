@@ -1,0 +1,21 @@
+{
+  "format": "eslm-alpha-nli-art-schema-inventory-v1",
+  "sourceSetSha256": "b2e3ea025d1f5771264716bd6b5a4cabd6a28bb16c96d7a4035bcec10f6d2c9c",
+  "recordFields": ["story_id", "obs1", "obs2", "hyp1", "hyp2"],
+  "labelDomain": ["1", "2"],
+  "files": [
+    {"split":"train","kind":"records","rows":169654,"bytes":47306303,"sha256":"23839e688ba80b8b0d46bde6fef70d09fbaa53d810b6d135e3b61ed664267e0c"},
+    {"split":"train","kind":"labels","rows":169654,"bytes":339308,"sha256":"f6876a0da8158651647ed7da9acd33d13037fd009d707b6f6eb764c0bcdc2c5e"},
+    {"split":"dev","kind":"records","rows":1532,"bytes":431993,"sha256":"e8a7f2e50aa3812c1e998843888bc94519b2b1aae146a368799eedb235d3c51c"},
+    {"split":"dev","kind":"labels","rows":1532,"bytes":3064,"sha256":"d170382e8e562ab2506175b0b01aa0edc851e5f53b2d199750509cdef39a89a1"},
+    {"split":"test","kind":"records","rows":3059,"bytes":864812,"sha256":"93bd86eb8961583b2181ac0834cd9bd26da3fd822f043a4d5bc7bda61a08834f"},
+    {"split":"test","kind":"labels","rows":3059,"bytes":6118,"sha256":"f4ffa9df8f82f0e617d9c225dfe0f861889d1a4a9099ea3742633b1ca83899d6"}
+  ],
+  "splits": {
+    "train": {"rows":169654,"uniqueStoryIds":17801,"repeatedStoryIds":151853,"duplicateVisibleCases":1445,"identicalHypotheses":52,"recordsWithEmbeddedLineBreaks":74,"recordsWithReplacementCharacters":35,"labels":{"1":84832,"2":84822},"membershipSha256":"a1dcecaa9a88aa3c47e40100f892a62b5eb8ed2c5fcf07da0220f4eac06092e8"},
+    "dev": {"rows":1532,"uniqueStoryIds":1532,"repeatedStoryIds":0,"duplicateVisibleCases":0,"identicalHypotheses":0,"recordsWithEmbeddedLineBreaks":0,"recordsWithReplacementCharacters":0,"labels":{"1":781,"2":751},"membershipSha256":"7cf9885a3a4435ae34dd3c5f512d4de5d6c66367896afd641c0c2520ad6e9ab9"},
+    "test": {"rows":3059,"uniqueStoryIds":3059,"repeatedStoryIds":0,"duplicateVisibleCases":0,"identicalHypotheses":0,"recordsWithEmbeddedLineBreaks":0,"recordsWithReplacementCharacters":1,"labels":{"1":1578,"2":1481},"membershipSha256":"f20e72e0fa4b7331dc8f5f909598ee70ba344a0dcd450dff0b28aa640107458d"}
+  },
+  "anomalyPolicy": "Every schema-valid row remains in the frozen inventory. Repeated story identifiers reflect multiple pair constructions and are not treated as unique case keys. Duplicate visible train pairs, equal train hypotheses, embedded line breaks, and replacement characters are counted rather than discarded. Whitespace control characters are collapsed only in the task projection; source bytes remain unchanged.",
+  "validation": "Every record and label in all six official files passed the closed schema, answer-domain, row-count, byte-count, and SHA-256 checks."
+}

@@ -84,6 +84,42 @@ export function validateCanonicalRecord(record) {
   } else if (record.recordType === 'plan') {
     requireString(record, 'goalPattern');
     requireValue(Array.isArray(record.steps) && record.steps.length > 0, `${record.recordId} requires steps.`);
+  } else if (record.recordType === 'constraint') {
+    requireString(record, 'constraintKind');
+    if (record.constraintKind === 'property-value-domain') {
+      requireString(record, 'predicate');
+      requireValue(Array.isArray(record.values) && record.values.length > 0
+        && record.values.every((value) => typeof value === 'string' && value.length > 0),
+      `${record.recordId} property-value-domain requires non-empty string values.`);
+    } else if (record.constraintKind === 'induction-policy') {
+      requireString(record, 'predicate');
+      requireValue(record.enabled === true, `${record.recordId} induction policy must be explicitly enabled.`);
+      requireValue(typeof record.implicitQuestionTrigger === 'boolean', `${record.recordId} requires implicitQuestionTrigger.`);
+      requireValue(Number.isInteger(record.minSupport) && record.minSupport >= 1, `${record.recordId} requires minSupport >= 1.`);
+      requireValue(typeof record.minCoverage === 'number' && record.minCoverage > 0 && record.minCoverage <= 1,
+        `${record.recordId} requires minCoverage in (0, 1].`);
+      requireValue(['all', 'latest-support', 'latest-member'].includes(record.selection ?? 'all'),
+        `${record.recordId} has an invalid induction selection.`);
+    } else if (record.constraintKind === 'typed-relation-algebra') {
+      requireString(record, 'algebraId');
+      requireValue(Array.isArray(record.relations) && record.relations.length > 0,
+        `${record.recordId} typed relation algebra requires relations.`);
+      requireValue(record.relations.every((relation) => typeof relation?.id === 'string'
+        && typeof relation.semanticClass === 'string'
+        && (relation.targetFeatures === undefined || (relation.targetFeatures
+          && typeof relation.targetFeatures === 'object' && !Array.isArray(relation.targetFeatures)))),
+      `${record.recordId} has invalid typed relation definitions.`);
+      requireValue(Array.isArray(record.inverses) && record.inverses.every((inverse) =>
+        typeof inverse?.relationClass === 'string' && typeof inverse.inverseClass === 'string'),
+      `${record.recordId} has invalid typed relation inverses.`);
+      requireValue(Array.isArray(record.compositions) && record.compositions.every((composition) =>
+        typeof composition?.left === 'string' && typeof composition.right === 'string'
+        && Array.isArray(composition.results) && composition.results.length > 0
+        && composition.results.every((value) => typeof value === 'string')),
+      `${record.recordId} has invalid typed relation compositions.`);
+    } else {
+      requireValue(false, `${record.recordId} has unsupported constraintKind ${record.constraintKind}.`);
+    }
   }
   return record;
 }

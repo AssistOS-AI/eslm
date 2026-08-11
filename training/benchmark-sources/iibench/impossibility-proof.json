@@ -1,0 +1,42 @@
+{
+  "format": "eslm-structural-non-identifiability-proof-v1",
+  "scope": "IIBench syllogism gold-form selection under the published prompt and rename-invariant categorical input",
+  "claim": "The source gold is not a total function of the two visible categorical premises and figure when both a universal conclusion and its subaltern particular are logically entailed.",
+  "observables": [
+    "ordered premise forms",
+    "subject and predicate complement parity",
+    "figure",
+    "declared premise transformation and transformed position",
+    "term incidence graph up to bijective renaming"
+  ],
+  "developmentEvidence": {
+    "syllogisms": 304,
+    "structuralEquivalenceClasses": 88,
+    "conflictingClasses": 16,
+    "membersInConflictingClasses": 86,
+    "conflictFamilies": [
+      "A versus I",
+      "E versus O"
+    ]
+  },
+  "proof": [
+    "A and I share quality and differ only in quantity; under traditional existential import, A entails I. E similarly entails O.",
+    "The development source contains alpha-isomorphic task structures with the same premise forms, complement parity, figure, and transformation provenance, but one gold form is A while another is I, or one is E while another is O.",
+    "A deterministic method invariant under complete term renaming must return the same conclusion form for members of one such structural class.",
+    "The source scorer requires different non-equivalent gold forms for those members because its equivalence closure does not include subalternation.",
+    "Therefore no deterministic rename-invariant method using only the published prompt observables can match every gold form. Supplying the hidden mood would resolve the target but would change the visible task contract by declaring the desired conclusion form."
+  ],
+  "systemBehavior": "ESLM returns the strongest low-complement categorical conclusion entailed in every satisfying finite population. All 304 development syllogism results are sound; 57 are not equivalent to the source-selected weaker gold form.",
+  "prohibitedWorkarounds": [
+    "term or entity vocabulary dispatch",
+    "row identifiers",
+    "source order",
+    "gold mood lookup",
+    "answer frequency tie breaking"
+  ],
+  "resolutionOptions": [
+    "score every sound entailed categorical conclusion",
+    "include the requested mood or conclusion form in the visible task",
+    "retain the strict gold-equivalence score and classify stronger sound conclusions separately"
+  ]
+}

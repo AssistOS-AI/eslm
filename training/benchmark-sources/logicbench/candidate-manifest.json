@@ -1,0 +1,35 @@
+{
+  "format": "eslm-logicbench-candidate-freeze-v1",
+  "protocol": "controlled-logical-entailment-development-v1",
+  "sourceSetSha256": "88c20f31a1c56ffc00a68aa2cf42a8a52f2547dcfee223be8e20a1cd022be078",
+  "dependencies": {
+    "src/benchmark-adapters/logicbench.mjs": "09910102c570c4e54c97129bd4a706d43763487a8cd2fc76221c6f751fde842e",
+    "src/benchmark-adapters/controlled-default-argument.mjs": "eab91dc14786514c884833e59a17237fbeb51bf04bc50ed545fea0ecc37b80d6",
+    "src/reasoning/finite-entailment.mjs": "7870db5d68c758632347e53dbe52f5aca6b75c9664448033685015334548d91d",
+    "src/reasoning/preferred-entailment.mjs": "6e01ce1f59ce48c8f538d7f097eb5c88a92ee01ccc8a0c3e344ebe45f6548d31",
+    "tests/logicbench-symbolic.test.mjs": "3d6d1c319c36b2724abc07e93bd13fe14c352b55a8c1f5680927fda7ed4275a2"
+  },
+  "development": {
+    "tested": 12908,
+    "available": 12908,
+    "correct": 10644,
+    "accuracy": 0.8246048961884103,
+    "directSymbolicSolved": 12250,
+    "directSymbolicRate": 0.9490238611713666,
+    "codingAgentInvocations": 0
+  },
+  "verification": {
+    "focused": "11/11 passed",
+    "repositoryTests": "132/132 passed",
+    "coreGuardian": "eligible",
+    "freshOpened": false
+  },
+  "knownDevelopmentGaps": [
+    "Some natural clauses align to the wrong proposition when two predicates share most lexical material.",
+    "Entity and pronoun identity is incomplete in quantified and cross-person arguments.",
+    "Existential paraphrases do not yet have a complete predicate-semantic representation.",
+    "Several default, exception, and open-domain constructions remain unparsed or under-specified.",
+    "The preferred-model implementation is finite and bounded; it is not unrestricted first-order default logic."
+  ],
+  "freshPolicy": "Run the BQA and MCQA evaluation source exactly once through the frozen dependencies. Publish aggregate and bounded stratum counts only. Never use the resulting failures for this candidate."
+}

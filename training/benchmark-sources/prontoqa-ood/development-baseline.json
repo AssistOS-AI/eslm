@@ -1,0 +1,63 @@
+{
+  "format": "eslm-prontoqa-development-baseline-v1",
+  "executedAt": "2026-08-11",
+  "evidenceState": "development-visible-stratified-baseline",
+  "benchmark": "PrOntoQA-OOD",
+  "source": {
+    "revision": "0a6412b6fddf46324a1cb96e066dd7b3d89b87d6",
+    "datasetSha256": "0becba04e1e1eb80593709c6a3db2a46badd5587a29587ffaeb68ed5068c9de9",
+    "availableOfficialTestExamples": 7900,
+    "developmentPool": 1580,
+    "sealedFreshPool": 6320
+  },
+  "sample": {
+    "policy": "two stable development members from each of 79 official JSON experiment files",
+    "seed": "eslm-prontoqa-ood-development-baseline-v1",
+    "membershipSha256": "5bd6fb91a0191c53148f5a7e5fbfee6276613ac3b950ed837bd8282a4b2bf8a3",
+    "tested": 158,
+    "available": 7900,
+    "comprehensive": false
+  },
+  "execution": {
+    "languageRoute": "direct-symbolic-source-adapter",
+    "codingAgentInvocations": 0,
+    "normalizationInvocations": 0,
+    "method": "generic bounded finite-entailment over source-compiled Boolean formulas",
+    "maxAtoms": 20,
+    "correct": 103,
+    "accuracy": 0.6518987341772152,
+    "statusCounts": {
+      "SOLVED": 103,
+      "RESOURCE_LIMIT": 55
+    },
+    "solvedSemanticErrors": 0,
+    "solvedAtomRange": [7, 20],
+    "resourceLimitAtomRange": [23, 44]
+  },
+  "byRuleFamily": {
+    "AndElim": { "tested": 34, "correct": 18, "resourceLimit": 16, "accuracy": 0.5294117647058824 },
+    "AndIntro": { "tested": 44, "correct": 19, "resourceLimit": 25, "accuracy": 0.4318181818181818 },
+    "Composed": { "tested": 18, "correct": 18, "resourceLimit": 0, "accuracy": 1 },
+    "ModusPonens": { "tested": 2, "correct": 1, "resourceLimit": 1, "accuracy": 0.5 },
+    "OrElim": { "tested": 14, "correct": 14, "resourceLimit": 0, "accuracy": 1 },
+    "OrIntro": { "tested": 10, "correct": 7, "resourceLimit": 3, "accuracy": 0.7 },
+    "ProofByContra": { "tested": 8, "correct": 8, "resourceLimit": 0, "accuracy": 1 },
+    "ProofsOnly": { "tested": 28, "correct": 18, "resourceLimit": 10, "accuracy": 0.6428571428571429 }
+  },
+  "adapterSemantics": {
+    "sourceLanguage": "The source-specific adapter accepts only the frozen controlled templates for unary individual assertions, universally quantified class implications, explicit negation, conjunction, disjunction, and proof queries.",
+    "grounding": "Universal source rules are instantiated for every explicitly named entity in the same case. Entity and predicate identifiers are normalized generically and do not depend on example values or expected proof steps.",
+    "reasoning": "The existing generic finite-entailment method searches Boolean assignments and returns either an exhaustive entailment witness, a countermodel, inconsistent context, or a resource limit.",
+    "proofScoring": "This baseline establishes semantic entailment with a finite witness. It does not claim equivalence to the official natural-language proof-step evaluator; official reference proofs remain host-only."
+  },
+  "frozenDependencies": {
+    "node": "v22.23.1",
+    "adapterPath": "src/benchmark-adapters/prontoqa.mjs",
+    "adapterSha256": "4db484384c039046daac9187977dfc9ce631e82f1ce023a3516f16f37b936a0d",
+    "reasonerPath": "src/reasoning/finite-entailment.mjs",
+    "reasonerSha256": "7870db5d68c758632347e53dbe52f5aca6b75c9664448033685015334548d91d",
+    "testPath": "tests/prontoqa-adapter.test.mjs",
+    "testSha256": "574105080f73d13db01b18a100261654fba8de36462dc3aa963776e52afb4ec1"
+  },
+  "claimBoundary": "This is a deterministic development-visible source-adapter baseline over 158 of 7,900 available official cases. It is not a full-corpus score, an untouched fresh result, an official leaderboard result, or evidence that natural-language proof traces match the official evaluator."
+}

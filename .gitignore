@@ -7,6 +7,4 @@ coverage/
 training/work/
 training/candidates/
 training/.cache/
-training/datasets/**
-!training/datasets/.gitkeep
 docs/results/*.tmp

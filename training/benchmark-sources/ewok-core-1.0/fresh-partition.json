@@ -1,0 +1,15 @@
+{
+  "format": "eslm-benchmark-partition-v1",
+  "benchmark": "ewok-core-1.0-analysis-snapshot",
+  "sourceDecisions": 8744,
+  "developmentDecisions": 110,
+  "freshDecisions": 8634,
+  "developmentMembershipSha256": "cb88f34cba2a37a8f1e6a9b353818ab8e386754b4a7c66752010da9955f7fd63",
+  "freshMembershipSha256": "83437a3163a2d1efa6dadac0e789b5db670ed90c8f4df7d8065254adba2b6a46",
+  "membershipPolicy": "The existing stable round-robin development probe takes one decision from each domain, dataset-version, and target-position stratum. Every other decision in the frozen analysis snapshot is fresh.",
+  "strata": 110,
+  "minimumFreshDecisionsPerStratum": 14,
+  "maximumFreshDecisionsPerStratum": 223,
+  "labelPolicy": "Membership was computed from case identifiers and public metadata. Preferred-context values were not consulted to choose membership.",
+  "protectedDataPolicy": "No protected item identifier or sentence is stored in this receipt. Source rows remain in the ignored authorized cache."
+}

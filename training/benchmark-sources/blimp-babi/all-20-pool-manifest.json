@@ -1,0 +1,15 @@
+{
+  "format": "eslm-benchmark-pool-manifest-v1",
+  "sourceId": "babi-en-10k-v1.2",
+  "archiveSha256": "84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c",
+  "visibility": "development-visible-official-training-only",
+  "selectionPolicy": "Complete enumeration of every parsed question in each of the twenty official en-10k training files; no sampling and no omitted valid row.",
+  "taskFamilies": 20,
+  "casesPerTask": 10000,
+  "cases": 200000,
+  "membershipSha256": "1a1ddc5829f63a9ee4912575b30ae6a039faee35aa4ed9e2db7f54b12110d347",
+  "executionPartitioning": "The evaluator processes one source task file and its 10,000 questions at a time, releases per-case successes after witness validation, and retains aggregate counts plus bounded failure evidence. The complete immutable archive remains frozen in the ignored source cache.",
+  "testEvidence": "Official test files were not opened, parsed, scored, sampled, or used for diagnosis in this cycle.",
+  "languageAgent": "disabled",
+  "oracleIsolation": "Answers are joined only inside the host scorer after label-free typed tasks have executed. Support-line annotations are not supplied to the compiler or reasoner."
+}

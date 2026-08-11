@@ -1,0 +1,8 @@
+{
+  "protocol": "sparp-ps1-development-failures-v1",
+  "sourceSplit": "official-validation",
+  "tested": 2397,
+  "failureCount": 0,
+  "failures": [],
+  "scope": "This empty list describes only the complete visible development split at the recorded candidate checkpoint. It makes no claim about the unexecuted official test split."
+}

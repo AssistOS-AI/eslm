@@ -1,0 +1,42 @@
+{
+  "format": "eslm-benchmark-pre-fresh-freeze-v1",
+  "frozenAt": "2026-08-11",
+  "benchmark": "PrOntoQA-OOD",
+  "freshPolicy": {
+    "partitionCount": 6320,
+    "partitionMembershipSha256": "68300189c0e28fc30b0629b76c7f045dbe9571fde45fa00ea96838836f3a1ba4",
+    "execution": "One aggregate-only execution after this dependency freeze",
+    "disclosure": "No fresh text, reference proof, label, stable identifier, or per-case outcome may be returned or printed."
+  },
+  "developmentAcceptance": {
+    "completeDevelopmentTested": 1580,
+    "completeDevelopmentCorrect": 1580,
+    "independentlyVerifiedWitnesses": 1580,
+    "codingAgentInvocations": 0,
+    "resultPath": "training/benchmark-sources/prontoqa-ood/development-scalable-result.json",
+    "resultSha256": "7ee98f5f6760a4955737cfe74016d9d2e51d84c7c24d45340616d469d73ae237"
+  },
+  "guardian": {
+    "proposalPath": "training/benchmark-sources/prontoqa-ood/core-change-proposal.json",
+    "proposalSha256": "1d4e1fde896adec8db39d6d13bc4b1dfcf9ab42c41b992ef44de4fcc85bf80c0",
+    "eligibleForImplementation": true,
+    "failures": []
+  },
+  "dependencies": {
+    "training/benchmark-sources/prontoqa-ood/source-manifest.json": "f65b609ae787005b3dfbc509e0c04f96ce9b8dcc3462e5e7764c95a0b4c67ace",
+    "training/benchmark-sources/prontoqa-ood/partition-manifest.json": "58b8d23699e9978258c9e260e1883ea7951ff8a8aa841133feecf7b9b9f30ef2",
+    "src/benchmark-adapters/prontoqa.mjs": "e501e6b6bead5b13eecacbaa3bca40607d3e585f2e65ce099f35fb6cd9c7fb37",
+    "src/reasoning/sat-entailment.mjs": "c570251279d6863300fefaf45e53f326d12ca6a295aeffef8067ebe3d41b14f5",
+    "src/reasoning/finite-entailment.mjs": "7870db5d68c758632347e53dbe52f5aca6b75c9664448033685015334548d91d",
+    "src/reasoning/capability-registry.mjs": "144538d606f5a0da927a8f0f005fa8d58620b5e9c3c80afa8170c421d18b9e64",
+    "src/runtime/engine.mjs": "436bed8af06d314a40ae3f39777451d5beed868465d16c69c6e83e0101116eb1",
+    "tests/prontoqa-adapter.test.mjs": "c6fe31de7f01387d8b634a48a18e35e1f043d6eaa309d480e1b0b1b3b61750f8",
+    "tests/sat-entailment.test.mjs": "9b5080eb5aeaed36be41f5b2c76fc5150f431a9d7b2ffdc3ad302f30e6d503c9"
+  },
+  "verification": {
+    "focused": { "tested": 17, "passed": 17, "failed": 0 },
+    "repository": { "tested": 186, "passed": 185, "failed": 1 },
+    "repositoryFailure": "The documentation matrix requires the new generic method ID in docs/reasoning-methods.html. That documentation-only edit is intentionally delegated because this task forbids DS and HTML changes; no behavioral, adapter, source, partition, or oracle test failed."
+  },
+  "runtime": { "node": "v22.23.1", "languageAgent": "not invoked" }
+}

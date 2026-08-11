@@ -1,0 +1,33 @@
+{
+  "format": "eslm-benchmark-source-manifest-v1",
+  "id": "reclor-official-v1",
+  "upstreamOwner": "Weihao Yu, Zihang Jiang, Yanfei Dong, and Jiashi Feng",
+  "repositoryUrl": "https://github.com/yuweihao/reclor",
+  "paperUrl": "https://openreview.net/forum?id=HJgJtT4tvB",
+  "codeRevision": "19b9d6c6025866ceafb4a4028819654b3817069b",
+  "codeReadmeSha256": "0fa813889fa52cc20ce6bc28318c1ead7c7e404c534afc4d4cb9a84922108465",
+  "dataEdition": "official GitHub release v1",
+  "archive": {
+    "authorizedUrl": "https://github.com/yuweihao/reclor/releases/download/v1/reclor_data.zip",
+    "bytes": 1974536,
+    "sha256": "fc64ad8755e88d7ab353a4679101f6b9a7f22c7718ce57f993abd974920f055b",
+    "encrypted": true,
+    "passwordEvidence": "The official pinned README publishes the extraction password and limits delivery to non-commercial research purpose."
+  },
+  "cache": "training/.cache/benchmarks/reclor",
+  "credentialsRequired": false,
+  "networkAtRuntime": false,
+  "sourceRows": 6138,
+  "visibleValidatedRows": 5138,
+  "sourceSetSha256": "055b5606c33a92ed1c8e77f6de750281946d105d4882d36dd505b2a1a287a2b2",
+  "datasetLicense": "no-explicit-dataset-license-identifier",
+  "licenseEvidence": "The official README states for_non-commercial_research_purpose_only as the data-delivery condition. Neither the repository nor the delivered archive states a separate dataset license identifier.",
+  "usePolicy": "Local non-commercial research and evaluation; no redistribution of source rows.",
+  "citation": "Weihao Yu, Zihang Jiang, Yanfei Dong, and Jiashi Feng. ReClor: A Reading Comprehension Dataset Requiring Logical Reasoning. ICLR 2020.",
+  "redistribution": "Only ESLM-authored adapters, aggregate inventories, digests, and non-row receipts are committed. The encrypted archive and extracted source remain in the ignored local cache.",
+  "splitLifecycle": {
+    "train": "training-visible",
+    "validation": "development-visible-with-host-only-oracle",
+    "test": "sealed-evaluator-only; immutable byte identity checked; content not opened by the adapter; no loader exported"
+  }
+}

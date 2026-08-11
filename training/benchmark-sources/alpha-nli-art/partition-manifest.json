@@ -1,0 +1,10 @@
+{
+  "format": "eslm-alpha-nli-art-split-lifecycle-v1",
+  "source": "alpha-nli-art-official-iclr2020",
+  "policy": "Preserve the official train, development, and test boundaries. No labels participate in membership because the upstream archive defines the files.",
+  "train": {"rows":169654,"visibility":"training-visible-but-unused-in-this-cycle","membershipSha256":"a1dcecaa9a88aa3c47e40100f892a62b5eb8ed2c5fcf07da0220f4eac06092e8"},
+  "development": {"rows":1532,"visibility":"task-text-visible-host-only-oracle","membershipSha256":"7cf9885a3a4435ae34dd3c5f512d4de5d6c66367896afd641c0c2520ad6e9ab9"},
+  "fresh": {"rows":3059,"visibility":"sealed-official-test-split-no-loader-exported","membershipSha256":"f20e72e0fa4b7331dc8f5f909598ee70ba344a0dcd450dff0b28aa640107458d","executed":false},
+  "oracleIsolation": "Source validation checks the separate label file's identity, length, and value domain. Only the development collector can join a label to a visible task. No public function loads test tasks or joins test labels, and no test prediction exists.",
+  "freshOpeningGate": "A one-shot fresh run requires an accepted development method with valid witnesses, metamorphic and contrastive controls, a pre-run behavior freeze, and explicit approval."
+}

@@ -1,0 +1,36 @@
+{
+  "format": "eslm-ewok-fresh-aggregate-v1",
+  "benchmark": "ewok-core-1.0-analysis-snapshot",
+  "partitionMembershipSha256": "83437a3163a2d1efa6dadac0e789b5db670ed90c8f4df7d8065254adba2b6a46",
+  "runPolicy": "single aggregate evaluation after candidate freeze; no item outcomes retained or inspected",
+  "total": 8634,
+  "correct": 3361,
+  "ties": 4245,
+  "wrong": 1028,
+  "accuracy": 0.3892749594625898,
+  "byDomain": {
+    "agent-properties": { "total": 2230, "correct": 765, "ties": 1351, "wrong": 114, "accuracy": 0.3430493273542601 },
+    "material-dynamics": { "total": 1550, "correct": 476, "ties": 1039, "wrong": 35, "accuracy": 0.30709677419354836 },
+    "material-properties": { "total": 238, "correct": 79, "ties": 137, "wrong": 22, "accuracy": 0.3319327731092437 },
+    "physical-dynamics": { "total": 140, "correct": 65, "ties": 50, "wrong": 25, "accuracy": 0.4642857142857143 },
+    "physical-interactions": { "total": 550, "correct": 215, "ties": 245, "wrong": 90, "accuracy": 0.39090909090909093 },
+    "physical-relations": { "total": 840, "correct": 420, "ties": 330, "wrong": 90, "accuracy": 0.5 },
+    "quantitative-properties": { "total": 370, "correct": 135, "ties": 175, "wrong": 60, "accuracy": 0.36486486486486486 },
+    "social-interactions": { "total": 320, "correct": 52, "ties": 262, "wrong": 6, "accuracy": 0.1625 },
+    "social-properties": { "total": 356, "correct": 103, "ties": 205, "wrong": 48, "accuracy": 0.2893258426966292 },
+    "social-relations": { "total": 1560, "correct": 696, "ties": 376, "wrong": 488, "accuracy": 0.4461538461538462 },
+    "spatial-relations": { "total": 480, "correct": 355, "ties": 75, "wrong": 50, "accuracy": 0.7395833333333334 }
+  },
+  "developmentResultAtFreeze": { "total": 110, "correct": 110, "ties": 0, "wrong": 0, "accuracy": 1 },
+  "agentInvocations": 0,
+  "behaviorHashes": {
+    "src/reasoning/semantic-compatibility.mjs": "91c467daf35783cb696201fe1eac9ba521c7c5fa38a40111d3854bb4f10884dd",
+    "src/runtime/runtime.mjs": "f3c4d3fbde2a81954a45ee4509f7cd2cef2e6fd360b9321946346702709bb3b8",
+    "src/public-kb-providers/world-relations.mjs": "db260742469bb2a624e8bc51f1f8d2b0b57a77cd788be2ed3438344d38206068",
+    "training/KBs/world-relations-1.0/canonical/ontology.json": "414143a2bdca92ca514b240bd9598036c07af607ab92e560c6ec7b470ed8e79a",
+    "training/KBs/world-relations-1.0/package/ontology/all.json": "7f669ba6c8dd8c9b0d7c81da2fed4f7a8428a9b208f3a031c97ddb42d9873436",
+    "training/KBs/world-relations-1.0/package/manifest.json": "eec8cf15701288f86282ce9a655815e847af9916f794d0965b6d065d96a520d5",
+    "tests/semantic-compatibility.test.mjs": "6779b6078f6950bb7ffbce94dfdbb41ccb65580f396a8a65697c33ba42645cac"
+  },
+  "interpretation": "The 110-case development probe was covered too narrowly by the authored ontology. The frozen fresh result is the current generalization evidence and must not be replaced by the development score. A later candidate requires a new version and a new untouched evaluation partition."
+}

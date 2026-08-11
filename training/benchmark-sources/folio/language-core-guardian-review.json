@@ -1,0 +1,47 @@
+{
+  "format": "eslm-core-change-guardian-review-v1",
+  "proposal": "core-change-proposal.json",
+  "proposalSha256": "543189fb02f786821321c27e6499d9df98105424bc925edf977bd991ca15f4dc",
+  "mechanicalAudit": {
+    "eligibleForImplementation": true,
+    "failures": []
+  },
+  "verdict": "accept-development-candidate-defer-runtime-registration",
+  "genericAlgorithmSoundWithinDeclaredFragment": true,
+  "promotionEvidenceSufficient": false,
+  "acceptedScope": "The bounded language mechanisms may remain in the unregistered generic quantified-English research module and may be invoked by the label-isolating development adapter.",
+  "generalityEvidence": [
+    "Nonce entity constants, classes, binary relations, object constants, and surface verbs are renamed together while preserving the typed formula shape.",
+    "Exchanging the relative and main predications changes implication scope and therefore changes the audited formula.",
+    "Implication and biconditional surfaces produce different typed operators under otherwise identical renamed vocabulary.",
+    "Shared-predicate subject coordination and complete-clause coordination preserve different term assignments.",
+    "Premise formula reordering preserves the query prediction.",
+    "The exact semantic audit compares alpha-normalized typed formulas and reports mismatches without using annotations to repair candidates or generate predictions.",
+    "The generic module contains no benchmark, dataset, row, answer, source-family, or inspected-example dispatch string."
+  ],
+  "abstentionAndAmbiguity": [
+    "A relative-clause boundary is accepted only when all successful boundaries yield one typed formula; competing formulas remain AMBIGUOUS.",
+    "A binary relation or constant resolver tie remains AMBIGUOUS.",
+    "Unsupported lexical evidence falls through to the previously accepted controlled constructions rather than claiming a new typed coreference parse.",
+    "Input length and recursive composition retain the existing 4,096-character and depth-24 bounds."
+  ],
+  "registrationBlockers": [
+    "Only 545 of 1,292 development sentence slots compile and only 383 of 1,279 parseable official annotations match exactly.",
+    "Only 4 of 204 complete natural-language cases are correct because every premise and the conclusion must compile exactly enough to execute.",
+    "The pinned official release exposes no public untouched test split, so the required fresh language-coverage evidence is unavailable.",
+    "Registering the module in Stage A would require explicit specification, capability, engine, documentation, and wider cross-source review outside this delegated change boundary."
+  ],
+  "rejectedRelaxations": [
+    "Do not choose one of several supported relative-clause boundaries from lexical overlap.",
+    "Do not collapse subject coordination and complete-clause coordination into an untyped conjunction.",
+    "Do not invent a binary predicate, object class, entity constant, or pronoun referent when the adapter resolver has no unique typed mapping.",
+    "Do not use official formulas or labels as parser inputs, candidate repairs, or answer selectors.",
+    "Do not branch on source names, record identifiers, hashes, expected answers, or inspected vocabulary."
+  ],
+  "coreRegistrationChanged": false,
+  "engineChanged": false,
+  "registryChanged": false,
+  "protectedEvidenceOpened": false,
+  "languageAgentInvocations": 0,
+  "nextGate": "Acquire a genuinely untouched authorized language-evidence partition, freeze candidate dependencies before execution, and require improved exact semantic-formula coverage without regression before proposing Stage A registration."
+}

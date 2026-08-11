@@ -1,0 +1,59 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Generic finite first-order countermodel construction and independent verification",
+  "independentExamples": [
+    "A unary quantified argument whose conclusion adds an unsupported predicate",
+    "A binary relation argument whose converse is not entailed",
+    "Development-visible formal arguments with unrelated predicate signatures and constant assignments"
+  ],
+  "inputTypes": [
+    "typed function-free first-order argument",
+    "finite nonempty domain size",
+    "explicit Boolean and constant-assignment budgets"
+  ],
+  "outputTypes": [
+    "total finite interpretation for every declared constant and predicate",
+    "countermodel verification witness",
+    "structured resource or no-model-in-domain status"
+  ],
+  "preconditions": [
+    "closed validated formula AST",
+    "consistent predicate arity",
+    "function-free terms",
+    "finite declared domain"
+  ],
+  "invariants": [
+    "search branches only on logical structure and typed symbols",
+    "every returned interpretation satisfies every premise and falsifies the conclusion",
+    "SAT output is replayed by an independent first-order evaluator",
+    "failure to find a model in one domain is not promoted to unrestricted validity"
+  ],
+  "uncertaintySemantics": "RESOURCE_LIMIT and NO_COUNTERMODEL_IN_DECLARED_DOMAIN are explicit and neither means globally valid.",
+  "proofBehavior": "The constructor grounds quantified formulas for each bounded constant assignment, requests a DPLL countermodel, decodes a total interpretation, and accepts it only after independent first-order evaluation.",
+  "resourceBounds": {
+    "domainSize": "1 through 8",
+    "defaultMaximumConstantAssignments": 2187,
+    "BooleanSearch": "inherits explicit scalable Boolean entailment semantic-atom, variable, clause, and search-node bounds"
+  },
+  "failureStatuses": [
+    "RESOURCE_LIMIT",
+    "NO_COUNTERMODEL_IN_DECLARED_DOMAIN"
+  ],
+  "tests": [
+    "unit",
+    "metamorphic",
+    "contrastive",
+    "regression"
+  ],
+  "kbMigration": "No KB schema or package changes. The method consumes typed formulas and does not reinterpret stored facts or rules.",
+  "renameTestPassed": true,
+  "renamedDimensions": [
+    "entity",
+    "predicate",
+    "value",
+    "ordering"
+  ],
+  "forbiddenDispatchAuditPassed": true,
+  "methodId": "method:core:finite-first-order-countermodel",
+  "freshPolicy": "The 300-member LogicSkills fresh partition remains unopened until symbolization and validity candidates are also frozen or a separately declared countermodel-only fresh claim is approved."
+}

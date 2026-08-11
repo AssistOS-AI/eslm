@@ -1,0 +1,36 @@
+{
+  "format": "eslm-clutrr-development-fresh-partition-v1",
+  "source": {
+    "repository": "https://github.com/facebookresearch/clutrr",
+    "repositoryCommit": "d045fae289d3746503677ceed7631c999202501e",
+    "release": "EMNLP-2019-paper-release",
+    "license": "CC-BY-NC-4.0",
+    "accessConstraint": "Use and redistribution remain subject to the source's non-commercial license. Raw rows stay in the ignored cache."
+  },
+  "development": {
+    "archiveSha256": "6b1ca22a4a48710124f15c848494db3c355373f931a6d4e09fea10b5cb569334",
+    "visibility": "inspected development evidence",
+    "relationDepths": [2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "samplePolicy": "12 cases per relation depth selected by adapter stable hash",
+    "seed": "eslm-public-probe-clutrr-v1",
+    "sampled": 108
+  },
+  "fresh": {
+    "archiveSha256": "9350c52ffa32d91d87e6b30123421e4b82ebb2cd819181d3333bdde2b07dbb90",
+    "inspectionStateAtReservation": "archive bytes and filename known; members and rows uninspected",
+    "selectionPolicy": "Use the official test member at each available relation depth and select 12 cases per accepted member by adapter stable hash.",
+    "seed": "eslm-clutrr-fresh-relation-algebra-v1",
+    "acceptedSourceRows": 101,
+    "sampled": 12,
+    "membershipCanonicalization": "Derived case IDs sorted lexically, joined with LF, and terminated by LF. IDs are not retained in this receipt.",
+    "membershipSha256": "1877c4df76349fa0a9eada5bccae94cc95180a45b949daab8dcce269d951ef6c",
+    "oracleVisibility": "host-scorer-only after candidate freeze",
+    "rejectedMembersBeforeScoring": 4,
+    "rejectionReason": "The frozen adapter rejected noise-variant members whose structured edge and relation cardinalities differ."
+  },
+  "privacy": {
+    "sourceSentencesRetained": false,
+    "caseIdentifiersRetained": false,
+    "caseLabelsRetained": false
+  }
+}

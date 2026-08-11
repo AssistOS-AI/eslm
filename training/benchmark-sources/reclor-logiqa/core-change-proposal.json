@@ -1,0 +1,32 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Bounded monadic categorical argument candidate validation",
+  "implementationState": "implemented-as-unregistered-research-candidate",
+  "independentExamples": [
+    "A sufficient-premise task where an existential negative fact and a renamed class inclusion entail a renamed conclusion.",
+    "A necessary-conclusion task where an existential witness propagates through a renamed inclusion and produces a different categorical conclusion."
+  ],
+  "inputTypes": ["categorical-argument-selection-v1", "monadic categorical propositions", "semantic candidate identifiers"],
+  "outputTypes": ["unique candidate identifier", "underdetermined", "inconsistent context", "resource limit", "unparsed"],
+  "preconditions": [
+    "Every premise, conclusion when required, and candidate is a complete typed all, none, some, or some-not proposition.",
+    "The question operation is either select-entailed-candidate or select-sufficient-premise.",
+    "No source sentence or candidate is ignored during projection.",
+    "Candidate identifiers carry join identity only and do not affect entailment."
+  ],
+  "invariants": [
+    "Candidate permutation cannot change the selected semantic candidate.",
+    "Premise ordering cannot change satisfiability or entailment.",
+    "Complete renaming of terms and candidate identifiers preserves the structural result.",
+    "A candidate qualifies only when adding the negated query makes the monadic constraint system inconsistent."
+  ],
+  "uncertaintySemantics": "Zero or several qualifying candidates return UNDERDETERMINED. An inconsistent base returns INCONSISTENT_CONTEXT. Unsupported language remains NO_APPLICABLE_METHOD at the adapter boundary.",
+  "proofBehavior": "Every qualifying candidate includes a literal-closure conflict. Every nonqualifying candidate includes an explicit finite object-type countermodel. verifyCategoricalArgumentSelection independently checks derivation-edge licenses or evaluates every premise and the query in the returned object model.",
+  "resourceBounds": {"maximumTerms":32,"maximumPropositions":128,"maximumCandidates":16,"maximumClosureStepsPerWitness":16384},
+  "failureStatuses": ["UNPARSED", "UNDERDETERMINED", "INCONSISTENT_CONTEXT", "RESOURCE_LIMIT"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "None. The candidate is unregistered, changes no package schema, and is called only by the two source adapters after strict projection.",
+  "renameTestPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "forbiddenDispatchAuditPassed": true
+}

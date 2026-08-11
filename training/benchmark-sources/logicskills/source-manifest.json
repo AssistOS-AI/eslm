@@ -1,0 +1,50 @@
+{
+  "protocol": "logicskills-official-source-manifest-v1",
+  "benchmarkId": "logicskills-arxiv-2602.06533v2",
+  "title": "LogicSkills: A Structured Benchmark for Formal Reasoning in Large Language Models",
+  "authors": ["Brian Rabern", "Philipp Mondorf", "Barbara Plank"],
+  "paper": {
+    "landingPage": "https://arxiv.org/abs/2602.06533v2",
+    "pdfUrl": "https://arxiv.org/pdf/2602.06533v2",
+    "localCache": "training/.cache/benchmarks/logicskills/paper/2602.06533v2.pdf",
+    "bytes": 341283,
+    "sha256": "d6e09bfcb72a5188456aca9a682984a98e3b079e434a949e137696f527ab5616"
+  },
+  "officialRepository": {
+    "url": "https://github.com/brianrabern/LogicSkills",
+    "branch": "main",
+    "revision": "1f23e684d6b1a465047f8b0d833d9b9b3388441a",
+    "archiveUrl": "https://github.com/brianrabern/LogicSkills/archive/1f23e684d6b1a465047f8b0d833d9b9b3388441a.tar.gz",
+    "localArchive": "training/.cache/benchmarks/logicskills/source/1f23e684d6b1a465047f8b0d833d9b9b3388441a.tar.gz",
+    "archiveBytes": 45726962,
+    "archiveSha256": "8f25d38f2fc0efd7eaed73e801bc01202076544ca776b4a0861a205341275286",
+    "localExtractedRoot": "training/.cache/benchmarks/logicskills/extracted/LogicSkills-1f23e684d6b1a465047f8b0d833d9b9b3388441a",
+    "completeArchiveRetained": true,
+    "extractedFiles": 433,
+    "extractedBytes": 454600095
+  },
+  "licenses": {
+    "code": "MIT",
+    "codeLicenseFile": "LICENSE",
+    "codeLicenseSha256": "017cef947b225901ab05e37837a04e8e2e6af34ae1ce9cdf66fdacb75936dcd0",
+    "benchmarkData": "CC-BY-4.0",
+    "benchmarkDataEvidence": [
+      "The official repository README explicitly assigns CC-BY-4.0 to the question sets and JSONL data.",
+      "The official logicskills dataset card declares license: cc-by-4.0."
+    ],
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "canonicalBenchmarkData": {
+    "path": "logicskills/data",
+    "files": 3,
+    "rows": 1500,
+    "sourceSetSha256": "c9c6f3c90503edb8cba5c723b9517778b8267990738a4e7ea9a3b283b031e1c4",
+    "validation": "All normalized fixed-evaluation JSONL rows were streamed and checked against task-dependent closed schemas. No valid row was discarded, sampled away, or rejected by size."
+  },
+  "archiveBoundary": "The complete author archive, including full evaluator question sets and verification code, is retained immutably. The dependency-free ESLM adapter consumes the authors' normalized 1,500-row benchmark export and does not execute the Python evaluator or archived strings.",
+  "acquisition": {
+    "sourceClass": "primary-author-release",
+    "unofficialMirrorsUsed": false,
+    "cachePolicy": "ignored-immutable-training-cache"
+  }
+}

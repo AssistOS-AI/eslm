@@ -1,0 +1,48 @@
+{
+  "protocol": "iibench-categorical-core-development-v2",
+  "measuredAt": "2026-08-11T17:39:02+03:00",
+  "runtimeProfile": "direct-symbolic-no-language-agent",
+  "sourceSplit": "official-public-test-reclassified-development",
+  "scoring": "Typed opposition labels; required operation form with negation-parity normalization for immediate transformations; declared logical-equivalence closure for syllogistic conclusions.",
+  "comparability": "Complete execution of the frozen development partition, not an untouched official test score.",
+  "languageParsing": "Not run. Official structured fields enter through the strict typed adapter, so this result measures categorical reasoning rather than free-text parsing.",
+  "availableSourceRows": 5284,
+  "tested": 4196,
+  "freshNotTested": 1088,
+  "correct": 4139,
+  "accuracy": 0.986415633937083,
+  "statusCounts": {
+    "ANSWERED": 4196
+  },
+  "testedBySourceFile": {
+    "AEIO_truth.jsonl": 864,
+    "Conversion_generation.jsonl": 1028,
+    "Obversion_generation.jsonl": 960,
+    "Contraposition_generation.jsonl": 1040,
+    "Syllogism_generation.jsonl": 304
+  },
+  "correctBySourceFile": {
+    "AEIO_truth.jsonl": 864,
+    "Conversion_generation.jsonl": 1028,
+    "Obversion_generation.jsonl": 960,
+    "Contraposition_generation.jsonl": 1040,
+    "Syllogism_generation.jsonl": 247
+  },
+  "syllogismSoundness": {
+    "entailedConclusions": 304,
+    "tested": 304,
+    "goldEquivalent": 247,
+    "strongerSubalternationAlternatives": 57,
+    "explanation": "All 304 returned conclusions are entailed by the typed premises under the declared traditional categorical semantics. In 57 cases the source gold selects a weaker subaltern conclusion although the prompt asks for a logically entailed relationship and the returned universal conclusion is stronger. The official equivalence closure does not accept subalternation."
+  },
+  "normalizationCandidates": 0,
+  "languageAgentInvocations": 0,
+  "behaviorHashes": {
+    "categoricalCore": "59fd2ff15c22cf056fa0de509088ee5825ead2b1681c48082d94f6d541c13e2b",
+    "capabilityRegistry": "bdf3012bb958f28390e2098e5d66be04335075403750284c4bfc437e6927e847",
+    "engine": "4081dfeb82530b9dd59cbeca06949df984b08f26e16b9c6e394c8bff2fe88dda",
+    "adapter": "56a12c6c65133932a850707fc1f21172facecc18b7021f74f7054727b50ae42d"
+  },
+  "freshState": "sealed-not-opened",
+  "remainingIssue": "The categorical candidate is ready for its single aggregate-only fresh execution. Later semantic changes require a new untouched partition."
+}

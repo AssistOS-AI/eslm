@@ -1,0 +1,23 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Bounded finite classical and preferred-model entailment",
+  "independentExamples": [
+    "A two-rule implication chain with renamed unary propositions",
+    "A conflicting pair of defeasible conclusions with explicit reliability priorities",
+    "A default property with an explicit exceptional member"
+  ],
+  "inputTypes": ["validated finite propositional formulas", "validated prioritized defaults"],
+  "outputTypes": ["entailed boolean or explicit inability", "finite proof summary or countermodel"],
+  "preconditions": ["At most 16 semantic atoms under the default policy", "All formulas use allowlisted operators", "Default priorities are explicit integers"],
+  "invariants": ["No source identity participates in inference", "Inconsistent strict premises do not entail by explosion", "All satisfying assignments are considered within the finite bound"],
+  "uncertaintySemantics": "Classical non-entailment returns a finite countermodel. Preferred entailment is skeptical over every lexicographically minimum-violation model and returns UNDERDETERMINED when those models disagree.",
+  "proofBehavior": "Classical support records exhaustive assignment counts; non-entailment records a checkable countermodel. Preferred reasoning records priority order, minimum penalty, preferred-model count, and a supporting or defeating assignment.",
+  "resourceBounds": { "defaultMaximumAtoms": 16, "hardMaximumAtoms": 20, "search": "exhaustive finite assignments", "failure": "RESOURCE_LIMIT" },
+  "failureStatuses": ["RESOURCE_LIMIT", "INCONSISTENT_CONTEXT", "UNDERDETERMINED"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "None. The methods consume typed formulas and do not change a KB record or package schema.",
+  "renameTestPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "forbiddenDispatchAuditPassed": true,
+  "forbiddenDispatchAudit": "The two reasoning modules contain no benchmark, dataset, path, split, source stratum, axiom name, row, answer, or domain vocabulary. Branches use only formula operators, typed defaults, declared priorities, bounds, and semantic statuses. Source syntax remains in benchmark adapters."
+}

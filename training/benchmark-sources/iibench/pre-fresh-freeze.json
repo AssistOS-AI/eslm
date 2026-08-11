@@ -1,0 +1,35 @@
+{
+  "format": "eslm-iibench-pre-fresh-freeze-v1",
+  "frozenAt": "2026-08-11T17:39:02+03:00",
+  "partitionMembershipSha256": "87d9f688b60475fa40f63c8092c294cbaa8c26cd2ce1d3061fc194a343fb4791",
+  "freshCases": 1088,
+  "behaviorHashes": {
+    "src/reasoning/categorical-logic.mjs": "59fd2ff15c22cf056fa0de509088ee5825ead2b1681c48082d94f6d541c13e2b",
+    "src/reasoning/capability-registry.mjs": "bdf3012bb958f28390e2098e5d66be04335075403750284c4bfc437e6927e847",
+    "src/runtime/engine.mjs": "4081dfeb82530b9dd59cbeca06949df984b08f26e16b9c6e394c8bff2fe88dda",
+    "src/benchmark-adapters/iibench.mjs": "56a12c6c65133932a850707fc1f21172facecc18b7021f74f7054727b50ae42d"
+  },
+  "testHashes": {
+    "tests/categorical-logic.test.mjs": "7a602aa96a05702b493354d559ae731f830eb6d8436cea4607986aa3998c310e",
+    "tests/iibench-adapter.test.mjs": "2638571e4cbd434ddf4a9f9449891fddd96c6396b38fb85ebdacaf17f4e6e8e0"
+  },
+  "specificationHash": {
+    "docs/specs/DS015-reasoning-method-semantics.md": "25940bfb78dfe79e987610d504ac00c9bb925b879d7a622657f10813628ed7a4"
+  },
+  "developmentResult": {
+    "correct": 4139,
+    "tested": 4196,
+    "soundSyllogismConclusions": 304,
+    "syllogisms": 304
+  },
+  "guardian": {
+    "eligibleForImplementation": true,
+    "failures": []
+  },
+  "regression": {
+    "command": "npm test",
+    "passed": 166,
+    "failed": 0
+  },
+  "freshPolicy": "Open the host-only oracle exactly once, retain only aggregate and source-family counts, do not inspect item outcomes, and make no behavior changes after the run."
+}

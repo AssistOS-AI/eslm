@@ -1,0 +1,44 @@
+{
+  "format": "eslm-benchmark-source-manifest-v1",
+  "id": "defeasible-nli-official-compound-2020",
+  "upstreamOwner": "Rachel Rudinger and the Defeasible NLI authors",
+  "sourceUrl": "https://github.com/rudinger/defeasible-nli",
+  "revision": "c675ffc1b0eec5fa56287f08490da8ed43c1ecc5",
+  "archiveUrl": "https://codeload.github.com/rudinger/defeasible-nli/tar.gz/c675ffc1b0eec5fa56287f08490da8ed43c1ecc5",
+  "archive": {
+    "bytes": 9393470,
+    "sha256": "5ce22943ab9e6cd1b687eb241e7da4db31ee30dcd24e66b7595c1e34d571d03b"
+  },
+  "cache": "training/.cache/benchmarks/defeasible-nli",
+  "credentialsRequired": false,
+  "networkAtRuntime": false,
+  "sourceRows": 245720,
+  "sourceSetSha256": "0a3258f0221ef2fbfdedb2dd0466220ab8ca6e9bd3bc981b25191b126c3c97bd",
+  "license": "MIT",
+  "licenseFile": {
+    "bytes": 1072,
+    "sha256": "4f3cbbc5e111fe600a5d515c5dbd5f437545d19b3ae3ba36acb9785cc9d88246"
+  },
+  "readmeSha256": "25b73083766ca40361a947771e278b0e2e7d06b3222530645ea408d156376fd6",
+  "componentProvenance": {
+    "atomic": {
+      "paper": "https://doi.org/10.1609/aaai.v33i01.33013027",
+      "citation": "Maarten Sap et al. ATOMIC: An Atlas of Machine Commonsense for If-Then Reasoning. AAAI 2019.",
+      "rights": "The compound release requires citation of the upstream source; no more permissive component grant is inferred here."
+    },
+    "snli": {
+      "project": "https://nlp.stanford.edu/projects/snli/",
+      "paper": "https://aclanthology.org/D15-1075/",
+      "citation": "Samuel R. Bowman et al. A large annotated corpus for learning natural language inference. EMNLP 2015.",
+      "rights": "CC BY-SA 4.0 upstream corpus."
+    },
+    "socialChemistry101": {
+      "project": "https://github.com/mbforbes/social-chemistry-101",
+      "paper": "https://aclanthology.org/2020.emnlp-main.48/",
+      "citation": "Maxwell Forbes et al. Social Chemistry 101: Learning to Reason about Social and Moral Norms. EMNLP 2020.",
+      "rights": "CC BY-SA 4.0 upstream dataset."
+    }
+  },
+  "citation": "Rachel Rudinger et al. Thinking Like a Skeptic: Defeasible Inference in Natural Language. Findings of EMNLP 2020. https://doi.org/10.18653/v1/2020.findings-emnlp.418",
+  "redistribution": "Only manifests and aggregates are committed; all source rows remain in the ignored local cache."
+}

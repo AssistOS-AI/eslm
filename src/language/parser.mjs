@@ -52,6 +52,12 @@ function singularClass(value, model) {
       : normalized.endsWith('s') ? normalized.slice(0, -1) : normalized);
 }
 
+function declaredProperty(surface, model) {
+  const requested = surface.trim().replaceAll(' ', '_');
+  return Object.keys(model.reasoning?.propertyValues ?? {}).find((predicate) =>
+    predicate.replaceAll(' ', '_') === requested);
+}
+
 export function parseQuestion(normalized, model, context = {}) {
   const words = normalized.tokens.filter((token) => !/^[?.!,;:]$/u.test(token));
   const joined = words.join(' ');
@@ -60,6 +66,19 @@ export function parseQuestion(normalized, model, context = {}) {
   if (/^(?:who are you|what are you|tell me who you are)$/u.test(joined)) return { intent: 'system-identity', target: 'meta' };
   if (/^(?:who am i|do you know who i am)$/u.test(joined)) return { intent: 'user-identity', target: 'meta' };
   if (/^(?:what can you do|what do you do|show me what you can do)$/u.test(joined)) return { intent: 'system-capabilities', target: 'meta' };
+  if (/^(?:how are you|how are you doing|how have you been|how is it going|what are you doing|what are you up to)$/u.test(joined)) {
+    return { intent: 'system-operational-status', target: 'meta' };
+  }
+
+  if ((match = joined.match(/^where was (.+?) before (.+)$/u))) {
+    const subject = resolveEntityPhrase(match[1].split(' '), model, context);
+    const boundary = resolveEntityPhrase(match[2].split(' '), model, context);
+    if (!subject.id) return resolvedEntityQuery(subject, () => undefined);
+    return resolvedEntityQuery(boundary, (boundaryId) => ({
+      intent: 'location-before', subject: subject.id, predicate: 'located_in', before: boundaryId,
+      target: 'object', reasoning: 'temporal-predecessor',
+    }));
+  }
 
   if ((match = joined.match(/^(?:where is|where can i find|in which place is) (.+?)(?: located)?$/u))) {
     return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
@@ -73,10 +92,18 @@ export function parseQuestion(normalized, model, context = {}) {
     return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
       predicateQuery('owner', undefined, 'owns', id, 'subject'));
   }
-  if ((match = joined.match(/^(?:what color is|which color is|what is the color of|tell me the color of) (.+)$/u))) {
-    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) => ({
-      ...predicateQuery('color', id, 'color', undefined, 'value'),
-      ...(model.reasoning?.induction?.implicitPredicates?.includes('color') ? { reasoning: 'induction' } : {}),
+  let propertySurface;
+  let propertySubject;
+  if ((match = joined.match(/^(?:what|which) ([a-z][a-z0-9_-]*) is (.+)$/u))) {
+    [, propertySurface, propertySubject] = match;
+  } else if ((match = joined.match(/^(?:what is|tell me) the ([a-z][a-z0-9_-]*) of (.+)$/u))) {
+    [, propertySurface, propertySubject] = match;
+  }
+  const property = propertySurface ? declaredProperty(propertySurface, model) : undefined;
+  if (property) {
+    return resolvedEntityQuery(resolveEntityPhrase(propertySubject.split(' '), model, context), (id) => ({
+      ...predicateQuery('property-value', id, property, undefined, 'value'),
+      ...(model.reasoning?.induction?.implicitPredicates?.includes(property) ? { reasoning: 'induction' } : {}),
     }));
   }
   if ((match = joined.match(/^(?:what is (.+?) afraid of|what does (.+?) fear|who does (.+?) fear)$/u))) {

@@ -1,0 +1,9 @@
+{
+  "format": "eslm-learning-pool-manifest-v1",
+  "working": {"split":"official development","sourceRows":1532,"experimentalCases":1532,"visibility":"task text visible; preferred-candidate labels retained only by the host scorer"},
+  "regression": {"tests":["tests/alpha-nli-art-adapter.test.mjs","tests/narrative-continuation.test.mjs","tests/core-generality.test.mjs","tests/runtime.test.mjs"]},
+  "fresh": {"split":"official test","sourceRows":3059,"visibility":"sealed; adapter exports no test loader","executed":false},
+  "training": {"split":"official train","sourceRows":169654,"usedForThisCycle":false},
+  "aggregateShadow": {"available":false},
+  "languageAgentPermitted": false
+}

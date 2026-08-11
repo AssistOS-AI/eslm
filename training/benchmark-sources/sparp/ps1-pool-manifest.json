@@ -1,0 +1,30 @@
+{
+  "protocol": "sparp-ps1-visible-pool-manifest-v1",
+  "sourceRevision": "2706ed464416758c67a09716ed0262c880ee6bdd",
+  "evidenceBoundary": "train-and-development-visible-only",
+  "train": {
+    "rows": 16450,
+    "bytes": 54515517,
+    "sha256": "0886bf6ed20559a56147038a254912503e98e50a8fb934bd20ce4aca5f8af3d0",
+    "use": "schema and relation-family inventory; no benchmark answer is embedded in core or policy control flow"
+  },
+  "development": {
+    "rows": 2397,
+    "bytes": 7782886,
+    "sha256": "19c39746c4a8ed284e39d5b109933e84dd4335dd3b22720895e5a14e00a2dd09",
+    "use": "complete development diagnosis and candidate evaluation"
+  },
+  "smallDevelopment": {
+    "rows": 500,
+    "bytes": 3495257,
+    "sha256": "7b95b05c9b13c338c2d7d36867f2a991caf7883d4a15db586b2709856a083bef",
+    "use": "bounded compatibility gate before the full development run"
+  },
+  "test": {
+    "rows": 2316,
+    "accessDuringCycle": "none",
+    "solverExecutions": 0,
+    "oracleAccess": 0
+  },
+  "languageAgentInvocations": 0
+}

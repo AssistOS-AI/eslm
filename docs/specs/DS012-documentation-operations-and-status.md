@@ -1,73 +1,101 @@
 ---
 id: DS012
-title: Documentation, Operations, Skills, and Implementation Status
+title: Documentation, Generated Status, and Repository Operations
 status: in-progress
 owner: repository
-summary: Defines authoritative documentation maintenance, small explanatory diagrams, repository-owned training skills, canonical commands, generated evidence, and the current implementation-status boundary.
+summary: Defines specification ownership, detailed HTML documentation, generated empirical status, navigation and diagram rules, skill-catalog synchronization, canonical checks, and change-locality requirements.
 ---
 
-# DS012 Documentation, Operations, Skills, and Implementation Status
+# DS012 Documentation, Generated Status, and Repository Operations
 
 ## Introduction
 
-This specification prevents the architecture, implementation, operational skills, and current evidence from drifting apart. It also defines how technical documentation explains the complete system without reducing normative contracts to short summaries.
+Documentation is part of the executable research contract, but different artifacts have different stability. DS files define durable normative boundaries. HTML pages teach the implemented mechanisms in technical depth. Typed catalogs and generated reports hold mutable package, benchmark, and execution state. This separation prevents every new adapter or measurement from rewriting unrelated specifications.
 
 ## Core Content
 
 ### Documentation hierarchy
 
-The DS files under `docs/specs/` are the authoritative contract. `matrix.md` indexes every contiguous DS through `specsLoader.html`. HTML pages explain the implemented system in operational detail and link to the relevant DS files. `README.md` provides an executable orientation. `AGENTS.md` governs future work and names the current skill catalog. Generated reports under `docs/results/` are dated evidence snapshots rather than architectural authority.
+`docs/specs/` is the sole design authority. `matrix.md` is generated from contiguous DS frontmatter and links every DS through `specsLoader.html`. HTML pages explain the same system from data-flow, algorithm, trust-boundary, operator, failure-diagnosis, and reviewer perspectives. `README.md` provides executable orientation. `AGENTS.md` governs repository work and mandatory reading. Generated artifacts under `docs/results/` are replaceable evidence, never architecture authority.
 
-HTML documentation must preserve the terminology, intent, conditions, and explanatory style of the DS contracts. It must not replace a detailed contract with an abstract summary. Difficult mechanisms should be explained from multiple useful viewpoints: what data enters, which component owns each step, what exact representation crosses the boundary, what can fail, how the failure is diagnosed, what is cached or persisted, and what a reviewer should verify.
+No layer may summarize away assumptions, algorithms, representations, invariants, failure states, measurement regimes, or falsification criteria. Repetition is justified only when a different viewpoint helps a reviewer; copied normative clauses instead reference their owning DS.
 
-Use one primary navigation system. Each page includes a stable path to the specification matrix. Mermaid diagrams are appropriate for architecture, flow, sequence, state, or ownership only when they improve comprehension. The default diagram is a single left-to-right two-dimensional flow with three to five primary nodes. One small secondary input edge is acceptable when it explains a real join. Deep trees, parallel subgraphs, repeated branch fans, long node text, and diagram-only explanations must be replaced by simpler flows plus prose. Static assets belong under `docs/assets/`. All HTML pages include the shared Mermaid loader.
+### Orthogonal DS ownership
 
-The documentation home page maintains two explicit inventories. The KB inventory lists only packages that exist locally and pass the current validation path, with source, version, scale, supported use, and limitations. The benchmark inventory lists reviewed families with separate source/access, adapter, acquisition, and execution states. A benchmark may appear as reviewed for inclusion before it is executed, but the page must label that state directly and must identify the exact post-reset reports that have actually run.
+The stable responsibility map is:
 
-### Repository-owned training skills
+| DS range | Exclusive primary responsibility |
+|---|---|
+| DS000–DS002 | vision, repository contract, and executable-versus-declarative architecture |
+| DS003–DS004 | direct language and benchmark-guided learning |
+| DS005–DS006 | canonical KB meaning and immutable package identity |
+| DS007–DS008 | operator interfaces, sessions, task planning, traces, and results |
+| DS009–DS010 | trust and failure semantics, then measurement and comparison |
+| DS011–DS012 | roadmap acceptance, documentation, generated status, and repository operations |
+| DS013–DS014 | external Language Agent normalization and document-derived symbolic KBs |
+| DS015 | registered reasoning method semantics |
+| DS016–DS017 | source authority and benchmark adapter/oracle lifecycle |
+| DS018–DS021 | corpus gate, streaming compilation, exact routing, and cache/memory behavior |
 
-The repository provides four self-contained operational skills under `training/.agents/skills/`: Document-to-KB Builder, Benchmark-Guided Symbolic Learner, Core Change Guardian, and KB Compiler and Quality Auditor. Each skill carries its own references, scripts, agent descriptor, schemas or templates needed for portable use. A skill must not import host-project source modules.
+A change updates only the DS files whose primary responsibility changes. A new benchmark normally changes the typed catalog, source receipt, adapter, tests, benchmark HTML page, and generated report, not the generic language, storage, CLI, roadmap, or documentation DS. A new reasoning method changes DS015 and the planner contract only if planner behavior also changes.
 
-Document-to-KB Builder registers sources, drives the direct symbolic parser, preserves spans, creates canonical candidates, and reports unresolved language. Benchmark-Guided Symbolic Learner manages pools, checkpoints, trace clusters, generalization gates, and research notes. Core Change Guardian decides whether repeated evidence authorizes a reusable mechanism in `src`. KB Compiler and Quality Auditor validates canonical records, compiles manifests and indexes, tests canonical-versus-compiled and lazy-versus-exhaustive equivalence, and publishes immutable packages.
+### Decisions and questions
 
-Skills may invoke repository CLI commands as external tools only when the assignment explicitly targets this repository. Their portable internal validators and assignment preparation remain usable without host-project imports. Updating a skill requires its own tests, the AGENTS catalog, HTML training documentation, and this specification to change together.
+`Decisions & Questions` contains only decisions whose rationale constrains future implementation or unresolved options that require selection. It does not restate the preceding section as rhetorical questions. A resolved entry uses `Response:`. A genuinely unresolved entry uses `Options:` and the affected behavior remains unimplemented until one option is selected. Current research blockers and operator choices that are not normative contracts belong on the separate decisions/issues HTML page or in source-specific receipts.
 
-### Current post-reset implementation boundary
+The research-decisions HTML page may index a normative unresolved DS question and explain its evidence from another
+reader viewpoint, but it cannot be the sole location of a contract-shaping choice. Operational source selection,
+benchmark-owner clarification, and replacement-pool acquisition may remain HTML or receipt issues when they do not
+change a generic contract.
 
-The structural reset has removed the old prepared benchmark trees, candidate and work ledgers, global generated model, executable KB modules, and historical result claims. Cached immutable archives remain reusable inputs. Open English WordNet 2025 and ATOMIC 2020 are rebuilt as provider-specific declarative JSON packages, and QUICK is replaced by the lowercase `quick` canonical-record fixture compiled through the generic schema and compiler.
+### HTML technical writing
 
-The accepted Stage A path now consists of deterministic normalization and a narrow controlled-English parser, explicit queries and task frames, a capability registry and plan record, indexed retrieval, safe Horn deduction, provenance-bearing structured results, the declarative package catalog and loader, query-directed public-KB caches, and success plus structured-failure tests. Runtime code is organized into `src/language/`, `src/kb/`, `src/reasoning/`, `src/runtime/`, and `src/training/` boundaries. Training can prepare a hashed train-visible packet with an explicit target namespace, precompute a hashed `BASELINE_ANALYSIS.jsonl` through the trusted Stage A language and reasoning components, create an isolated workspace, copy one of four self-contained skills, and invoke Codex as an ephemeral subprocess whose output remains an untrusted candidate. The Document-to-KB skill contains the exact canonical record contract and a host-independent validator; the host repeats semantic graph validation before compiling inert JSON shards.
+HTML pages are substantial technical chapters. Every behavioral claim is verified against source, tests, schemas, or generated evidence. An algorithm explanation names its input representation, state, transition or inference rule, termination condition, complexity or bound, witness, failure statuses, and known incompleteness. Storage pages show real manifest, record, shard, index, routing, and cache shapes. Benchmark pages explain what the task tests, exactly which cases ran, which scorer was used, and why a result failed.
 
-This accepted boundary is not the complete research system. Semantic IR coverage beyond the implemented query and assertion forms, full context projection, event and temporal methods, constraint solving, mature induction and abduction, defaults and exceptions, richer discourse, optional validated language normalization, probabilistic scoring, and narrative construction remain partial or planned. Prepared public benchmark adapters must be rebuilt under the current visibility and packet contracts before new public scores are claimed. Later capability tables must distinguish implemented, partial, and planned behavior and name source modules and evidence. A schema, CLI placeholder, benchmark catalog entry, capability descriptor, or future module name does not count as implementation.
+Academic background links to primary papers, books, standards, and clearly identified secondary references such as Wikipedia. References establish theoretical context; they do not substitute for describing ESLM's actual algorithm or imply equivalence to a broader formalism.
 
-### Operational verification
+### Navigation and page layout
 
-Canonical commands include interactive and one-shot CLI execution, batch JSONL, KB list/show/compile/register/unregister/build/validate operations, source and dataset status, training prepare/candidate/run/validate, local evaluation, the benchmark catalog and native fixture harness, documentation checks, and the composed full check. No public benchmark family is currently claimed as an executed post-reset adapter. Compilation does not register or publish a package. A promotion command is intentionally absent until its review and version-transition contract is implemented. Commands that need network access remain explicit and are not part of inference.
+The site uses one shared header navigation and breadcrumbs. The home page has exactly three substantive sections: project presentation, a client-rendered table from `latest-public-benchmark-probes.json`, and a compact two-dimensional sitemap. Other material receives a dedicated page linked from the sitemap and menu.
 
-The documentation verifier checks navigation, assets, DS loader targets, matrix entries, and Mermaid availability. The specification matrix is generated from frontmatter rather than edited manually. The full project check validates source behavior, canonical schemas, package compilation and routing, skill portability, tests, evaluation, and documentation without silently acquiring external data.
+Pages use the browser width with 3% left and right padding. The benchmark table uses approximately 30% for benchmark identity, execution mark, concise score, tested/possible scope, and normalization percentage, and 70% for human-readable outcomes, protocol, diagnosis, and action. Technical identifiers wrap; source hashes remain in raw or secondary audit views.
+
+### Diagrams
+
+Use a diagram only when spatial structure clarifies data flow, sequence, hierarchy, ownership, or branching. Mermaid diagrams are normally left-to-right, use three to five primary nodes, short labels, readable bold fonts, and visibly larger labels for acceptance-critical nodes. The surrounding prose explains every node, edge, trust boundary, exceptional path, and limit. Dense graphs are split into several focused diagrams or replaced with prose and tables.
+
+### Generated status and empirical values
+
+The home benchmark table reads `docs/results/latest-public-benchmark-probes.json` in the browser. Current dates, denominators, percentages, failure counts, adapter state, access state, and next actions exist only there or in the typed source receipts that generate it. Hand-authored HTML explains fields and protocols but does not copy temporary numbers.
+
+Roadmap coverage uses `docs/results/current-status.json` with named capability bands, evidence, and boundaries. It remains separate from benchmark accuracy. A check beside a benchmark means the declared probe executed; it does not mean the complete official benchmark is solved.
+
+### Repository-owned skills
+
+Repository-owned training and audit skills under `training/.agents/skills/` remain self-contained. Their exact catalog is maintained in `AGENTS.md`, training documentation, and tests rather than repeated here. A skill carries its own references, scripts, schemas, and templates, imports no host source internally, receives only authorized evidence, and produces untrusted candidates or audit receipts.
+
+Imported maintenance skills under `.agents/skills/` remain read-only during product work. Host documentation describes their role only where it affects repository operations; it does not create product DS files for imported skills.
+
+### Canonical verification
+
+The repository exposes focused tests, full `npm test`, evaluation, benchmark, public-probe publication, KB build and validation, random source-KB checks, scale profiling, spec-matrix generation, documentation validation, source-size checks, and composed `npm run check`. Commands that acquire network data remain explicit and are never hidden inside inference or verification.
+
+Documentation verification checks required pages, shared navigation, local links, assets, Mermaid availability and diagram constraints, DS structure, contiguous numbering, and specs-loader targets. Behavioral tests check generated report schemas and that every registered reasoning method is documented.
+
+### Synchronization rule
+
+A behavior, interface, schema, method, evaluation, or claim change updates source, tests, its owning DS, affected HTML explanation, and generated evidence in the same change set. Mechanical catalog growth does not trigger unrelated DS rewrites. Before completion, the reviewer rereads affected DS files in order, verifies question numbering and ownership, regenerates the matrix, checks links, and runs the proportionate full verification.
 
 ## Decisions & Questions
 
-### Question #1: Why keep detailed HTML when DS files already exist?
+### Question #1: Why is generated status separate from normative prose?
 
-Response: Reviewers need an operational explanation that connects contracts to actual modules, commands, traces, and failure states. The HTML expands perspective and navigation; it does not shorten or weaken the DS text.
+Response: Measurements and adapter states change after executions, while contracts define how those executions remain interpretable. A generated source prevents stale copied percentages and lets the home page update without rewriting architectural documents.
 
-### Question #2: Why are skill details kept inside skill folders?
+### Question #2: When are multiple explanations useful rather than redundant?
 
-Response: The skills must remain portable and self-contained. Host documentation explains their role and interfaces, while scripts, schemas, templates, and step-by-step agent instructions travel with each skill.
-
-### Question #3: When may a current-status claim move from planned to implemented?
-
-Response: Only after executable behavior, success and failure tests, synchronized DS and HTML documentation, and proportionate evaluation evidence all agree.
-
-### Question #4: Why prefer a short left-to-right diagram over a complete component graph?
-
-Response: The diagram should expose one important relationship at a glance. Detailed ownership, exceptional paths, invariants, and reviewer checks remain in the surrounding prose, where they can be explained precisely without forcing readers to decode a dense graph.
-
-### Question #5: Why separate KB availability from benchmark execution on the home page?
-
-Response: A source can be compiled into a useful KB without being an evaluation set, while a benchmark can be selected for future coverage without having an adapter or result. Separate inventories preserve these different evidence regimes and prevent an available data package or catalog entry from becoming an accidental performance claim.
+Response: It is useful when it answers a different reviewer question, such as algorithm semantics versus operational diagnosis, and explicitly references the normative owner. Repeating the same contract in several DS files is redundant and creates contradictory update obligations.
 
 ## Conclusion
 
-Documentation and operations are part of the executable research contract. The repository must remain navigable, testable, honest about status, and detailed enough for a programmer to review every major boundary without consulting superseded source material.
+The documentation system keeps stable contracts, technical explanations, and mutable evidence distinct but synchronized. Orthogonal ownership makes future changes local, while generated status keeps current results honest and reviewable.

@@ -1,0 +1,34 @@
+{
+  "format": "eslm-benchmark-failure-clusters-v1",
+  "tracks": ["ReClor", "LogiQA"],
+  "visibleEvidence": ["official training", "official validation/development"],
+  "protectedEvidenceOpened": false,
+  "clusters": [
+    {
+      "stage": "question-operation",
+      "reclor": {"training":4333,"development":466},
+      "logiqaEnglish": {"training":7216,"development":613},
+      "meaning": "The question asks for weakening, strengthening, flaw, role, analogy, explanation, exception, assignment, or another operation not represented by necessary categorical entailment or sufficient-premise validation."
+    },
+    {
+      "stage": "premise-semantics",
+      "reclor": {"training":225,"development":23},
+      "logiqaEnglish": {"training":159,"development":38},
+      "meaning": "The operation is recognizable, but at least one passage clause requires conditionals, relations, cardinality, order, causality, argument roles, unrestricted predication, or another structure outside monadic categorical propositions. No clause is silently dropped."
+    },
+    {
+      "stage": "argument-boundary",
+      "reclor": {"training":80,"development":11},
+      "logiqaEnglish": {"training":0,"development":0},
+      "meaning": "A sufficient-premise question lacks exactly one unambiguous explicit conclusion marker. Guessing which passage sentence is the conclusion would make the candidate validator depend on an unsafe discourse heuristic."
+    },
+    {
+      "stage": "candidate-semantics",
+      "reclor": {"training":0,"development":0},
+      "logiqaEnglish": {"training":1,"development":0},
+      "meaning": "The passage and proof obligation compile, but at least one candidate is compound or otherwise outside the same semantic fragment. Executing only the parsed candidates would change the four-way task and can create a false unique answer."
+    }
+  ],
+  "safeCategoricalMethodAttempts": {"reclorTraining":0,"reclorDevelopment":0,"logiqaEnglishTraining":0,"logiqaEnglishDevelopment":0},
+  "conclusion": "No visible source case satisfies every precondition of the small sound categorical candidate validator. This is an engineering coverage gap, not an impossibility proof and not a benchmark score."
+}

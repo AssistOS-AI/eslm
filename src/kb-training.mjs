@@ -16,10 +16,10 @@ export async function buildKnowledgeBase(id) {
       languages: ['en'],
       domains: [entry.domain],
       dependencies: [],
-      capabilities: ['classification', 'capability', 'safe-horn-deduction'],
-      trustLevel: 'repository-reviewed-fixture',
+      capabilities: entry.capabilities ?? ['classification', 'capability', 'safe-horn-deduction'],
+      trustLevel: entry.trustLevel ?? 'repository-reviewed-fixture',
       benchmarkEligible: false,
-      license: 'MIT repository fixture',
+      license: entry.license ?? 'MIT repository fixture',
     },
   });
 }

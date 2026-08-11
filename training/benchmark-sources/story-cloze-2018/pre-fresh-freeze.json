@@ -1,0 +1,30 @@
+{
+  "format": "eslm-story-cloze-pre-fresh-freeze-v1",
+  "partitionDigest": "df208d36029d86c020cbc7ec49cf7937f8cac785230fdeab6f222968b61180b1",
+  "developmentResult": {
+    "correct": 727,
+    "total": 1257,
+    "accuracy": 0.5783611774065235,
+    "rankCorrect": 755,
+    "rankAccuracy": 0.6006364359586317
+  },
+  "verification": {
+    "npmTest": "92 passed, 0 failed",
+    "coreGuardian": "eligibleForImplementation",
+    "sourceSize": "new cohesive modules remain below 500 lines",
+    "diffCheck": "passed"
+  },
+  "implementationSha256": {
+    "src/reasoning/narrative-state.mjs": "61cf8bccedf4b05a828b31b04966ca35241834c568480f73ec7a9e138b23deaa",
+    "src/reasoning/continuation-selection.mjs": "9fcb26072484362cddd8da3a65436fc3b60aa5c5ca7ff689b511687788ba5019",
+    "src/public-kb-providers/atomic-continuation.mjs": "de94c4b89912eccf3ef320902b57eedf303f5c17dc0b7122b9e787a1e4bc4329",
+    "src/public-kbs.mjs": "b58e833e6e7bf4b8cda86208153588a4919feb56c1617b0b1821fa3616b13f9e",
+    "src/runtime/engine.mjs": "75aa5da02b6129dc1f96b110d7727b8bbf9abeca2042dc27e5039d6beaaf7f77",
+    "src/runtime/runtime.mjs": "77e2333a02e2403a16418987d20b644096568750ee1f909400be2ba681b716cb",
+    "src/evaluation/story-cloze-2018-adapter.mjs": "d49ae98285bb11fb0641e7accb1f100d22c9c74c75d9c4faada5aa8f373321f6",
+    "src/evaluation/story-cloze-2018-cache.mjs": "84310c5203cfad61039d5a05ce9f578ec03036f15623c3066a81b5b81499b7a4",
+    "training/benchmark-sources/story-cloze-2018/fresh-partition.json": "f2b8d43eb755a92c0dd73e2089331418be48b4320b721e844685fd95329c0625",
+    "training/benchmark-sources/story-cloze-2018/core-change-proposal.json": "f21748dee01bafe999a30b3b687834d58d21b62e926e0dd9c339738b601497aa"
+  },
+  "oraclePolicy": "Open the 314-case fresh oracle once for aggregate scoring. Do not inspect case-level outcomes and do not alter behavior after scoring. The label-free test split remains untouched."
+}

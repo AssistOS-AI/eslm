@@ -1,0 +1,86 @@
+{
+  "format": "eslm-folio-development-remaining-issues-v1",
+  "protocol": "folio-v0.0-complete-validation-development-v2",
+  "sourceSetSha256": "5157453a3938447308d9df627418cbbeb1e363894bad2c8fcffe5b7f3dcfad1a",
+  "measuredAt": "2026-08-11T18:07:52Z",
+  "currentSemanticAudit": {
+    "definition": "Counts below cover all 1,279 parseable official sentence annotations. An operator is counted when it occurs anywhere in the official typed formula; exact means alpha-normalized typed-formula equality, not lexical overlap.",
+    "conjunction": { "official": 335, "candidateParsed": 125, "exact": 37 },
+    "disjunction": { "official": 97, "candidateParsed": 23, "exact": 1 },
+    "exclusiveDisjunction": { "official": 47, "candidateParsed": 19, "exact": 4 },
+    "implication": { "official": 653, "candidateParsed": 272, "exact": 210 },
+    "universal": { "official": 629, "candidateParsed": 248, "exact": 201 },
+    "existential": { "official": 94, "candidateParsed": 40, "exact": 31 }
+  },
+  "language": [
+    {
+      "cluster": "scoped-coordination",
+      "evidence": {
+        "officialConjunctionAnnotations": 335,
+        "exactConjunctionCandidates": 37,
+        "officialDisjunctionAnnotations": 97,
+        "exactDisjunctionCandidates": 1,
+        "officialExclusiveDisjunctionAnnotations": 47,
+        "exactExclusiveDisjunctionCandidates": 4
+      },
+      "requiredMechanism": "A typed scope parser must distinguish predicate coordination, noun-phrase coordination, shared subjects, and nested either/neither constructions without flattening them into one lexical predicate."
+    },
+    {
+      "cluster": "conditional-and-relative-clause-boundaries",
+      "evidence": {
+        "officialImplicationAnnotations": 653,
+        "exactImplicationCandidates": 210,
+        "officialUniversalAnnotations": 629,
+        "exactUniversalCandidates": 201
+      },
+      "requiredMechanism": "Clause boundary selection needs explicit subject sharing, relative-clause attachment, and quantifier scope. A lexical-overlap tie must remain ambiguous."
+    },
+    {
+      "cluster": "arguments-reference-and-vocabulary",
+      "evidence": {
+        "queryUnsupported": 76,
+        "queryAmbiguous": 20,
+        "exactQueryFormulas": 73,
+        "availableQueries": 204
+      },
+      "requiredMechanism": "Binary argument attachment, pronoun and definite-description resolution, and predicates absent from the premise-declared vocabulary need typed evidence. The adapter must not invent a relation or select an equally ranked candidate."
+    }
+  ],
+  "closedLanguageGaps": [
+    {
+      "cluster": "bounded-relative-clause-attachment",
+      "mechanism": "The generic parser enumerates possible relative/main-predication boundaries, shares the quantified variable across both clauses, and accepts only a unique typed formula; competing supported scopes remain AMBIGUOUS.",
+      "controls": "Nonce predicates and constants survive full renaming, while exchanging relative and main predications changes the audited formula."
+    },
+    {
+      "cluster": "named-subject-versus-clause-coordination",
+      "mechanism": "Two resolved named terms may share one typed predication, while complete left and right clauses are parsed independently before Boolean composition.",
+      "controls": "The two constructions retain different term assignments even when both have an outer conjunction."
+    },
+    {
+      "cluster": "conditional-indefinite-object-coreference",
+      "mechanism": "A uniquely resolved binary relation introduces a typed object binder constrained by its class; a later object pronoun reuses that binder in the consequent relation.",
+      "controls": "Entity, class, relation, action, and object vocabulary are all replaced together; implication and biconditional surfaces remain meaning-changing contrasts."
+    }
+  ],
+  "closedExecutionGaps": [
+    {
+      "cluster": "finite-ground-atom-capacity",
+      "mechanism": "Tasks exceeding the exhaustive finite evaluator's small-atom threshold now fall through to generic query-directed Tseitin-CNF and DPLL with independently checked certificates or countermodels.",
+      "effect": "The previous resource-limited official-formula and query-language cases are executed without dropping source rows or enlarging the exhaustive enumeration bound."
+    }
+  ],
+  "execution": [
+    {
+      "cluster": "named-domain-inconsistency",
+      "officialFormulaCases": 24,
+      "queryLanguageCases": 10,
+      "interpretation": "The bounded named-domain interpretation finds no satisfying assignment. It does not apply explosion or coerce the case to an official label."
+    }
+  ],
+  "freshEvidence": {
+    "available": false,
+    "reason": "The pinned official v0.0 source has no released test set, and both local labeled files are development-visible.",
+    "consequence": "The generic language module remains an adapter-guided research candidate and is not registered in the deployed Stage A parser."
+  }
+}

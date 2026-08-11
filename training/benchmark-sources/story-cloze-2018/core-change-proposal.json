@@ -1,0 +1,63 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Bounded narrative-state compilation and defeasible continuation ranking",
+  "independentExamples": [
+    "A repaired nonce vehicle followed by a continuation that operates the same vehicle",
+    "A completed nonce ritual followed by a declaratively supported social consequence",
+    "A negative state assertion contrasted with an otherwise lexically similar positive assertion"
+  ],
+  "inputTypes": [
+    "narrative-sequence-v1",
+    "narrative-event-frame-v1 candidates",
+    "optional provenance-bearing semantic provider evidence",
+    "validated bounded ranking policy"
+  ],
+  "outputTypes": [
+    "selected candidate identifier or explicit UNKNOWN",
+    "ranked candidates",
+    "feature contribution trace",
+    "provider provenance witness"
+  ],
+  "preconditions": [
+    "one to sixty-four validated narrative events",
+    "two to thirty-two uniquely identified candidate frames",
+    "allowlisted integer feature weights",
+    "at most sixteen providers and sixty-four support records per provider candidate"
+  ],
+  "invariants": [
+    "candidate text and KB content remain inert strings",
+    "candidate order is never a tie breaker",
+    "no candidate identifier, source row, expected answer, benchmark identifier, or exact sentence controls core flow",
+    "provider claims are defeasible evidence and retain source references",
+    "the selected candidate must exceed the runner-up by the declared minimum margin"
+  ],
+  "uncertaintySemantics": "DEFEASIBLE for a margin-qualified ranking; UNKNOWN for a tie or insufficient margin; UNPARSED for an invalid semantic payload",
+  "proofBehavior": "Returns every feature value, weight, contribution, provenance reference, final margin, and provider-evidence count",
+  "resourceBounds": {
+    "sentences": 64,
+    "charactersPerSentence": 4096,
+    "tokensPerSentence": 512,
+    "candidates": 32,
+    "providers": 16,
+    "supportRecordsPerProviderCandidate": 64
+  },
+  "failureStatuses": [
+    "UNPARSED",
+    "UNKNOWN"
+  ],
+  "tests": [
+    "unit",
+    "metamorphic",
+    "contrastive",
+    "regression"
+  ],
+  "kbMigration": "No existing package schema changes. ATOMIC exposes an optional typed semantic-evidence interface; existing ask and package validation behavior remains compatible.",
+  "renameTestPassed": true,
+  "forbiddenDispatchAuditPassed": true,
+  "renamedDimensions": [
+    "entity",
+    "predicate",
+    "value",
+    "ordering"
+  ]
+}

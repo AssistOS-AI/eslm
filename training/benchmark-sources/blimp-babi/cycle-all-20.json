@@ -1,0 +1,12 @@
+{
+  "format": "eslm-benchmark-learning-cycle-v1",
+  "cycleId": "babi-all-20-finite-episode-2026-08-11",
+  "acceptedCheckpoint": "ede71a0c6202d239ff73c2e1d4a33088fcb6a252",
+  "poolManifest": "all-20-pool-manifest.json",
+  "candidateResult": "all-20-candidate-result.json",
+  "comparison": "all-20-comparison.json",
+  "remainingFailureEvidence": "all-20-ambiguity-proof.json",
+  "proposal": "core-change-proposal-episodic-world.json",
+  "agentEvidence": "No Coding Agent or Language Agent was invoked. The cycle was implemented and evaluated by the repository host under the declared development-visible boundary.",
+  "decision": "candidate-awaiting-shared-integration-review"
+}

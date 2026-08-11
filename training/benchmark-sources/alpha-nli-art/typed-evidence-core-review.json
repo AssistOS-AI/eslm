@@ -1,0 +1,53 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Provenance-bearing typed evidence comparison for narrative bridge alternatives",
+  "benchmark": "alphaNLI / ART development-only research cycle",
+  "decision": "isolate-comparator-reject-automatic-source-projection",
+  "independentExamples": [
+    "A declared activation transition connects an inactive nonce device to a later signal state.",
+    "A declared travel event connects a nonce courier at an origin to a later observation at a destination."
+  ],
+  "inputTypes": [
+    "typed before and after event frames",
+    "two or more opaque typed bridge alternatives",
+    "provenance-bearing causal temporal goal state contradiction and participant evidence",
+    "declared comparison policy"
+  ],
+  "outputTypes": ["selected bridge with comparison witness", "explicit UNKNOWN with abstention witness"],
+  "preconditions": [
+    "Every support or attack is established by a validated semantic relation rather than candidate position.",
+    "The bridge is checked against both the preceding and following event.",
+    "The comparison margin and evidence-family weights are explicit."
+  ],
+  "invariants": [
+    "Candidate order and evidence order do not affect the selected semantic alternative.",
+    "Full renaming preserves results when typed relations are preserved.",
+    "Removing or reversing an enabling relation changes support or yields UNKNOWN.",
+    "No lexical cue, candidate position, source identity, row identity, or expected answer participates in core control flow."
+  ],
+  "uncertaintySemantics": "Missing evidence, exact ties, and margins below the declared threshold remain UNKNOWN and are not resolved by source order.",
+  "proofBehavior": "Every result carries ranked contributions and a digest-bound comparison witness independently recomputed by the verifier.",
+  "resourceBounds": "Two through 32 alternatives, at most 2,048 evidence records, bounded strengths and weights, and at most 64 frames per bridge derivation call.",
+  "failureStatuses": ["UNKNOWN", "schema-validation-error", "resource-validation-error"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "None. The comparator remains unregistered and no automatically derived bridge evidence is promoted because the development control failed.",
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "renameTestPassed": true,
+  "forbiddenDispatchAuditPassed": true,
+  "guardianDecision": "accept-isolated-mechanism-reject-source-claim",
+  "guardianReasons": [
+    "Nonce/full-renaming, candidate and evidence permutation, semantic contrast, explicit tie, missing-evidence, provenance, resource, and witness-verification tests pass.",
+    "The comparison primitive is generic only because typed evidence is an explicit precondition; it does not infer commonsense relations from surface text.",
+    "The automatic frame-overlap integration answered 826 of 1,532 development cases but was correct on only 440, so it is not eligible for runtime registration or a benchmark capability claim.",
+    "A sound bridge selector still requires provenance-bearing causal, temporal, goal, state-transition, contradiction, and coreference relations from declarative providers."
+  ],
+  "forbiddenDispatchAudit": {
+    "genericCoreChanged": true,
+    "benchmarkNamesInCore": 0,
+    "datasetIdsInCore": 0,
+    "recordIdsInCore": 0,
+    "sourceHashesInCore": 0,
+    "expectedAnswersInCore": 0,
+    "sourceEntityOrRelationConstantsInCore": 0
+  }
+}

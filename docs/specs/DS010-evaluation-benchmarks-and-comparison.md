@@ -1,111 +1,89 @@
 ---
 id: DS010
-title: Evaluation, Benchmark Adapters, and Small-LLM Comparison
+title: Evaluation, Measurement, and External Comparison
 status: in-progress
 owner: evaluation
-summary: Defines capability-specific metrics, frozen comparison protocols, public benchmark adapters, language-route accounting, proof evaluation, external prediction exchange, and claim discipline.
+summary: Defines evidence layers, scoring and route metrics, proof validation, public report schemas, generated regression evidence, freeze rules, and comparison with external systems.
 ---
 
-# DS010 Evaluation, Benchmark Adapters, and Small-LLM Comparison
+# DS010 Evaluation, Measurement, and External Comparison
 
 ## Introduction
 
-Evaluation must reveal which layer works and which layer fails. This specification defines final comparison with existing small language models, benchmark-derived measurements, split isolation, source exposure, and the evidence required before any capability claim.
+Evaluation must reveal which layer works and which layer fails. This specification owns measurements, scorers, generated reports, and external comparisons. DS016 governs source authority and licensing; DS017 governs benchmark adapters, oracles, and split lifecycles. Current denominators and results belong only in replaceable execution receipts.
 
 ## Core Content
 
-### 1. Evaluation objective
+### Evidence layers
 
-The symbolic system is developed without training a neural baseline. After a stable freeze, one or more existing small pretrained language models are selected for capability comparison.
+Unit tests verify implementation contracts with small repository fixtures. Metamorphic smoke tests preserve accepted generic behavior over generated nonce inputs. Local evaluation measures a fixed internal cross-section. Development probes execute externally defined tasks that may guide repair. Fresh and shadow regimes test a frozen candidate without exposing individual outcomes. Official test or evaluator runs follow the source owner's protocol. External comparisons measure another system under a frozen shared manifest.
 
-The comparison is not a claim of equal training data. It compares final functional behavior, resource cost, systematic generalization, updateability, provenance and honest uncertainty.
+These layers do not substitute for one another. A fixture is not a public benchmark, an adapter is not a score, a development sample is not an untouched test result, a local exact scorer is not an official semantic grader, and a fresh aggregate ceases to describe a later behavior change.
 
-### 2. Freeze before comparison
+### Case and scorer contract
 
-The symbolic commit, KB versions, benchmark adapters, CNL version, LLM fallback policy and secret evaluation seeds are frozen before final neural comparisons. Results from the final comparison may not be used to patch the frozen system.
+Every evaluated case has a stable join identifier, label-free visible input, declared answer or preference domain, evidence scope, capability tags, route policy, resource policy, and required proof or witness kind. The host-only oracle is joined after predictions exist. Missing predictions count according to the scorer and are never silently removed from the denominator.
 
-### 3. Model-selection criteria
+The scorer compares semantic values, assignments, paths, transitions, proofs, or strict preferences rather than terminal prose whenever the task permits. Exact string normalization is documented and deterministic. A semantic model grader is used only in a separately frozen protocol that records its exact model, prompt, inputs, outputs, and route; deterministic validators remain preferred.
 
-The selected model must be publicly identifiable, locally runnable where practical, licensed for evaluation, small enough to represent the intended comparison class and used without task-specific fine-tuning. Retrieval and tool use are disabled unless the comparison explicitly defines an additional tool-augmented track.
+### Required measurements
 
-### 4. Shared inputs and outputs
+Correctness measurements include correct count, tested denominator, available source scope, accuracy, capability and stratum breakdowns, exact match where appropriate, and official-versus-local scorer identity. Proof measurements independently validate proof graphs, countermodels, assignments, relation paths, transition traces, feature witnesses, and source provenance.
 
-Both systems receive the same benchmark texts, answer options and task context. Output formats are constrained to objective labels or structured answers whenever possible. Evaluation must not rely on an LLM judge when deterministic validators exist.
+Language measurements include direct accepted semantics, direct `UNPARSED`, Language Agent candidates, actual external calls, cache hits, accepted translations, accepted simplifications, host rejections, process failures, and accuracy by route. A normalization-candidate rate is the direct `UNPARSED` fraction; it is not agent use and not wrong-answer rate. A cached normalization remains assisted even when no live process ran.
 
-The symbolic system is reported in direct-symbolic and normalized modes. The normalized mode uses the configured translation or simplification LLM only under the language and trust boundaries in DS003 and DS009 and declares its use. The comparison model does not receive hidden extra context.
+Reliability measurements separate correct abstention from accidental failure: `UNKNOWN`, `AMBIGUOUS`, `UNDERDETERMINED`, `INCONSISTENT_CONTEXT`, `NO_APPLICABLE_METHOD`, `RESOURCE_LIMIT`, and `UNPARSED` retain their meanings. Efficiency measurements include elapsed time, peak application memory where measurable, loaded bytes, shard and cache activity, search nodes, package size, and deterministic replay. Updateability measurements cover changed records, changed compiled bytes, affected answers, unaffected-answer stability, and provenance.
 
-### 5. Metrics
+### Generalization and robustness
 
-| Metric family | Required measurements |
-|---|---|
-| Correctness | Overall and capability-level accuracy, exact match and proof validity where applicable. |
-| Language autonomy | Direct symbolic rate, fallback rate, normalization rejection and accuracy by route. |
-| Generalization | Nonce vocabulary, fresh generated worlds, unseen chain lengths, compositional OOD and contrastive sensitivity. |
-| Reliability | Unknown detection, ambiguity handling, contradiction handling, calibration and unsupported-task reporting. |
-| Explainability | Provenance coverage, proof availability and trace validity. |
-| Efficiency | Model or package size, peak memory, latency, loaded KB bytes and energy proxy where available. |
-| Updateability | Cost and locality of adding, correcting or retracting knowledge. |
+Random row splits are insufficient when templates, worlds, stories, vocabulary, relations, or proof structures repeat. Evaluation groups by relevant causal structure: source document, generated world, construction family, entity vocabulary, domain, relation composition, rule depth, spatial hop count, or another task-specific unit.
 
-### 6. Capability matrix
+Every accepted generic capability has meaning-preserving transformations, meaning-changing contrasts, full entity and predicate renaming, irrelevant-fact injection, order changes that should be invariant, and depth or size curves. Accuracy must be interpreted beside direct-language coverage and proof validity. A gain that depends on more external normalization or invalid witnesses is not an unqualified symbolic improvement.
 
-The final report identifies both-correct, symbolic-only-correct, LLM-only-correct and both-wrong subsets. These subsets are analyzed by language form, knowledge dependency, reasoning method, depth and ambiguity.
+### Public empirical report
 
-The purpose is to locate the frontier. A symbolic advantage on strict deduction and systematic composition does not imply an advantage on social plausibility or unrestricted language. An LLM advantage on a natural-language task does not reveal whether the difference comes from parsing, world knowledge or reasoning unless the traces and direct-symbolic measurements are separated.
+`docs/results/latest-public-benchmark-probes.json` is the replaceable receipt for the latest published benchmark portfolio. DS files and hand-authored HTML do not copy its temporary dates, percentages, denominators, failure counts, access states, or current adapter inventory. The home page loads the JSON in the browser and renders the current state.
 
-### 7. Knowledge-editing comparison
+Every catalog row records stable benchmark identity, source and access state, adapter state, evaluation state, evidence regime, effective split visibility, human-readable sample and protocol descriptions, internal protocol identifiers, tested count or `null`, possible count or `null`, correct count or `null`, accuracy or `null`, status counts, normalization candidates or `null`, actual Language Agent invocations or `null`, selected methods and KBs, scorer limitations, diagnosis, and official next-action URL when applicable.
 
-A controlled update test adds, retracts or qualifies facts and exceptions. The symbolic runtime recompiles or overlays only affected records. The neural model is evaluated under its available prompting or editing mechanism, reported transparently.
+An executed row displays the tested count beside the possible source scope. A non-executed row has no denominator and no zero percentage. Preference rows report correct preferences, reversed preferences, and ties separately; a strict preference requires the designated candidate to score higher, and a tie fails when the task contract says so. Internal stable identifiers and source hashes remain in raw or secondary audit views rather than breaking the primary two-column table.
 
-The result measures time, changed storage, affected answers, unaffected-answer stability and provenance.
+The report may contain development, diagnostic, or fresh rows, but each row names its regime. A fresh aggregate is never merged into a recurring development percentage. Current portfolio membership is generated from the typed research catalog and therefore can grow without revising this specification.
 
-### 8. Reporting discipline
+### Generated regression and examples
 
-Claims must be capability-specific. The report states the neural model, quantization, prompt, context window, hardware and run policy. It states the symbolic code size, KB size, loaded-shard size, normalization usage and coding-agent development cost.
+The repository owns a deterministic 4,096-case default metamorphic corpus built from 26 rotating templates in twelve structural groups. Cases use nonce entities, concepts, predicates, objects, places, and values rather than copied public benchmark rows. Meaning-preserving variants and meaning-changing controls exercise direct retrieval, class inference, Horn rules, open-world behavior, state replacement, temporal predecessor, possession, paraphrase, preference semantics, scalable Boolean entailment, and categorical logic.
 
-The comparison should make clear which results belong to pure symbolic language processing and which used optional translation or simplification.
+The test suite and `/smoke` execute the same catalog without Language Agent assistance. `/examples [PAGE] [SEED]` displays 24 cases per page from that catalog. `/smoke [COUNT] [SEED]` executes the selected deterministic prefix or sampling contract and prints one actual input, expected result, and actual result per encountered template plus every failure and aggregate totals. Comparing expectations without invoking the runtime or fabricating displayed answers invalidates the smoke result.
 
-### Evidence layers and causal measurements
+Smoke proves regression preservation for authored templates. It does not establish external task selection, source validity, held-out generalization, or benchmark accuracy.
 
-Unit tests verify implementation contracts with small fixtures. Local evaluation measures a fixed cross-section of implemented behavior. Public benchmarks execute externally defined tasks through versioned native Node.js adapters. External comparisons use identical prediction manifests where possible or remain clearly reference-only. These layers cannot substitute for one another.
+### Freeze before external comparison
 
-Every case records input, answer or preference contract, semantic oracle, evidence scope, capability tags, required proof or witness, and language-route policy. Metrics separate semantic parse fidelity, direct-symbolic coverage, fallback usage, retrieval recall, reasoning accuracy conditional on premises, trace validity, realization fidelity, abstention precision and recall, robustness under meaning-preserving changes, sensitivity to meaning-changing changes, composition depth, latency, memory, loaded bytes, package size, update locality, and deterministic replay.
+Before a final comparison, freeze the symbolic commit, accepted KB versions, adapters, CNL version, Language Agent policy, prompts and model when an assisted track is included, seeds, scorers, resource budgets, and prediction schema. A label-free export manifest lets another system produce predictions. The local deterministic oracle joins by stable identifier, validates shape, and counts omissions.
 
-Random example splits are insufficient when templates, stories, vocabularies, or compositions repeat. Grouped splits must isolate source documents or worlds, construction families, entity vocabulary, domain, relation composition, and depth. At least one shadow pool remains unavailable to the learning agent. An inspected holdout becomes development evidence in a new experiment version.
+Results from final comparison do not feed patches into that frozen candidate. A later patch starts a new comparison version. Reports retain raw predictions and name model identity, quantization, prompt, context window, decoding, tools or retrieval, hardware, cost, and evidence regime.
 
-### Benchmark portfolio and CNL traceability
+### Comparison dimensions
 
-bAbI supplies state, possession, coreference, temporal order, counting, negation, deduction, induction, path, and motivation diagnostics. LogicBench, IIBench, RuleTaker, ProofWriter, PrOntoQA, LogicSkills, FOLIO, and ProverQA exercise increasingly rich logical forms and proof obligations. CLUTRR and StepGame exercise relational composition. SATBench, ZebraLogic, and SLR-Bench exercise constraints, search, arithmetic, recursion, and ordering. Defeasible NLI, CommonsenseQA, SocialIQA, PIQA, and ART or alphaNLI exercise defaults, exceptions, event roles, intentions, affordances, and abduction. BLiMP exercises grammatical contrasts. WinoGrande, ReClor, and LogiQA exercise reference and longer argument structure.
+The comparison matrix identifies both-correct, ESLM-only-correct, external-system-only-correct, and both-wrong subsets by language form, knowledge dependency, reasoning method, depth, ambiguity, and route. It also compares provenance coverage, trace validity, update locality, loaded knowledge, memory, latency, and honest failure.
 
-Each adapter preserves official task semantics while emitting the common task and result contracts. Metadata may configure answer domains and validators; it cannot choose a privileged parser, solver, or answer path by benchmark name. Dataset acquisition records source, version, license, digest, extracted-file digests, and adapter version. No benchmark data is silently downloaded or vendored.
-
-The current executable catalog is narrower than the research portfolio. It records BLiMP, bAbI, CLUTRR, Entity Tracking, EWOK, Story Cloze, and SimpleQA after checking task relevance, a primary source, and the applicable license or access gate. bAbI Tasks 2, 3, 15, and 16 have a native reset-era adapter and adapter fixtures, but their public 10k files remain unprepared and unexecuted after the declarative reset. The other six catalog entries remain planned integrations. Gated, non-commercial, or dataset-specific terms remain operative even after a family is accepted into the catalog.
-
-The only post-reset benchmark execution currently published is the five-case `eslm-native-v1` fixture. Its three QA cases and two preference cases verify the shared scorer and runtime on `quick@1.0.0`. The report is non-comparable and must be described as software regression evidence. A catalog entry, external paper, public reference result, cached archive, adapter fixture, and executed public benchmark are six different evidence states and must never be represented by one undifferentiated “available” label.
-
-### Prediction exchange and freeze
-
-Before final comparison, freeze the symbolic commit, KB versions, adapters, CNL version, language fallback policy, prompts or normalization policy, seeds, and resource budgets. A label-free export manifest enables another system to produce predictions. The local deterministic oracle joins predictions by stable record ID and counts omissions as failures.
-
-Final comparison results may not feed patches into the frozen system. Reports identify model name and version, quantization, prompt, context, decoding, tool or retrieval access, hardware, cost, and evidence regime. A published aggregate from a different protocol is contextual evidence rather than a direct tie.
+The purpose is to locate the capability frontier. Symbolic strength on strict deduction does not imply unrestricted language or social plausibility. External-model strength on human prose does not reveal whether the difference is parsing, knowledge, or reasoning unless the symbolic route and intermediate evidence are separated.
 
 ## Decisions & Questions
 
-### Question #1: Why avoid an LLM judge when possible?
+### Question #1: When is comparison with an official or external score valid?
 
-Response: Exact labels, semantic values, constraints, and proof witnesses have deterministic validators. Adding a model judge would introduce an unnecessary and difficult-to-reproduce authority.
+Response: Only when source version, split, visible evidence, prompt or adapter, answer normalization, grader, proof policy, tools, language route, and resource regime match. Otherwise the value is a named local diagnostic or contextual reference, not a direct leaderboard comparison.
 
-### Question #2: Can an ingested-source holdout establish independent world knowledge?
+### Question #2: Why does deterministic validation take precedence over a model judge?
 
-Response: No. It can establish compiler fidelity, execution, relation completion, or language transfer under source exposure. Independent factual claims require separately sourced evidence.
+Response: Semantic labels, values, constraints, paths, proofs, and assignments have reproducible validators. Adding a model judge would introduce a mutable authority and could hide whether the symbolic result actually satisfies the task.
 
-### Question #3: What is the preferred direct external comparison?
+### Question #3: What makes an impossibility or exception report valid?
 
-Response: Give both systems the same visible cases and output schema, preserve raw predictions, and score both with the same deterministic oracle. Protocol differences remain disclosed rather than normalized away.
-
-### Question #4: Why list reviewed benchmark families before their adapters are complete?
-
-Response: The list records the intended capability coverage and the acquisition or license work that remains. Giving each family an explicit evidence state prevents planning visibility from being mistaken for an executed score and makes the next adapter work reviewable.
+Response: The report must identify the accepted input representation, prove that materially different oracle outcomes are indistinguishable under that representation or that the required oracle is unavailable, and show that no invariant method can separate them without new evidence or a changed task. Low accuracy, missing code, or a resource limit is an engineering gap, not an impossibility.
 
 ## Conclusion
 
-Evaluation maps the capability frontier rather than compressing it into one score. Claims remain valid only for frozen inputs, methods, KBs, language routes, proofs, and evidence regimes.
+Evaluation maps the capability frontier through exact evidence regimes, route accounting, witnesses, and frozen comparisons. Dynamic results can change without rewriting the stable contracts that make those results interpretable.

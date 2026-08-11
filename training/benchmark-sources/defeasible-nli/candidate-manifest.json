@@ -1,0 +1,17 @@
+{
+  "format": "eslm-benchmark-candidate-manifest-v1",
+  "candidate": "deferred-typed-defeasible-update-comparison-v1",
+  "scope": "development diagnosis only; no executable core candidate",
+  "dependencies": {
+    "src/benchmark-adapters/defeasible-nli.mjs": "09e95b7a3df7cd97741389d0c7b30955451bd6740d40da29a3af4caa7a9adf45"
+  },
+  "tests": {
+    "tests/defeasible-nli-adapter.test.mjs": "ef078837d1e2f4f1bb0cbd952ff4f58562838cab3f5553d5dce35c5126386900"
+  },
+  "guardianAudit": {
+    "eligibleForImplementation": false,
+    "failures": ["rename test not passed"]
+  },
+  "testExecuted": false,
+  "genericCoreChanged": false
+}

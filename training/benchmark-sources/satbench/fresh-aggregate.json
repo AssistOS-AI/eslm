@@ -1,0 +1,35 @@
+{
+  "format": "eslm-satbench-sealed-fresh-aggregate-v1",
+  "executedAt": "2026-08-11",
+  "evidenceState": "sealed-fresh-aggregate-only",
+  "benchmark": "SATBench",
+  "track": "source-annotated-formula-symbolic",
+  "source": {
+    "datasetRevision": "186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9",
+    "datasetSha256": "d32ee8ca8ccee4ee3dcb322e174d4cbe5ffebbd1b76dcdb702d397afd34294b5"
+  },
+  "preFreshFreeze": {
+    "path": "training/benchmark-sources/satbench/pre-fresh-freeze.json",
+    "sha256": "67e5548b983fef13ae52b6d86abcc99ca0d7caead5e14e565c5d62ff8b9e9e82"
+  },
+  "partitionMembershipSha256": "bff899604f6e9d0ef2dde8b43960f1d125f8cfa2d16030fd5707dacad3a1457d",
+  "tested": 1680,
+  "available": 1680,
+  "correct": 1680,
+  "accuracy": 1,
+  "witnessValid": 1680,
+  "directSymbolic": 1680,
+  "languageAgentInvocations": 0,
+  "methodId": "method:core:scalable-boolean-entailment",
+  "statusCounts": { "SOLVED": 1680 },
+  "strata": {
+    "easy-SAT": { "tested": 442, "correct": 442, "accuracy": 1 },
+    "easy-UNSAT": { "tested": 454, "correct": 454, "accuracy": 1 },
+    "medium-SAT": { "tested": 173, "correct": 173, "accuracy": 1 },
+    "medium-UNSAT": { "tested": 163, "correct": 163, "accuracy": 1 },
+    "hard-SAT": { "tested": 221, "correct": 221, "accuracy": 1 },
+    "hard-UNSAT": { "tested": 227, "correct": 227, "accuracy": 1 }
+  },
+  "oracleBoundary": "The single fresh execution returned only aggregate counts. It did not return or print a fresh scenario, condition, formula, label, explanation, identifier, assignment, certificate, or per-case outcome. Every success required an independently validated assignment or replayed DPLL certificate.",
+  "claimBoundary": "This is fresh evidence for the frozen source-annotated formula track. It is not the authors' official natural-language-only prompt protocol, not a direct-language score, and not a leaderboard submission."
+}

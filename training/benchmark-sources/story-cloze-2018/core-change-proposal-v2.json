@@ -1,0 +1,64 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Provider-neutral typed semantic evidence for bounded narrative continuation",
+  "independentExamples": [
+    "A nonce process followed by a declaratively supported causal outcome",
+    "A renamed nonce goal followed by a continuation that satisfies the declared goal",
+    "A cooperative nonce exchange contrasted with a provider-declared social conflict",
+    "A positive containment state contrasted with a provider-declared inverse state"
+  ],
+  "inputTypes": [
+    "narrative-sequence-v1",
+    "narrative-event-frame-v1 candidates",
+    "bounded provider-neutral semanticEvidence records",
+    "allowlisted semantic-family weights"
+  ],
+  "outputTypes": [
+    "selected candidate identifier or explicit UNKNOWN",
+    "ranked candidates",
+    "signed typed feature contributions",
+    "provider and source provenance"
+  ],
+  "preconditions": [
+    "one to sixty-four validated narrative events",
+    "two to thirty-two uniquely identified candidate frames",
+    "at most sixteen semantic providers",
+    "each provider record declares a bounded signed score and optional allowlisted semantic family"
+  ],
+  "invariants": [
+    "provider identifiers, benchmark identifiers, row identifiers, candidate order, and exact strings never dispatch core behavior",
+    "unknown semantic families fall back to event support or signed contradiction rather than creating executable policy",
+    "negative evidence remains negative through bounded scoring",
+    "provider records remain defeasible and retain source references",
+    "source-local development calibration is adapter policy and not universal semantic truth"
+  ],
+  "uncertaintySemantics": "DEFEASIBLE only above the declared minimum margin; UNKNOWN for a tie or insufficient margin; UNPARSED for an invalid payload",
+  "proofBehavior": "Returns the semantic family, signed value, weight, contribution, relation, match type, and source reference in the ordinary ranking trace",
+  "resourceBounds": {
+    "sentences": 64,
+    "candidates": 32,
+    "providers": 16,
+    "compatibilityEvidencePerCandidate": 24,
+    "supportRecordsPerProviderCandidate": 64,
+    "coreProviderEvidenceRecords": 512
+  },
+  "failureStatuses": [
+    "UNPARSED",
+    "UNKNOWN"
+  ],
+  "tests": [
+    "unit",
+    "metamorphic",
+    "contrastive",
+    "regression"
+  ],
+  "kbMigration": "No package-schema migration. ATOMIC, ConceptNet, and world-relations expose optional semanticEvidence methods while their existing query interfaces remain compatible.",
+  "renameTestPassed": true,
+  "forbiddenDispatchAuditPassed": true,
+  "renamedDimensions": [
+    "entity",
+    "predicate",
+    "value",
+    "ordering"
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "format": "eslm-proverqa-sealed-fresh-aggregate-v1",
+  "executedAt": "2026-08-11",
+  "evidenceState": "sealed-fresh-aggregate-only",
+  "track": "source-annotation-assisted-finite-entailment",
+  "preFreshFreeze": {
+    "path": "training/benchmark-sources/proverqa/pre-fresh-freeze-v2.json",
+    "sha256": "1d786f7ed6a0ad19992be3d92cfc469a66c6f75362cdccc747cc2c5a88202221"
+  },
+  "abortedOutputAttempt": {
+    "path": "training/benchmark-sources/proverqa/fresh-attempt-1-aborted.json",
+    "sha256": "9cab21874d3c01dcae0f08a0f190fd28c99f7523ca44e5b4956d2381ac9a19b5",
+    "effect": "No outcome or aggregate escaped; one output-only property-name correction was frozen before this aggregate-producing retry."
+  },
+  "tested": 1200,
+  "available": 1200,
+  "correct": 1196,
+  "accuracy": 0.9966666666666667,
+  "statusCounts": {
+    "SOLVED": 1198,
+    "INCONSISTENT_CONTEXT": 2
+  },
+  "byLevel": {
+    "easy": { "tested": 400, "correct": 400 },
+    "medium": { "tested": 400, "correct": 398 },
+    "hard": { "tested": 400, "correct": 398 }
+  },
+  "byAnswer": {
+    "A": { "tested": 377, "correct": 376 },
+    "B": { "tested": 387, "correct": 385 },
+    "C": { "tested": 436, "correct": 435 }
+  },
+  "proofOrCountermodelWitnessesValid": 1198,
+  "sourceAnnotationNormalization": {
+    "policy": "predicate-morphology-and-surface-evidence-v2",
+    "casesWithReconciliation": 125,
+    "mergedPredicates": 149,
+    "usesAnswerOrReferenceReasoning": false
+  },
+  "languageAgentInvocations": 0,
+  "normalizationCandidates": 0,
+  "partitionMembershipSha256": "06d3e3a2257edd975e4c49af2b63468c3a6020ee2ca95a5e5ae1c393165b66a1",
+  "oracleBoundary": "Only aggregate and declared-stratum counts left the evaluator. No case, identifier, formula, sentence, answer, reasoning trace, witness, or per-case outcome was returned.",
+  "diagnosisBoundary": "Aggregate evidence establishes two inconsistent compiled contexts and two additional strict mismatches among solved cases, but does not expose which members or lexical constructions caused them. They cannot be used for post-fresh tuning.",
+  "claimBoundary": "Fresh evidence for the frozen annotation-assisted logical-form track; not a direct natural-language score or an official leaderboard submission."
+}

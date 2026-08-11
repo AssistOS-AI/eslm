@@ -1,0 +1,48 @@
+{
+  "format": "eslm-story-cloze-development-result-v1",
+  "partitionDigest": "df208d36029d86c020cbc7ec49cf7937f8cac785230fdeab6f222968b61180b1",
+  "sourceSha256": "1e8f4987664c12889426465481d998f843ad844cc97ba5d99f30c9032329664b",
+  "evidenceVisibility": "development-visible validation subset only",
+  "testSplitUsed": false,
+  "freshLabelsUsed": false,
+  "cycles": [
+    {
+      "name": "surface-state baseline",
+      "total": 1257,
+      "correct": 509,
+      "accuracy": 0.4049323786793954,
+      "omissions": 277,
+      "rankCorrect": 649,
+      "rankAccuracy": 0.5163086714399363
+    },
+    {
+      "name": "development-calibrated structural policy without public event evidence",
+      "total": 1257,
+      "correct": 720,
+      "accuracy": 0.5727923627684964,
+      "omissions": 60,
+      "rankCorrect": 749,
+      "rankAccuracy": 0.5958631662688942
+    },
+    {
+      "name": "frozen structural policy with ATOMIC 2020 semantic evidence",
+      "total": 1257,
+      "correct": 727,
+      "accuracy": 0.5783611774065235,
+      "omissions": 59,
+      "rankCorrect": 755,
+      "rankAccuracy": 0.6006364359586317,
+      "ties": 59,
+      "statusCounts": {
+        "DEFEASIBLE": 1198,
+        "UNKNOWN": 59
+      },
+      "providerEvidenceRecords": 355,
+      "elapsedMilliseconds": 83142,
+      "usedKbVersions": [
+        "atomic-2020"
+      ]
+    }
+  ],
+  "claimBoundary": "The final development accuracy is not an official Story Cloze test score. It demonstrates bounded direct symbolic ranking on a development-visible partition. The remaining gap requires broader event, goal, causal, social, and contradiction knowledge; it cannot be repaired honestly by memorizing endings or treating candidate order as evidence."
+}

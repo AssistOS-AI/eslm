@@ -1,0 +1,14 @@
+{
+  "format": "eslm-learning-comparison-v1",
+  "eligible": false,
+  "baselineTested": 14968,
+  "candidateTested": 14968,
+  "deltas": {
+    "answered": 0,
+    "correct": 0,
+    "executionFailures": 0,
+    "coreBytes": 0,
+    "languageAgentInvocations": 0
+  },
+  "promotion": "No candidate is promoted. Source integration and an honest direct-only baseline are retained; the generic reasoning proposal is deferred until typed semantic inputs and proof semantics exist."
+}

@@ -1,0 +1,45 @@
+{
+  "protocol": "iibench-official-source-manifest-v1",
+  "benchmarkId": "iibench-acl-2026",
+  "title": "Immediate Inference: The Missing Foundation in Large Language Model Logical Reasoning",
+  "paper": {
+    "landingPage": "https://aclanthology.org/2026.acl-long.808/",
+    "pdfUrl": "https://aclanthology.org/2026.acl-long.808.pdf",
+    "localCache": "training/.cache/benchmarks/iibench/paper/2026.acl-long.808.pdf",
+    "bytes": 1986187,
+    "sha256": "a8a125834f776f649fafba37b34c0798f9eac3c871b46e5b760ce8984068a50c"
+  },
+  "officialRepository": {
+    "url": "https://github.com/michaellu5475/IIBench",
+    "branch": "main",
+    "revision": "5db6067770fa7d7fdc93b0b17747c7f1cf1d35c8",
+    "archiveUrl": "https://github.com/michaellu5475/IIBench/archive/5db6067770fa7d7fdc93b0b17747c7f1cf1d35c8.tar.gz",
+    "localArchive": "training/.cache/benchmarks/iibench/source/5db6067770fa7d7fdc93b0b17747c7f1cf1d35c8.tar.gz",
+    "archiveBytes": 322908,
+    "archiveSha256": "e1f0cacf12547560d19b8c77bc4b8d8dddbf153b3304ab9c99af3106fc3d54a7",
+    "localExtractedRoot": "training/.cache/benchmarks/iibench/extracted/IIBench-5db6067770fa7d7fdc93b0b17747c7f1cf1d35c8"
+  },
+  "sourceInventory": {
+    "files": 5,
+    "rows": 5284,
+    "sourceSetSha256": "9d66969544f81aa3c70f0867dc147131e18e8fc3ffe835ebd74bdd31ce6af43a",
+    "validation": "Every non-empty JSONL row was streamed, parsed, and checked against its task-specific closed schema. No valid row was discarded or truncated."
+  },
+  "licenseAndTerms": {
+    "repositoryLicenseFile": null,
+    "githubDetectedLicense": null,
+    "status": "explicit-benchmark-license-not-present-at-pinned-revision",
+    "paperSourceStatements": [
+      "The paper states that factual inputs are sourced from Wikidata under CC0.",
+      "The paper states that WordNet material is used under the Princeton WordNet license."
+    ],
+    "boundary": "Those upstream source licenses do not establish a license for the assembled benchmark repository. The cached source is used locally for the authorized research evaluation; this repository does not redistribute the JSONL payloads.",
+    "operatorAction": "Before redistributing the benchmark or using it outside the authorized research setting, obtain an explicit benchmark license from the authors through https://github.com/michaellu5475/IIBench/issues or another contact listed by the paper, then pin the authors' response or added LICENSE revision here."
+  },
+  "acquisition": {
+    "sourceClass": "primary-author-release",
+    "unofficialMirrorsUsed": false,
+    "completeArchiveRetained": true,
+    "cachePolicy": "ignored-immutable-training-cache"
+  }
+}

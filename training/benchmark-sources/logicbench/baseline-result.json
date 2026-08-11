@@ -1,0 +1,14 @@
+{
+  "format": "eslm-logicbench-direct-runtime-baseline-v1",
+  "protocol": "unchanged-eslm-engine-concatenated-context-question-v1",
+  "split": "LogicBench(Aug)",
+  "visibility": "development-visible",
+  "tested": 12908,
+  "available": 12908,
+  "correct": 1,
+  "accuracy": 0.00007747133560582585,
+  "usableYesNoResults": 1,
+  "withoutUsableYesNoResult": 12907,
+  "codingAgentInvocations": 0,
+  "diagnosis": "The pre-candidate runtime did not possess a task representation for these controlled logical arguments. This baseline establishes a missing language-and-method path; it is not an official LogicBench score."
+}

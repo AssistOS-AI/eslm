@@ -1,0 +1,59 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Argument-sensitive semantic compatibility over declarative relation metadata",
+  "independentExamples": [
+    "A nonce landmark remains to the left after both endpoint names are replaced",
+    "A nonce contained object follows its container while an independently supported object does not",
+    "A renamed material class supports a declared action affordance while a contrasting class rejects it"
+  ],
+  "inputTypes": [
+    "bounded English statements",
+    "bounded target statement",
+    "semantic-compatibility-ontology-v1"
+  ],
+  "outputTypes": [
+    "signed compatibility score",
+    "typed context and target frames",
+    "inverse, implication, transition, affordance, and numeric witnesses"
+  ],
+  "preconditions": [
+    "trusted checksum-validated ontology package",
+    "allowlisted construction and relation schemas",
+    "finite statements and finite rule inventory"
+  ],
+  "invariants": [
+    "entity names remain data and never select control flow",
+    "relation arguments, polarity, inverse direction, and transition order are preserved",
+    "benchmark identifiers, item identifiers, answer indices, and complete benchmark sentences are absent from core",
+    "domain vocabulary is declarative KB metadata rather than source-code dispatch",
+    "a contradictory frame contributes negative evidence rather than being silently ignored"
+  ],
+  "uncertaintySemantics": "Compatibility is graded defeasible evidence. Equal aggregate scores remain a tie; absence of matching semantic evidence does not become a fabricated fact.",
+  "proofBehavior": "Every contribution identifies the context frame, target frame, relation transform or KB affordance, signed contribution, and derivation path.",
+  "resourceBounds": {
+    "statements": 64,
+    "ontologyConstructions": 4096,
+    "closureIterations": "finite monotone set closure",
+    "numericPolicies": 256
+  },
+  "failureStatuses": [
+    "tie",
+    "no-semantic-evidence",
+    "invalid-ontology"
+  ],
+  "tests": [
+    "unit",
+    "metamorphic",
+    "contrastive",
+    "regression"
+  ],
+  "kbMigration": "Adds an authored world-relations package and source-specific public providers. Existing package and runtime question behavior remain compatible.",
+  "renameTestPassed": true,
+  "forbiddenDispatchAuditPassed": true,
+  "renamedDimensions": [
+    "entity",
+    "predicate",
+    "value",
+    "ordering"
+  ]
+}

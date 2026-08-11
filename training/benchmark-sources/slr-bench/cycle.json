@@ -1,0 +1,17 @@
+{
+  "protocol": "benchmark-guided-symbolic-learning-cycle-v1",
+  "benchmark": "SLR-Bench",
+  "evidenceBoundary": "official train and validation only; official test remained sealed",
+  "baseline": "baseline-result.json",
+  "candidate": "candidate-result.json",
+  "failures": "failures.json",
+  "comparison": "comparison.json",
+  "proposal": "core-change-proposal.json",
+  "candidateImplementation": {
+    "core": { "path": "src/reasoning/finite-conjunctive-rule-induction.mjs", "sha256": "01f5ec541e8e70a38ea33169e34efa425a56edfc39113cfd44241a51145f0481" },
+    "adapter": { "path": "src/benchmark-adapters/slr-bench-induction.mjs", "sha256": "104630442fac04e551f47d5af5d6801792ea896848c5400d2c90286be2d8fc9c" }
+  },
+  "oracleBoundary": "Prompt examples construct the task. Ground-truth rules and validation programs remain host-only and are joined only after a candidate exists for aggregate family diagnosis and inert semantic validation.",
+  "acceptedCheckpoint": "finite-conjunctive-rule-induction-development-v1",
+  "freshOpened": false
+}

@@ -1,0 +1,32 @@
+{
+  "format": "eslm-benchmark-source-manifest-v1",
+  "id": "alpha-nli-art-official-iclr2020",
+  "upstreamOwner": "Allen Institute for AI and the ART authors",
+  "sourceUrl": "https://github.com/allenai/abductive-commonsense-reasoning",
+  "paperUrl": "https://openreview.net/forum?id=Byg1v1HKDB",
+  "codeRevision": "8ed901f038df77b7a4d0d8889255160d351d2b49",
+  "codeArchive": {
+    "url": "https://codeload.github.com/allenai/abductive-commonsense-reasoning/tar.gz/8ed901f038df77b7a4d0d8889255160d351d2b49",
+    "bytes": 6373037,
+    "sha256": "dceb0fdbfda8ba6f0448f529b35c623cfa19a89821549041a5b0a2dcaa801f7a",
+    "license": "Apache-2.0",
+    "licenseFileSha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "readmeSha256": "afa10757a6628560d95a4d98e6be46a6e0020c4c9fb858a93289e50962155324"
+  },
+  "dataArchive": {
+    "authorizedUrl": "https://storage.googleapis.com/ai2-mosaic/public/abductive-commonsense-reasoning-iclr2020/anli.zip",
+    "lastModified": "2020-01-21T22:39:42Z",
+    "bytes": 5415361,
+    "sha256": "4e00551fd9ee04c92e823a8fe078e017c78b35739b36e8f9f122b4bf8a84b16b"
+  },
+  "cache": "training/.cache/benchmarks/alpha-nli-art",
+  "credentialsRequired": false,
+  "networkAtRuntime": false,
+  "sourceRows": 174245,
+  "sourceSetSha256": "b2e3ea025d1f5771264716bd6b5a4cabd6a28bb16c96d7a4035bcec10f6d2c9c",
+  "datasetLicense": "no-explicit-dataset-license-identifier",
+  "licenseEvidence": "The official repository grants Apache-2.0 for its code. Its README and delivered archive do not state that this grant covers the dataset, and the official allenai/art Hugging Face card records the dataset license as unknown.",
+  "usePolicy": "Local noncommercial research and evaluation with no redistribution of source rows while dataset rights remain unclear.",
+  "citation": "Chandra Bhagavatula, Ronan Le Bras, Chaitanya Malaviya, Keisuke Sakaguchi, Ari Holtzman, Hannah Rashkin, Doug Downey, Wen-tau Yih, and Yejin Choi. Abductive Commonsense Reasoning. ICLR 2020.",
+  "redistribution": "Only ESLM-authored adapters, aggregate inventories, digests, and non-row receipts are committed. The complete source remains in the ignored local cache."
+}

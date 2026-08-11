@@ -1,0 +1,38 @@
+{
+  "format": "eslm-benchmark-partition-manifest-v1",
+  "benchmark": "ZebraLogic",
+  "datasetRevision": "2f94a445d7079f20146f5443e2606049de8543e0",
+  "gridJsonlSha256": "a35f4a86b003f4134b4701cd83fef56964c39628d26715e26db68bafbfb229f1",
+  "partition": {
+    "version": "zebralogic-size-stratified-partition-v1",
+    "seed": "eslm-zebralogic-size-stratified-partition-v1",
+    "algorithm": "Construct the stable identity zebralogic + official id + SHA-256(puzzle). In each of the 25 official size strata, rank by SHA-256(seed + NUL + size + NUL + stable identity). The first eight are development-visible and the remaining 32 are sealed fresh members.",
+    "answerBlindFields": ["id", "size", "puzzle"],
+    "excludedOracleFields": ["solution", "private assignment", "multiple-choice answer"],
+    "strata": "Every official number-of-houses by number-of-attributes size from 2*2 through 6*6 contains 40 grid puzzles and contributes eight development and 32 fresh members.",
+    "all": {
+      "count": 1000,
+      "membershipSha256": "e396ae15fb3161db8729b559a4af851b28451ead1620c30b4b877338df0bfa2c"
+    },
+    "development": {
+      "count": 200,
+      "membershipSha256": "796d63bec8f018203f022011a94c1fdd12dd29dcd43cef02f6fc49ff6cc7d1e3",
+      "visibility": "The 200 selected public puzzle texts may be inspected for parser development. Their public solution fields are redacted and cannot supply an answer."
+    },
+    "fresh": {
+      "count": 800,
+      "membershipSha256": "6c644963f89e423620642f24363ba6a47097469891caea7133274c0ddc3caf69",
+      "visibility": "sealed membership only; no fresh puzzle text, computed assignment, stable identifier, or per-case outcome may be returned by the adapter"
+    }
+  },
+  "oracleIsolation": {
+    "visibleTask": "Contains the attribute domains and clue text only. It contains no public solution placeholders and no computed assignment.",
+    "hostOracle": "For the public-clue CSP track, the host independently checks a returned complete assignment against the parsed constraints and proves uniqueness by adding a blocking constraint and rerunning search. An official-label host oracle remains unavailable behind the gated private source.",
+    "freshEvaluator": "May return aggregate statuses and resource maxima only after dependencies are frozen; it must not expose fresh clues, identifiers, assignments, or per-case results."
+  },
+  "trackBoundary": {
+    "id": "public-clue-csp-symbolic",
+    "evidence": "Direct deterministic parsing of the official public puzzle text, complete CSP search, independent clue satisfaction, and uniqueness verification.",
+    "notClaimed": "This is not the official private-label score or a leaderboard submission. It cannot compare computed cells with the gated reference solution until authorized source access exists."
+  }
+}

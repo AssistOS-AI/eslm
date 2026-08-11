@@ -1,0 +1,42 @@
+{
+  "protocol": "slr-bench-ds018-source-gate-v1",
+  "sourceIdentity": "AIML-TUDA SLR-Bench v1-All at cecc0aa2602943ead28a4ea74c7a8f3c91264cbf",
+  "approvalState": "complete-source-validated; finite-conjunctive development candidate executed; broader rule language pending",
+  "completeAccounting": {
+    "rawParquetShards": 5,
+    "rawCompressedBytes": 260070558,
+    "preparedJsonlShards": 79,
+    "preparedBytes": 1261211442,
+    "rows": 19253,
+    "validationProgramFacts": 13999345,
+    "schemaInvalidRows": 0,
+    "unsupportedValidRows": 0,
+    "discardedForSize": 0
+  },
+  "semanticMapping": {
+    "prompt": "visible input for generic symbolic-rule induction",
+    "curriculum level and tier": "visible stratification and difficulty metadata",
+    "problem size and vocabulary predicate count": "visible resource and task metadata",
+    "ground-truth rule": "host-only reference oracle",
+    "validation program": "host-only labeled-example oracle; parsed into inert ground facts but never executed",
+    "validation_program_shortcuts": "host-only validation oracle metadata",
+    "symbols": "host-only symbolic validation support",
+    "remaining generation metadata": "retained in source and inventory but not projected into the runtime task"
+  },
+  "physicalPlan": {
+    "raw": "Retain the five source-native immutable Parquet shards.",
+    "prepared": "Deterministic JSONL projection; train is split by curriculum level into at most 250 rows per shard, test is split by source order into 250-row shards, and validation remains one 200-row shard.",
+    "largestPreparedShardBytes": 47870290,
+    "reconstruction": "Concatenating prepared shards in lexical order reproduces the frozen split JSONL payload hashes.",
+    "memoryPolicy": "Read one JSON line and one validation program at a time. Keep only identifiers and aggregate counters proportional to row count."
+  },
+  "profile": {
+    "operation": "complete schema validation plus inert parsing of every validation program",
+    "elapsedSeconds": 29.0,
+    "maximumResidentSetKiB": 133640,
+    "combinedInventoryAndLifecycleElapsedSeconds": 57.74,
+    "combinedMaximumResidentSetKiB": 136400,
+    "corpusProgramsExecuted": 0
+  },
+  "coverageGap": "The adapter now projects visible ground examples into finite conjunctive induction and safely validates returned conjunctive rules over inert ground facts. It still does not reproduce the official SWI-Prolog scorer. Quantification, negation, aggregation, extrema, arithmetic, and larger bounded searches remain outside this candidate, and the selected train and validation rows contain no self-recursive target rule."
+}

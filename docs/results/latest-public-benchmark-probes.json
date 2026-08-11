@@ -1,0 +1,1433 @@
+{
+  "format": "eslm-public-benchmark-probe-report-v1",
+  "createdAt": "2026-08-11T18:22:08.515Z",
+  "evidenceRegime": "frozen fresh evaluations, development probes, and diagnostic probes are labeled separately; inaccessible sources and sources without a valid symbolic method remain unscored",
+  "languageAgentPolicy": "No Language Agent calls were made. normalizationCandidateRate counts direct UNPARSED cases that would trigger the optional profile; null means that direct-language eligibility was not measured.",
+  "rows": [
+    {
+      "id": "blimp",
+      "evidenceState": "fresh-evaluation-executed",
+      "total": 13400,
+      "correct": 11767,
+      "accuracy": 0.8781343283582089,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "protocol": "blimp-feature-acceptability-fresh-v1",
+      "samplePolicy": "frozen-label-blind-stratified-partition",
+      "protocolDescription": "For each minimally different sentence pair, the system earns a point only when the generic feature grammar assigns the higher acceptability score to the grammatical sentence.",
+      "sampleDescription": "Every one of the 67 grammar paradigms contributes 800 development pairs and 200 fresh pairs. The candidate was frozen before the 13,400 fresh pairs were scored once, and only aggregate results were retained.",
+      "ties": 1227,
+      "reversedPreferences": 406,
+      "statusCounts": {
+        "SCORED": 13400
+      },
+      "sourceEvidence": [
+        {
+          "path": "training/.cache/datasets/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/blimp.tar.gz",
+          "bytes": 35662249,
+          "sha256": "cbada5cc59b41798f0f0a6b2525166c7a1d82c4a40ed726c78810b898e1979f6",
+          "reused": true
+        },
+        {
+          "path": "training/benchmark-sources/blimp-acceptability/candidate-manifest.json",
+          "sha256": "88209c1220f8665994744d5c758224d0e12ebf2fa03123dc95cea0bea6e67630"
+        },
+        {
+          "path": "training/benchmark-sources/blimp-acceptability/fresh-result.json",
+          "sha256": "c8549ce7919075ad77ecd03aba3e7b00d20318873a1c904418d31cdbb4c1d878"
+        }
+      ],
+      "developmentResult": {
+        "total": 53600,
+        "correct": 47389,
+        "ties": 4594,
+        "reverse": 1617,
+        "accuracy": 0.8841231343283582
+      },
+      "sampleCoverage": {
+        "tested": 13400,
+        "available": 67000,
+        "unit": "minimal sentence pairs",
+        "comprehensive": false,
+        "scope": "The latest run scored the frozen fresh partition. The separate development run scored the other 53,600 pairs, so all 67 paradigms have lifecycle evidence, but the latest result is not presented as one undifferentiated full-corpus run."
+      },
+      "capabilityCoverage": {
+        "level": "broad-but-incomplete",
+        "description": "All 67 BLiMP grammar paradigms are represented in the fresh partition. The remaining gap is concentrated in phrase structure, attachment, lexical selection, and binding rather than missing paradigm sampling."
+      },
+      "diagnosis": "The remaining failures cluster in long-distance subject-gap attachment, adjunct islands, lexical animacy selection, N-bar ellipsis, adjective-mediated and relative-clause agreement, optional or inchoative valency, participle ambiguity, and binding-domain attachment. Progress requires a fuller phrase-structure and clause-attachment representation, not paradigm-name dispatch or memorized sentences."
+    },
+    {
+      "id": "babi",
+      "evidenceState": "development-probe-executed",
+      "total": 200000,
+      "correct": 199872,
+      "accuracy": 0.99936,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "protocol": "finite-episodic-world-train-visible-v1",
+      "samplePolicy": "complete-official-English-10k-training-split-all-twenty-families",
+      "protocolDescription": "The adapter compiles each visible story into a finite typed episode. The registered generic executor applies state changes, relations, event roles, paths, vectors, counting, and source-declared policies, then returns semantic values with replayable operation references.",
+      "sampleDescription": "The latest run executed every one of the 200,000 questions in all twenty official English 10k training files. These train-visible cases are development evidence, not an untouched test score.",
+      "statusCounts": {
+        "SOLVED": 199872,
+        "AMBIGUOUS": 128
+      },
+      "byTask": {
+        "1": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "2": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "3": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "4": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "5": {
+          "tested": 10000,
+          "correct": 9872,
+          "witnessesVerified": 10000,
+          "ambiguous": 128
+        },
+        "6": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "7": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "8": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "9": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "10": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "11": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "12": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "13": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "14": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "15": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "16": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "17": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "18": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "19": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        },
+        "20": {
+          "tested": 10000,
+          "correct": 10000,
+          "witnessesVerified": 10000
+        }
+      },
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/blimp-babi/all-20-candidate-result.json",
+          "sha256": "70361cd9ad643f70af68c9c7b82dad3b41cf30d0d44e706c7334252d5aefd595"
+        },
+        {
+          "path": "training/benchmark-sources/blimp-babi/all-20-ambiguity-proof.json",
+          "sha256": "db9b8649e17f46d7e3703d01fe78b92ac2b40d21b98bf463f1338a96daf92ab7"
+        }
+      ],
+      "sampleCoverage": {
+        "tested": 200000,
+        "available": 200000,
+        "unit": "official English 10k training questions",
+        "comprehensive": true,
+        "scope": "The latest development run executed all 10,000 questions in each of all twenty task families. Official test files were not opened or scored."
+      },
+      "usedKbVersions": [
+        "babi-v1.2-language@1.0.0"
+      ],
+      "diagnosis": "199872/200000 cases match the single-label development oracle and all 200000 execution witnesses replay. Tasks 1–4 and 6–20 are each 10,000/10,000. Task 5 is 9,872/10,000; its 128 remaining inputs each expose at least two distinct transfer themes satisfying the same visible event-role query. Five alpha-renamed structural signatures require contradictory oracle choices, which falsifies first, latest, and verb-priority tie-breakers. The sound runtime returns AMBIGUOUS instead of reading host-only support-line annotations.",
+      "capabilityCoverage": {
+        "level": "complete-all-twenty-development-family-coverage",
+        "description": "Every official English 10k training question in all twenty families was executed. The method covers the delivered finite episode operations; this does not establish unrestricted natural-language, temporal, spatial, or causal reasoning outside the declared schemas."
+      }
+    },
+    {
+      "id": "clutrr",
+      "evidenceState": "development-probe-executed",
+      "total": 108,
+      "correct": 104,
+      "accuracy": 0.9629629629629629,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "protocol": "clutrr-relation-classification-development-probe-v1",
+      "protocolDescription": "The system must infer the requested typed family relationship from the people and relationships stated in each story.",
+      "samplePolicy": "stable-hash-equal-count-per-relation-depth",
+      "sampleDescription": "The development sample is selected deterministically with the same number of cases at every relationship-chain depth from 2 through 10.",
+      "statusCounts": {
+        "SOLVED": 104,
+        "AMBIGUOUS": 4
+      },
+      "strata": {
+        "relationDepths": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "perDepth": 12
+      },
+      "sourceEvidence": [
+        {
+          "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.2_test.csv",
+          "sha256": "9f4a950fc5122a64af75fb80e628feabfaa2ddb606019163f4f0a8ed739acadd",
+          "sourceRows": 38,
+          "sampled": 12
+        },
+        {
+          "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.3_test.csv",
+          "sha256": "9eef7ddbe865a83fcc9b53e2ec4248bed35bf43681007f9ade1072539d723918",
+          "sourceRows": 105,
+          "sampled": 12
+        },
+        {
+          "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.4_test.csv",
+          "sha256": "91b7162d45daa69efee31372280f86d2140863bbe464c39c85c1157e642ceca5",
+          "sourceRows": 190,
+          "sampled": 12
+        },
+        {
+          "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.5_test.csv",
+          "sha256": "54ce4fe99250bb26f2d2bc327f0e021d86fdb426a887374f0257a71541df9f93",
+          "sourceRows": 174,
+          "sampled": 12
+        },
+        {
+          "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.6_test.csv",
+          "sha256": "500100329e9c21b26865d558cb9481c4579f9f96a825f358e50e2ed1b4429393",
+          "sourceRows": 107,
+          "sampled": 12
+        },
+        {
+          "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.7_test.csv",
+          "sha256": "ddbe49064976fbca203f069b0faab519d5f290f57c8b39ebc4d81587ef02b2ca",
+          "sourceRows": 144,
+          "sampled": 12
+        },
+        {
+          "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.8_test.csv",
+          "sha256": "c8550c7f90fb18ff2788b48e65c3324c475246fb5de49826328af65383a216fe",
+          "sourceRows": 150,
+          "sampled": 12
+        },
+        {
+          "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.9_test.csv",
+          "sha256": "815b4a37ecd95670ddfa9a698300649b33d92bf0111c814263668b6df899fed4",
+          "sourceRows": 119,
+          "sampled": 12
+        },
+        {
+          "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.10_test.csv",
+          "sha256": "4df345af503330e22b4070a8bf4c27be2ee01281b8b340cecb901c25d95d5290",
+          "sourceRows": 119,
+          "sampled": 12
+        }
+      ],
+      "sampleCoverage": {
+        "tested": 108,
+        "available": 1146,
+        "unit": "validated structured relation cases",
+        "comprehensive": false,
+        "scope": "The latest development run sampled the same count from every relation depth from 2 through 10; it did not execute every validated row."
+      },
+      "diagnosis": "The runtime composes typed relations with a source-local kinship algebra and returns AMBIGUOUS when the available graph cannot distinguish structurally identical labels. Remaining ambiguity is preserved instead of resolved from names, row identifiers, answer frequency, or candidate order.",
+      "capabilityCoverage": {
+        "level": "broad-for-structured-kinship",
+        "description": "The probe covers relation chains at every depth from 2 through 10. Coverage is strong for structured typed graphs, while narrative extraction and source-label ambiguity remain separate limits."
+      }
+    },
+    {
+      "id": "entityTracking",
+      "evidenceState": "development-probe-executed",
+      "total": 100,
+      "correct": 100,
+      "accuracy": 1,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "protocol": "entity-tracking-masked-span-development-probe-v1",
+      "protocolDescription": "The system executes the stated object movements and must return the exact final contents of the queried container.",
+      "samplePolicy": "stable-hash-round-robin-operation-count",
+      "sampleDescription": "The development sample is selected deterministically while cycling across stories with different numbers of operations.",
+      "statusCounts": {
+        "SOLVED": 100
+      },
+      "sourceEvidence": [
+        {
+          "path": "training/.cache/datasets/entity-tracking/extracted/boxes-dataset-v1/few_shot_boxes_nso_exp2_max3/dev-t5.jsonl",
+          "sha256": "5b369e51daf03147b1dceb4265b5fec61a3e9596ba780db76a9aedd7b2f4fc8b",
+          "sourceRows": 20020
+        }
+      ],
+      "sampleCoverage": {
+        "tested": 100,
+        "available": 20020,
+        "unit": "development stories",
+        "comprehensive": false,
+        "scope": "The latest run used a deterministic operation-count-stratified sample from the validated development file."
+      },
+      "diagnosis": "The reviewed adapter projects the story into generic container-state operations. The core executes additions, removals, moves, and final-content queries as finite state transitions rather than treating the task as raw mask completion.",
+      "capabilityCoverage": {
+        "level": "complete-for-current-bounded-schema",
+        "description": "The measured schema covers the declared add, remove, and move operations through the sampled operation depths. It does not establish unrestricted event language or arbitrary container programs."
+      }
+    },
+    {
+      "id": "ewok",
+      "evidenceState": "fresh-evaluation-executed",
+      "total": 8634,
+      "correct": 3361,
+      "accuracy": 0.3892749594625898,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "protocol": "ewok-symbolic-context-preference-fresh-v1",
+      "protocolDescription": "For each target statement, the system must prefer the context in which that statement is more plausible according to ordinary physical, social, spatial, material, and quantitative knowledge.",
+      "samplePolicy": "frozen-complement-of-development-probe",
+      "sampleDescription": "The candidate was frozen after a balanced 110-decision development probe. Every other decision in the protected analysis snapshot formed an 8,634-decision fresh partition, which was scored once without retaining item outcomes.",
+      "comparability": "Direct scalar-preference diagnostic over the protected paper-analysis snapshot; not the official language-model probability protocol.",
+      "ties": 4245,
+      "reversedPreferences": 1028,
+      "statusCounts": {
+        "SCORED": 8634
+      },
+      "sourceEvidence": [
+        {
+          "path": "training/.cache/benchmarks/ewok-core-1.0/source/analysis-data.zip",
+          "sha256": "545bc1affc1df4629e60537478308c1242d9e33fa115a789982e0ba745bdc6f0"
+        },
+        {
+          "path": "training/.cache/benchmarks/ewok-core-1.0/source/config.zip",
+          "sha256": "4bbae97ab5661a2bbaa108c20691c57c3537b94aa2b19eb83f97ca8ae24bbd22"
+        },
+        {
+          "path": "training/benchmark-sources/ewok-core-1.0/fresh-result.json",
+          "sha256": "b2d1ff66c120b6e36d3d7e856deb5e898616b06443fb6298b54beab41b3abcef"
+        }
+      ],
+      "sourceValidation": {
+        "inventoryRows": 4397,
+        "excludedRows": 25,
+        "reversedRows": 0,
+        "retainedSnapshotItems": 4372,
+        "decisions": 8744,
+        "protectedFiles": [
+          {
+            "path": "training/.cache/benchmarks/ewok-core-1.0/protected/data/items_in_results.csv",
+            "sha256": "9265834e807e9ccdcca9ef7685e2ddba4971c923dc3472bc8a6abd89858de840"
+          },
+          {
+            "path": "training/.cache/benchmarks/ewok-core-1.0/protected/config/utils/remove_from_results.csv",
+            "sha256": "0ba1be945b9e2ff5526987e10e93e1fe0e7014632f84aad49920eb7f21a0a4c3"
+          },
+          {
+            "path": "training/.cache/benchmarks/ewok-core-1.0/protected/config/utils/flagged_reverse.csv",
+            "sha256": "6338c175f8d05f40f25687792a5ed10d9826c4374ca0f0b4ec4caa20def2ed40"
+          }
+        ]
+      },
+      "sampleCoverage": {
+        "tested": 8634,
+        "available": 8744,
+        "unit": "target-context preference decisions",
+        "comprehensive": false,
+        "scope": "The latest run scored the 8,634-decision fresh complement once. The other 110 decisions were the separate development probe used before the candidate freeze."
+      },
+      "developmentResult": {
+        "total": 110,
+        "correct": 110,
+        "ties": 0,
+        "wrong": 0,
+        "accuracy": 1
+      },
+      "byDomain": {
+        "agent-properties": {
+          "total": 2230,
+          "correct": 765,
+          "ties": 1351,
+          "wrong": 114,
+          "accuracy": 0.3430493273542601
+        },
+        "material-dynamics": {
+          "total": 1550,
+          "correct": 476,
+          "ties": 1039,
+          "wrong": 35,
+          "accuracy": 0.30709677419354836
+        },
+        "material-properties": {
+          "total": 238,
+          "correct": 79,
+          "ties": 137,
+          "wrong": 22,
+          "accuracy": 0.3319327731092437
+        },
+        "physical-dynamics": {
+          "total": 140,
+          "correct": 65,
+          "ties": 50,
+          "wrong": 25,
+          "accuracy": 0.4642857142857143
+        },
+        "physical-interactions": {
+          "total": 550,
+          "correct": 215,
+          "ties": 245,
+          "wrong": 90,
+          "accuracy": 0.39090909090909093
+        },
+        "physical-relations": {
+          "total": 840,
+          "correct": 420,
+          "ties": 330,
+          "wrong": 90,
+          "accuracy": 0.5
+        },
+        "quantitative-properties": {
+          "total": 370,
+          "correct": 135,
+          "ties": 175,
+          "wrong": 60,
+          "accuracy": 0.36486486486486486
+        },
+        "social-interactions": {
+          "total": 320,
+          "correct": 52,
+          "ties": 262,
+          "wrong": 6,
+          "accuracy": 0.1625
+        },
+        "social-properties": {
+          "total": 356,
+          "correct": 103,
+          "ties": 205,
+          "wrong": 48,
+          "accuracy": 0.2893258426966292
+        },
+        "social-relations": {
+          "total": 1560,
+          "correct": 696,
+          "ties": 376,
+          "wrong": 488,
+          "accuracy": 0.4461538461538462
+        },
+        "spatial-relations": {
+          "total": 480,
+          "correct": 355,
+          "ties": 75,
+          "wrong": 50,
+          "accuracy": 0.7395833333333334
+        }
+      },
+      "capabilityCoverage": {
+        "level": "low-generalization-coverage",
+        "description": "The large fresh partition spans all 11 EWoK domains and shows that the current ontology covers only a minority of required world-knowledge preferences; spatial relations are strongest and social interactions are weakest."
+      },
+      "diagnosis": "The typed world-relation method achieved complete coverage of its 110-case development probe but generalized poorly to the frozen fresh complement, with many ties. The authored ontology is therefore too narrow. A new candidate must broaden source-independent physical, social, material, quantitative, and spatial knowledge under a new version and a new untouched evaluation partition; it must not patch the opened fresh cases. The protected inventory contains 4,397 rows and its explicit removal list excludes 25, leaving 4,372."
+    },
+    {
+      "id": "storyCloze",
+      "evidenceState": "development-probe-executed",
+      "total": 1257,
+      "correct": 734,
+      "accuracy": 0.5839299920445505,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "protocol": "story-cloze-binary-ending-selection-v1",
+      "protocolDescription": "The system compiles the four-sentence story into bounded narrative state, evaluates both candidate events with structural and typed commonsense evidence, and abstains when neither candidate has a sufficient margin.",
+      "samplePolicy": "frozen-label-blind-development-partition",
+      "sampleDescription": "A label-blind SHA-256 partition reserves 314 validation cases as fresh and exposes the remaining 1,257 cases for development. This row measures only that development partition; the official label-free test split was not used.",
+      "omissions": 53,
+      "statusCounts": {
+        "DEFEASIBLE": 1204,
+        "UNKNOWN": 53
+      },
+      "usedKbVersions": [
+        "world-relations-1.0",
+        "atomic-2020",
+        "conceptnet-5.7.0-en"
+      ],
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/story-cloze-2018/fresh-partition.json",
+          "sha256": "f2b8d43eb755a92c0dd73e2089331418be48b4320b721e844685fd95329c0625",
+          "partitionDigest": "df208d36029d86c020cbc7ec49cf7937f8cac785230fdeab6f222968b61180b1"
+        }
+      ],
+      "sampleCoverage": {
+        "tested": 1257,
+        "available": 1571,
+        "unit": "labeled validation stories",
+        "comprehensive": false,
+        "scope": "The latest run measured the 1,257-case development partition. The other 314 validation stories are reserved fresh evidence for a separately frozen candidate; the 1,571-case official test file has no local labels."
+      },
+      "diagnosis": "The method is executable and auditable, but current narrative state and public KB evidence do not yet cover enough goals, causal consequences, social expectations, contradictions, and multi-event temporal dependencies. This is an unresolved capability gap, not a proof that the task is impossible.",
+      "capabilityCoverage": {
+        "level": "partial-narrative-coverage",
+        "description": "The current method models participants, lexical bridges, polarity, tense, goals, causes, events, social effects, and states. Its development score shows that this inventory is not yet a complete account of story coherence."
+      }
+    },
+    {
+      "id": "simpleqa",
+      "evidenceState": "development-probe-executed",
+      "total": 100,
+      "correct": 0,
+      "accuracy": 0,
+      "normalizationCandidates": 35,
+      "normalizationCandidateRate": 0.35,
+      "directSymbolicRate": 0.65,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "protocol": "deterministic-normalized-exact-match-diagnostic",
+      "protocolDescription": "This local diagnostic compares a normalized short answer exactly; it is deliberately not presented as the official semantic-grader score.",
+      "comparability": "not-an-official-simpleqa-score",
+      "samplePolicy": "stable topic-stratified evaluation-visible questions; host-only answers",
+      "sampleDescription": "The diagnostic sample is selected deterministically across question topics. Questions are visible to the runtime, while reference answers remain available only to the local evaluator.",
+      "statusCounts": {
+        "UNPARSED": 35,
+        "UNKNOWN": 65
+      },
+      "sourceEvidence": [
+        {
+          "path": "training/.cache/benchmarks/simpleqa-official-test-2024/raw/simple_qa_test_set.csv",
+          "bytes": 2012910,
+          "sha256": "feee3f7e7db3617e94e8fcf1977b756ec420ef8568f4e0fcbbe0e92e9d5fc032",
+          "records": 4326,
+          "header": [
+            "metadata",
+            "problem",
+            "answer"
+          ]
+        }
+      ],
+      "sampleCoverage": {
+        "tested": 100,
+        "available": 4326,
+        "unit": "official test questions",
+        "comprehensive": false,
+        "scope": "The latest diagnostic used a deterministic topic-stratified subset. Because SimpleQA publishes only a test set, these questions remain evaluation-only and cannot become training examples."
+      },
+      "diagnosis": "Most failures are unsupported broad factoid interrogatives; parsed cases lack independently sourced encyclopedic evidence. Exact match is diagnostic because official SimpleQA uses semantic grading.",
+      "capabilityCoverage": {
+        "level": "low-factoid-coverage",
+        "description": "The frontend recognizes a bounded set of factoid frames and the loaded public KBs cover selected lexical, geographic, commonsense, and relational facts. The stratified diagnostic exposes large gaps in both question forms and encyclopedic breadth."
+      }
+    },
+    {
+      "id": "logicbench",
+      "evidenceState": "fresh-evaluation-executed",
+      "protocol": "logicbench-pinned-fresh-aggregate-v1",
+      "protocolDescription": "The adapter compiles controlled logical arguments into finite classical or prioritized-default tasks, then scores binary answers or multiple-choice selections against the isolated oracle.",
+      "samplePolicy": "complete one-shot official evaluation source after development freeze",
+      "sampleDescription": "The candidate was frozen on LogicBench(Aug) before every BQA and MCQA case in LogicBench(Eval) was scored once. Only aggregate and family counts were retained.",
+      "total": 2020,
+      "correct": 217,
+      "accuracy": 0.10742574257425742,
+      "normalizationCandidates": 1635,
+      "normalizationCandidateRate": 0.8094059405940595,
+      "directSymbolicRate": 0.1905940594059406,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED": 315,
+        "UNPARSED": 1635,
+        "UNKNOWN": 62,
+        "UNDERDETERMINED": 8
+      },
+      "sampleCoverage": {
+        "tested": 2020,
+        "available": 2020,
+        "unit": "official evaluation questions",
+        "comprehensive": true,
+        "scope": "The latest result executed all 1,520 BQA and all 500 MCQA cases in the pinned evaluation source. The 12,908 augmented development cases belong to the earlier development checkpoint."
+      },
+      "capabilityCoverage": {
+        "level": "fresh-generalization-gap",
+        "description": "Finite classical and skeptical default reasoning execute correctly after a controlled argument is compiled, but most fresh BQA and MCQA language surfaces still fail before a usable task or choice comparison is formed."
+      },
+      "diagnosis": "No fresh item or failure text was inspected. The aggregates show that the development adapter did not generalize to most evaluation surfaces, especially MCQA, but they cannot authorize item-specific repair. Any later change begins a new experiment and requires a new untouched pool.",
+      "comparability": "This is the first one-shot fresh ESLM protocol result for the pinned source and frozen candidate. It is not the official LogicBench model-prompt protocol or an official leaderboard score.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/logicbench/source-manifest.json",
+          "sourceRevision": "c014153303c98de4d5f09d41c3a235cd869be5c8"
+        }
+      ]
+    },
+    {
+      "id": "iibench",
+      "evidenceState": "fresh-evaluation-executed",
+      "protocol": "iibench-categorical-core-fresh-v1",
+      "protocolDescription": "The typed adapter executes the traditional square of opposition, required-form immediate transformations, and exhaustive finite-population syllogistic entailment. Syllogism scoring accepts only the source-declared reversible equivalence closure.",
+      "samplePolicy": "frozen label-blind 80/20 reclassification of the author release",
+      "sampleDescription": "The categorical candidate, adapter, tests, and specification were frozen before all 1,088 protected members were scored once. Only aggregate and source-family counts were retained.",
+      "total": 1088,
+      "correct": 1071,
+      "accuracy": 0.984375,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
+      "directSymbolicRate": null,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "ANSWERED": 1088
+      },
+      "sampleCoverage": {
+        "tested": 1088,
+        "available": 5284,
+        "unit": "validated author-release cases",
+        "comprehensive": false,
+        "scope": "The latest run scored the complete 1,088-member fresh partition once. The separate development run executed the other 4,196 cases before the candidate freeze."
+      },
+      "capabilityCoverage": {
+        "level": "implemented-categorical-method-with-proved-gold-strength-ambiguity",
+        "description": "All opposition and immediate-transformation development cases pass. Every syllogism receives a sound model-entailed conclusion; strict source equivalence rejects some stronger universal conclusions when the gold selects their particular subaltern."
+      },
+      "diagnosis": "80/80 fresh syllogism conclusions are model-entailed. 17 are stronger A/E conclusions where the source gold selects I/O without exposing a requested mood; the development proof shows conflicting gold forms inside rename-equivalent input classes.",
+      "comparability": "One-shot fresh local partition under the pinned typed protocol; not an official natural-language leaderboard score.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/iibench/pre-fresh-freeze.json"
+        },
+        {
+          "path": "training/benchmark-sources/iibench/fresh-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/iibench/impossibility-proof.json"
+        }
+      ]
+    },
+    {
+      "id": "proofwriter",
+      "evidenceState": "development-probe-executed",
+      "protocol": "proofwriter-owa-main-depth-stratified-development-v1",
+      "protocolDescription": "The logical-form track computes open-world safe-Horn closure, distinguishes true, false, and unknown, and validates every returned support witness. A separate direct-language pass measures whether the ordinary frontend can construct the same task.",
+      "samplePolicy": "20 cases for each of 15 depth-by-answer strata",
+      "sampleDescription": "The sample contains 20 development questions in each official depth-by-answer stratum across depths 0, 1, 2, 3, and 5.",
+      "total": 300,
+      "correct": 300,
+      "accuracy": 1,
+      "normalizationCandidates": 300,
+      "normalizationCandidateRate": 1,
+      "directSymbolicRate": 0,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED_LOGICAL_FORM": 300
+      },
+      "sampleCoverage": {
+        "tested": 300,
+        "available": 50844,
+        "unit": "main open-world development questions",
+        "comprehensive": false,
+        "scope": "The latest run tested 300 of 50,844 main open-world development questions. It did not score CWA, staged implication, abduction, NatLang variants, or official test files."
+      },
+      "capabilityCoverage": {
+        "level": "logical-form-strong-language-missing",
+        "description": "The generic Horn core solves the selected inert logical programs and produces valid witnesses, while the ordinary natural-language frontend cannot yet compile their arbitrary unary, binary, negative, and rule statements."
+      },
+      "diagnosis": "This is a frontend diagnostic, not a second accuracy score. The same current core solves the selected logical programs, but the controlled-English session compiler does not yet convert ProofWriter's generic attributes, binary predicates, explicit negation, and general rules into that program.",
+      "comparability": "Development diagnostic through the official logical representation; not a full ProofWriter or natural-language leaderboard score.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/proofwriter/development-result.json"
+        }
+      ]
+    },
+    {
+      "id": "prontoqa",
+      "evidenceState": "sealed-fresh-aggregate-only",
+      "protocol": "eslm-prontoqa-sealed-fresh-aggregate-v1",
+      "protocolDescription": "The adapter grounds the controlled ontology formulas, explicitly declares the source calculus inconsistency policy, and invokes generic Tseitin-CNF plus query-directed DPLL entailment. Every certificate or countermodel is independently replayed before scoring.",
+      "samplePolicy": "complete one-shot sealed fresh partition after behavior freeze",
+      "sampleDescription": "All 6,320 label-blind fresh members were executed once after source, adapter, solver, verifier, tests, and membership were frozen. Only aggregate and rule-family counts left the evaluator.",
+      "total": 6320,
+      "correct": 6320,
+      "accuracy": 1,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED": 6320
+      },
+      "sampleCoverage": {
+        "tested": 6320,
+        "available": 6320,
+        "unit": "sealed official generated cases",
+        "comprehensive": true,
+        "scope": "The latest run executed the complete 6,320-member fresh partition. Before the freeze, the separate complete development run executed all 1,580 development members and independently verified every witness."
+      },
+      "capabilityCoverage": {
+        "level": "complete-for-frozen-generated-semantic-task",
+        "description": "All eight rule families pass under the frozen finite propositional projection. The result establishes semantic entailment and independently checked witnesses for this source, not unrestricted first-order reasoning or textual equivalence to reference proof prose."
+      },
+      "diagnosis": "This is one sealed fresh execution of all 6,320 predeclared fresh members under the frozen local adapter and reasoning dependencies. It measures semantic proof-task entailment under the official source calculus; it does not claim textual equivalence to the authors' natural-language proof traces or an official leaderboard submission.",
+      "comparability": "One-shot sealed fresh semantic execution under the pinned local protocol; not an official natural-language proof-trace leaderboard submission.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/prontoqa-ood/pre-fresh-freeze.json"
+        },
+        {
+          "path": "training/benchmark-sources/prontoqa-ood/fresh-aggregate.json"
+        },
+        {
+          "path": "training/benchmark-sources/prontoqa-ood/development-scalable-result.json"
+        }
+      ]
+    },
+    {
+      "id": "slr-bench",
+      "evidenceState": "development-probe-executed",
+      "protocol": "slr-bench-current-development-result-v2",
+      "protocolDescription": "The adapter compiles visible demonstrations to typed positive and negative relational examples. The registered generic method enumerates connected alpha-canonical conjunctive rules by increasing body length. A separate verifier replays every positive join and every exhaustive negative rejection. Validation programs remain inert ground-fact AST data; corpus text and Prolog are never executed.",
+      "samplePolicy": "complete official validation split with the official test split sealed",
+      "sampleDescription": "All ten validation cases at each of the twenty curriculum levels were submitted through the typed task boundary. Ground-truth rules, validation programs, shortcuts, and symbols remained host-only. The 1,000 official test cases were not executed.",
+      "total": 200,
+      "correct": 126,
+      "accuracy": 0.63,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED": 126,
+        "UNKNOWN": 10,
+        "RESOURCE_LIMIT": 64
+      },
+      "sampleCoverage": {
+        "tested": 200,
+        "available": 200,
+        "unit": "official validation cases",
+        "comprehensive": true,
+        "scope": "The latest run covered all 200 official validation cases, ten at each of twenty levels. The complete source contains 18,053 training rows and an untouched 1,000-case official test split; those are not part of this development denominator."
+      },
+      "capabilityCoverage": {
+        "level": "registered-finite-conjunctive-rule-induction",
+        "description": "The runtime synthesizes and verifies finite connected positive conjunctive rules. Quantification, negation, inequality, arithmetic, aggregation, and recursive rule induction remain distinct unimplemented hypothesis families."
+      },
+      "diagnosis": "126/200 complete validation cases produced rules that cover every positive and reject every negative inert validation example; all 126 solved witnesses replayed. 10 cases exhaust the declared finite conjunctive hypothesis space without a separator. 64 cases reach an explicit candidate or match-search limit and remain in the denominator. Levels 1–5 are 10/10 each. The visible train and validation release contains no self-recursive target rule, so this run makes no recursion claim.",
+      "comparability": "Complete development execution with a safe finite conjunctive fragment; not an official SWI-Prolog score.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/slr-bench/source-manifest.json"
+        },
+        {
+          "path": "training/benchmark-sources/slr-bench/schema-inventory.json"
+        },
+        {
+          "path": "training/benchmark-sources/slr-bench/lifecycle-manifest.json"
+        },
+        {
+          "path": "training/benchmark-sources/slr-bench/development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/slr-bench/core-change-proposal.json"
+        },
+        {
+          "path": "training/benchmark-sources/slr-bench/core-change-guardian-result.json"
+        }
+      ]
+    },
+    {
+      "id": "logicskills",
+      "evidenceState": "development-probe-executed",
+      "protocol": "logicskills-development-symbolization-candidate-v3",
+      "protocolDescription": "The strict adapter preserves three different output contracts: a formula whose correctness requires semantic equivalence, a validity selection whose oracle is isolated, and a finite countermodel that must be verified rather than string-matched.",
+      "samplePolicy": "label-blind task-and-language-stratified 80/20 public-evaluation reclassification",
+      "sampleDescription": "All 1,200 development members were submitted through the typed task boundary. A previous frozen candidate executed the 60-member fresh countermodel stratum once; the 240 fresh symbolization and validity members remain sealed.",
+      "total": 1200,
+      "correct": null,
+      "accuracy": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
+      "directSymbolicRate": 0.44,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED": 528,
+        "NO_APPLICABLE_METHOD": 672
+      },
+      "sampleCoverage": {
+        "tested": 1200,
+        "available": 1200,
+        "unit": "development-partition cases",
+        "comprehensive": true,
+        "scope": "The latest run covered all 1,200 development members: 480 symbolization, 480 validity, and 240 countermodel cases. Of the separate 300-member fresh partition, 60 countermodel cases were executed once by an earlier frozen candidate and 240 symbolization or validity cases remain unopened."
+      },
+      "capabilityCoverage": {
+        "level": "controlled-symbolization-partial-countermodel-complete-validity-absent",
+        "description": "The development-only controlled symbolizer emitted 288/480 formulas, all witness-verified with no emitted mismatch under the sound incomplete equivalence checker. The generic finite-model method verified 240/240 development and 60/60 sealed fresh countermodels. No complete validity method is registered."
+      },
+      "diagnosis": "Symbolization is 288/480 over the complete development track: every emitted formula has a replayed derivation and accepted semantic equivalence, while 192 unsupported cases remain explicit. Countermodels are 240/240 with independent semantic verification. Validity has 0 attempts, so its accuracy remains absent rather than 0%. The row does not fabricate one aggregate percentage across unlike output contracts.",
+      "comparability": "Development candidate and capability diagnostic, not an official LogicSkills aggregate score.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/logicskills/source-manifest.json"
+        },
+        {
+          "path": "training/benchmark-sources/logicskills/partition-manifest.json"
+        },
+        {
+          "path": "training/benchmark-sources/logicskills/development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/logicskills/pre-fresh-countermodel-freeze.json"
+        },
+        {
+          "path": "training/benchmark-sources/logicskills/fresh-countermodel-aggregate.json"
+        }
+      ],
+      "subtrackResults": [
+        {
+          "id": "symbolization-development",
+          "label": "Symbolization development track",
+          "evidenceState": "development-probe-executed",
+          "tested": 480,
+          "correct": 288,
+          "accuracy": 0.6
+        },
+        {
+          "id": "countermodel-development",
+          "label": "Countermodel development track",
+          "evidenceState": "development-probe-executed",
+          "tested": 240,
+          "correct": 240,
+          "accuracy": 1
+        },
+        {
+          "id": "countermodel-fresh",
+          "label": "Countermodel fresh subtrack",
+          "evidenceState": "sealed-fresh-countermodel-subtrack",
+          "tested": 60,
+          "correct": 60,
+          "accuracy": 1
+        }
+      ]
+    },
+    {
+      "id": "folio",
+      "evidenceState": "development-probe-executed",
+      "protocol": "folio-v0.0-complete-validation-development-v2",
+      "protocolDescription": "The formula track parses official FOL annotations, grounds the supported finite fragment, and returns entailment, counterevidence, inconsistency, unsupported syntax, or resource limits. Direct natural-language coverage is measured separately.",
+      "samplePolicy": "complete pinned official v0.0 validation file",
+      "sampleDescription": "Every validation record was executed. Both available labeled files are development-visible and the official v0.0 test set is unreleased, so this is not fresh evidence.",
+      "total": 204,
+      "correct": 161,
+      "accuracy": 0.7892156862745098,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
+      "directSymbolicRate": null,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED": 175,
+        "UNSUPPORTED_FORMULA": 5,
+        "INCONSISTENT_CONTEXT": 24
+      },
+      "sampleCoverage": {
+        "tested": 204,
+        "available": 204,
+        "unit": "official v0.0 validation cases",
+        "comprehensive": true,
+        "scope": "The latest run executed all 204 cases in the pinned validation file. It is comprehensive for that development-visible file, not for an unreleased official test set or the separately gated corrected v2 source."
+      },
+      "capabilityCoverage": {
+        "level": "bounded-formula-and-development-language-candidate",
+        "description": "The formula adapter handles a useful finite FOL fragment. A generic controlled quantified-English candidate now compiles some sentences and queries for adapter-guided development analysis, but it is not registered in the Stage A runtime and complete-case natural-language coverage remains low."
+      },
+      "diagnosis": "The complete official-formula track scored 161/204; 146 cases used exhaustive finite enumeration and 53 used certificate-producing scalable Boolean entailment, while five malformed source formulas were not executed. The separate full-language candidate compiled 545/1292 sentence slots and scored 4/204 complete cases. The diagnostic query-only track compiled 108/204 conclusions and scored 75/204, but it uses premise-annotation vocabulary and is not direct-language accuracy. The deployed runtime frontend was not rerun in this candidate iteration; Language Agent use remained zero.",
+      "comparability": "Complete development run over official v0.0 validation formulas; not an untouched test score and not direct natural-language accuracy.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/folio/development-result.json"
+        }
+      ],
+      "subtrackResults": [
+        {
+          "id": "full-natural-language-development-candidate",
+          "label": "All-premises-and-query natural-language candidate",
+          "tested": 204,
+          "correct": 4,
+          "accuracy": 0.0196078431372549
+        },
+        {
+          "id": "premise-vocabulary-assisted-query-diagnostic",
+          "label": "Natural-language query with premise-annotation vocabulary",
+          "tested": 204,
+          "correct": 75,
+          "accuracy": 0.36764705882352944
+        }
+      ]
+    },
+    {
+      "id": "proverqa",
+      "evidenceState": "sealed-fresh-aggregate-only",
+      "protocol": "source-annotation-assisted-finite-entailment",
+      "protocolDescription": "The adapter reads the source-provided first-order annotations, performs label-blind predicate-morphology reconciliation, and invokes the generic finite entailment core. A prediction counts only after its proof or countermodel witness passes independent verification.",
+      "samplePolicy": "complete aggregate-only execution of the protected partition after the development candidate and dependencies were frozen",
+      "sampleDescription": "The candidate first passed all 300 development-visible cases. The latest run then executed all 1,200 protected members and returned only aggregate and declared difficulty/answer counts.",
+      "total": 1200,
+      "correct": 1196,
+      "accuracy": 0.9966666666666667,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED": 1198,
+        "INCONSISTENT_CONTEXT": 2
+      },
+      "sampleCoverage": {
+        "tested": 1200,
+        "available": 1200,
+        "unit": "protected annotation-assisted evaluation cases",
+        "comprehensive": true,
+        "scope": "The latest run tested every member of the 1,200-case protected partition. The other 300 public evaluation cases formed the completed development set; the separate 5,000-record training source is not part of this denominator."
+      },
+      "capabilityCoverage": {
+        "level": "fresh-annotation-assisted-logical-execution-nearly-complete",
+        "description": "All 300 development tasks pass. On fresh evidence, 1198/1200 tasks produced independently valid proof or countermodel witnesses. Predicate reconciliation is same-arity and label-blind; its modifier-omission rule requires explicit aligned surface evidence and rejects an otherwise similar contrast."
+      },
+      "diagnosis": "1196/1200 fresh cases matched the isolated oracle. 2 compiled contexts were inconsistent and the aggregate shows two additional strict mismatches among solved cases; no per-case outcome escaped, so these cannot guide post-fresh tuning. Direct derivation of the formulas from English remains a separate unimplemented capability.",
+      "comparability": "Fresh evidence for the frozen annotation-assisted logical-form track; not a direct natural-language score or an official leaderboard submission.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/proverqa/source-manifest.json",
+          "sourceRevision": "e2561beed450272690da658d21ae667570dbbafc"
+        },
+        {
+          "path": "training/benchmark-sources/proverqa/partition-manifest.json"
+        },
+        {
+          "path": "training/benchmark-sources/proverqa/development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/proverqa/pre-fresh-freeze-v2.json"
+        },
+        {
+          "path": "training/benchmark-sources/proverqa/fresh-aggregate.json"
+        }
+      ]
+    },
+    {
+      "id": "stepgame",
+      "evidenceState": "development-probe-executed",
+      "protocol": "stepgame-current-core-development-result-v1",
+      "protocolDescription": "The adapter maps validated official direction templates to a declarative vector relation system and submits the resulting task through the public engine route. The generic core propagates exact displacements and accepts a prediction only with a replayable path-sum witness.",
+      "samplePolicy": "complete corrected official validation split across hop depths one through five",
+      "sampleDescription": "All 5,000 official validation cases were processed. The source template catalog and task labels remained adapter/evaluator concerns; the generic vector solver received only typed entities, vectors, facts, and query endpoints. The 100,000-case official test split was not executed.",
+      "total": 5000,
+      "correct": 4710,
+      "accuracy": 0.942,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED": 4710,
+        "UNKNOWN": 290
+      },
+      "sampleCoverage": {
+        "tested": 5000,
+        "available": 5000,
+        "unit": "official validation cases",
+        "comprehensive": true,
+        "scope": "The latest run executed all 5,000 corrected-release validation cases. The complete source also contains 50,000 training and 100,000 untouched test cases; they are not part of this development denominator."
+      },
+      "capabilityCoverage": {
+        "level": "complete-vector-method-with-source-template-gap",
+        "description": "Every one of the 4710 solved cases is exact and has an independently replayed displacement witness. The 290 unknown cases contain malformed or semantically ambiguous official generator sentences, including one official template that omits an entity placeholder; no answer-guided repair is permitted."
+      },
+      "diagnosis": "Every SOLVED prediction is exact and has a replayable displacement witness. All 290 non-answers contain at least one malformed or semantically ambiguous official generator sentence; 234 additional issue-bearing cases remain solvable from independent accepted evidence. The adapter does not inspect the answer to repair those sentences.",
+      "comparability": "Complete development execution of the corrected official validation split; not an untouched test or leaderboard score.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/stepgame/source-manifest.json",
+          "sourceRevision": "6d859381dfd518cae3f073b268aaa323bf4dcf04"
+        },
+        {
+          "path": "training/benchmark-sources/stepgame/schema-inventory.json"
+        },
+        {
+          "path": "training/benchmark-sources/stepgame/development-result.json"
+        }
+      ]
+    },
+    {
+      "id": "sparc-sparp",
+      "evidenceState": "development-probe-executed",
+      "protocol": "sparp-current-core-development-result-v1",
+      "protocolDescription": "PS1 executes a declarative qualitative relation closure with reciprocal inverses, explicit binary composition and selective containment lifting. PS2 and PS3 compile point tasks into generic vector constraints; PS4 compiles extended-object directions into generic extent inequalities. Every output has an independently replayed proof tree or path witness.",
+      "samplePolicy": "complete official full validation configurations PS1 through PS4; small validation configurations retained only as overlapping controls",
+      "sampleDescription": "The headline combines every full-validation PS1–PS4 property regime. It does not count small configurations as independent evidence because they are transformed subsets. All official test configurations remain sealed.",
+      "total": 15647,
+      "correct": 15578,
+      "accuracy": 0.995590208985748,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED": 15647
+      },
+      "sampleCoverage": {
+        "tested": 15647,
+        "available": 15647,
+        "unit": "full official validation cases across PS1–PS4",
+        "comprehensive": true,
+        "scope": "The latest full-source run tested all 15,647 available validation cases across PS1–PS4. Every case produced a replay-verified symbolic result. All test configurations remain untouched."
+      },
+      "capabilityCoverage": {
+        "level": "qualitative-closure-vector-and-extent-methods-complete",
+        "description": "PS1, PS3, and PS4 pass completely. PS2 returns valid vector witnesses for every case; 69 official targets disagree with the relation entailed by their own relation-complete quantified symbolic contexts. The core does not imitate those incompatible targets."
+      },
+      "diagnosis": "2397/2397 PS1 exact, 4907/4976 PS2 exact, 4499/4499 PS3 exact, and 3775/3775 PS4 exact. All 15,647 outputs have verified witnesses. The four small validation controls are each 500/500, but the overlap audit proves these property configurations are transformed subsets and must not be summed as independent evidence.",
+      "comparability": "Complete official validation-split source diagnostic for each listed configuration; no test partition was executed. SpaRP StepGame configurations overlap the StepGame source and are not independent benchmark evidence.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/sparp/source-manifest.json",
+          "sourceRevision": "2706ed464416758c67a09716ed0262c880ee6bdd"
+        },
+        {
+          "path": "training/benchmark-sources/sparp/schema-inventory.json"
+        },
+        {
+          "path": "training/benchmark-sources/sparp/overlap-audit.json"
+        },
+        {
+          "path": "training/benchmark-sources/sparp/development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/sparp/core-change-proposal-ps1.json"
+        }
+      ],
+      "subtrackResults": [
+        {
+          "id": "ps1",
+          "label": "Full PS1 exact",
+          "tested": 2397,
+          "correct": 2397,
+          "accuracy": 1
+        },
+        {
+          "id": "ps2",
+          "label": "Full PS2 exact",
+          "tested": 4976,
+          "correct": 4907,
+          "accuracy": 0.9861334405144695
+        },
+        {
+          "id": "ps3",
+          "label": "Full PS3 exact",
+          "tested": 4499,
+          "correct": 4499,
+          "accuracy": 1
+        },
+        {
+          "id": "ps4",
+          "label": "Full PS4 exact",
+          "tested": 3775,
+          "correct": 3775,
+          "accuracy": 1
+        }
+      ]
+    },
+    {
+      "id": "satbench",
+      "evidenceState": "fresh-evaluation-executed",
+      "protocol": "source-annotated-formula-symbolic",
+      "protocolDescription": "The adapter converts the official signed-integer CNF annotation into generic Boolean premises. SAT answers require a satisfying assignment checked against every source clause; UNSAT answers require a replayable DPLL inconsistency certificate accepted by an independent verifier.",
+      "samplePolicy": "complete one-shot sealed fresh partition after source, adapter, solver, verifier, and membership freeze",
+      "sampleDescription": "All 1,680 fresh members were scored exactly once after the 420-case development partition passed. The evaluator returned only aggregate and declared stratum counts.",
+      "total": 1680,
+      "correct": 1680,
+      "accuracy": 1,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "SOLVED": 1680
+      },
+      "sampleCoverage": {
+        "tested": 1680,
+        "available": 1680,
+        "unit": "sealed source-annotated formula cases",
+        "comprehensive": true,
+        "scope": "The latest run executed all 1,680 members of the sealed formula-track partition. The separate development run executed all 420 development members. This denominator does not measure the authors' natural-language-only prompt protocol."
+      },
+      "capabilityCoverage": {
+        "level": "complete-for-frozen-source-annotated-cnf-track",
+        "description": "All 1680 fresh cases returned independently verified SAT assignments or UNSAT certificates. Development covered 214 SAT and 206 UNSAT cases before the freeze. A generic natural-language constraint compiler remains a separate unimplemented capability."
+      },
+      "diagnosis": "The single fresh execution returned only aggregate counts. It did not return or print a fresh scenario, condition, formula, label, explanation, identifier, assignment, certificate, or per-case outcome. Every success required an independently validated assignment or replayed DPLL certificate.",
+      "comparability": "This is fresh evidence for the frozen source-annotated formula track. It is not the authors' official natural-language-only prompt protocol, not a direct-language score, and not a leaderboard submission.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/satbench/source-manifest.json",
+          "sourceRevision": "186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9"
+        },
+        {
+          "path": "training/benchmark-sources/satbench/pre-fresh-freeze.json"
+        },
+        {
+          "path": "training/benchmark-sources/satbench/fresh-aggregate.json"
+        }
+      ]
+    },
+    {
+      "id": "zebralogic",
+      "evidenceState": "fresh-evaluation-executed",
+      "protocol": "eslm-zebralogic-sealed-fresh-aggregate-v1",
+      "protocolDescription": "The adapter parses every public clue into typed finite-domain constraints, encodes the all-different puzzle as Boolean clauses, and invokes the generic SAT method. A result passes only when a direct interpreter replays every clue against the complete assignment and a second blocked-assignment search proves uniqueness.",
+      "samplePolicy": "complete one-shot sealed public-clue partition after development freeze",
+      "sampleDescription": "The public 1,000-puzzle grid configuration was partitioned by size before puzzle inspection: eight development and thirty-two sealed members in each of twenty-five size strata. After 200/200 development puzzles passed, all 800 sealed members were executed once and only aggregates left the evaluator.",
+      "total": 800,
+      "correct": 791,
+      "accuracy": 0.98875,
+      "normalizationCandidates": 0,
+      "normalizationCandidateRate": 0,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "PARSE_ERROR": 9,
+        "SOLVED": 791
+      },
+      "sampleCoverage": {
+        "tested": 800,
+        "available": 800,
+        "unit": "sealed public grid puzzles",
+        "comprehensive": true,
+        "scope": "The latest run executed all 800 sealed public-clue puzzles. The public multiple-choice configuration contains 3,259 additional answer-redacted rows and was inventoried but is not part of this CSP denominator."
+      },
+      "capabilityCoverage": {
+        "level": "fresh-public-clue-csp-near-complete-private-oracle-unavailable",
+        "description": "791/800 sealed puzzles produced a complete clue-satisfying assignment and an independently verified uniqueness certificate. Nine cases stopped at PARSE_ERROR and remained aggregate-only. Public labels are redacted, so this is method completion evidence rather than official answer accuracy."
+      },
+      "diagnosis": "Development passed 200/200. The sealed run passed 791/800; every pass has both a replayed assignment and a uniqueness proof. The nine failed sealed inputs cannot be inspected or used for repair under this lifecycle.",
+      "comparability": "This is fresh evidence for the frozen public-clue CSP track. It is not the official private-label ZebraLogic score, cell accuracy, a leaderboard submission, or authorization to inspect the nine failed fresh records.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/zebralogic/source-manifest.json",
+          "sourceRevision": "2f94a445d7079f20146f5443e2606049de8543e0"
+        },
+        {
+          "path": "training/benchmark-sources/zebralogic/partition-manifest.json"
+        },
+        {
+          "path": "training/benchmark-sources/zebralogic/development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/zebralogic/fresh-aggregate.json"
+        }
+      ]
+    },
+    {
+      "id": "defeasible-nli",
+      "evidenceState": "development-probe-executed",
+      "protocol": "eslm-defeasible-nli-development-result-v1",
+      "protocolDescription": "The adapter preserves premise or social situation, hypothesis, and the proposed update as a typed strengthen-or-weaken task. Owner-declared impossible updates remain in source accounting but are excluded from scoring exactly as required by the published protocol. Labels and impossible reasons remain host-only.",
+      "samplePolicy": "complete official development split after the source-declared impossible-update exclusion",
+      "sampleDescription": "All 14,968 paper-eligible development rows across ATOMIC, SNLI, and Social Chemistry were submitted to the direct typed-task boundary. All 1,040 owner-declared impossible development rows remain retained and separately counted. The official test split was not executed.",
+      "total": 14968,
+      "correct": null,
+      "accuracy": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
+      "directSymbolicRate": null,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "NO_APPLICABLE_METHOD": 14968
+      },
+      "sampleCoverage": {
+        "tested": 14968,
+        "available": 14968,
+        "unit": "officially eligible development updates",
+        "comprehensive": true,
+        "scope": "The latest run exercised every one of the 14,968 paper-eligible development cases. The source development split contains 16,008 rows in total; 1,040 owner-declared impossible rows are retained but excluded by the official protocol. The test split remains sealed."
+      },
+      "capabilityCoverage": {
+        "level": "complete-adapter-no-general-semantic-update-method",
+        "description": "Source identity, complete streaming retention, compound-family schema validation, official eligibility policy, oracle isolation, and the strengthen-or-weaken task contract are implemented. The core does not yet compile arbitrary event, causal, physical, and normative prose into comparable provenance-bearing default theories."
+      },
+      "diagnosis": "The registered runtime still returns NO_APPLICABLE_METHOD because no sound source-to-evidence compiler exists. A development-only frame-overlap experiment exercised the generic typed comparator, but its accuracy on answered binary cases was below chance, so Core Guardian rejected that automatic projection instead of promoting a misleading lexical classifier.",
+      "comparability": "Complete direct-only development task-contract diagnostic; no answers were produced, the official test split remains sealed, and this is not an official accuracy score.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/defeasible-nli/source-manifest.json",
+          "sourceRevision": "c675ffc1b0eec5fa56287f08490da8ed43c1ecc5"
+        },
+        {
+          "path": "training/benchmark-sources/defeasible-nli/schema-inventory.json"
+        },
+        {
+          "path": "training/benchmark-sources/defeasible-nli/development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/defeasible-nli/core-change-proposal.json"
+        },
+        {
+          "path": "training/benchmark-sources/defeasible-nli/typed-evidence-development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/defeasible-nli/typed-evidence-core-review.json"
+        }
+      ],
+      "subtrackResults": [
+        {
+          "id": "rejected-typed-frame-overlap",
+          "label": "Rejected typed-frame experiment, accuracy on answered cases",
+          "tested": 5519,
+          "correct": 2721,
+          "accuracy": 0.49302409856858126
+        }
+      ]
+    },
+    {
+      "id": "alpha-nli-art",
+      "evidenceState": "development-probe-executed",
+      "protocol": "alpha-nli-art-complete-official-development-direct-symbolic-baseline-v1",
+      "protocolDescription": "The adapter exposes the earlier observation, two candidate bridge events, and the later observation as a typed narrative-bridge selection task. The preferred candidate remains in a host-only oracle. A future method must rank causal and temporal compatibility with explicit evidence rather than infer from candidate position.",
+      "samplePolicy": "complete official development split with the official test split sealed",
+      "sampleDescription": "All 1,532 official development cases exercised the label-free task boundary. The complete 169,654-row training split remains available for train-visible analysis; all 3,059 official test cases remain sealed and no test loader is exported.",
+      "total": 1532,
+      "correct": null,
+      "accuracy": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
+      "directSymbolicRate": null,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "NO_APPLICABLE_METHOD": 1532
+      },
+      "sampleCoverage": {
+        "tested": 1532,
+        "available": 1532,
+        "unit": "official development narrative pairs",
+        "comprehensive": true,
+        "scope": "The latest run exercised every one of the 1,532 official development cases. It did not execute the 3,059-case official test split and does not treat the much larger training split as evaluation evidence."
+      },
+      "capabilityCoverage": {
+        "level": "complete-adapter-no-general-narrative-bridge-method",
+        "description": "Source identity, complete retention, split isolation, label-free candidate projection, and the narrative-bridge output contract are implemented. Arbitrary observations and alternatives are not yet compiled into typed event, temporal, causal, goal, state, and contradiction relations backed by sufficient commonsense evidence."
+      },
+      "diagnosis": "The registered runtime still returns NO_APPLICABLE_METHOD because no sound source-to-evidence compiler exists. A development-only event-frame overlap experiment exercised the generic comparator but remained near chance on answered cases, so Core Guardian rejected its automatic projection instead of promoting surface overlap as narrative abduction.",
+      "comparability": "Direct typed narrative-bridge coverage diagnostic; not an official leaderboard submission and not evidence of unrestricted English plausibility judgment.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/alpha-nli-art/source-manifest.json",
+          "sourceRevision": "8ed901f038df77b7a4d0d8889255160d351d2b49"
+        },
+        {
+          "path": "training/benchmark-sources/alpha-nli-art/schema-inventory.json"
+        },
+        {
+          "path": "training/benchmark-sources/alpha-nli-art/development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/alpha-nli-art/core-change-proposal.json"
+        },
+        {
+          "path": "training/benchmark-sources/alpha-nli-art/typed-evidence-development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/alpha-nli-art/typed-evidence-core-review.json"
+        }
+      ],
+      "subtrackResults": [
+        {
+          "id": "rejected-typed-frame-overlap",
+          "label": "Rejected typed-frame experiment, accuracy on answered cases",
+          "tested": 826,
+          "correct": 440,
+          "accuracy": 0.5326876513317191
+        }
+      ]
+    },
+    {
+      "id": "reclor",
+      "evidenceState": "development-probe-executed",
+      "protocol": "reclor-complete-official-validation-direct-symbolic-baseline-v1",
+      "protocolDescription": "The source adapter preserves the passage, question, and four ordered candidates as a typed logical-reading-comprehension task while keeping the preferred candidate in a host-only oracle. The capability registry is then asked for a method; it must abstain when no method can justify a choice.",
+      "samplePolicy": "complete official validation split",
+      "sampleDescription": "All 500 official validation records were streamed and projected. The 4,638 training records remain development-visible; the 1,000-case test file stayed sealed and was checked only by byte identity.",
+      "total": 500,
+      "correct": null,
+      "accuracy": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "NO_APPLICABLE_METHOD": 500
+      },
+      "sampleCoverage": {
+        "tested": 500,
+        "available": 500,
+        "unit": "official validation questions",
+        "comprehensive": true,
+        "scope": "The latest run exercised all 500 validation tasks. It did not open or execute the 1,000-case official test split."
+      },
+      "capabilityCoverage": {
+        "level": "complete-development-task-construction-no-applicable-argument-method",
+        "description": "Every visible development record reached the typed task boundary, but no registered generic method can yet compile unrestricted passages into argument structures and prove which candidate follows, weakens, strengthens, resolves, or diagnoses the argument. Abstention is evidence of a missing method, not an incorrect option choice."
+      },
+      "diagnosis": "All 500 available validation tasks were executed. A strict categorical argument projection recognized 34 question operations but rejected every case before reasoning because the complete passage or explicit argument boundary could not be compiled safely. The runtime therefore returned no candidate on every task. Accuracy is absent rather than 0% because there were no evidential attempts.",
+      "comparability": "Source-native typed logical-reading-comprehension coverage diagnostic; not an official leaderboard submission and not evidence of unrestricted English argument understanding.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/reclor/source-manifest.json",
+          "sourceRevision": "release official GitHub release v1; code 19b9d6c6025866ceafb4a4028819654b3817069b"
+        },
+        {
+          "path": "training/benchmark-sources/reclor/development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/reclor/schema-inventory.json"
+        },
+        {
+          "path": "training/benchmark-sources/reclor/core-change-decision.json"
+        }
+      ]
+    },
+    {
+      "id": "logiqa",
+      "evidenceState": "development-probe-executed",
+      "protocol": "logiqa-complete-official-english-evaluation-direct-symbolic-baseline-v1",
+      "protocolDescription": "The source adapter preserves the passage, question, and four ordered candidates as a typed logical-reading-comprehension task while keeping the preferred candidate in a host-only oracle. The capability registry is then asked for a method; it must abstain when no method can justify a choice.",
+      "samplePolicy": "complete official English development split",
+      "sampleDescription": "All 651 English development records were streamed and projected. The parallel 651 Chinese development records are retained outside this English-only execution profile; both 651-case test files stayed byte-sealed.",
+      "total": 651,
+      "correct": null,
+      "accuracy": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
+      "directSymbolicRate": 1,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "statusCounts": {
+        "NO_APPLICABLE_METHOD": 651
+      },
+      "sampleCoverage": {
+        "tested": 651,
+        "available": 651,
+        "unit": "official English development questions",
+        "comprehensive": true,
+        "scope": "The latest run exercised all 651 English development tasks. The complete Chinese source is retained, but no Chinese score is claimed; neither official test file was opened or executed."
+      },
+      "capabilityCoverage": {
+        "level": "complete-development-task-construction-no-applicable-argument-method",
+        "description": "Every visible development record reached the typed task boundary, but no registered generic method can yet compile unrestricted passages into argument structures and prove which candidate follows, weakens, strengthens, resolves, or diagnoses the argument. Abstention is evidence of a missing method, not an incorrect option choice."
+      },
+      "diagnosis": "All 651 available English development tasks were executed. A strict categorical argument projection recognized 38 necessary-conclusion questions but rejected every case before reasoning because the complete passage was outside the supported monadic fragment. The runtime therefore returned no candidate on every task. Accuracy is absent rather than 0% because there were no evidential attempts.",
+      "comparability": "Source-native typed logical-reading-comprehension coverage diagnostic; not an official leaderboard submission, not a Chinese-language score, and not evidence of unrestricted argument understanding.",
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/logiqa/source-manifest.json",
+          "sourceRevision": "ff6c4cbca47627b3ac2da94a29fa28204a167b41"
+        },
+        {
+          "path": "training/benchmark-sources/logiqa/development-result.json"
+        },
+        {
+          "path": "training/benchmark-sources/logiqa/schema-inventory.json"
+        },
+        {
+          "path": "training/benchmark-sources/logiqa/core-change-decision.json"
+        }
+      ]
+    }
+  ]
+}

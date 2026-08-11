@@ -1,0 +1,70 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Generic controlled quantified-English scope, coordination, and typed coreference composition",
+  "independentExamples": [
+    "Universal class implication and its existential and universal-negative controls",
+    "Generalized conditional with renamed actor, action predicate, and consequence predicate",
+    "Named unary predication, explicit negation, and adapter-declared binary relation-object segmentation",
+    "Relative-clause attachment with a shared quantified variable and a meaning-changing attachment contrast",
+    "Two named subjects sharing one predication versus two complete coordinated clauses",
+    "An indefinite object introduced in a conditional antecedent and referenced by a typed object pronoun in its consequent"
+  ],
+  "inputTypes": [
+    "bounded normalized English statement",
+    "optional adapter-owned predicate resolver",
+    "optional adapter-owned constant resolver"
+  ],
+  "outputTypes": [
+    "typed predicate, negation, binary-composition, or quantified formula AST",
+    "explicit UNSUPPORTED, AMBIGUOUS, or RESOURCE_LIMIT status"
+  ],
+  "preconditions": [
+    "The statement uses a declared controlled quantified-English construction.",
+    "Adapter resolvers return a unique typed symbol, AMBIGUOUS, or UNSUPPORTED; they do not return answers.",
+    "Input length and composition depth remain within generic hostile-input bounds."
+  ],
+  "invariants": [
+    "Core control flow uses grammatical operators and typed resolver outcomes, never a benchmark or record identity.",
+    "Negation, conjunction, disjunction, exclusive disjunction, implication, and quantifier scope remain explicit in the AST.",
+    "A relative clause and its main predication use the same explicit bound variable; an indefinite object reused by a consequent pronoun receives a separate explicit object binder.",
+    "A shared-predicate subject coordination and a complete-clause coordination remain different derivations even when their outer Boolean shapes coincide.",
+    "A lexical tie remains AMBIGUOUS and an absent mapping remains UNSUPPORTED.",
+    "The language module performs no inference, label access, network access, file access, or subprocess invocation."
+  ],
+  "uncertaintySemantics": "The parser never selects among equally supported lexical mappings. Structural uncertainty returns AMBIGUOUS; missing grammatical or lexical support returns UNSUPPORTED; excessive composition returns RESOURCE_LIMIT.",
+  "proofBehavior": "The parser returns a typed semantic AST whose binders, argument order, Boolean operators, and scope boundaries are auditable exactly. Proof certificates and countermodels remain responsibilities of the unchanged finite-entailment and scalable Boolean-entailment methods after the adapter grounds a validated AST.",
+  "resourceBounds": {
+    "inputCharacters": 4096,
+    "compositionDepth": 24,
+    "sourceRows": "unbounded by acceptance quota; the source adapter streams and evaluates all 204 development rows"
+  },
+  "failureStatuses": ["UNSUPPORTED", "AMBIGUOUS", "RESOURCE_LIMIT"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "renameTestPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "controlEvidence": {
+    "nonceAndFullRename": "Entity constants, unary classes, binary relations, object constants, and surface verbs are replaced together while the typed formula shape remains invariant.",
+    "scopeContrast": "Swapping the relative and main predications changes antecedent and consequent placement; implication and biconditional controls remain different formulas.",
+    "coordinationContrast": "Shared-predicate subject coordination and independently predicated clauses preserve distinct term assignments.",
+    "sourceOrder": "Reordering declared premise formulas leaves query prediction unchanged."
+  },
+  "forbiddenDispatchAuditPassed": true,
+  "forbiddenDispatchAudit": "src/language/quantified-english.mjs contains no benchmark, dataset, source, record, answer, person, domain predicate, or source-family identifier. Source vocabulary resolution remains in src/benchmark-adapters/folio.mjs.",
+  "kbMigration": "No KB schema or package changes. Existing runtime, compiled KBs, parser routes, and reasoning methods remain unchanged because this candidate module is used only by the research adapter until fresh language evidence exists.",
+  "capabilityDescriptor": {
+    "id": "language:controlled-quantified-formula-candidate-v1",
+    "scope": "controlled unary quantified statements, explicit Boolean composition, generalized conditionals, relative-clause attachment, named-subject coordination, and adapter-declared binary predicates with bounded object coreference",
+    "runtimeRegistration": "deferred"
+  },
+  "developmentEvidence": {
+    "completeCases": 204,
+    "sentenceCompilation": "545/1292",
+    "exactAnnotationAgreement": "383/1279 parseable official annotations",
+    "queryCompilation": "108/204",
+    "queryExecutionSolved": "98/204",
+    "queryCorrect": "75/204",
+    "completeNaturalLanguageCasesCorrect": "4/204",
+    "freshEvidence": "unavailable because the pinned official release contains no public test split"
+  },
+  "decision": "Accepted for adapter-guided development measurement. Promotion into the deployed Stage A parser is deferred because the pinned source has no untouched labeled or language-only fresh split."
+}

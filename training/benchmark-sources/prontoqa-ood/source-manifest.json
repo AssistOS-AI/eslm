@@ -1,0 +1,72 @@
+{
+  "format": "eslm-benchmark-source-manifest-v1",
+  "benchmark": "PrOntoQA-OOD",
+  "source": {
+    "repository": "https://github.com/asaparov/prontoqa",
+    "revision": "0a6412b6fddf46324a1cb96e066dd7b3d89b87d6",
+    "archive": {
+      "url": "https://codeload.github.com/asaparov/prontoqa/tar.gz/0a6412b6fddf46324a1cb96e066dd7b3d89b87d6",
+      "cachePath": "training/.cache/benchmarks/prontoqa/source/0a6412b6fddf46324a1cb96e066dd7b3d89b87d6.tar.gz",
+      "bytes": 39854588,
+      "sha256": "9e978f96efabff27bfee721b7bf14957dfaabe4d6527b2a69f810c3fee288094"
+    },
+    "officialDatasetArtifact": {
+      "pathInRepository": "generated_ood_data.zip",
+      "releaseDescription": "The official README states that this archive was regenerated on 2024-10-17 to include the latest bug fixes.",
+      "compressedBytes": 5431791,
+      "sha256": "0becba04e1e1eb80593709c6a3db2a46badd5587a29587ffaeb68ed5068c9de9",
+      "extractedFiles": 79,
+      "extractedBytes": 48629276,
+      "extractedFileSetSha256": "f9012fd2ba0b9113f733e92c71530797798b04eaeccb866de64ffe763f408bee"
+    }
+  },
+  "license": {
+    "spdx": "Apache-2.0",
+    "evidence": "The pinned repository root contains LICENSE with SHA-256 4a79e06d1d3a7e4e27d51ca1e9e2af85e57d8a77b436c205189251b3c1402e3f.",
+    "scope": "The repository and its included generated artifact are distributed together under the root Apache-2.0 license. Preserve the license and attribution conditions when redistributing a derivative artifact."
+  },
+  "citations": [
+    {
+      "title": "Language Models Are Greedy Reasoners: A Systematic Formal Analysis of Chain-of-Thought",
+      "authors": "Abulhair Saparov and He He",
+      "venue": "ICLR 2023",
+      "url": "https://openreview.net/forum?id=qFVVBzXxR2V"
+    },
+    {
+      "title": "Testing the General Deductive Reasoning Capacity of Large Language Models Using OOD Examples",
+      "authors": "Abulhair Saparov, Richard Yuanzhe Pang, Vishakh Padmakumar, Nitish Joshi, Seyed Mehran Kazemi, Najoung Kim, and He He",
+      "venue": "NeurIPS 2023",
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2023/file/09425891e393e64b0535194a81ba15b7-Paper-Conference.pdf"
+    }
+  ],
+  "schema": {
+    "files": 79,
+    "recordsPerFile": 100,
+    "availableTestExamples": 7900,
+    "root": "Each JSON file is an object with exactly example1 through example100.",
+    "standardRecord": "64 files contain eight in-context demonstrations and one test_example.",
+    "fourShotRecord": "15 files whose names contain _4shot_ contain four in-context demonstrations and one test_example.",
+    "example": "Every example contains exactly question, query, and chain_of_thought. All 7,900 test queries in the frozen artifact use the Prove: form; no answer or model_output field is present.",
+    "developmentVisibleTrainingDemonstrations": 11440,
+    "validationBoundary": "The strict Node adapter validates every file and field and computes aggregate identities. Only stable development members are returned as readable tasks. Fresh text and reference proofs are not returned or printed."
+  },
+  "generatorConfiguration": {
+    "authority": "run_experiment.py at the pinned revision and the lossless suffix encoding implemented by its command-line entry point",
+    "modelName": "json",
+    "ontology": "fictional; no trueontology or falseontology suffix is present",
+    "randomSeed": 62471893,
+    "ordering": "random",
+    "proofsOnly": true,
+    "noAdjectives": true,
+    "fewShotExamples": "eight except for the 15 explicitly named 4shot files",
+    "testTrialsPerFile": 100,
+    "trainingHops": [1, 2, 3, 4],
+    "ruleFamilies": ["AndElim", "AndIntro", "Composed", "ModusPonens", "OrElim", "OrIntro", "ProofByContra", "ProofsOnly"],
+    "variedAxes": ["OOD rule holdout", "proof width", "test width", "test hop depth", "number of composed rule types", "training distractor policy", "test distractor policy"]
+  },
+  "retention": {
+    "completeSource": "All 7,900 official test examples and their complete records remain in the immutable ignored cache.",
+    "resourcePolicy": "The adapter reads one source file at a time. Runtime proof-search limits may refuse an execution plan, but do not remove or reject a source record.",
+    "regeneration": "The official generated artifact is used directly. ESLM does not persist Python or generator dependencies and did not replace the official data with a local regeneration."
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "protocol": "iibench-source-inventory-v1",
+  "release": "iibench-acl-2026",
+  "rows": 5284,
+  "files": [
+    {
+      "file": "AEIO_truth.jsonl",
+      "task": "Square-of-opposition truth judgment",
+      "rows": 1100,
+      "sha256": "684ae1c910f93d76c0510111d6f3d4a2d4973ec043078d5abb2c9da859c15be7",
+      "visibleInput": ["premise", "candidate", "categorical forms", "canonical subject and predicate", "negation depths", "category"],
+      "hostOnlyOracle": "gold_label"
+    },
+    {
+      "file": "Conversion_generation.jsonl",
+      "task": "Categorical conversion generation",
+      "rows": 1300,
+      "sha256": "7f72573ec7d3ac9d9a9309bd30b096f2a4d153805e51a18bf466b79767236c8a",
+      "visibleInput": ["premise", "categorical form", "canonical subject and predicate", "negation depths", "category"],
+      "hostOnlyOracle": "candidate and candidate-form fields"
+    },
+    {
+      "file": "Obversion_generation.jsonl",
+      "task": "Categorical obversion generation",
+      "rows": 1200,
+      "sha256": "b390ad4792efab8fc3cbbaa25e7db38bde42cb24995d417f611f047532793a28",
+      "visibleInput": ["premise", "categorical form", "canonical subject and predicate", "negation depths", "category"],
+      "hostOnlyOracle": "candidate and candidate-form fields"
+    },
+    {
+      "file": "Contraposition_generation.jsonl",
+      "task": "Categorical contraposition generation",
+      "rows": 1300,
+      "sha256": "9661945673170f82807d86efa342bda13f2b962e349be0b6a4b10bc530c94599",
+      "visibleInput": ["premise", "categorical form", "canonical subject and predicate", "negation depths", "category"],
+      "hostOnlyOracle": "candidate and candidate-form fields"
+    },
+    {
+      "file": "Syllogism_generation.jsonl",
+      "task": "Two-premise categorical syllogism generation",
+      "rows": 384,
+      "sha256": "33c1a56b23aefbbb01061fc0a985c10326d9fef1c7b3ec76909ef4f08e00b12b",
+      "visibleInput": ["premise1", "premise2", "categorical forms", "canonical terms", "negation depths", "figure", "condition", "category"],
+      "hostOnlyOracle": "candidate_gold and candidate-form fields",
+      "optionalSourceFields": ["source_id", "gold_recomputed", "nonce_map"]
+    }
+  ],
+  "sourceSetSha256": "9d66969544f81aa3c70f0867dc147131e18e8fc3ffe835ebd74bdd31ce6af43a",
+  "validation": {
+    "mode": "streaming-closed-schema",
+    "validRowsPreserved": 5284,
+    "rejectedRows": 0,
+    "sizeBasedRejections": 0,
+    "unknownFieldsAllowed": false,
+    "sourceStringsExecuted": false
+  }
+}

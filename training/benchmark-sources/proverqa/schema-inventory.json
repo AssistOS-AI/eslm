@@ -1,0 +1,28 @@
+{
+  "format": "eslm-proverqa-schema-inventory-v1",
+  "sourceSetSha256": "45022f6eae95e1f1905bf8afdce672f2bf12c1d3f629dd2439f25acb59b23741",
+  "evaluation": {
+    "records": 1500,
+    "levels": {
+      "easy": { "records": 500, "minimumPremises": 1, "maximumPremises": 10 },
+      "medium": { "records": 500, "minimumPremises": 2, "maximumPremises": 20 },
+      "hard": { "records": 500, "minimumPremises": 7, "maximumPremises": 35 }
+    },
+    "fields": ["id", "options", "answer", "question", "reasoning", "context", "nl2fol", "conclusion_fol"],
+    "answerDomain": ["A", "B", "C"],
+    "answerMeaning": { "A": "True", "B": "False", "C": "Uncertain" },
+    "premiseAnnotations": 15842,
+    "formulaAnnotations": 17342,
+    "formulaOperators": { "not": 2975, "and": 1632, "or": 2320, "xor": 4624, "implies": 6796, "forall": 2278, "exists": 0 },
+    "predicateArities": { "unary": 32714, "other": 0 },
+    "formulaParseability": { "parseable": 17342, "unsupported": 0 }
+  },
+  "training": {
+    "records": 5000,
+    "fields": ["system", "output", "input", "instruction"],
+    "validEmbeddedOutputJson": 4997,
+    "malformedEmbeddedOutputJsonRetained": 3,
+    "anomalyPolicy": "The outer source rows are valid and retained. Invalid embedded output JSON is counted and cannot silently enter a structured training packet."
+  },
+  "validation": "Every native JSON array was parsed in full; every row was checked against its closed split schema. Exact file identity replaces arbitrary input-size thresholds."
+}

@@ -1,0 +1,42 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Bounded evidence-bearing selection of a narrative bridge between two observations",
+  "benchmark": "alphaNLI / ART",
+  "decision": "no-generic-core-change",
+  "independentExamples": [
+    "A nonce reactor is initially inactive and later emits a signal; inserting an activation event is supported when a declared transition connects inactive, activation, and emitting states.",
+    "A nonce courier starts at one location and is later recorded elsewhere; a travel event is supported only when declared spatial and temporal relations permit that transition."
+  ],
+  "inputTypes": ["typed before-event","two or more typed candidate bridge event sequences","typed after-event","provenance-bearing causal temporal goal social and state evidence","bounded ranking policy"],
+  "outputTypes": ["ranked candidate or explicit unknown","feature and evidence contribution witness"],
+  "preconditions": [
+    "Every observation and candidate is compiled into explicit events, participants, roles, polarity, time, modality, and state effects.",
+    "Candidate support and contradiction use declared KB relations with provenance rather than benchmark-local vocabulary.",
+    "The ranking policy defines a positive decision margin and returns unknown for ties or insufficient evidence."
+  ],
+  "invariants": [
+    "A candidate is evaluated in the temporal middle, against both the preceding and following observation.",
+    "Renaming every entity, predicate, state value, and surface token while preserving typed relations leaves the result unchanged.",
+    "Reversing a causal edge, removing an enabling condition, or replacing the bridge with an unrelated event changes support or yields unknown.",
+    "No default candidate position, lexical cue, source ID, expected label, or benchmark identity contributes to ranking."
+  ],
+  "uncertaintySemantics": "Defeasible ranking over explicit evidence; ties, incompatible evidence, and missing knowledge remain distinct unknown outcomes and are not resolved by source order.",
+  "proofBehavior": "A solved result would cite the before event, selected bridge, after event, every activated causal or state transition, every contradiction, feature contributions, provider provenance, and the winning margin.",
+  "resourceBounds": "At most a declared number of candidates, bridge events, provider records, state expansions, causal expansions, and deterministic search steps; exhaustion returns RESOURCE_LIMIT.",
+  "failureStatuses": ["UNPARSED_SEMANTICS","MISSING_KNOWLEDGE","INCONSISTENT_CONTEXT","TIE_OR_INSUFFICIENT_MARGIN","RESOURCE_LIMIT"],
+  "interaction": "This would be a new task operation, not an alias for select-narrative-continuation. It may reuse narrative event frames and provider evidence envelopes, but must account for the later observation explicitly.",
+  "tests": ["unit","metamorphic","contrastive","regression"],
+  "testPlan": ["fully renamed nonce structures","candidate-order permutation","irrelevant distractor","causal-edge reversal","missing-enabler contrast","participant-coreference contrast","explicit contradiction","tie","resource bound","narrative continuation regression"],
+  "kbMigration": "No migration is authorized. Future provider records would require reviewed causal, temporal, goal, social, and state relation schemas before this method can consume them.",
+  "renamedDimensions": ["entity","predicate","value","ordering","relation vocabulary","namespace"],
+  "renameTestPassed": false,
+  "forbiddenDispatchAuditPassed": true,
+  "guardianDecision": "defer",
+  "guardianReasons": [
+    "The current narrative compiler extracts shallow bounded features but does not produce the causal, role, goal, temporal, and state structures required by the proposed preconditions.",
+    "The current KB providers do not establish complete or calibrated commonsense evidence for arbitrary ART events.",
+    "Reusing the continuation ranker would score a candidate in the wrong temporal position and would not validate compatibility with the later observation.",
+    "Without typed evidence, any executable candidate would reduce to lexical or positional policy and fail the semantic rename and contrastive gates."
+  ],
+  "forbiddenDispatchAudit": {"genericCoreChanged":false,"benchmarkNamesInCore":0,"datasetIdsInCore":0,"recordIdsInCore":0,"sourceHashesInCore":0,"expectedAnswersInCore":0,"sourceEntityOrRelationConstantsInCore":0}
+}

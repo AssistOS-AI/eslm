@@ -1,0 +1,37 @@
+{
+  "manifestType": "knowledgeBasePackage",
+  "format": "eslm-kb-package-v1",
+  "schemaVersion": "1",
+  "kbId": "babi-v1.2-language",
+  "kbVersion": "1.0.0",
+  "namespace": "babi-v1.2-language",
+  "languages": [
+    "en"
+  ],
+  "domains": [
+    "bAbI-visible color vocabulary and explicitly defeasible class-property induction policy"
+  ],
+  "dependencies": [],
+  "capabilities": [
+    "property-language",
+    "configured-induction"
+  ],
+  "trustLevel": "source-declared-benchmark-policy",
+  "benchmarkEligible": false,
+  "license": "CC BY 3.0 Unported",
+  "canonicalSource": {
+    "path": "../canonical/records.jsonl",
+    "file": "records.jsonl",
+    "checksum": "sha256:2108fb795250257e43e18d6a940a6a5cad495c13f43cb4d4301a1ae6f983a984",
+    "recordCount": 3
+  },
+  "compiler": {
+    "version": "eslm-kb-compiler-v1",
+    "configurationHash": "sha256:bdca0c0fac56d0c580a4f198a198b4f25dbe3487b6d583485e7a3f0c8fbe3b8f"
+  },
+  "counts": {
+    "constraint": 2,
+    "provenance": 1
+  },
+  "shardDirectoryRef": "shards.json"
+}

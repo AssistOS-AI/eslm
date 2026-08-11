@@ -66,7 +66,19 @@ Every plan step records the method, inputs, outputs, KB premises, assumptions, c
 
 The trace must remain stable enough for failure clustering. A coding agent should be able to identify whether an answer failed during parsing, retrieval, decomposition, method selection, method execution or answer projection.
 
-### Task Calculus audit algebra
+### 9. Method semantic authority
+
+DS015 is the normative catalog for the executable semantics of every registered generic reasoning method and the
+provider-coordination surfaces that do not enter the planner registry. This specification does not duplicate those
+algorithms. The planner consumes their capability descriptors, checks typed preconditions and budgets, invokes the
+bound executor, and preserves the method's witness and uncertainty status in the task trace.
+
+The currently implemented planner remains narrower than the target AND/OR architecture: ordinary language execution
+plans one semantic goal through a deterministic candidate order and an OBSERVE, DERIVE, VERIFY, CONSTRUCT sequence.
+Multi-goal decomposition, general alternative-branch execution, declarative domain-plan interpretation, CSP, SAT, and
+constraint search require their own executors and acceptance evidence; descriptor names alone do not count as support.
+
+### 10. Task Calculus audit algebra
 
 The semantic operation families are OBSERVE, STRUCTURE, RELATE, REDUCE, DERIVE, CONSTRUCT, VERIFY, and EFFECT. They classify runtime, training, evaluation, and maintenance work; they do not replace linguistic types, world models, or method descriptors.
 
@@ -74,9 +86,11 @@ OBSERVE reads authorized evidence. STRUCTURE compiles spans or records into type
 
 The control vocabulary is THEN, ALL, CHOOSE, EACH, UNTIL, BEAM, MEMO, and COMPENSATE. A control may enter an executable plan only after its semantics, budgets, effect behavior, and tests exist. A declared but unimplemented control produces a capability gap. Decomposition is capability-aware: the planner never creates an abstract node and assumes an executor will later appear.
 
-General training and evaluation work uses `Task = ⟨Goal, Assets, Deliverable, Constraints, Plan, Oracles, Effects, Budget, AbstentionPolicy⟩`. Language-question execution uses the more specific task frame below. Every intermediate node must enable execution, verification, selection, caching, provenance, effect control, or reuse; a wrapper that only renames prose is invalid.
+DS004 owns the general training and evaluation assignment contract. Language-question execution uses the specific task
+frame below. Every runtime intermediate node must enable execution, verification, selection, caching, provenance,
+effect control, or reuse; a wrapper that only renames prose is invalid.
 
-### 1. Task frame
+### 11. Task frame schema
 
 The task frame is the authoritative semantic input to planning. It is produced by the language front-end and session manager.
 
@@ -104,7 +118,7 @@ The task frame is the authoritative semantic input to planning. It is produced b
 
 The task frame contains semantic references rather than raw benchmark-specific fields. An adapter may create the output contract but cannot bypass parsing and planning.
 
-### 2. Method capability descriptor
+### 12. Method capability descriptor
 
 Every reusable executable method in `src` publishes a descriptor.
 
@@ -126,7 +140,7 @@ Every reusable executable method in `src` publishes a descriptor.
 
 The descriptor is metadata about trusted code. The implementation remains in `src`. A KB plan may reference `methodId` but cannot redefine it.
 
-### 3. Declarative plan record
+### 13. Declarative plan record
 
 ```json
 {
@@ -144,7 +158,7 @@ The descriptor is metadata about trusted code. The implementation remains in `sr
 
 The plan declares subgoals and references methods. It contains no method code.
 
-### 4. Execution-step trace
+### 14. Execution-step trace
 
 ```json
 {
@@ -162,7 +176,7 @@ The plan declares subgoals and references methods. It contains no method code.
 
 The trace is detailed enough for benchmark diagnosis and concise enough to store at scale with references.
 
-### 5. Runtime result
+### 15. Runtime result
 
 ```json
 {
@@ -189,7 +203,7 @@ The trace is detailed enough for benchmark diagnosis and concise enough to store
 
 For PARTIAL, MISSING_KNOWLEDGE, NO_APPLICABLE_METHOD or another non-solved status, `answer` may be null and `unresolvedSubgoals` carries structured gap descriptions.
 
-### 6. Capability-gap record
+### 16. Capability-gap record
 
 ```json
 {
@@ -205,21 +219,21 @@ For PARTIAL, MISSING_KNOWLEDGE, NO_APPLICABLE_METHOD or another non-solved statu
 
 This record tells a coding agent that the problem is algorithmic rather than a missing fact.
 
-### 7. Language-route values
+### 17. Language-route values
 
-The route is one of direct-symbolic, symbolic-recovery, llm-translation-then-symbolic, llm-simplification-then-symbolic, normalization-rejected or unparsed. Every benchmark and runtime report uses the same values.
+The implemented route vocabulary is `direct-symbolic` for ordinary offline language execution, `direct-symbolic-task-adapter` for an explicit deterministic task projection such as Entity Tracking, `language-agent-normalized` for an accepted assisted rewrite that was reparsed, `language-agent-normalization-rejected` for failed host validation or reparse, and `language-agent-normalization-failed` for an unavailable or unsuccessful subprocess. A rejected candidate uses status `UNVERIFIED_NORMALIZATION`; a subprocess failure preserves the direct `UNPARSED` status and distinguishes the attempted route in the normalization diagnostic. Future symbolic recovery methods must add a named route and tests rather than reuse one of these values ambiguously.
 
 ## Decisions & Questions
 
-### Question #1: Why publish method descriptors?
+### Question #1: Why are method descriptors public contracts?
 
 Response: They let the planner choose algorithms by typed preconditions and guarantees, let users distinguish missing knowledge from missing machinery, and let evaluation check whether a claimed method actually produced its witness.
 
-### Question #2: Why use AND/OR plans?
+### Question #2: Why do plans use explicit AND/OR structure?
 
 Response: Many tasks require all premises for one method while permitting alternative methods or hypotheses. AND/OR structure makes these obligations, choices, and partial results explicit.
 
-### Question #3: What happens when a budget expires?
+### Question #3: What happens when an execution budget expires?
 
 Response: Execution returns RESOURCE_LIMIT with the best valid partial trace, unresolved subgoals, and resource accounting. It never promotes a partial hypothesis into a complete answer.
 

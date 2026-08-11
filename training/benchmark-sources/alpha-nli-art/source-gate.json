@@ -1,0 +1,32 @@
+{
+  "format": "eslm-corpus-source-gate-v1",
+  "source": "alpha-nli-art-official-iclr2020",
+  "trigger": "The release contains more than 100,000 records and therefore receives the DS018 large-source gate even though the compressed archive is smaller than 50 MB.",
+  "decision": "approved-for-source-native-streaming-adapter-and-complete-development-evaluation",
+  "completeDatasetPayloadBytes": 48951598,
+  "completeDatasetRows": 174245,
+  "strata": [
+    {"field":"official split","values":["train","dev","test"],"outcome":"mapped to distinct lifecycle visibility"},
+    {"field":"preferred candidate","values":["1","2"],"outcome":"validated in host-only label streams"},
+    {"field":"repeated story identity","outcome":"retained because train constructs multiple comparisons from one narrative context"},
+    {"field":"identical candidate text","outcome":"retained and reported as an intrinsically tied source pair"},
+    {"field":"embedded line break or Unicode replacement character","outcome":"retained; source anomaly counted; task whitespace normalization declared"}
+  ],
+  "semanticMapping": {
+    "obs1": "typed event observed before an unobserved bridge",
+    "hyp1AndHyp2": "ordered alternative bridge events; order is preserved but conveys no preference",
+    "obs2": "typed event observed after the bridge",
+    "label": "host-only preferred-candidate oracle joined after prediction",
+    "taskOperation": "select-narrative-bridge",
+    "unsupportedProjection": "The Stage A narrative compiler exposes bounded event features but does not claim full roles, causality, goals, temporal preconditions, or world plausibility for unrestricted English."
+  },
+  "streamingProfile": {
+    "operation": "Sequentially hash and closed-schema validate every JSONL record; label files are small bounded arrays; per-split signature sets support exact duplicate accounting without constructing a semantic graph.",
+    "wallClockMilliseconds": 1280,
+    "maximumResidentSetBytes": 149372928,
+    "hostObservation": "2026-08-11 local run with Node.js 22; measurements describe this source and machine, not an acceptance quota."
+  },
+  "storagePlan": "The immutable archive and six extracted source files remain under training/.cache. The three official split files are already source-native shards. Development materialization is bounded to 1,532 label-free tasks. Train is streamed only when requested; official test has no exported loader. No KB compilation is performed in this integration.",
+  "queryAndCachePlan": "The adapter selects one official split by a fixed local path and sequentially reads only that split. There is no approximate routing, cross-split preload, corpus execution, or runtime network access.",
+  "sizePolicy": "No valid record is rejected because of file size, row count, text length, duplicate source context, or anomaly class."
+}

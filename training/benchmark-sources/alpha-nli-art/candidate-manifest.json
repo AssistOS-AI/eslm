@@ -1,0 +1,20 @@
+{
+  "format": "eslm-benchmark-candidate-manifest-v1",
+  "candidate": "deferred-bounded-narrative-bridge-selection-v1",
+  "scope": "development diagnosis and semantic contract only; no executable core candidate",
+  "dependencies": {
+    "src/benchmark-adapters/alpha-nli-art.mjs": "85a1846def6b158698e981ced91def6e39e15dc57f171a4bca1f1762e416b3d3"
+  },
+  "tests": {
+    "tests/alpha-nli-art-adapter.test.mjs": "52ef67407b92dc65bdb06646644ae4cf48aaae4d900935fd3be9456f611fc37c"
+  },
+  "guardianAudit": {
+    "eligibleForImplementation": false,
+    "failures": [
+      "typed causal, temporal, goal, participant-role, and state evidence is unavailable for arbitrary source prose",
+      "executable rename and meaning-changing contrast gates cannot pass before those semantics exist"
+    ]
+  },
+  "freshExecuted": false,
+  "genericCoreChanged": false
+}

@@ -1,0 +1,48 @@
+{
+  "format": "eslm-benchmark-partition-manifest-v1",
+  "benchmark": "PrOntoQA-OOD",
+  "sourceRevision": "0a6412b6fddf46324a1cb96e066dd7b3d89b87d6",
+  "sourceDatasetSha256": "0becba04e1e1eb80593709c6a3db2a46badd5587a29587ffaeb68ed5068c9de9",
+  "partition": {
+    "version": "prontoqa-ood-stable-stratified-partition-v1",
+    "seed": "eslm-prontoqa-ood-partition-v1",
+    "algorithm": "For each official JSON file independently, rank example keys by SHA-256(seed + NUL + file name + NUL + example key). The first 20 ranks are development-visible and the remaining 80 are sealed fresh members.",
+    "answerBlindFields": ["official JSON file name", "example1 through example100 key"],
+    "stratification": "Each of the 79 official generator configurations contributes exactly 20 development and 80 fresh cases.",
+    "all": {
+      "count": 7900,
+      "membershipSha256": "95394a17dedad69a7d71bf00af44ff841ba9152ae0e0d95b94e7d261c3abb0a1"
+    },
+    "development": {
+      "count": 1580,
+      "membershipSha256": "4d61f3a3be0fda34fac8d29b46ffd3bfefc8060ba478e933f91d0760c601bc09",
+      "visibility": "question, query, reference proof, and the attached in-context demonstrations may be inspected for adapter validation and failure clustering"
+    },
+    "trainingVisibleDemonstrations": {
+      "count": 11440,
+      "membership": "Only demonstrations attached to development members are training-visible. They are never counted as independent official test cases."
+    },
+    "fresh": {
+      "count": 6320,
+      "membershipSha256": "68300189c0e28fc30b0629b76c7f045dbe9571fde45fa00ea96838836f3a1ba4",
+      "visibility": "sealed membership only; adapter v1 exports no fresh-case loader and no fresh text, reference proof, or per-case outcome",
+      "executionState": "not-run"
+    }
+  },
+  "baselineSample": {
+    "version": "prontoqa-ood-development-baseline-v1",
+    "seed": "eslm-prontoqa-ood-development-baseline-v1",
+    "algorithm": "Within the 20 development cases in each official file, rank stable IDs by SHA-256(seed + NUL + stable ID) and select the first two.",
+    "casesPerOfficialFile": 2,
+    "count": 158,
+    "membershipSha256": "5bd6fb91a0191c53148f5a7e5fbfee6276613ac3b950ed837bd8282a4b2bf8a3",
+    "visibility": "development-visible",
+    "comprehensive": false
+  },
+  "oracleIsolation": {
+    "visiblePool": "contains context, query, typed finite-entailment task, and generator-configuration metadata, but no reference proof",
+    "hostOracle": "contains the stable case ID, expected entailment, and official reference proof in a separate array",
+    "trainingPool": "may be requested explicitly and contains only the in-context demonstrations attached to development members",
+    "freshPool": "does not exist in the exported adapter interface"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "format": "eslm-reclor-training-projection-diagnostic-v1",
+  "protocol": "reclor-complete-official-training-categorical-projection-diagnostic-v1",
+  "evidenceRegime": "complete official training split with host-only oracle; training evidence only",
+  "claimBoundary": "Training-visible compiler and witness diagnostic; not development, fresh, test, or leaderboard evidence.",
+  "available": 4638,
+  "tested": 4638,
+  "answered": 0,
+  "correct": null,
+  "benchmarkAccuracy": null,
+  "statusCounts": {"NO_APPLICABLE_METHOD":4638},
+  "categoricalMethodAttempts": 0,
+  "projectionFailureCounts": {"question-operation":4333,"premise-semantics":225,"argument-boundary":80},
+  "projectionDiagnosticCounts": {"question does not declare a supported proof obligation":4333,"unsupported categorical predication":7,"missing categorical quantifier":207,"requires exactly one explicit conclusion marker":80,"compound or unbounded categorical term":11},
+  "recognizedOperationCounts": {"select-sufficient-premise":113,"select-entailed-candidate":192},
+  "witnessBearing": 0,
+  "witnessVerified": 0,
+  "languageAgentInvocations": 0,
+  "interpretation": "The strict compiler recognized 305 training question operations but found no record whose full passage, conclusion boundary when required, and complete candidate set all belonged to the supported monadic categorical fragment. It did not discard opaque sentences or candidates to manufacture method coverage."
+}

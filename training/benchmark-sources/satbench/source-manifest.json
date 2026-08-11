@@ -1,0 +1,71 @@
+{
+  "format": "eslm-benchmark-source-manifest-v1",
+  "benchmark": "SATBench",
+  "source": {
+    "officialRepository": "https://github.com/Anjiang-Wei/SATBench",
+    "codeRevision": "3c93c5b6ee89c563fff279bdf286845d8b7cbe36",
+    "codeArchive": {
+      "url": "https://codeload.github.com/Anjiang-Wei/SATBench/tar.gz/3c93c5b6ee89c563fff279bdf286845d8b7cbe36",
+      "cachePath": "training/.cache/benchmarks/satbench/source/3c93c5b6ee89c563fff279bdf286845d8b7cbe36.tar.gz",
+      "bytes": 22392,
+      "sha256": "2f47f48049bc10b360ec177f7d6c65df5f3a9387f90602f00b7272c26e66502a",
+      "files": 15
+    },
+    "officialDataset": "https://huggingface.co/datasets/LLM4Code/SATBench",
+    "datasetRevision": "186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9",
+    "datasetArtifact": {
+      "url": "https://huggingface.co/datasets/LLM4Code/SATBench/resolve/186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9/SATBench-problems.jsonl",
+      "cachePath": "training/.cache/benchmarks/satbench/dataset/SATBench-problems-186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9.jsonl",
+      "bytes": 32618716,
+      "sha256": "d32ee8ca8ccee4ee3dcb322e174d4cbe5ffebbd1b76dcdb702d397afd34294b5",
+      "mediaType": "application/x-ndjson",
+      "records": 2100
+    },
+    "datasetCard": {
+      "cachePath": "training/.cache/benchmarks/satbench/dataset/README-186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9.md",
+      "sha256": "ff0cd042a14cb85ecc7291e69b1797966e987ffa3512762fd2ce512af33cdea4"
+    }
+  },
+  "license": {
+    "datasetSpdx": "Apache-2.0",
+    "datasetEvidence": "The dataset card at the pinned Hugging Face revision declares license: apache-2.0, and the Hugging Face repository metadata carries license:apache-2.0.",
+    "codeEvidence": "The pinned code README displays an Apache-2.0 badge and has SHA-256 9b4544357df47b4429abc26c08dcac35762b5175200e61f118daecf8e7471f7e. The 15-file code archive does not contain a standalone LICENSE file, so the manifest does not claim stronger code-license evidence than the upstream README provides.",
+    "redistribution": "The complete external dataset remains in ignored cache. Committed files contain source identity, aggregate inventories, and evaluation receipts rather than source puzzle text."
+  },
+  "citation": {
+    "title": "SATBench: Benchmarking LLMs' Logical Reasoning via Automated Puzzle Generation from SAT Formulas",
+    "authors": "Anjiang Wei, Yuheng Wu, Yingjia Wan, Tarun Suresh, Huanmi Tan, Zhanke Zhou, Sanmi Koyejo, Ke Wang, and Alex Aiken",
+    "venue": "Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing",
+    "pages": "33832-33849",
+    "doi": "10.18653/v1/2025.emnlp-main.1716",
+    "url": "https://aclanthology.org/2025.emnlp-main.1716/"
+  },
+  "inventory": {
+    "records": 2100,
+    "labels": { "SAT": 1050, "UNSAT": 1050 },
+    "numVariablesRange": [5, 90],
+    "numClauses": [4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+    "recordsPerClauseCount": 140,
+    "clauseLengthRange": [1, 9],
+    "largestSourceLineBytes": 83401,
+    "formulaEquivalenceMarker": "All 2,100 records contain the official [EQUIVALENT] marker.",
+    "conditionCountMismatches": 9,
+    "conditionMismatchPolicy": "The nine records remain valid and retained. Their natural-language condition arrays contain split or expanded conditions whose count differs from num_clauses; the official clauses array remains structurally valid."
+  },
+  "schema": {
+    "commonFields": [
+      "dims", "num_vars", "num_clauses", "clauses", "readable", "satisfiable", "scenario",
+      "variable_mapping", "conditions", "question", "formula_equivalence_check", "recovered_formula",
+      "recovered_formula_full_text", "consistency_check_trace_history"
+    ],
+    "answerSpecificField": "SAT records contain sat_reason; UNSAT records contain unsat_reason.",
+    "constraintRepresentation": "clauses is a list of non-empty lists of nonzero signed one-based variable identifiers. Positive integers denote positive literals and negative integers denote negation.",
+    "identity": "The stable case identifier hashes only label-free task fields, including clauses and language fields; satisfiable, sat_reason, unsat_reason, and validation traces are excluded."
+  },
+  "retentionAndScale": {
+    "completeRetention": "All 2,100 records and all source fields remain byte-for-byte in the immutable ignored JSONL cache.",
+    "streaming": "Validation and adaptation use Node readline over the complete JSONL. No operation reads the 32,618,716-byte artifact as one string or rejects it by file size.",
+    "shardingDecision": "The official JSONL is already a sequential record stream and contains only 2,100 rows, so no derived source shard is needed. Evaluation retains only the selected pool in memory and processes sealed fresh cases one record at a time.",
+    "resourcePolicy": "Search limits may produce RESOURCE_LIMIT for a case but never remove that case from the declared denominator."
+  }
+}

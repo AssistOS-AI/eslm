@@ -24,7 +24,7 @@ Persistent source, comments, diagnostics, specifications, agent skills, and docu
 
 The principal product directories are `src/`, `tests/`, `training/`, `docs/`, and preserved `original_specs/`. Imported project-maintenance skills under `.agents/skills/` are read-only during ESLM product work. Repository-owned operational skills live under `training/.agents/skills/` and must be self-contained.
 
-Trusted reusable mechanisms belong in cohesive subdirectories under `src/`: language compilation, semantic contracts, KB schemas and loading, reasoning methods and planning, runtime orchestration, training control, evaluation, and CLI adapters. Tests mirror those boundaries. Canonical KB records, manifests, compiler outputs, source registrations, and reports live within independently versioned directories under `training/KBs/`. Dataset caches and prepared benchmark pools remain separate from KB knowledge.
+Trusted reusable mechanisms belong in cohesive subdirectories under `src/`: language compilation, semantic contracts, KB schemas and loading, reasoning methods and planning, runtime orchestration, benchmark adapters, evaluation, training control, operator-only language services, and CLI adapters. `src/runtime/engine.mjs` and `src/runtime/runtime.mjs` define the deployable inference closure. `src/runtime/language-agent-assisted-runtime.mjs` defines the product-neutral operator wrapper and `src/language/codex-normalizer.mjs` defines its currently supported Codex adapter; neither may become a transitive dependency of the deployable closure. Tests mirror those boundaries. Canonical KB records, manifests, compiler outputs, source registrations, and reports live within independently versioned directories under `training/KBs/`. Dataset caches and prepared benchmark pools remain separate from KB knowledge.
 
 Do not create root-level `data`, `benchmarks`, `results`, `artifacts`, or `configs` directories. Generated and temporary training artifacts belong under ignored paths selected by the training contract. Published documentation evidence belongs under `docs/results/`.
 
@@ -36,13 +36,19 @@ Do not suppress errors. Catch only to add context, implement a specified fallbac
 
 ### Runtime and data safety
 
-Runtime and declarative KB content must not use `eval`, `Function`, `node:vm`, child processes, networking, secret-bearing environment access, corpus-selected dynamic imports, or import-time I/O. Corpus strings remain inert data. A restricted declarative rule is parsed into a validated AST and interpreted by a registered trusted method; it never contains source code.
+The deployed runtime closure and declarative KB content must not use `eval`, `Function`, `node:vm`, child processes, networking, secret-bearing environment access, corpus-selected dynamic imports, or import-time I/O. Corpus strings remain inert data. A restricted declarative rule is parsed into a validated AST and interpreted by a registered trusted method; it never contains source code.
 
-Training orchestration may start an explicitly configured coding-agent subprocess because agent use is part of training. That authority is isolated from deployed inference, receives only an approved packet and skill directory, uses an explicit working directory, and produces a candidate plus an execution receipt. Runtime modules must not import training-agent code.
+DS009 owns process isolation, untrusted-input handling, and security controls. DS013 owns the complete operator
+normalization subprocess protocol. DS004 and DS007 own training authority and its command surface. This coding contract
+requires runtime core modules to remain outside both subprocess dependency closures.
+
+DS002 owns the executable-versus-declarative placement test, DS015 owns generic-method generality, and DS017 owns
+adapter and oracle isolation. Source review must enforce those contracts: runtime control flow may consume declared
+semantic types and validated policy metadata, but not external record identity or expected output.
 
 ### Tests and fixtures
 
-Use `node:test` with strict assertions. Name tests after observable contracts. Organize unit tests by the source boundary they protect and add integration tests for CLI, canonical-to-compiled equivalence, lazy-versus-exhaustive loading, planner traces, honest failure, skill portability, agent invocation construction, dataset isolation, and documentation synchronization.
+Use `node:test` with strict assertions. Name tests after observable contracts. Organize unit tests by the source boundary they protect and add integration tests for CLI, canonical-to-compiled equivalence, lazy-versus-exhaustive loading, planner traces, honest failure, skill portability, agent invocation construction, normalization invocation and host rejection, dataset isolation, benchmark oracle isolation, renamed and nonce generalization, deterministic multi-thousand regression smoke, and documentation synchronization.
 
 Fixtures must be small, legible, deterministic, and licensed for repository inclusion. Public datasets remain local ignored inputs. A fixture demonstrates software behavior and is never reported as a scientific benchmark. Tests may write only to operating-system temporary directories or an explicit ignored work directory; they must not mutate published KB versions or promoted reports.
 
@@ -50,7 +56,9 @@ Fixtures must be small, legible, deterministic, and licensed for repository incl
 
 The contiguous DS set under `docs/specs/` is authoritative. Behavior, interface, evaluation, claim, skill, or architecture changes must update the affected DS files, tests, HTML pages, README, and AGENTS guidance in the same change.
 
-HTML documentation must explain the complete operational contract in continuous technical prose. It must not summarize away assumptions, algorithms, invariants, failure states, measurement regimes, acceptance gates, or falsification criteria. It should explain difficult behavior from several useful viewpoints: data flow, control flow, trust boundary, operator responsibility, failure diagnosis, and review procedure. Diagrams are used only when they materially clarify a relationship. They must be small, readable on mobile, use short labels, and be followed by prose that explains inputs, processing, outputs, and limits.
+DS012 owns the complete technical-writing, navigation, generated-status, diagram, and synchronization contract. Code and
+documentation reviews must invoke that owner whenever a behavior or claim changes rather than creating a second local
+documentation policy here.
 
 ### Required checks
 
@@ -58,17 +66,9 @@ HTML documentation must explain the complete operational contract in continuous 
 
 ## Decisions & Questions
 
-### Question #1: Why use direct .mjs rather than TypeScript?
+### Question #1: Why does the repository use direct `.mjs` rather than TypeScript?
 
 Response: Direct ESM removes compilation and dependency ambiguity, makes trusted mechanisms and generated tools immediately inspectable, and preserves the dependency-free offline runtime.
-
-### Question #2: May KB packages contain functions?
-
-Response: No. KB packages are declarative data products. Specialized reusable behavior belongs in src and is selected through registered method identifiers. Compilers may emit optimized data segments, but not executable corpus-derived helpers.
-
-### Question #3: Why require explanatory HTML in addition to DS contracts?
-
-Response: The DS set states normative obligations. HTML explains how those obligations appear in the implemented system and gives reviewers multiple operational views without weakening or paraphrasing away the contract.
 
 ## Conclusion
 

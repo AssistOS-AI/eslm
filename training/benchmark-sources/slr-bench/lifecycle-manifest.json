@@ -1,0 +1,11 @@
+{
+  "protocol": "slr-bench-official-split-lifecycle-v1",
+  "policy": "Use the official train, validation, and test split membership. No derived random partition is needed, and membership never depends on the ground-truth rule, validation program, shortcuts, symbols, or any evaluator output.",
+  "training": 18053,
+  "development": 200,
+  "fresh": 1000,
+  "membershipSha256": "7814eaaf05dd4207f9fc49a63ff01123f27f4a0d35f998fd4e76e4aaf7cd9407",
+  "trainingVisibility": "Training and validation consumers receive only the prompt, split-local identity, curriculum metadata, and output contract. Large train access is streaming rather than materialized.",
+  "hostOnlyOracle": ["ground-truth rule", "validation program", "validation_program_shortcuts", "symbols"],
+  "freshVisibility": "The official test split is host-only, has not been evaluated, and cannot be opened by the public pool loader."
+}

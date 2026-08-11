@@ -1,0 +1,14 @@
+{
+  "format": "eslm-learning-evaluation-v1",
+  "protocol": "defeasible-nli-complete-official-development-direct-symbolic-baseline-v1",
+  "officialDevelopmentSourceRows": 16008,
+  "tested": 14968,
+  "answered": 0,
+  "correct": 0,
+  "accuracyOnAnswered": null,
+  "statusCounts": {"NO_APPLICABLE_METHOD":14968},
+  "excludedOwnerDeclaredImpossible": 1040,
+  "testExecuted": false,
+  "languageAgentInvocations": 0,
+  "interpretation": "The current runtime has no registered task method for natural-language defeasible update comparison. Zero correct is a coverage result, not an accuracy estimate over guessed labels."
+}

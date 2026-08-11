@@ -1,0 +1,30 @@
+{
+  "format": "eslm-proofwriter-source-inventory-v1",
+  "sourceId": "proofwriter-v2020.12.3",
+  "validator": "src/benchmark-adapters/proofwriter.mjs",
+  "validationMode": "stream every JSONL record, validate the declared source shape, parse every logical representation, retain only aggregate evidence for protected test files",
+  "totals": {
+    "jsonlFiles": 110,
+    "records": 702271,
+    "taskItems": 2670022
+  },
+  "byKind": {
+    "main": { "files": 50, "records": 179281, "questions": 1691056 },
+    "stage": { "files": 38, "records": 463341, "inferences": 650076 },
+    "abduct": { "files": 22, "records": 59649, "abductionQuestions": 328890 }
+  },
+  "byOfficialSplit": {
+    "train": { "files": 35, "records": 489748, "taskItems": 1851831, "visibility": "training-visible" },
+    "dev": { "files": 35, "records": 71081, "taskItems": 270071, "visibility": "development-visible" },
+    "test": { "files": 40, "records": 141442, "taskItems": 548120, "visibility": "host-only-oracle" }
+  },
+  "sourceAnomalies": [
+    {
+      "path": "CWA/birds-electricity/meta-test.jsonl",
+      "affectedRecords": 124,
+      "condition": "NRule metadata differs from the number of rule objects",
+      "handling": "Rows remain preserved and schema-valid. The validator reports the metadata inconsistency rather than deleting or silently correcting source data. This test-only variant is not used by the development baseline."
+    }
+  ],
+  "testBoundary": "Test files were parsed only by the deterministic host schema validator. Their text, labels, questions, proofs, per-answer counts, and rows were not printed, sampled, sent to Coding Agent, or used to select a mechanism."
+}

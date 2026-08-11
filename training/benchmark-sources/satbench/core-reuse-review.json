@@ -1,0 +1,35 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Reuse the frozen generic scalable Boolean entailment method for satisfiability decisions",
+  "independentExamples": [
+    "A satisfiable renamed CNF with two clauses and a validated assignment",
+    "An unsatisfiable pair of opposed unit clauses with a replayable DPLL certificate",
+    "A three-clause conflict preserved after variable permutation and clause reordering"
+  ],
+  "inputTypes": ["finite Boolean clauses", "explicit search budgets"],
+  "outputTypes": ["SAT with satisfying assignment", "UNSAT with unsatisfiability certificate"],
+  "preconditions": [
+    "Every clause is non-empty and contains validated signed semantic variables.",
+    "The task creates a tautological Boolean query over the same formula language.",
+    "The scalable entailment method retains its default report-only inconsistency policy."
+  ],
+  "invariants": [
+    "A consistent complete premise context maps to SAT only after its context model satisfies every source clause.",
+    "An inconsistent complete premise context maps to UNSAT only after independent certificate replay.",
+    "The adapter never selects an answer from source identity, record order, expected label, or puzzle vocabulary.",
+    "Resource limits retain the case and produce an explicit failed execution rather than a guessed label."
+  ],
+  "uncertaintySemantics": "RESOURCE_LIMIT and malformed task states remain explicit and never map to SAT or UNSAT.",
+  "proofBehavior": "SAT requires the generic solver's complete context model and a second direct clause check. UNSAT requires the generic full-context DPLL inconsistency certificate and independent verifier replay.",
+  "resourceBounds": {
+    "inherited": "The frozen scalable Boolean entailment defaults bound semantic atoms, CNF variables, clauses, and DPLL search nodes.",
+    "denominator": "A bound may affect execution status but cannot reduce source retention or an evaluation denominator."
+  },
+  "failureStatuses": ["RESOURCE_LIMIT", "schema validation error"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "None. No KB record, package, core method, capability descriptor, runtime route, or solver behavior changes.",
+  "renameTestPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "forbiddenDispatchAuditPassed": true,
+  "decision": "Reuse accepted generic core without modification. The only implementation is source validation, typed projection, oracle isolation, and scoring in the SATBench adapter."
+}

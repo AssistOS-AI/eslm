@@ -1,0 +1,43 @@
+{
+  "format": "eslm-folio-source-manifest-v1",
+  "source": "https://github.com/Yale-LILY/FOLIO",
+  "sourceRevision": "5d7bb84c7edab3fb358e057d2807f19cf5cf5e2d",
+  "release": "official repository data/v0.0",
+  "archive": {
+    "path": "training/.cache/benchmarks/folio/source/5d7bb84c7edab3fb358e057d2807f19cf5cf5e2d.tar.gz",
+    "bytes": 216478,
+    "sha256": "c1ab92c373a8e4f1e55781f89d44675082379a2c3d841c3667dbbe0209ee0924"
+  },
+  "sourceSetSha256": "5157453a3938447308d9df627418cbbeb1e363894bad2c8fcffe5b7f3dcfad1a",
+  "license": {
+    "name": "Creative Commons Attribution-ShareAlike 4.0 International",
+    "pathInArchive": "LICENSE",
+    "sha256": "da89f9867822be4b8adb1e601d9e9226c195016c6508015eb7593e68ead0c98a"
+  },
+  "files": {
+    "train": {
+      "path": "data/v0.0/folio-train.jsonl",
+      "bytes": 787496,
+      "sha256": "008d34b750d31fa7f014e953228adf4db81ec34bbda9e7f67c96c60438d1e6b2",
+      "records": 1004,
+      "premises": 5237,
+      "labels": { "True": 388, "False": 286, "Unknown": 330 },
+      "emptyFormulaAnnotations": 6,
+      "premiseAlignmentMismatches": 2,
+      "emptyNaturalLanguagePremises": 4
+    },
+    "validation": {
+      "path": "data/v0.0/folio-validation.jsonl",
+      "bytes": 173456,
+      "sha256": "6922c988ef10987bd6545568ee8e63e897af80994591fa20539767da58f8e3d1",
+      "records": 204,
+      "premises": 1088,
+      "labels": { "True": 72, "False": 63, "Uncertain": 69 },
+      "emptyFormulaAnnotations": 0,
+      "premiseAlignmentMismatches": 10,
+      "emptyNaturalLanguagePremises": 0
+    }
+  },
+  "preservation": "The complete immutable archive and every official row remain in the ignored cache. Source anomalies are counted; no row is removed for size, alignment, or annotation quality.",
+  "versionBoundary": "The repository README points to a quality-corrected v2 dataset on Hugging Face. That gated source was not accessible without authorization in this environment, so this manifest makes no v2 claim."
+}

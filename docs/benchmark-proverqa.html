@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ProverQA protocol — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation / ProverQA</p>
+<h1>ProverQA: first-order inference with independently checked witnesses</h1>
+<p class="lead">ProverQA combines natural-language theories, source-provided first-order annotations, three-way entailment labels, and reference reasoning. ESLM's current track deliberately measures annotation adaptation plus generic finite entailment. It does not claim that the ordinary language frontend derived those formulas from the English text.</p>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  A[Official FOL annotations] --> N[Typed predicate reconciliation]
+  N --> E[Finite entailment]
+  E --> W[Proof or countermodel]
+  W --> O[Host-only oracle]</pre><figcaption>The answer and reference reasoning remain outside the visible task. A label match is accepted only when the returned semantic witness is valid.</figcaption></figure>
+
+<h2 id="protocol">Source, partition, and tested denominator</h2>
+<p>The pinned <a href="https://huggingface.co/datasets/opendatalab/ProverQA">official dataset release</a> contains 1,500 public evaluation cases—500 easy, 500 medium, and 500 hard—and 5,000 training records. ESLM retains every row and validates all 15,842 premise annotations and 17,342 formulas. Three malformed JSON strings embedded in training-output text are retained and counted; they are not silently dropped or executed.</p>
+<p>Before adaptation, each difficulty was sorted by a stable hash that excluded the answer. One hundred cases per difficulty became development-visible and the remaining 1,200 formed a protected fresh partition. The candidate passed all 300 development members before its behavior and dependencies were frozen. The latest result then executed <strong>all 1,200 out of 1,200 protected cases</strong> through an aggregate-only evaluator. The separate 5,000-record training source is not part of either denominator.</p>
+
+<h2>Logical execution</h2>
+<p>The adapter parses source annotations into inert formulas, grounds their finite domain, and asks the same generic entailment method used by other sources. Answer A requires the conclusion to follow, answer B requires its negation to follow, and answer C requires neither. Every outcome carries either a proof/conflict certificate or a model witnessing non-entailment; an independent verifier evaluates that witness against the original formulas.</p>
+<p>The source occasionally renders morphologically related predicate names differently across annotations. The adapter applies a label-blind reconciliation policy based on normalized predicate morphology and records when it does so. It does not inspect the answer or reference reasoning, and the core contains no ProverQA name, case identifier, answer constant, or difficulty-specific branch. Nonce predicate renaming and meaning-changing controls test this boundary.</p>
+
+<h2 id="outcomes">How to read the current result</h2>
+<p>The dashboard reads exact counts from the replaceable JSON report. All 300 development tasks pass. On the protected partition, 1,196 of 1,200 strict answers match the isolated oracle and 1,198 tasks return semantically valid witnesses. Two compiled contexts are inconsistent; the aggregate proves two further mismatches among solved cases but exposes no affected member. Those outcomes therefore cannot become a post-fresh repair list. The opened partition is exhausted for later tuning.</p>
+<p>The fifth development annotation mismatch was resolved without a source predicate constant: the shorter same-arity identifier may omit exactly one content root only when every aligned source statement using it explicitly contains that root. A nonce positive control and a contrast lacking the surface evidence protect the boundary; an unrestricted lexical subset merge remains rejected because it creates inconsistency elsewhere.</p>
+<p>This is fresh evidence for an <em>annotation-assisted logical-form track</em>. It shows that the generic finite reasoner executes supplied logical representations; it does not show that ESLM derived them from all ProverQA English or reproduced the official end-to-end protocol. The next English-to-formula candidate requires newly untouched evidence.</p>
+
+<h2>Rights and reproducibility</h2>
+<p>The source is public and intended for academic research, but the pinned dataset card does not state an explicit license identifier for the assembled benchmark. ESLM therefore keeps source rows in the ignored local cache, publishes only manifests and aggregate receipts, and does not infer redistribution permission from licenses of upstream WordNet or name resources. The <a href="https://openreview.net/forum?id=C25SgeXWjE">ICLR 2025 paper</a> is the primary methodological citation.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

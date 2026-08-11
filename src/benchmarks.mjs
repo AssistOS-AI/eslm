@@ -1,17 +1,19 @@
 import { readFile } from 'node:fs/promises';
 import { extname, relative } from 'node:path';
 import { readJsonLines, writeJson } from './io.mjs';
+import { RESEARCH_BENCHMARK_CATALOG } from './evaluation/benchmark-research-catalog.mjs';
 import { PROJECT_ROOT } from './paths.mjs';
 import { hashFile, sha256 } from './util.mjs';
 
 export const BENCHMARK_CATALOG = Object.freeze({
-  blimp: { task: 'minimal-pair preference', license: 'CC BY', source: 'https://github.com/alexwarstadt/blimp' },
-  babi: { task: 'symbolic text understanding and reasoning', license: 'research dataset; source code BSD-3-Clause', source: 'https://github.com/facebookarchive/bAbI-tasks' },
+  blimp: { task: 'minimal-pair preference', license: 'CC BY 4.0', source: 'https://github.com/alexwarstadt/blimp' },
+  babi: { task: 'symbolic text understanding and reasoning', license: 'CC BY 3.0 Unported data archive', source: 'https://github.com/facebookarchive/bAbI-tasks' },
   clutrr: { task: 'compositional relational reasoning', license: 'CC BY-NC 4.0', source: 'https://github.com/facebookresearch/clutrr' },
-  entityTracking: { task: 'state tracking', license: 'dataset terms', source: 'https://aclanthology.org/2023.acl-long.213/' },
+  entityTracking: { task: 'state tracking', license: 'no explicit data license at pinned source', source: 'https://aclanthology.org/2023.acl-long.213/' },
   ewok: { task: 'world-knowledge preference', license: 'acceptance required', source: 'https://arxiv.org/abs/2405.09605' },
   storyCloze: { task: 'narrative ending selection', license: 'dataset terms', source: 'https://aclanthology.org/N16-1098/' },
   simpleqa: { task: 'short-form factual QA', license: 'MIT repository', source: 'https://github.com/openai/simple-evals' },
+  ...RESEARCH_BENCHMARK_CATALOG,
 });
 
 export const PUBLIC_RESULT_CATALOG = Object.freeze([
@@ -46,13 +48,24 @@ async function scoreCase(engine, item) {
   if (item.kind === 'preference') {
     const left = engine.score(item.good);
     const right = engine.score(item.bad);
-    return { pass: left.score > right.score, actual: [left.score, right.score] };
+    return {
+      pass: left.score > right.score, actual: [left.score, right.score], status: 'SCORED',
+      languageRoute: 'direct-symbolic', normalizationAttempted: false,
+    };
   }
   const input = item.context ? `${item.context} ${item.text}` : item.text;
   const result = await engine.ask(input);
-  if (item.values) return { pass: JSON.stringify([...result.values ?? []].sort()) === JSON.stringify([...item.values].sort()), actual: result.values };
+  const route = {
+    status: result.status, languageRoute: result.languageRoute,
+    normalizationAttempted: Boolean(result.normalization?.attempted),
+    normalizationStatus: result.normalization?.status,
+    normalizationCacheHit: result.normalization?.cacheHit,
+    normalizationExternalInvocation: Boolean(result.normalization?.attempted
+      && !result.normalization?.cacheHit && result.normalization?.receipt),
+  };
+  if (item.values) return { pass: JSON.stringify([...result.values ?? []].sort()) === JSON.stringify([...item.values].sort()), actual: result.values, ...route };
   const aliases = [item.answer, ...(item.aliases ?? [])].map(normalizeAnswer);
-  return { pass: aliases.includes(normalizeAnswer(result.answer)), actual: result.answer };
+  return { pass: aliases.includes(normalizeAnswer(result.answer)), actual: result.answer, ...route };
 }
 
 export async function runBenchmark(engine, suitePath, publishPath) {
@@ -62,7 +75,7 @@ export async function runBenchmark(engine, suitePath, publishPath) {
     results.push({ id: suite[index].id ?? String(index + 1), ...await scoreCase(engine, suite[index]) });
   }
   const report = {
-    format: 'eslm-benchmark-report-v1',
+    format: 'eslm-benchmark-report-v2',
     protocol: 'eslm-native-v1',
     createdAt: new Date().toISOString(),
     dataset: { path: relative(PROJECT_ROOT, suitePath), sha256: await hashFile(suitePath) },
@@ -74,10 +87,36 @@ export async function runBenchmark(engine, suitePath, publishPath) {
     total: results.length,
     correct: results.filter((item) => item.pass).length,
     accuracy: results.length ? results.filter((item) => item.pass).length / results.length : 0,
+    language: languageMetrics(results),
     results,
   };
   if (publishPath) await writeJson(publishPath, report);
   return report;
+}
+
+function accuracyOf(results) {
+  return results.length ? results.filter((item) => item.pass).length / results.length : null;
+}
+
+function languageMetrics(results) {
+  const attempts = results.filter((item) => item.normalizationAttempted);
+  const direct = results.filter((item) => !item.normalizationAttempted);
+  const normalized = results.filter((item) => item.languageRoute === 'language-agent-normalized');
+  const routes = Object.fromEntries([...new Set(results.map((item) => item.languageRoute ?? 'unknown'))]
+    .sort().map((route) => [route, results.filter((item) => (item.languageRoute ?? 'unknown') === route).length]));
+  return {
+    directSymbolicCases: direct.length,
+    directSymbolicRate: results.length ? direct.length / results.length : 0,
+    specialAnalysisCases: attempts.length,
+    specialAnalysisRate: results.length ? attempts.length / results.length : 0,
+    externalInvocations: attempts.filter((item) => item.normalizationExternalInvocation).length,
+    cacheHits: attempts.filter((item) => item.normalizationCacheHit).length,
+    acceptedNormalizations: normalized.length,
+    rejectedNormalizations: attempts.filter((item) => item.normalizationStatus !== 'accepted').length,
+    directAccuracy: accuracyOf(direct),
+    normalizedAccuracy: accuracyOf(normalized),
+    routes,
+  };
 }
 
 export async function importComparison(inputPath, outputPath) {

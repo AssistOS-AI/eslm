@@ -8,10 +8,10 @@ import { appendFile, writeFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import { EslmEngine } from './runtime/engine.mjs';
 import { EslmRuntime } from './runtime/runtime.mjs';
+import { LanguageAgentAssistedRuntime } from './runtime/language-agent-assisted-runtime.mjs';
 import {
-  BENCHMARK_CATALOG, PUBLIC_RESULT_CATALOG, exportBenchmark, importComparison, runBenchmark,
-  scoreExternalPredictions,
-} from './benchmarks.mjs';
+  CodexLanguageNormalizer, DEFAULT_CODEX_NORMALIZATION_MODEL,
+} from './language/codex-normalizer.mjs';
 import { checkDocumentation, publishReport } from './docs-reports.mjs';
 import {
   DATASET_CATALOG, datasetStatus, fetchDataset, prepareDataset,
@@ -36,9 +36,14 @@ import { parseArgs } from './util.mjs';
 import { editDistance } from './util.mjs';
 import { createTerminalStyle } from './terminal-style.mjs';
 import {
-  interactiveExamples, interactiveHelp, interactiveKbText, interactiveSmoke, memoryText, modelText, profileText,
-  traceText,
+  interactiveCountAndSeed, interactiveExamplePage, interactiveExamples, interactiveHelp, interactiveKbText,
+  interactiveResultText, interactiveSmoke, memoryText, modelText, profileText, traceText,
 } from './interface/interactive-presenter.mjs';
+import { benchmarkCommand } from './interface/benchmark-command.mjs';
+import {
+  languageAgentNormalizationEnabled, withLanguageAgentNormalization,
+} from './interface/cli-runtime-policy.mjs';
+import { interactiveCompletions } from './interface/interactive-completion.mjs';
 const runFile = promisify(execFile);
 let writeOutput = (text) => stdout.write(text);
 
@@ -73,6 +78,8 @@ Usage:
   eslm evaluate --suite FILE [--publish]
   eslm benchmark catalog
   eslm benchmark references
+  eslm benchmark status
+  eslm benchmark probe --benchmark all|ID[,ID] [--publish]
   eslm benchmark run --suite FILE [--publish]
   eslm benchmark export --suite FILE --output FILE
   eslm benchmark score-predictions --suite FILE --input FILE --model-name NAME [--output FILE]
@@ -85,6 +92,10 @@ Global options:
   --memory-policy auto          auto, eager, or lazy public-KB loading
   --color auto                  auto, always, or never; structured output is never colored
   --profile                      include per-stage timing, CPU, memory deltas, and work counts
+  --external-language-agent      explicitly select the default assisted CLI profile
+  --no-external-language-agent   keep this command entirely offline and direct-symbolic
+  --language-agent-model MODEL   adapter model; default ${DEFAULT_CODEX_NORMALIZATION_MODEL}
+  --no-normalization-cache       do not read or write the ignored operator normalization cache
 `);
 }
 async function selectedRuntimeKbIds(value) {
@@ -108,7 +119,17 @@ async function engineFor(options) {
   const loaded = await loadPublicKnowledgeBases(publicIds, {
     memoryMb: options['memory-mb'], memoryPolicy: options['memory-policy'],
   });
-  return new EslmRuntime(core, loaded.providers, selected, loaded.memoryPlan);
+  const runtime = new EslmRuntime(core, loaded.providers, selected, loaded.memoryPlan);
+  if (!languageAgentNormalizationEnabled(options)) return runtime;
+  const timeoutMs = Number(options['language-agent-timeout-ms'] ?? options['codex-timeout-ms'] ?? 120_000);
+  if (!Number.isFinite(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 600_000) {
+    throw new Error('--language-agent-timeout-ms must be between 1000 and 600000.');
+  }
+  return new LanguageAgentAssistedRuntime(runtime, new CodexLanguageNormalizer({
+    model: options['language-agent-model'] ?? options['codex-model'] ?? DEFAULT_CODEX_NORMALIZATION_MODEL,
+    command: options['language-agent-command'] ?? options['codex-command'], timeoutMs,
+    cache: !options['no-normalization-cache'],
+  }));
 }
 function globExpression(value) {
   return new RegExp(`^${value.split('*').map((part) => part.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')).join('.*')}$`, 'iu');
@@ -146,13 +167,21 @@ async function matchInteractiveKnowledgeBases(value, { includeQuick = true } = {
 
 async function chat(options) {
   const style = createTerminalStyle(options.color, stdout);
-  let runtimeOptions = { ...options };
+  let runtimeOptions = withLanguageAgentNormalization(options, languageAgentNormalizationEnabled(options));
   let selected = await selectedRuntimeKbIds(options.kb ?? Object.keys(PUBLIC_KB_CATALOG).join(','));
   let engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
-  const terminal = createInterface({ input: stdin, output: stdout });
+  const registeredIds = (await registeredKnowledgeBases()).map((entry) => entry.kbId);
+  const completionKbIds = [...new Set([
+    ...Object.keys(KB_CATALOG), ...Object.keys(PUBLIC_KB_CATALOG), ...registeredIds,
+  ])];
+  const terminal = createInterface({
+    input: stdin,
+    output: stdout,
+    completer: (line) => interactiveCompletions(line, completionKbIds),
+  });
   let context = {};
   let last;
-  stdout.write(`${style.bold(style.blue('ESLM'))} is ready. Public knowledge: ${style.green(selected.join(', ') || 'none')}.\nUse ${style.blue('/help')} for an explanation, ${style.blue('/examples')} for varied examples, or ${style.blue('/smoke')} to execute a quick check.\n`);
+  stdout.write(`${style.bold(style.blue('ESLM'))} is ready. Public knowledge: ${style.green(selected.join(', ') || 'none')}.\nUse ${style.blue('/help')} for an explanation, ${style.blue('/examples')} for varied examples, or ${style.blue('/smoke')} to execute a regression check. Press Tab to complete commands and KB names. Language Agent normalization is ${runtimeOptions['external-language-agent'] ? style.yellow('on') : style.green('off')}. The current Language Agent adapter invokes Codex.\n`);
   while (true) {
     let answer;
     try { answer = await terminal.question(style.blue('eslm> ')); }
@@ -170,6 +199,21 @@ async function chat(options) {
       continue;
     }
     if (line === '/memory') { stdout.write(`${memoryText(engine, style)}\n`); continue; }
+    if (line === '/normalize') {
+      const configuration = engine.normalizationConfiguration?.();
+      stdout.write(configuration
+        ? `${style.yellow('Language Agent normalization is on.')} Adapter: Codex; model: ${configuration.model}; reasoning: ${configuration.reasoningEffort}; proposal limit: ${configuration.proposalLimit}; cache: ${configuration.cacheEnabled ? 'on' : 'off'}. Only UNPARSED input is sent externally.\n`
+        : `${style.green('Language Agent normalization is off.')} The active path is offline and direct-symbolic.\n`);
+      continue;
+    }
+    if (line === '/normalize on' || line === '/normalize off') {
+      runtimeOptions = withLanguageAgentNormalization(runtimeOptions, line.endsWith(' on'));
+      engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+      stdout.write(line.endsWith(' on')
+        ? `${style.yellow('Language Agent normalization enabled.')} The current adapter invokes Codex. Otherwise-unparsed input may leave the offline runtime boundary.\n`
+        : `${style.green('Language Agent normalization disabled.')} The active path is offline and direct-symbolic.\n`);
+      continue;
+    }
     if (line.startsWith('/memory ')) {
       const value = line.slice('/memory '.length).trim().toLocaleLowerCase('en-US');
       if (['auto', 'eager', 'lazy'].includes(value)) runtimeOptions = { ...runtimeOptions, 'memory-policy': value };
@@ -181,13 +225,21 @@ async function chat(options) {
     }
     if (line === '/clear') { context = {}; last = undefined; stdout.write(`${style.green('Session context cleared.')}\n`); continue; }
     if (line === '/examples' || line.startsWith('/examples ')) {
-      const seed = line.slice('/examples'.length).trim() || `${Date.now().toString(36)}-examples`;
-      stdout.write(`${interactiveExamples(style, seed)}\n`);
+      try {
+        const { page, seed } = interactiveExamplePage(line.slice('/examples'.length));
+        stdout.write(`${interactiveExamples(style, seed, page)}\n`);
+      } catch (error) { stdout.write(`${style.red(error.message)}\n`); }
       continue;
     }
     if (line === '/smoke' || line.startsWith('/smoke ')) {
-      const seed = line.slice('/smoke'.length).trim() || `${Date.now().toString(36)}-smoke`;
-      stdout.write(`${await interactiveSmoke(engine, selected, style, seed)}\n`);
+      const { count, seed } = interactiveCountAndSeed(line.slice('/smoke'.length), 4096, 'smoke');
+      const smokeEngine = await engineFor({
+        ...runtimeOptions,
+        kb: 'quick',
+        'external-language-agent': false,
+        'no-external-language-agent': true,
+      });
+      stdout.write(`${await interactiveSmoke(smokeEngine, ['quick'], style, seed, count)}\n`);
       continue;
     }
     if (line.startsWith('/load ')) {
@@ -214,7 +266,7 @@ async function chat(options) {
     if (line.startsWith('/')) { stdout.write(`${style.red('Unknown command.')} Use ${style.blue('/help')} to see the available commands.\n`); continue; }
     last = await engine.ask(line, context);
     context = last.context ?? context;
-    stdout.write(`${style.status(last.status, `[${last.status}]`)} ${last.answer}\n`);
+    stdout.write(`${interactiveResultText(last, line, style)}\n`);
     if (last.input?.corrections?.length) stdout.write(`${style.magenta(`[normalized: ${last.input.normalized}]`)}\n`);
   }
   terminal.close();
@@ -390,7 +442,14 @@ async function knowledgeBase(args, options) {
     const unbuildable = ids.filter((id) => registered.has(id) && !KB_CATALOG[id]);
     if (unbuildable.length > 0) throw new Error(`Registered packages have no repository build adapter: ${unbuildable.join(', ')}.`);
     for (const id of ids.filter((item) => PUBLIC_KB_CATALOG[item])) {
-      const script = resolve(PROJECT_ROOT, id === 'oewn-2025' ? 'scripts/build-oewn-kb.mjs' : 'scripts/build-atomic-kb.mjs');
+      const scripts = {
+        'oewn-2025': 'scripts/build-oewn-kb.mjs',
+        'atomic-2020': 'scripts/build-atomic-kb.mjs',
+        'geonames-2026': 'scripts/build-geonames-kb.mjs',
+        'conceptnet-5.7.0-en': 'scripts/build-conceptnet-kb.mjs',
+        'world-relations-1.0': 'scripts/build-world-relations-kb.mjs',
+      };
+      const script = resolve(PROJECT_ROOT, scripts[id]);
       const result = await runFile(process.execPath, [script], { cwd: PROJECT_ROOT, maxBuffer: 4 * 1024 * 1024 });
       results.push(JSON.parse(result.stdout));
     }
@@ -412,43 +471,6 @@ async function knowledgeBase(args, options) {
     return;
   }
   throw new Error('Unknown kb action.');
-}
-
-async function benchmark(args, options) {
-  const action = args[0];
-  if (action === 'catalog') { printJson(BENCHMARK_CATALOG); return; }
-  if (action === 'references') { printJson(PUBLIC_RESULT_CATALOG); return; }
-  if (action === 'run') {
-    if (!options.suite) throw new Error('benchmark run requires --suite.');
-    const suite = await resolveProjectPath(options.suite);
-    const publish = options.publish ? resolve(PROJECT_ROOT, 'docs/results/latest-benchmark.json') : undefined;
-    const report = await runBenchmark(await engineFor(options), suite, publish);
-    if (publish) await publishReport('benchmark');
-    printJson(report);
-    return;
-  }
-  if (action === 'export') {
-    if (!options.suite || !options.output) throw new Error('benchmark export requires --suite and --output.');
-    printJson(await exportBenchmark(await resolveProjectPath(options.suite), resolve(options.output)));
-    return;
-  }
-  if (action === 'score-predictions') {
-    if (!options.suite || !options.input || !options['model-name']) {
-      throw new Error('benchmark score-predictions requires --suite, --input, and --model-name.');
-    }
-    const output = resolve(options.output ?? 'docs/results/external-comparison.json');
-    printJson(await scoreExternalPredictions(
-      await resolveProjectPath(options.suite), resolve(options.input), options['model-name'], output,
-    ));
-    return;
-  }
-  if (action === 'import-results') {
-    if (!options.input) throw new Error('benchmark import-results requires --input.');
-    const output = resolve(options.output ?? 'docs/results/imported-comparison.json');
-    printJson(await importComparison(resolve(options.input), output));
-    return;
-  }
-  throw new Error('Unknown benchmark action.');
 }
 
 async function docs(args) {
@@ -476,7 +498,7 @@ async function dispatch(arguments_) {
   if (command === 'corpus') return corpus(args, options);
   if (command === 'kb') return knowledgeBase(args, options);
   if (command === 'evaluate') return evaluateCommand(options);
-  if (command === 'benchmark') return benchmark(args, options);
+  if (command === 'benchmark') return benchmarkCommand(args, options, { engineFor, printJson });
   if (command === 'docs') return docs(args);
   throw new Error(`Unknown command: ${command}`);
 }

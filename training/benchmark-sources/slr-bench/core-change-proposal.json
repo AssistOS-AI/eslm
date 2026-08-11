@@ -1,0 +1,58 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Bounded finite conjunctive rule induction over typed N-ary facts",
+  "benchmark": "Development-visible relational classification examples",
+  "decision": "implement-generic-core-method",
+  "independentExamples": [
+    { "description": "Two renamed positive entity graphs share a root-to-member edge and one member property while a negative graph changes only the property value.", "expectedBehavior": "Return the two-literal shared-variable conjunction with positive bindings and an exhaustive negative rejection." },
+    { "description": "A disconnected lookalike contains the same edge and property on different entities.", "expectedBehavior": "Reject it because one rule variable must bind the same entity in both literals." }
+  ],
+  "inputTypes": ["finite positive and negative examples", "typed N-ary ground facts", "target predicate", "bounded conjunctive hypothesis policy"],
+  "outputTypes": ["safe unary-head conjunctive rule", "positive coverage bindings", "negative exhaustive-match receipts"],
+  "preconditions": [
+    "both positive and negative examples are present",
+    "the target root occurs in accepted evidence for every example",
+    "entity and value term kinds are declared before induction",
+    "facts, arity, variables, literals, candidates, and match steps remain bounded"
+  ],
+  "invariants": [
+    "the head variable is bound by a connected body",
+    "all rule constants come from typed value terms in visible positive evidence",
+    "a solved rule covers every positive and rejects every negative example",
+    "predicate names, values, entity names, fact order, and example order are data rather than control flow",
+    "candidate selection is shortest-body first with canonical variable and literal ordering"
+  ],
+  "uncertaintySemantics": "UNPARSED denotes malformed typed evidence. UNKNOWN denotes that no separator exists in the completely explored declared hypothesis space. RESOURCE_LIMIT denotes an exhausted example, fact, arity, variable, body, candidate, or match-search bound.",
+  "proofBehavior": "Each positive receipt records the root-preserving variable binding and one supporting fact per body literal. Each negative receipt records completion of bounded match search. Verification reruns canonical induction, replays all joins, and compares the complete rule and evidence.",
+  "resourceBounds": { "examples": 512, "facts": 20000, "arity": 8, "bodyLiterals": 10, "variables": 7, "candidates": 100000, "matchSteps": 2000000 },
+  "failureStatuses": ["UNPARSED", "UNKNOWN", "RESOURCE_LIMIT"],
+  "tests": ["unit", "metamorphic", "contrastive", "regression"],
+  "kbMigration": "none; existing KB packages, rules, and reasoning methods are unchanged",
+  "renameTestPassed": true,
+  "renamedDimensions": ["entity", "predicate", "value", "ordering"],
+  "forbiddenDispatchAuditPassed": true,
+  "guardianControls": {
+    "fullRename": "target, entity, predicate, value, example, and fact identifiers are all replaced",
+    "ordering": "fact arrays and example arrays are reversed",
+    "contrast": "a lookalike places the required property on a disconnected entity",
+    "nonIdentifiability": "isomorphic positive and negative graphs return UNKNOWN",
+    "witnessTamper": "a nonexistent support fact invalidates verification"
+  },
+  "forbiddenDispatchAudit": { "benchmarkNamesInCore": 0, "datasetIdsInCore": 0, "sourceRowsInCore": 0, "expectedAnswersInCore": 0, "sourcePredicateOrValueConstantsInCore": 0 },
+  "proposedDescriptor": {
+    "propertyName": "finiteConjunctiveRuleInduction",
+    "methodId": "method:core:finite-conjunctive-rule-induction",
+    "capabilities": ["symbolic-rule-induction", "typed-relational-joins", "shortest-conjunctive-hypothesis", "witness-production"],
+    "inputTypes": ["typed-positive-negative-examples", "typed-nary-facts", "bounded-hypothesis-policy"],
+    "outputTypes": ["safe-conjunctive-rule", "coverage-and-rejection-witness"],
+    "preconditions": ["finite-active-domain", "typed-entity-value-terms", "positive-and-negative-training-evidence"],
+    "soundness": "every solved rule covers all positive and rejects all negative examples under finite conjunctive-query semantics",
+    "completeness": "complete for connected positive conjunctive rules within the declared variable, literal, candidate, and match bounds",
+    "uncertaintySemantics": "explicit-malformation-no-separator-and-resource-limit",
+    "proofKind": "positive-variable-bindings-and-exhaustive-negative-match-rejection",
+    "costModel": "bounded-shortest-first-connected-subgraph-enumeration-v1",
+    "implementationVersion": "1"
+  },
+  "implementationIdentity": { "module": "src/reasoning/finite-conjunctive-rule-induction.mjs", "sha256": "01f5ec541e8e70a38ea33169e34efa425a56edfc39113cfd44241a51145f0481" },
+  "remainingGap": "No official test or recursive-target claim is made. The reviewed method is registered and the complete validation split reproduces 126 solved, 10 unknown, and 64 resource-limited results through the public engine route. Quantification, negation, aggregation, arithmetic, and larger conjunctive search require later generic iterations."
+}

@@ -1,0 +1,48 @@
+{
+  "format": "eslm-babi-all-training-evaluation-v1",
+  "createdAt": "2026-08-11T18:01:28Z",
+  "sourceId": "babi-en-10k-v1.2",
+  "archiveSha256": "84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c",
+  "visibility": "development-visible-official-training-only",
+  "protocol": "finite-episodic-world-train-visible-v1",
+  "tested": 200000,
+  "available": 200000,
+  "correct": 199872,
+  "accuracy": 0.99936,
+  "witnessesVerified": 200000,
+  "languageAgentInvocations": 0,
+  "statusCounts": {
+    "SOLVED": 199872,
+    "AMBIGUOUS": 128
+  },
+  "byTask": {
+    "1": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "2": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "3": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "4": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "5": { "tested": 10000, "correct": 9872, "witnessesVerified": 10000, "ambiguous": 128 },
+    "6": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "7": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "8": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "9": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "10": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "11": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "12": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "13": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "14": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "15": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "16": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "17": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "18": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "19": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 },
+    "20": { "tested": 10000, "correct": 10000, "witnessesVerified": 10000 }
+  },
+  "implementation": {
+    "method": "method:core:finite-episodic-world",
+    "latestVerifiedRoute": "registered-public-engine-task-route; focused routing replay matches the frozen direct aggregate",
+    "methodSourceSha256": "871dc13c1beb05600217b6b21d31f2ce5d339ff76c0e341845e143d87281322a",
+    "adapterSourceSha256": "96bbee39234198904487931653bbb7b78901a43c2ebc7c0f1822b2322b55d834",
+    "repositoryBaseCommit": "ede71a0c6202d239ff73c2e1d4a33088fcb6a252"
+  },
+  "claimBoundary": "This is a comprehensive development-visible run over official English 10k training questions. It is not an untouched test result. The 128 Task-5 rows are witnessed semantic ambiguities and are not reported as correct single-label predictions."
+}

@@ -1,0 +1,83 @@
+{
+  "protocol": "logicskills-development-symbolization-candidate-v3",
+  "measuredAt": "2026-08-11T20:48:57+03:00",
+  "runtimeProfile": "direct-symbolic-no-language-agent",
+  "comparability": "Development candidate and capability diagnostic, not an official LogicSkills aggregate score.",
+  "scoring": "Countermodels require independent semantic verification. A symbolization prediction counts only when its derivation replays and a sound but incomplete canonical equivalence checker matches the host-only formula. Unsupported symbolizations count in the 480-case denominator. Validity remains unscored without a method.",
+  "availableSourceRows": 1500,
+  "tested": 1200,
+  "freshNotOpenedInThisIteration": 300,
+  "freshLifecycle": {
+    "countermodel": "The separately frozen 60-member countermodel subtrack was executed once by the preceding candidate and is not fresh for later changes.",
+    "symbolizationAndValidity": "The remaining 240 fresh members have not been opened or executed."
+  },
+  "answered": 528,
+  "statusCounts": {
+    "SOLVED": 528,
+    "NO_APPLICABLE_METHOD": 672
+  },
+  "testedByTask": {
+    "symbolization": 480,
+    "validity": 480,
+    "countermodel": 240
+  },
+  "symbolizationTrack": {
+    "tested": 480,
+    "attempted": 288,
+    "witnessVerified": 288,
+    "correct": 288,
+    "accuracyOverCompleteDevelopmentTrack": 0.6,
+    "accuracyOnAttempted": 1,
+    "abstained": 192,
+    "mismatches": 0,
+    "scorer": "The host parses the isolated reference formula after prediction. It accepts only alpha-renaming, double-negation, associative and commutative Boolean rewrites, and two explicitly checked safe quantifier-lifting equivalences. This is a sound lower bound, not a complete first-order equivalence decision procedure.",
+    "byLanguage": {
+      "english": { "tested": 240, "attempted": 167, "witnessVerified": 167, "correct": 167 },
+      "carroll": { "tested": 240, "attempted": 121, "witnessVerified": 121, "correct": 121 }
+    },
+    "byConstruction": {
+      "conditional-with-only-if": { "tested": 218, "attempted": 104, "witnessVerified": 104, "correct": 104 },
+      "quantified-clause": { "tested": 52, "attempted": 32, "witnessVerified": 32, "correct": 32 },
+      "conjunction-with-contrast": { "tested": 23, "attempted": 15, "witnessVerified": 15, "correct": 15 },
+      "conjunction": { "tested": 51, "attempted": 40, "witnessVerified": 40, "correct": 40 },
+      "disjunction": { "tested": 25, "attempted": 17, "witnessVerified": 17, "correct": 17 },
+      "named-clause": { "tested": 16, "attempted": 13, "witnessVerified": 13, "correct": 13 },
+      "unless": { "tested": 30, "attempted": 24, "witnessVerified": 24, "correct": 24 },
+      "only-if": { "tested": 19, "attempted": 12, "witnessVerified": 12, "correct": 12 },
+      "conditional": { "tested": 11, "attempted": 6, "witnessVerified": 6, "correct": 6 },
+      "biconditional": { "tested": 35, "attempted": 25, "witnessVerified": 25, "correct": 25 }
+    }
+  },
+  "validityTrack": {
+    "tested": 480,
+    "attempted": 0,
+    "correct": null,
+    "accuracy": null,
+    "status": "not-scored-no-applicable-validity-method"
+  },
+  "semanticTrack": {
+    "task": "countermodel",
+    "tested": 240,
+    "correct": 240,
+    "accuracy": 1,
+    "domainSize": 3,
+    "witnessPolicy": "Every model assigns every constant and predicate and is replayed against the typed argument by a verifier independent of the SAT search result."
+  },
+  "languageAgentInvocations": 0,
+  "missingCapabilityFamilies": [
+    "controlled-language-to-first-order-symbolization-outside-the-verified-subset",
+    "two-variable-first-order-validity",
+    "complete-semantic-formula-equivalence-scoring"
+  ],
+  "protectedBoundary": "The 300-member fresh partition was not loaded, executed, inspected, or rescored during this development iteration.",
+  "behaviorDependencies": {
+    "src/language/controlled-fol-symbolizer.mjs": "006983869de8f16ef7b6368162d215c9558b172d39896d271e931161f47ea964",
+    "src/language/compact-fol.mjs": "a194c7e4ac067021725e31e49b54b31c80e6c89413c5b2c48c56aac476161270",
+    "src/benchmark-adapters/logicskills.mjs": "8191fb111df397f30ab06abd0a517b8b1d0166d0ae0766182bcf9b8e9691b6be",
+    "src/reasoning/finite-first-order-model.mjs": "e707181ca2d75d87f84e7c26cae4ac99f1650c1769ee22bc6fe2ad0c6a92fcae",
+    "src/reasoning/sat-entailment.mjs": "c570251279d6863300fefaf45e53f326d12ca6a295aeffef8067ebe3d41b14f5",
+    "src/runtime/engine.mjs": "e2750e225ebcd3fd2c25e1cab9e940c9e829ea09457e15881b82ed90d5ce2975",
+    "tests/controlled-fol-symbolizer.test.mjs": "542f57509883f03760b09d3d36855ed8c7d7d8be2529d8caf0af84f51fb42fcc",
+    "tests/logicskills-adapter.test.mjs": "d3981bf269b3f0f5db3b342175a9311faf24c6cd02a4742a194628cb632c228a"
+  }
+}

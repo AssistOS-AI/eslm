@@ -1,0 +1,32 @@
+{
+  "format": "eslm-learning-pool-manifest-v1",
+  "working": {
+    "split": "official development",
+    "sourceRows": 16008,
+    "experimentalCases": 14968,
+    "excludedOwnerDeclaredImpossible": 1040,
+    "visibility": "task text visible; labels retained only by host-side scorer"
+  },
+  "regression": {
+    "tests": [
+      "tests/defeasible-nli-adapter.test.mjs",
+      "tests/core-generality.test.mjs",
+      "tests/runtime.test.mjs"
+    ]
+  },
+  "fresh": {
+    "split": "official test",
+    "sourceRows": 16486,
+    "experimentalCases": 15414,
+    "visibility": "evaluator-only; adapter exports no test loader",
+    "executed": false
+  },
+  "training": {
+    "split": "official train",
+    "sourceRows": 213226,
+    "experimentalCases": 200692,
+    "usedForThisCycle": false
+  },
+  "aggregateShadow": {"available": false},
+  "languageAgentPermitted": false
+}

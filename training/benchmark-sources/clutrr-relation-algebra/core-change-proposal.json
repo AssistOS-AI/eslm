@@ -1,0 +1,62 @@
+{
+  "format": "eslm-core-change-proposal-v1",
+  "title": "Bounded provider-neutral typed relation algebra",
+  "independentExamples": [
+    "A fully renamed two-edge algebra composes nonce relation classes and returns a typed proof witness.",
+    "A renamed inverse query reverses declared relation semantics without depending on source vocabulary.",
+    "A meaning-changing relation order produces a different semantic class, while missing refinement evidence remains ambiguous."
+  ],
+  "inputTypes": [
+    "typed-relation-task-v1",
+    "typed-relation-algebra-v1"
+  ],
+  "outputTypes": [
+    "SOLVED with semantic values and ordered witness",
+    "AMBIGUOUS with declared alternatives",
+    "UNKNOWN, INCONSISTENT_CONTEXT, NO_APPLICABLE_METHOD, RESOURCE_LIMIT, or UNPARSED"
+  ],
+  "preconditions": [
+    "The task and algebra identifiers and record shapes validate.",
+    "Relation values, inverse classes, and composition classes are declared by trusted package projection.",
+    "The source adapter validates and bounds all structured evidence before method execution."
+  ],
+  "invariants": [
+    "Core control flow depends only on semantic types, declared relation metadata, features, and resource policy.",
+    "Entity names, source rows, expected answers, benchmark identity, and case order do not select an answer.",
+    "Every solved result retains an ordered edge witness and composition tree.",
+    "Missing refinement evidence returns AMBIGUOUS rather than choosing a source label.",
+    "All bounded binary parenthesizations are considered; relation order remains semantically significant."
+  ],
+  "uncertaintySemantics": "Missing distinguishing features produce AMBIGUOUS; disconnected evidence produces UNKNOWN; conflicting features or incompatible shortest paths produce INCONSISTENT_CONTEXT; exhausted policy produces RESOURCE_LIMIT.",
+  "proofBehavior": "A solved result records asserted or inverse edge direction, fact identifiers, semantic classes, path length, explored states, and a binary composition proof. Ambiguity retains alternative values and witnesses.",
+  "resourceBounds": {
+    "facts": 10000,
+    "entities": 10000,
+    "pathDepth": 32,
+    "pathStates": 100000,
+    "visitsPerEntityPerPath": 2
+  },
+  "failureStatuses": [
+    "UNPARSED",
+    "NO_APPLICABLE_METHOD",
+    "UNKNOWN",
+    "AMBIGUOUS",
+    "INCONSISTENT_CONTEXT",
+    "RESOURCE_LIMIT"
+  ],
+  "tests": [
+    "unit",
+    "metamorphic",
+    "contrastive",
+    "regression"
+  ],
+  "kbMigration": "No generic package-schema migration is required. Relation semantics remain declarative in independently versioned typed-relation-algebra constraints.",
+  "renameTestPassed": true,
+  "forbiddenDispatchAuditPassed": true,
+  "renamedDimensions": [
+    "entity",
+    "predicate",
+    "value",
+    "ordering"
+  ]
+}

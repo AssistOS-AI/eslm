@@ -1,0 +1,28 @@
+{
+  "format": "eslm-benchmark-source-registration-v1",
+  "id": "proofwriter-v2020.12.3",
+  "family": "ProofWriter",
+  "version": "V2020.12.3",
+  "officialLandingPage": "https://allenai.org/data/proofwriter",
+  "officialArchiveUrl": "https://aristo-data-public.s3.amazonaws.com/proofwriter/proofwriter-dataset-V2020.12.3.zip",
+  "paper": "https://aclanthology.org/2021.findings-acl.317/",
+  "supportingRepository": {
+    "url": "https://github.com/allenai/ruletaker",
+    "revision": "abaacec9364992eff5ec4555b837e20fee2f2ff0",
+    "license": "Apache-2.0 for the repository software"
+  },
+  "archive": {
+    "cachePath": "training/.cache/benchmarks/proofwriter/source/proofwriter-dataset-V2020.12.3.zip",
+    "bytes": 214185889,
+    "sha256": "bbc5694901e8306d0bd659aa1ad53ccfd02c201864f4b320ffa3777827d1fc26",
+    "zipValidation": "all entries passed unzip integrity validation"
+  },
+  "licenseAndTerms": {
+    "datasetLicenseBundledInArchive": false,
+    "finding": "The official archive contains its dataset README and data, but no LICENSE or separate dataset terms. The Apache-2.0 license in the supporting RuleTaker repository is recorded only as the software-repository license and is not silently asserted to cover the archive.",
+    "currentUse": "local research validation and evaluation without plaintext dataset redistribution",
+    "remainingAction": "Request or locate an explicit archive-specific dataset-license statement from AI2 before redistributing source rows or derived plaintext examples."
+  },
+  "cachePolicy": "The complete immutable ZIP and complete extracted tree are retained under the ignored training cache. Sampling affects only evaluation cost and never deletes source rows.",
+  "citation": "Peter Clark, Oyvind Tafjord, and Kyle Richardson. ProofWriter: Generating Implications, Proofs, and Abductive Statements over Natural Language. Findings of ACL-IJCNLP 2021."
+}

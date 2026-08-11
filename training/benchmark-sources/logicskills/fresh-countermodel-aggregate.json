@@ -1,0 +1,18 @@
+{
+  "protocol": "logicskills-countermodel-fresh-aggregate-v1",
+  "measuredAt": "2026-08-11T19:22:00+03:00",
+  "evidenceState": "sealed-fresh-countermodel-subtrack",
+  "preFreshFreezeSha256": "75f738f558494559ed74cd9d7a9e9b20a7df82921d0fa75ad397573ac61afeaa",
+  "sourcePartitionSha256": "0468b85e544b38396ddd0f7476468cf2dc0124e618b150b660e4db9b04805a6a",
+  "tested": 60,
+  "correct": 60,
+  "accuracy": 1,
+  "statusCounts": {
+    "SOLVED": 60
+  },
+  "verifiedCountermodels": 60,
+  "languageAgentInvocations": 0,
+  "retainedProtectedItems": 0,
+  "boundary": "Only the countermodel subtrack was executed. Fresh symbolization and validity inputs and all reference answers remained unopened. No task text, identifier, model, or per-case outcome left the evaluator.",
+  "claim": "The frozen generic finite-model candidate produced an independently verified three-member countermodel for every member of the sealed 60-case countermodel subtrack. This is not an aggregate LogicSkills score and says nothing about the unopened fresh symbolization and validity cases."
+}

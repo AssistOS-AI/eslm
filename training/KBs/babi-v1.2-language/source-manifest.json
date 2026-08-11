@@ -1,0 +1,10 @@
+{
+  "format": "eslm-source-manifest-v1",
+  "sourceId": "babi-en-10k-v1.2",
+  "source": "https://s3.amazonaws.com/text-datasets/babi_tasks_1-20_v1-2.tar.gz",
+  "version": "1.2",
+  "archiveSha256": "84f5296ab9a1ad0dc9464e08c491d65cd08830fca3acae9ab86f75e0fb81573c",
+  "license": "CC BY 3.0 Unported",
+  "splitExposure": "The color vocabulary and Task 16 induction convention are taken from the official training-visible split; no test answer is represented.",
+  "purpose": "Declare source-local property vocabulary and the benchmark's defeasible class-property induction policy as KB data instead of generic core code."
+}

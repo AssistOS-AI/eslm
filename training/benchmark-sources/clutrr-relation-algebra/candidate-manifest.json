@@ -1,0 +1,40 @@
+{
+  "format": "eslm-clutrr-relation-algebra-candidate-freeze-v1",
+  "frozenAt": "2026-08-11T11:20:00+03:00",
+  "candidate": {
+    "ownedFileDigestAlgorithm": "SHA-256 over sorted sha256sum output for the frozen candidate-owned files",
+    "ownedFileDigest": "e75b2f1d68d4ff04f35114bbd45c7c8c527fd34bde1f32adf6421aedf187985a",
+    "method": "typed-relation-algebra",
+    "knowledgeBase": "clutrr-kinship-algebra@1.0.0"
+  },
+  "behaviorSha256": {
+    "src/reasoning/relation-algebra.mjs": "67e0cf07afbbcc7b764e37ed5caa663598d4f3b7c15fc92e9424e97ea5a20832",
+    "src/benchmark-adapters/clutrr.mjs": "1c41df5c2ff0a2e170477fbeac90a02110f00a55d45cde9bc564cf91d74153c1",
+    "src/runtime/engine.mjs": "75aa5da02b6129dc1f96b110d7727b8bbf9abeca2042dc27e5039d6beaaf7f77",
+    "src/reasoning/capability-registry.mjs": "026a4e59cc55cd5913748beae7c56d342832883dfa88a2fe0334112aa85891bf",
+    "training/KBs/clutrr-kinship-algebra/canonical/records.jsonl": "6937b2aac4184a855eff537a9d530f1be7eaf483c17e2aaa411b05797ac3b4fe",
+    "training/KBs/clutrr-kinship-algebra/package/manifest.json": "aaad2a2fad6b16b3b154813d737be8c2af2838f5442c71a1b862f39ecc93cb6b"
+  },
+  "development": {
+    "protocol": "clutrr-relation-classification-development-probe-v1",
+    "total": 108,
+    "correct": 104,
+    "accuracy": 0.9629629629629629,
+    "statusCounts": {
+      "SOLVED": 104,
+      "AMBIGUOUS": 4
+    }
+  },
+  "gates": {
+    "freshRowsInspectedBeforeFreeze": false,
+    "freshLabelsInspectedBeforeFreeze": false,
+    "benchmarkIdentityDispatchInCore": false,
+    "caseOrAnswerMemorization": false,
+    "agentCalls": 0,
+    "postFreezeBehaviorChangesBeforeFreshEvaluation": false
+  },
+  "verificationCommands": [
+    "node training/.agents/skills/core-change-guardian/scripts/audit-proposal.mjs training/benchmark-sources/clutrr-relation-algebra/core-change-proposal.json",
+    "node --test tests/clutrr-adapter.test.mjs tests/relation-algebra.test.mjs tests/core-generality.test.mjs tests/kb-schema.test.mjs"
+  ]
+}

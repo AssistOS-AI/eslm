@@ -1,0 +1,17 @@
+{
+  "format": "eslm-alpha-nli-art-development-result-v1",
+  "protocol": "alpha-nli-art-complete-official-development-direct-symbolic-baseline-v1",
+  "evidenceRegime": "complete official development split with host-only preferred-candidate oracle",
+  "claimBoundary": "Direct typed narrative-bridge coverage diagnostic; not an official leaderboard submission and not evidence of unrestricted English plausibility judgment.",
+  "available": 1532,
+  "tested": 1532,
+  "answered": 0,
+  "correct": 0,
+  "accuracyOnAnswered": null,
+  "statusCounts": {"NO_APPLICABLE_METHOD":1532},
+  "witnessBearing": 0,
+  "normalizationCandidates": 0,
+  "languageAgentInvocations": 0,
+  "fresh": {"available":3059,"executed":false,"visibility":"sealed-official-test-split-no-loader-exported"},
+  "interpretation": "The adapter can express the temporal bridge-selection task without exposing the preferred candidate, but the current runtime has no registered narrative-bridge method. Zero correct is a coverage result over zero attempted answers, not a 0% accuracy estimate."
+}
