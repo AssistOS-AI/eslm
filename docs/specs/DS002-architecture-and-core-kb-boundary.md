@@ -22,7 +22,17 @@ The central question for every learned artifact is not where it is easiest to pu
 
 ### 2. What belongs in `src`
 
-`src` contains trusted executable mechanisms. The symbolic tokenizer, morphology, feature grammar, chart parser, semantic-composition operators, reference-resolution machinery, task-frame builder, planner, rule interpreter, graph query engine, temporal engine, default-reasoning engine, constraint solver, search strategies, proof construction, contradiction handling, confidence semantics, shard loader and result formatter are all reusable mechanisms.
+`src` is the only location for trusted executable mechanisms. In the target architecture this includes the symbolic
+tokenizer, morphology, feature grammar or chart parser, semantic-composition operators, reference resolution,
+task-frame builder, planner, rule interpreters, graph and temporal methods, default reasoning, constraint solvers,
+search, proof construction, contradiction handling, confidence semantics, shard loaders, failure grounding, and result
+formatting. This list assigns ownership; it does not claim that every mechanism is implemented.
+
+At the present checkpoint, `src` contains bounded deterministic language compilers rather than a general chart parser,
+a single-goal plan skeleton and typed-operation dispatch rather than general AND/OR planning, positive Horn reasoning
+and several finite typed methods rather than every listed logic, and provider-specific retrieval/caches rather than the
+complete future catalog. DS003, DS008, DS015, and DS020 state those exact boundaries. Documentation must not infer an
+executor from the appearance of a mechanism in this ownership list.
 
 A new mechanism belongs in `src` when its behavior is independent of the vocabulary and topic of the benchmark. Passive-voice semantic-role inversion, quantifier scope, temporal state supersession, unification, backtracking and proof search are representative examples.
 
@@ -81,6 +91,11 @@ The deployed path is language front-end → accepted Semantic IR → task frame 
 planning → bounded execution → proof verification → result realization. DS003, DS008, DS020, DS015, and DS009 own
 those typed boundaries in order. DS004 owns construction and promotion; DS017 owns evaluation-pool isolation. The
 runtime does not discover training files, invoke a coding agent, download a source, or execute a KB payload.
+
+If the primary path cannot establish an answer, a bounded related-evidence phase may query already selected declarative
+indexes under DS009 and DS020. This remains trusted generic retrieval in `src`; source facts and lexical neighborhoods
+remain KB data. The phase cannot execute KB content, change the primary status, or pass evidence into the DS013
+language-only normalizer.
 
 ### Capability descriptors
 

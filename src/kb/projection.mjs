@@ -18,7 +18,32 @@ function runtimePredicate(value, termsById) {
     .replace(/^_|_$/gu, '').toLocaleLowerCase('en-US');
 }
 
+function executableStrictAssertion(record) {
+  return record.recordType === 'assertion'
+    && record.polarity === 'positive'
+    && ['asserted', 'strict'].includes(record.epistemicStatus)
+    && record.arguments.length === 2;
+}
+
+function requireExecutableStrictRule(record) {
+  if (record.semantics !== 'strict') return false;
+  const atoms = [...record.when, ...record.then, ...(record.unless ?? [])];
+  if ((record.unless?.length ?? 0) > 0 || record.then.length !== 1
+    || atoms.some((atom) => atom.polarity !== 'positive' || atom.arguments?.length !== 2)) {
+    throw new Error(`${record.recordId} is outside the executable positive binary single-head strict Horn profile.`);
+  }
+  return true;
+}
+
 export function projectCanonicalRecords(records, packageManifests = []) {
+  const packageSources = packageManifests.map((manifest) => ({
+    kbId: manifest.kbId,
+    version: manifest.kbVersion,
+  }));
+  const packageIdentity = packageManifests.length === 1 ? {
+    kbId: packageManifests[0].kbId,
+    kbVersion: packageManifests[0].kbVersion,
+  } : {};
   const termRecords = records.filter((record) => record.recordType === 'term');
   const termsById = new Map(termRecords.map((record) => [record.recordId, record]));
   const lexemes = records.filter((record) => record.recordType === 'lexeme');
@@ -31,7 +56,7 @@ export function projectCanonicalRecords(records, packageManifests = []) {
     canonicalRecordId: record.recordId,
   }));
   const entityIdByRecord = new Map(entities.map((entity) => [entity.canonicalRecordId, entity.id]));
-  const facts = records.filter((record) => record.recordType === 'assertion' && record.polarity === 'positive')
+  const facts = records.filter(executableStrictAssertion)
     .map((record) => {
       const [subject, object] = record.arguments;
       const objectId = entityIdByRecord.get(object);
@@ -42,30 +67,45 @@ export function projectCanonicalRecords(records, packageManifests = []) {
         : undefined;
       return {
         id: record.recordId,
+        ...packageIdentity,
+        kbSources: packageSources,
         subject: entityIdByRecord.get(subject) ?? termId(subject),
         predicate,
         ...(scalarObject !== undefined ? { value: scalarObject }
           : objectId ? { object: objectId } : { value: assertionValue(record) }),
         provenance: record.provenanceRefs,
+        polarity: record.polarity,
         epistemicStatus: record.epistemicStatus,
-        contextRef: record.contextRef,
+        ...(record.confidence === undefined ? {} : { confidence: structuredClone(record.confidence) }),
+        ...(record.validity === undefined ? {} : { validity: structuredClone(record.validity) }),
+        ...(record.contextRef === undefined ? {} : { contextRef: record.contextRef }),
       };
     });
-  const rules = records.filter((record) => record.recordType === 'rule' && record.semantics === 'strict')
-    .map((record) => ({
-      id: record.recordId,
-      when: record.when.map((atom) => [
-        entityIdByRecord.get(atom.arguments[0]) ?? termId(atom.arguments[0]),
-        runtimePredicate(atom.predicate, termsById),
-        entityIdByRecord.get(atom.arguments[1]) ?? atom.arguments[1],
-      ]),
-      then: [
-        entityIdByRecord.get(record.then[0].arguments[0]) ?? termId(record.then[0].arguments[0]),
-        runtimePredicate(record.then[0].predicate, termsById),
-        entityIdByRecord.get(record.then[0].arguments[1]) ?? record.then[0].arguments[1],
-      ],
-      source: record.provenanceRefs[0],
-    }));
+  const rules = records.filter((record) => record.recordType === 'rule' && requireExecutableStrictRule(record))
+    .map((record) => {
+      const sources = [...new Set(record.provenanceRefs)].toSorted();
+      return {
+        id: record.recordId,
+        ...packageIdentity,
+        kbSources: packageSources,
+        when: record.when.map((atom) => [
+          entityIdByRecord.get(atom.arguments[0]) ?? termId(atom.arguments[0]),
+          runtimePredicate(atom.predicate, termsById),
+          entityIdByRecord.get(atom.arguments[1]) ?? atom.arguments[1],
+        ]),
+        then: [
+          entityIdByRecord.get(record.then[0].arguments[0]) ?? termId(record.then[0].arguments[0]),
+          runtimePredicate(record.then[0].predicate, termsById),
+          entityIdByRecord.get(record.then[0].arguments[1]) ?? record.then[0].arguments[1],
+        ],
+        semantics: record.semantics,
+        ...(record.contextRef === undefined ? {} : { contextRef: record.contextRef }),
+        ...(record.priority === undefined ? {} : { priority: record.priority }),
+        ...(record.validity === undefined ? {} : { validity: structuredClone(record.validity) }),
+        source: sources[0],
+        sources,
+      };
+    });
   const constraints = records.filter((record) => record.recordType === 'constraint');
   const propertyValues = Object.fromEntries(constraints
     .filter((record) => record.constraintKind === 'property-value-domain')
@@ -76,6 +116,7 @@ export function projectCanonicalRecords(records, packageManifests = []) {
     .map((record) => [record.algebraId, {
       schema: 'typed-relation-algebra-v1', algebraId: record.algebraId,
       relations: record.relations, inverses: record.inverses, compositions: record.compositions,
+      sourceKbVersions: packageSources,
     }]));
   const inductionPredicates = [...new Set(inductionPolicies.map((record) => record.predicate))].sort();
   const model = {
@@ -85,6 +126,10 @@ export function projectCanonicalRecords(records, packageManifests = []) {
         ? packageManifests.map((manifest) => `${manifest.kbId}@${manifest.kbVersion}`).join('+')
         : 'eslm-core-empty',
       knowledgeBases: packageManifests.map((manifest) => manifest.kbId),
+      knowledgeBaseVersions: packageManifests.map((manifest) => ({
+        kbId: manifest.kbId,
+        version: manifest.kbVersion,
+      })),
       benchmarkComparable: packageManifests.length === 0,
     },
     entities,
@@ -103,6 +148,7 @@ export function projectCanonicalRecords(records, packageManifests = []) {
         byPredicate: Object.fromEntries(inductionPolicies.map((record) => [record.predicate, {
           minSupport: record.minSupport, minCoverage: record.minCoverage,
           selection: record.selection ?? 'all',
+          sourceKbVersions: packageSources,
         }])),
       },
       abduction: { maxHypotheses: 4 },

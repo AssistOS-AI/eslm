@@ -3,7 +3,7 @@ id: DS010
 title: Evaluation, Measurement, and External Comparison
 status: in-progress
 owner: evaluation
-summary: Defines evidence layers, scoring and route metrics, proof validation, public report schemas, generated regression evidence, freeze rules, and comparison with external systems.
+summary: Defines evidence layers, fixed-denominator and route metrics, receipt currentness, proof and grounding validation, public reports, structural splits, freeze rules, and external comparison.
 ---
 
 # DS010 Evaluation, Measurement, and External Comparison
@@ -26,11 +26,49 @@ Every evaluated case has a stable join identifier, label-free visible input, dec
 
 The scorer compares semantic values, assignments, paths, transitions, proofs, or strict preferences rather than terminal prose whenever the task permits. Exact string normalization is documented and deterministic. A semantic model grader is used only in a separately frozen protocol that records its exact model, prompt, inputs, outputs, and route; deterministic validators remain preferred.
 
+For forced-choice and other fixed-denominator tasks, three numbers are mandatory:
+
+- **end-to-end accuracy** is `correct / all eligible cases`; abstentions, missing predictions, resource limits, and
+  missing methods remain in the denominator;
+- **attempt coverage** is `attempted / all eligible cases`, where an attempt is a prediction inside the declared answer
+  domain;
+- **selective accuracy** is `correct / attempted` and is `null` when no case was attempted.
+
+Therefore zero attempts over a non-empty forced-choice pool means end-to-end accuracy `0`, attempt coverage `0`, and
+selective accuracy `null`; suppressing accuracy would conceal total system failure. A task whose oracle is genuinely
+unavailable has no valid correctness denominator and must instead report an explicitly named completion, consistency,
+or unscored execution metric.
+
+Whether a benchmark is forced-choice is typed report metadata, not an optional row hint. The report registry declares
+it for every portfolio ID; row factories serialize the declaration and validation rejects a missing or changed value.
+This prevents a malformed report from bypassing the mandatory attempted count or removing abstentions from the fixed
+denominator by deleting `forcedChoice`.
+
+External prediction imports reject duplicate IDs, unknown extra IDs, malformed choices, and incomplete protocol
+metadata. Missing known IDs remain scorer-visible omissions. A numeric choice is accepted only in its exact declared
+domain; coercion from arbitrary strings is forbidden. The receipt hashes the suite and the prediction file and records
+model revision, prompt or adapter, decoding, evidence access, tools, and other comparison metadata required by the
+protocol.
+
+An aggregate copied from a paper or third-party report is not equivalent to locally scored predictions. Aggregate
+imports use a closed manifest with model and revision, protocol and input route, scorer, tools, dataset identity and
+split, optional dataset digest, typed metrics with checked arithmetic, primary citation, evidence regime, and explicit
+limitations. The import receipt hashes that manifest and always labels it `reference-only-unverified-aggregate`.
+Naming a protocol `eslm-native` or supplying a familiar metric can never auto-promote an imported aggregate to a
+comparable result.
+
 ### Required measurements
 
 Correctness measurements include correct count, tested denominator, available source scope, accuracy, capability and stratum breakdowns, exact match where appropriate, and official-versus-local scorer identity. Proof measurements independently validate proof graphs, countermodels, assignments, relation paths, transition traces, feature witnesses, and source provenance.
 
 Language measurements include direct accepted semantics, direct `UNPARSED`, Language Agent candidates, actual external calls, cache hits, accepted translations, accepted simplifications, host rejections, process failures, and accuracy by route. A normalization-candidate rate is the direct `UNPARSED` fraction; it is not agent use and not wrong-answer rate. A cached normalization remains assisted even when no live process ran.
+
+Every benchmark row identifies two separate classifications. Its **measured track** is `raw-language`,
+`structured-task`, or `solver-conformance`. Its **input route** is `raw-language`, `source-template`,
+`structured-task`, or `source-annotation`. `directSymbolicRate` is meaningful only when the input route is
+`raw-language`. A graph, finite program, formula, CNF, source calculus, or host-projected task may exercise a real
+generic solver, but it is not direct natural-language coverage. Reports may show both the adapter or solver result and
+an independent raw-language diagnostic; they must not replace the latter with the former.
 
 Reliability measurements separate correct abstention from accidental failure: `UNKNOWN`, `AMBIGUOUS`, `UNDERDETERMINED`, `INCONSISTENT_CONTEXT`, `NO_APPLICABLE_METHOD`, `RESOURCE_LIMIT`, and `UNPARSED` retain their meanings. Efficiency measurements include elapsed time, peak application memory where measurable, loaded bytes, shard and cache activity, search nodes, package size, and deterministic replay. Updateability measurements cover changed records, changed compiled bytes, affected answers, unaffected-answer stability, and provenance.
 
@@ -38,13 +76,46 @@ Reliability measurements separate correct abstention from accidental failure: `U
 
 Random row splits are insufficient when templates, worlds, stories, vocabulary, relations, or proof structures repeat. Evaluation groups by relevant causal structure: source document, generated world, construction family, entity vocabulary, domain, relation composition, rule depth, spatial hop count, or another task-specific unit.
 
+Every split receipt carries a `splitQuality` label such as row-IID, grouped-world, grouped-template,
+vocabulary-disjoint, structure-disjoint, source-version, or official-test. “Fresh” describes the one-shot lifecycle of a
+frozen pool; it does not by itself mean structural novelty. A holdout sampled inside the same paradigm or generator is
+reported as in-distribution row-IID or grouped holdout as applicable. Correlated decisions produced from one source
+item are assigned to the same group and confidence unit.
+
 Every accepted generic capability has meaning-preserving transformations, meaning-changing contrasts, full entity and predicate renaming, irrelevant-fact injection, order changes that should be invariant, and depth or size curves. Accuracy must be interpreted beside direct-language coverage and proof validity. A gain that depends on more external normalization or invalid witnesses is not an unqualified symbolic improvement.
 
 ### Public empirical report
 
-`docs/results/latest-public-benchmark-probes.json` is the replaceable receipt for the latest published benchmark portfolio. DS files and hand-authored HTML do not copy its temporary dates, percentages, denominators, failure counts, access states, or current adapter inventory. The home page loads the JSON in the browser and renders the current state.
+`docs/results/latest-public-benchmark-probes.json` is the replaceable receipt for the latest published benchmark
+portfolio. DS files and hand-authored HTML do not copy its temporary dates, percentages, denominators, failure counts,
+access states, or current adapter inventory. The evaluation page is the one full browser-rendered portfolio view. The
+home and status pages link to it and explain the evidence boundary without duplicating the table.
 
 Every catalog row records stable benchmark identity, source and access state, adapter state, evaluation state, evidence regime, effective split visibility, human-readable sample and protocol descriptions, internal protocol identifiers, tested count or `null`, possible count or `null`, correct count or `null`, accuracy or `null`, status counts, normalization candidates or `null`, actual Language Agent invocations or `null`, selected methods and KBs, scorer limitations, diagnosis, and official next-action URL when applicable.
+
+An executable row additionally records its input track, metric semantics, split quality, row execution time,
+source/partition/oracle/scorer identities or digests, behavior-dependency digest, selected method and KB versions,
+language policy, requested resource policy, measured elapsed time and peak memory where available, and a replay
+command. The report records assembly time separately. A row built from a committed receipt retains that receipt's
+execution time and checkpoint; it must not inherit the new assembly time as if it were re-executed.
+
+Before a row is called current, a static audit recomputes the frozen result and behavior-dependency digests. An audited
+row is classified as current, historical-stale, historical-unrecoverable, invalid, or unavailable. A stored execution
+outside the audit definitions is `historical-unverified`: it may retain its historical metric and timestamp, but it
+cannot imply behavior currentness. Cache presence, a
+hardcoded catalog state, or a passing assertion over stored metrics cannot establish currentness. Historical evidence
+is retained and clearly labeled rather than rewritten. A strict publication or release check rejects stale rows that
+claim the current checkpoint; routine source checks may remain non-strict to avoid silently running costly probes.
+
+The current report implementation separates report assembly from row execution, records track and input route, applies
+fixed-denominator metrics, and audits the frozen receipt families for which dependency maps exist. Some older receipts
+still lack measured peak memory, full scorer identity, or a replay command. Such rows remain historical or incomplete
+evidence until a clean isolated rerun produces the full execution contract; the report generator must not synthesize
+missing metadata. Dependency currentness and reporting completeness are separate audit facts. Matching source hashes do
+not make an older receipt `current` when it lacks the execution timestamp, content-addressed behavior identity, resource
+policy and measurements, replay command, scorer/oracle/partition identities, selected methods and KB versions, or
+language policy. The audit labels that receipt's reporting completeness `incomplete` and prevents a current-checkpoint
+claim until a new execution records those fields.
 
 An executed row displays the tested count beside the possible source scope. A non-executed row has no denominator and no zero percentage. Preference rows report correct preferences, reversed preferences, and ties separately; a strict preference requires the designated candidate to score higher, and a tie fails when the task contract says so. Internal stable identifiers and source hashes remain in raw or secondary audit views rather than breaking the primary two-column table.
 
@@ -57,6 +128,34 @@ The repository owns a deterministic 4,096-case default metamorphic corpus built 
 The test suite and `/smoke` execute the same catalog without Language Agent assistance. `/examples [PAGE] [SEED]` displays 24 cases per page from that catalog. `/smoke [COUNT] [SEED]` executes the selected deterministic prefix or sampling contract and prints one actual input, expected result, and actual result per encountered template plus every failure and aggregate totals. Comparing expectations without invoking the runtime or fabricating displayed answers invalidates the smoke result.
 
 Smoke proves regression preservation for authored templates. It does not establish external task selection, source validity, held-out generalization, or benchmark accuracy.
+
+The default `evaluate` and `benchmark` repository suites are small authored integration fixtures. Their generated HTML
+must show the case count, authored/internal regime, and `benchmarkComparable: false` beside any accuracy. A perfect
+fixture score is useful executable sanity evidence, but it is never a headline public benchmark result.
+
+### Grounded-failure benchmark
+
+Failure-time grounding has an independent, frozen product benchmark. Cases cover answerable, partially answerable,
+unanswerable, ambiguous, conflicting, malformed, typo/paraphrase, multilingual, multi-KB, and wrong-KB-distractor
+requests. The pool is authored independently of the retrieval implementation and contains host-only expected answer
+support plus acceptable related-record sets.
+
+Scoring separates four layers:
+
+1. **Primary result:** end-to-end answer correctness, status correctness, abstention calibration, proof validity, and
+   unsupported-claim rate.
+2. **Retrieval:** record or span recall@k, precision@k, ranking quality, contradiction/distractor rate, and search
+   completeness calibration.
+3. **Attribution:** KB/version identity, citation validity, provenance reachability, derived witness validity, and the
+   invariant that grounding never appears in answer provenance.
+4. **Optional downstream formulation:** a separately declared model receives only the structured bundle and visible
+   question; its answer quality, citation use, unsupported claims, model configuration, latency, and cost are scored as
+   an assisted generation track, never as deterministic ESLM inference.
+
+Metamorphic controls rename entities and predicates, vary provider order, inject irrelevant high-overlap records,
+remove the supporting KB, alter the requested relation, truncate search, and force provider failure. A correct system
+must preserve a truthful primary inability while returning useful related evidence when available and must distinguish
+complete absence from incomplete search.
 
 ### Freeze before external comparison
 
@@ -83,6 +182,12 @@ Response: Semantic labels, values, constraints, paths, proofs, and assignments h
 ### Question #3: What makes an impossibility or exception report valid?
 
 Response: The report must identify the accepted input representation, prove that materially different oracle outcomes are indistinguishable under that representation or that the required oracle is unavailable, and show that no invariant method can separate them without new evidence or a changed task. Low accuracy, missing code, or a resource limit is an engineering gap, not an impossibility.
+
+### Question #4: Can a formula or structured-adapter score be a real benchmark result?
+
+Response: Yes, for the explicitly named solver, annotation, or adapter track. It is evidence that the projected task
+and generic method execute correctly. It is not evidence that raw benchmark language was parsed end to end, so both
+the input track and any independent language coverage must remain visible.
 
 ## Conclusion
 

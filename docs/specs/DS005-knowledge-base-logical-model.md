@@ -30,6 +30,10 @@ Cross-KB equivalence is explicit. Two terms with similar labels are not automati
 
 ### 3. Record classes
 
+The following table is the target logical vocabulary. It states what the canonical model must be able to preserve; it
+does not claim that the current version-1 validator and runtime execute every listed meaning. The current implementation
+boundary is stated explicitly in Section 9 before the record examples.
+
 | Record class | Meaning |
 |---|---|
 | Term | Declares an entity, concept, predicate, role, unit, value type or lexical sense. |
@@ -38,7 +42,7 @@ Cross-KB equivalence is explicit. Two terms with similar labels are not automati
 | Binary assertion | Relates two arguments through a predicate. |
 | Event | Declares an event instance and its event type. |
 | Role edge | Connects an event to an agent, patient, theme, recipient, source, destination, instrument or other role. |
-| N-ary relation instance | Represents relations that cannot be safely reduced to a single binary edge. |
+| N-ary relation instance | In the target model, uses a declared fixed-arity assertion or a dedicated typed record when one binary edge would lose meaning. Version 1 has no dedicated N-ary record kind. |
 | Rule | Declares a restricted, typed and safe inference rule. |
 | Constraint | Declares disjointness, uniqueness, cardinality, type, ordering or integrity constraints. |
 | Context | Defines a named world, source viewpoint, hypothetical branch, session or temporal frame. |
@@ -51,33 +55,61 @@ Every assertion may carry polarity, epistemic status, confidence, validity inter
 
 Confidence is not treated as truth. It records evidential or extraction strength under a declared calibration policy. The reasoner must not combine scores unless the relevant operator defines valid combination semantics.
 
-Temporal validity distinguishes the time of the described fact from the time of the source claim. State-changing events may create intervals or supersede earlier states under generic temporal operators in `src`.
+Temporal validity distinguishes the time of the described fact from the time of the source claim. In the target
+architecture, registered temporal operators may derive intervals or supersede earlier states from state-changing events.
+The current generic package projection preserves these fields as canonical data but does not interpret event records or
+validity intervals as runtime state transitions.
 
 ### 5. Facts and events
 
 Unary and binary assertions receive optimized representations because they dominate many KBs. Events are represented explicitly because natural-language semantics often requires identity, roles, time, modality and causal connections.
 
-For example, “John moved the box from the hall to the kitchen” is represented as one move event with agent, theme, source and destination role edges. The effect that the box is later in the kitchen is derived by the temporal or event semantics of the core, not inserted by the parser unless the source explicitly states it.
+For example, “John moved the box from the hall to the kitchen” is represented in the target canonical model as one move
+event with agent, theme, source and destination role edges. A future event executor must derive the later location under
+declared transition semantics rather than asking the parser to insert an unstated fact. The current typed episodic task
+route has explicit state-transition semantics, but it does not consume DS005 event and role records from a package; the
+generic package projection therefore makes no such derived-location claim yet.
 
 ### 6. Declarative rules
 
-Rules use a restricted safe representation comparable to typed Datalog or guarded Horn clauses. Variables in the head must be bound by positive body atoms unless an explicitly supported existential rule class is used. Negation must follow the core’s stratification or well-founded semantics. Rule guards may invoke only registered pure predicates whose semantics are part of the trusted core.
+Rules use a restricted safe representation comparable to typed Datalog or guarded Horn clauses. Variables in the head
+must be bound by positive body atoms unless an explicitly supported existential rule class is introduced later. The
+target model reserves explicitly typed negation and guards, but neither becomes executable merely because a record
+contains the corresponding field. The supported package input profile is currently positive, binary, single-head,
+range-restricted `strict` Horn rules. The projector selects records tagged `strict`, but the version-1 validator does
+not yet prove atom polarity or arity. The active projector therefore rechecks the narrower executable profile and
+rejects a `strict` record instead of dropping polarity, exceptions, extra arguments, or conclusions. Package compilation
+is not evidence that a rule outside the supported profile has executable semantics. Any later negation regime must declare
+and test its stratification or well-founded semantics, and any guard must name a registered pure predicate whose meaning
+belongs to the trusted core.
 
 A rule record declares body atoms, head atoms, rule mode, priority or default strength, applicable context, provenance and optional validity interval. The rule record contains no source code.
 
-Strict rules produce logical consequences under the selected logic. Default rules produce defeasible conclusions that may be blocked or retracted by exceptions or stronger evidence. Causal and plausibility rules are explicitly typed and cannot masquerade as strict implication.
+Strict rules produce logical consequences under the selected logic. Default rules are intended to produce defeasible
+conclusions that may be blocked by exceptions or stronger evidence. Causal, temporal, constraint, and plausibility rules
+must remain explicitly typed and cannot masquerade as strict implication. In version 1, only strict rules cross the
+generic package projection into the Horn executor; the other accepted semantics remain inert canonical data until a
+named executor and acceptance evidence exist.
 
 ### 7. Lexicon and semantic frames
 
 Lexical knowledge is data. A lexeme records language, surface form, lemma, part of speech, morphology, candidate term or event frame and usage constraints.
 
-A semantic frame declares expected roles and type restrictions. The generic parser understands how to compose frames; individual verbs and domain meanings are supplied by lexical KBs. This permits many language and domain KBs without duplicating parser code.
+A semantic frame declares expected roles and type restrictions. The target generic parser composes validated frames
+while lexical KBs supply individual verbs and domain meanings, permitting many language and domain KBs without
+duplicating parser code. The current package projection does not load `semanticFrame` records into the ordinary parser;
+schema acceptance currently guarantees preservation and validation, not frame-based language understanding.
 
 ### 8. Contexts and hypotheses
 
-The runtime must represent source claims, hypothetical worlds, counterfactual assumptions and session-provided facts without overwriting baseline knowledge. A context can inherit from other contexts and add assertions, retractions or qualifications.
+The target runtime must represent source claims, hypothetical worlds, counterfactual assumptions and session-provided
+facts without overwriting baseline knowledge. A context can inherit from other contexts and add assertions, retractions
+or qualifications.
 
-Queries run against an explicit context stack. The trace records which context supplied every premise. Contradictions between contexts remain distinguishable from contradictions inside one context.
+Queries in that target architecture run against an explicit context stack, and the trace records which context supplied
+every premise. The current task frame carries a context stack and projected facts retain `contextRef` metadata, but the
+generic package projection does not yet apply context inheritance, retraction visibility, or branching-world conflict
+semantics. Those missing operations must remain visible as capability gaps rather than be inferred from record order.
 
 ### 9. Canonical serialization
 
@@ -90,6 +122,32 @@ The canonical form is not the high-performance query engine. It is the reproduci
 The following schemas define the minimum canonical fields required for interoperable KB packages. The notation is illustrative JSON data, not executable JavaScript. Implementations may serialize the same typed records as JSONL, CBOR sequences or another schema-valid stream.
 
 Every record contains `recordType`, `recordId`, `kbNamespace`, `schemaVersion` and `provenanceRefs`. Optional fields are omitted only when their meaning is genuinely absent, not when extraction failed silently.
+
+#### Current implementation boundary
+
+Five different operations must not be confused:
+
+1. **Shape validation** checks that one record has an allowlisted type and the required fields for that type.
+2. **Graph validation** checks identities and the cross-record references currently covered by the validator.
+3. **Compilation** writes every accepted record to deterministic package shards; it does not execute the record.
+4. **Projection** converts an explicitly supported subset into the in-memory structures used by the runtime.
+5. **Execution** applies a named trusted method to a projected structure and returns a witness or an explicit gap.
+
+The current version-1 support boundary is:
+
+| Canonical data | Validator and compiler | Generic runtime projection and execution now | Target contract retained here |
+|---|---|---|---|
+| Terms and lexemes | Their base shapes are accepted; selected identity references are checked. | Entity and concept terms become runtime entities. Lexeme surfaces become names for denoted entities, and predicate terms provide normalized predicate names. Morphology, frame references, and general sense selection are not projected. | Typed lexical senses and semantic-frame composition remain required. |
+| Assertions | Positive and negative polarity plus every allowlisted epistemic status are accepted. The validator requires one or more arguments but does not enforce a predicate declaration's arity. | Only positive binary assertions whose epistemic status is `asserted` or `strict` enter the strict runtime fact model. Negative, unary, N-ary, default, likely, possible, unlikely, contradicted, and unknown assertions remain inert canonical data. For projected facts, polarity, epistemic status, confidence, validity, and `contextRef` remain metadata and participate in composition identity; their context, temporal, and confidence semantics are not yet interpreted. | Qualified unary, binary, and N-ary assertions must eventually retain their declared arity and logical meaning under a named interpreter. |
+| Rules | `strict`, `default`, `causal`, `temporal`, and `constraint` tags are accepted as data. The validator requires non-empty body and conclusion arrays and checks only that each head variable occurs somewhere in the body; it does not yet validate atom polarity or arity. | The active projector accepts only positive, binary, single-head, range-restricted strict Horn records with no `unless` atoms. A `strict` record outside that executable shape is rejected visibly; non-strict tags remain inert. No polarity, argument, exception, or conclusion is silently dropped. | Stronger schema checks and each additional semantics tag require a separately named interpreter, uncertainty contract, witness, and tests. |
+| Constraints | Version 1 accepts exactly `property-value-domain`, `induction-policy`, and `typed-relation-algebra`. | Property domains and induction policies configure bounded induction. Typed relation algebras configure the typed task executor. | Further integrity, ordering, uniqueness, or cardinality kinds require a schema revision and trusted executor before use. |
+| Events, role edges, and semantic frames | Their base shapes are accepted. Graph validation checks event types and role-edge event, role, and filler references; it does not yet check a semantic frame's `evokes` or role references. | They are preserved in packages but are not projected into the ordinary runtime model. | Event identity, roles, time, modality, effects, and generic frame composition remain target semantics. |
+| Contexts, alignments, retractions, and plans | Their base shapes are accepted; the validator checks only the references it explicitly implements. | They are stored but are not interpreted by generic package projection. A task frame's context stack and adapter-owned typed tasks are separate runtime structures. | Context inheritance, alignment reasoning, visibility-changing retractions, and declarative plan interpretation remain required target capabilities. |
+| Provenance | Every record must contain `provenanceRefs`; non-provenance records require at least one reference. Provenance records may use an empty list to terminate the reference chain. | Projected assertions retain their reference list. Projected executable rules retain the complete sorted reference list and one stable representative `source` for older internal proof fields. Exact duplicate facts and rules merge their complete package and provenance lineage. Provenance records themselves are not a general query language. | Every derived result must remain traceable to accepted records and frozen sources, without losing multi-source rule provenance. |
+
+Schema-valid therefore does not mean runtime-executable. A package may safely preserve a target record before the
+runtime has its interpreter, but the loader and reasoner must not silently approximate that record's meaning. Advancing
+any row in this table requires synchronized projection or executor code, focused tests, and an update to this section.
 
 ### 10. Term record
 
@@ -129,7 +187,9 @@ Every record contains `recordType`, `recordId`, `kbNamespace`, `schemaVersion` a
 }
 ```
 
-A lexeme may denote several senses. Ambiguous mappings are represented as several lexeme-sense records or explicit candidate lists with priors. The parser, not the KB compiler, selects a contextually admissible sense.
+A surface form may denote several senses. In version 1, each lexeme record has one `denotes` string, so ambiguity is
+preserved through several lexeme records. Explicit candidate lists with priors belong to the target schema and require a
+versioned shape before use. The parser, not the KB compiler, selects a contextually admissible sense.
 
 ### 12. Unary and binary assertion records
 
@@ -153,7 +213,11 @@ A lexeme may denote several senses. Ambiguous mappings are represented as severa
 }
 ```
 
-The `arguments` field supports unary and binary assertions and MAY support directly indexed n-ary predicates when the predicate schema declares a fixed arity. Natural-language events SHOULD use event and role records when identity, time, modality or later references matter.
+The version-1 validator accepts one or more entries in `arguments`, but it does not yet validate a declared predicate
+arity. The current generic projector has only a subject/object-or-value runtime shape and consumes the first two
+arguments. Until an arity schema and projection tests exist, packages must not mistake validator acceptance of a longer
+array for executable N-ary semantics. Natural-language events SHOULD use event and role records when identity, time,
+modality or later references matter, while remembering that those records are currently preservation-only data.
 
 `epistemicStatus` is one of asserted, strict, default, likely, possible, unlikely, contradicted or unknown. The allowed status set may be extended only through a schema version and core semantics.
 
@@ -207,7 +271,8 @@ Role edges are independently indexable by event, role and filler. The event reco
 }
 ```
 
-Semantic frames are declarative lexical and ontological data. The generic semantic-composition mechanism that instantiates frames belongs in `src`.
+Semantic frames are declarative lexical and ontological data. The target generic semantic-composition mechanism that
+instantiates them belongs in `src`; the current package projection preserves these records without instantiating them.
 
 ### 15. Rule record
 
@@ -217,46 +282,52 @@ Semantic frames are declarative lexical and ontological data. The generic semant
   "recordId": "rule:example:container-movement",
   "kbNamespace": "axiologic.example",
   "schemaVersion": "1",
-  "semantics": "default",
+  "semantics": "strict",
   "variables": ["?container", "?item", "?destination"],
   "when": [
     {"predicate": "term:common:Inside", "arguments": ["?item", "?container"], "polarity": "positive"},
     {"predicate": "term:common:MovesTo", "arguments": ["?container", "?destination"], "polarity": "positive"}
   ],
-  "unless": [
-    {"predicate": "term:common:RemovedDuringMove", "arguments": ["?item", "?container"], "polarity": "positive"}
-  ],
   "then": [
     {"predicate": "term:common:LocatedAt", "arguments": ["?item", "?destination"], "polarity": "positive"}
   ],
-  "priority": 10,
   "contextRef": "context:example:domain",
   "provenanceRefs": ["prov:source:rule-span-12"]
 }
 ```
 
-The rule schema is data. `semantics` selects an interpreter already implemented in `src`, such as strict, default, causal, temporal or constraint. No field may contain executable source text. Variables and operators are validated against the core rule schema.
+This example deliberately stays inside the supported package profile: a positive, binary, single-head, range-restricted
+strict rule. The version-1 validator also accepts the tags `default`, `causal`, `temporal`, and `constraint` so their
+intended meaning can be preserved as inert canonical data. It does not follow that interpreters for those tags exist.
+The validator checks the semantics tag, non-empty body and conclusion arrays, and that each head variable appears in a
+body argument. It does not yet prove that the occurrence is positive or that atoms have the required arity. The active
+projector therefore rechecks the executable boundary: it rejects a strict record containing an `unless` atom, a
+non-positive or non-binary atom, or more than one conclusion. It never ignores those fields and maps only a record that
+has exactly one valid conclusion. No field may contain source code.
 
 ### 16. Constraint record
 
 ```json
 {
   "recordType": "constraint",
-  "recordId": "constraint:example:one-owner",
+  "recordId": "constraint:example:owner-kind-domain",
   "kbNamespace": "axiologic.example",
   "schemaVersion": "1",
-  "constraintKind": "maxCardinality",
-  "predicate": "term:example:OwnedBy",
-  "subjectType": "term:example:RegisteredAsset",
-  "value": 1,
-  "contextRef": "context:example:domain",
+  "constraintKind": "property-value-domain",
+  "predicate": "owner_kind",
+  "values": ["organization", "person"],
   "provenanceRefs": ["prov:source:policy-4"]
 }
 ```
 
-Constraint kinds are interpreted by trusted core operators. Unsupported kinds fail validation rather than being evaluated dynamically.
+Version 1 accepts exactly three constraint kinds: `property-value-domain`, `induction-policy`, and
+`typed-relation-algebra`. Unknown kinds fail validation rather than being evaluated dynamically. Cardinality,
+uniqueness, ordering, type, and other integrity constraints remain part of the target logical model, but no
+`maxCardinality` record is valid until a later schema version defines its fields and binds it to a trusted executor.
 
-The current compiler implements two additional constraint kinds used to configure an existing generic method without turning policy into code. `property-value-domain` contains a `predicate` string and a non-empty, deterministically sorted `values` array of non-empty strings. It declares the admissible source-local property vocabulary. It does not assert a value for an entity and it does not authorize selection of an evaluation answer.
+`property-value-domain` contains a `predicate` string and a non-empty `values` array of non-empty strings. Projection
+deduplicates and sorts those values deterministically. The record declares admissible source-local property vocabulary;
+it neither asserts a value for an entity nor authorizes selection of an evaluation answer.
 
 `induction-policy` contains a `predicate`, `enabled: true`, Boolean `implicitQuestionTrigger`, positive integer `minSupport`, `minCoverage` in `(0, 1]`, and optional `selection` in `all`, `latest-support`, or `latest-member`. The optional selection defaults to `all`. Projection places the policy under the runtime reasoning configuration keyed by predicate. Package merging unions property domains, unions enabled predicate lists, and rejects incompatible policies for the same predicate. Inductive conclusions retain their non-strict status and remain distinguishable from source assertions.
 
@@ -308,7 +379,9 @@ later migration when generic records gain equivalent meaning.
 }
 ```
 
-Contexts permit source viewpoints, session facts, counterfactual worlds and version overlays without overwriting baseline records.
+Contexts are the target representation for source viewpoints, session facts, counterfactual worlds and version overlays
+without overwriting baseline records. Version 1 stores and reference-checks their current shape but does not interpret
+context inheritance during generic package projection.
 
 ### 18. Provenance record
 
@@ -322,6 +395,7 @@ Contexts permit source viewpoints, session facts, counterfactual worlds and vers
   "sourceChecksum": "sha256:...",
   "span": {"start": 4120, "end": 4198, "unit": "utf8-byte"},
   "transformation": "direct-symbolic-parse",
+  "provenanceRefs": [],
   "normalizationRef": null,
   "agentVersion": "agent:...",
   "systemCommit": "git:...",
@@ -329,7 +403,9 @@ Contexts permit source viewpoints, session facts, counterfactual worlds and vers
 }
 ```
 
-The exact timestamp format follows the project convention. Reproducible identifiers must not depend only on the timestamp.
+The exact timestamp format follows the project convention. Reproducible identifiers must not depend only on the
+timestamp. A provenance record still carries the mandatory `provenanceRefs` field, but the list may be empty to
+terminate a provenance chain. Every non-provenance record requires at least one provenance reference in version 1.
 
 ### 19. Alignment and retraction records
 
@@ -360,11 +436,18 @@ The exact timestamp format follows the project convention. Reproducible identifi
 }
 ```
 
-Retractions do not erase provenance. They alter record visibility under explicit context and version policies.
+Retractions never erase provenance. In the target runtime they alter record visibility under explicit context and
+version policies. The current generic package projection does not apply retraction visibility, so a schema-valid
+retraction must not be reported as an executed correction.
 
 ### 20. Canonical invariants
 
-Every referenced term must be declared locally or imported through a manifest dependency. Every rule must be safe under its declared semantics. Every persistent semantic record must have provenance. Confidence must declare a policy. Context and temporal qualifiers must not be encoded inside predicate names. Records must be deterministic, streamable and free of executable payloads.
+Every referenced term must be declared locally or imported through a manifest dependency. Every executable rule must be
+safe under its declared and implemented semantics. Every record carries `provenanceRefs`, and every non-provenance
+record has at least one reference. Confidence must declare a policy before any operator interprets it. Context and
+temporal qualifiers must not be encoded inside predicate names. Records must be deterministic, streamable and free of
+executable payloads. Requirements not yet enforced by the version-1 validator remain target invariants and cannot be
+claimed as current validation guarantees.
 
 ## Decisions & Questions
 
@@ -398,6 +481,14 @@ Selection requires cross-source mappings, renamed event and participant controls
 temporal and context qualification, provider-order invariance, and replayable witnesses that distinguish strict,
 default, abductive, and ranked conclusions. Until selection, provider-specific profiles remain declarative and no
 surface frame overlap is promoted as causal or goal evidence.
+
+### Question #5: Why may the schema accept a record that the runtime does not execute?
+
+Response: Canonical data must sometimes preserve reviewed meaning before a generic interpreter is ready. Shape and
+graph validation make that data safe to store; they do not manufacture semantics. Projection and execution are separate
+gates because silently approximating a default, retraction, context, event, or plan as an ordinary positive fact would
+be less honest than retaining it as inert data and reporting the missing capability. The implementation-support table
+in Core Content is therefore part of the contract and must advance with code and tests.
 
 ## Conclusion
 

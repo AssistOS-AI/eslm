@@ -97,7 +97,30 @@ An answer may therefore be absent verbatim from every source passage while still
 
 “Plausible” means supported by an explicitly defeasible method with visible alternatives and provenance, not fluent generation. Strict deduction, skeptical default reasoning, guarded abduction, and narrative or compatibility ranking must remain distinguishable in the result.
 
-### 9. Document build pipeline
+### 9. Grounding when no answer is established
+
+Symbolic RAG has a recovery mode as well as an answering mode. If parsing, retrieval, or a registered method cannot
+establish the requested answer, the runtime may still return bounded, source-addressable records related to accepted
+entities, concepts, predicates, or original surface terms. DS009 owns the grounding bundle and its strict
+`answerSupported: false` boundary; DS020 owns how selected packages search their indexes.
+
+For document packages, a grounding entry should include the canonical record, edition-qualified package identity,
+epistemic status, exact document span, and any derivation witness. It may expose a relevant definition, warning,
+procedure step, temporal rule, or conflicting claim even when no complete proof connects it to the question. This is
+useful material for clarification or for a separately evaluated downstream model, but lexical or structural relevance
+is never promoted to an answer premise.
+
+The recovery path preserves four distinctions:
+
+- no related evidence after complete search versus no evidence observed after incomplete search;
+- source assertions versus derived records and their support witnesses;
+- answer-contributing KB versions versus selected, consulted, and grounding-contributing versions;
+- deterministic symbolic inference versus optional downstream formulation from the exported evidence bundle.
+
+Document-scale grounding remains query directed and bounded. It never scans an entire compiled collection after every
+failure, and it never runs after an exhausted primary resource budget unless a separate grounding budget was reserved.
+
+### 10. Document build pipeline
 
 The document pipeline consumes a DS016 source, decodes it, and establishes the structural spans defined here. DS004
 owns candidate learning and promotion, DS007 owns the training command and packet interface, DS009 owns isolation and
@@ -107,7 +130,7 @@ The DS013 operator Language Agent has no authority in this build process.
 
 The compiler records coverage: decoded spans, semantically attempted spans, accepted records, unresolved spans, rejected candidates by reason, and provenance coverage. It never equates extraction count with factual correctness. Promotion requires nonce tests for generic mechanisms, source-grounded spot checks, contradiction checks, eager/lazy equivalence, proof-to-span validation, and held-out questions that were not exposed in the extraction packet.
 
-### 10. Answer and citation contract
+### 11. Answer and citation contract
 
 Every document-backed result identifies the package versions and source editions consulted. A strict answer includes the proof graph and the exact source spans supporting leaf records. A defeasible or abductive result identifies its reasoning regime, ranked alternatives, assumptions, counterevidence, and why the selected hypothesis outranks others. A quoted answer distinguishes exact quotation from deterministic realization of a symbolic conclusion.
 
@@ -117,7 +140,7 @@ Absent required document premises return `MISSING_KNOWLEDGE` with the searched s
 completed applicable search in which available knowledge neither entails nor contradicts the target. A missing
 transformation remains `NO_APPLICABLE_METHOD`.
 
-### 11. Security and review invariants
+### 12. Security and review invariants
 
 DS009 owns the untrusted-document threat model, DS006 owns package path and dependency validation, and DS019 owns
 compiled-data integrity. Embedded instructions, formulas, code blocks, and strings remain inert source content.
@@ -127,9 +150,16 @@ modules, callbacks, import specifiers, or executable helpers.
 A document KB cannot modify core methods, override another namespace, contact a network, or start a subprocess at
 runtime. Source strings remain normalized index data and never become JavaScript identifiers or paths.
 
-### 12. Present boundary and staged delivery
+### 13. Present boundary and staged delivery
 
-The present repository implements canonical KB records, compiled packages, several public-source indexes, query-directed shard loading, bounded caches, proof-bearing core methods, and provenance. It does not yet implement a general book or manual compiler. The next implementation stage should use a small legally distributable technical document with definitions, procedures, temporal changes, and cross-section questions, then demonstrate complete source retention, stable compilation, eager/lazy equivalence, and derived answers with citations.
+The present repository implements canonical KB records, compiled packages, several public-source indexes,
+query-directed shard loading, bounded caches, proof-bearing core methods, provenance, and a generic failure-time
+grounding bundle over canonical facts, the session overlay, and selected public providers. The fallback is an
+implemented bounded record-retrieval foundation, not document comprehension: it does not yet search book-scale span
+indexes or compile a general book or manual. The next document stage should use a small legally distributable
+technical source with definitions, procedures, temporal changes, and cross-section questions, then demonstrate
+complete source retention, stable compilation, eager/lazy equivalence, derived answers with citations, and useful
+grounding for deliberately unanswerable or partially supported requests.
 
 Benchmark completion remains the immediate research priority. This specification prevents that work from creating benchmark-only representations that cannot later serve document knowledge. It does not authorize claims of document-scale comprehension before the staged acceptance evidence exists.
 
@@ -146,6 +176,11 @@ Response: Yes, when the language frontend maps the question to supported concept
 ### Question #3: How do temporary events connect to enduring concepts?
 
 Response: Events reference stable participant concepts or entities through typed roles and create or terminate state intervals. Event time, state valid time, and publication time remain separate. Queries choose the relevant temporal view before executing state or rule reasoning.
+
+### Question #4: Is a related source span a citation for the answer?
+
+Response: Only when a registered method uses the corresponding record in the answer proof. A span returned solely by
+failure-time grounding is cited as a related record inside the bundle and is explicitly not answer provenance.
 
 ## Conclusion
 

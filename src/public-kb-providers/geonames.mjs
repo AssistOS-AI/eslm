@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { ShardCache } from '../memory-policy.mjs';
 import { sha256 } from '../util.mjs';
+import { makeGroundingEntry } from '../reasoning/grounding-retrieval.mjs';
 
 const CONTINENTS = Object.freeze({ AF: 'Africa', AN: 'Antarctica', AS: 'Asia', EU: 'Europe',
   NA: 'North America', OC: 'Oceania', SA: 'South America' });
@@ -29,9 +30,15 @@ async function readShard(path, expectedChecksum) {
 
 function result(provider, answer, values, facts, ambiguity = false) {
   return {
-    status: values.length > 0 && !ambiguity ? 'ANSWERED' : ambiguity ? 'AMBIGUOUS' : 'UNKNOWN',
+    status: values.length > 0 && !ambiguity ? 'SOLVED' : ambiguity ? 'AMBIGUOUS' : 'UNKNOWN',
     answer, values, ambiguity,
-    provenance: facts.map((id) => ({ fact: `geonames:${id}`, source: [`GeoNames:${id}`], method: 'source-retrieval' })),
+    provenance: facts.map((id) => ({
+      fact: `geonames:${id}`,
+      kbId: provider.manifest.kbId,
+      kbVersion: provider.manifest.kbVersion,
+      source: [`GeoNames:${id}`],
+      method: 'source-retrieval',
+    })),
     reasoning: { method: ambiguity ? 'typed-ambiguity-preservation' : 'indexed-lookup' },
     query: { provider: provider.manifest.id }, learned: [], learnedRules: [], context: {},
   };
@@ -83,6 +90,81 @@ export class GeoNamesProvider {
     return this.mode === 'eager'
       ? { mode: 'eager', estimatedBytes: 48 * 1024 * 1024 }
       : { mode: 'lazy', ...this.cache.snapshot() };
+  }
+
+  async retrieveGrounding(request) {
+    const maximumLookups = Math.min(request.limits.maximumLookups, request.terms.length, 8);
+    const maximumValues = request.limits.maximumValuesPerLookup;
+    const entries = [];
+    const truncationReasons = [];
+    let considered = 0;
+    for (const [termIndex, term] of request.terms.slice(0, maximumLookups).entries()) {
+      considered += 1;
+      const country = await this.country(term);
+      if (country) {
+        const record = country.record;
+        entries.push(makeGroundingEntry({
+          kbId: this.manifest.kbId,
+          kbVersion: this.manifest.kbVersion,
+          recordId: `geonames:${record[11]}`,
+          statement: `${record[0]} is a country in ${CONTINENTS[record[2]] ?? record[2]}; its capital is ${record[1]}.`,
+          semantic: {
+            kind: 'country-summary',
+            name: record[0],
+            capital: record[1],
+            continent: CONTINENTS[record[2]] ?? record[2],
+            currencyCode: record[3],
+            languages: record[5],
+          },
+          epistemicStatus: 'source-assertion',
+          provenance: [`GeoNames:${record[11]}`],
+          relevance: { score: 30 - termIndex * 0.25, reasons: ['exact-country-name-match'] },
+        }));
+      }
+      const key = normalize(term);
+      const ids = (await this.load(`names/${nameBucket(key)}.json`))[key] ?? [];
+      if (ids.length > maximumValues) truncationReasons.push('place-ambiguity-budget');
+      for (const id of ids.slice(0, maximumValues)) {
+        const record = (await this.load(`places/${idBucket(id)}.json`))[id];
+        if (!record) continue;
+        const countryRecord = (await this.country(record[2]))?.record;
+        entries.push(makeGroundingEntry({
+          kbId: this.manifest.kbId,
+          kbVersion: this.manifest.kbVersion,
+          recordId: `geonames:${id}`,
+          statement: `${record[0]} is a populated place${countryRecord ? ` in ${countryRecord[0]}` : ''}.`,
+          semantic: {
+            kind: 'populated-place',
+            name: record[0],
+            countryCode: record[2],
+            country: countryRecord?.[0],
+            population: record[3],
+            latitude: record[4],
+            longitude: record[5],
+            timezone: record[6],
+          },
+          epistemicStatus: 'source-assertion',
+          provenance: [`GeoNames:${id}`],
+          relevance: { score: 24 - termIndex * 0.25, reasons: ['exact-place-name-match'] },
+        }));
+      }
+    }
+    if (request.terms.length > maximumLookups) truncationReasons.push('lookup-budget');
+    return {
+      entries,
+      receipt: {
+        kbId: this.manifest.kbId,
+        kbVersion: this.manifest.kbVersion,
+        status: entries.length > 0 ? 'matches-found' : 'no-match',
+        coverage: 'bounded-exact-country-and-populated-place-name-lookup',
+        complete: truncationReasons.length === 0 && request.termSelection.complete,
+        candidatesConsidered: considered,
+        truncationReasons: [...new Set([
+          ...truncationReasons,
+          ...(!request.termSelection.complete ? ['term-selection-budget'] : []),
+        ])],
+      },
+    };
   }
 
   async countryProperty(subject, property) {

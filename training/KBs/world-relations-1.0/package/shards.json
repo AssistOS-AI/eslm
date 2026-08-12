@@ -8,5 +8,15 @@
     "compressedBytes": 17797,
     "checksum": "sha256:7f669ba6c8dd8c9b0d7c81da2fed4f7a8428a9b208f3a031c97ddb42d9873436",
     "dependencies": []
+  },
+  {
+    "shardId": "ontology-grounding",
+    "shardKind": "exactGroundingPostings",
+    "accessPath": "normalized-term",
+    "dataRef": "ontology/grounding.json",
+    "recordCount": 44,
+    "compressedBytes": 6713,
+    "checksum": "sha256:b5289d858a1206855f49c41f24cda440a990facdb438aaf89544df79fea65973",
+    "dependencies": []
   }
 ]

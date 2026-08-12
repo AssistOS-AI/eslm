@@ -3,6 +3,8 @@ import { PROJECT_ROOT } from './paths.mjs';
 import { openKnowledgePackage, loadPackageRecords } from './kb/package.mjs';
 import { projectCanonicalRecords } from './kb/projection.mjs';
 import { KnowledgeCatalog } from './kb/catalog.mjs';
+import { serializedIndexes } from './runtime/core-model.mjs';
+import { stableStringify } from './util.mjs';
 
 export const KB_CATALOG_PATH = join(PROJECT_ROOT, 'training/KBs/catalog.json');
 
@@ -87,73 +89,232 @@ function mergeEntities(models) {
     for (const entity of model.entities) {
       const existing = entities.get(entity.id);
       if (!existing) entities.set(entity.id, { ...entity, names: [...entity.names] });
-      else existing.names = [...new Set([...existing.names, ...entity.names])];
+      else {
+        if (existing.kind !== entity.kind || existing.canonicalRecordId !== entity.canonicalRecordId) {
+          throw new Error(`Conflicting runtime entity identity ${entity.id}.`);
+        }
+        existing.names = [...new Set([...existing.names, ...entity.names])];
+      }
     }
   }
   return [...entities.values()];
 }
 
-function mergeUnique(models, field, signature) {
-  const values = [];
-  const seen = new Set();
+function compareText(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+function kbSourcesOf(value) {
+  const raw = value.kbSources ?? (value.kbId ? [{ kbId: value.kbId, version: value.kbVersion }] : []);
+  const unique = new Map(raw.filter((item) => item?.kbId).map((item) => [
+    `${item.kbId}\u0000${item.version ?? ''}`,
+    { kbId: item.kbId, ...(item.version ? { version: item.version } : {}) },
+  ]));
+  return [...unique.values()].toSorted((left, right) =>
+    compareText(left.kbId, right.kbId) || compareText(String(left.version), String(right.version)));
+}
+
+function mergeSources(left, right) {
+  return kbSourcesOf({ kbSources: [...kbSourcesOf(left), ...kbSourcesOf(right)] });
+}
+
+function sortedUniqueStrings(values) {
+  return [...new Set(values.filter((value) => typeof value === 'string' && value.length > 0))]
+    .toSorted(compareText);
+}
+
+function factSemanticKey(fact) {
+  return stableStringify({
+    subject: fact.subject,
+    predicate: fact.predicate,
+    term: Object.hasOwn(fact, 'object')
+      ? { kind: 'object', value: fact.object }
+      : { kind: 'value', value: fact.value },
+    polarity: fact.polarity ?? null,
+    epistemicStatus: fact.epistemicStatus ?? null,
+    confidence: fact.confidence ?? null,
+    validity: fact.validity ?? null,
+    contextRef: fact.contextRef ?? null,
+  });
+}
+
+function mergeFacts(models) {
+  const bySignature = new Map();
   for (const model of models) {
-    for (const value of model[field]) {
-      const key = signature(value);
-      if (!seen.has(key)) { seen.add(key); values.push(value); }
+    for (const fact of model.facts) {
+      const key = factSemanticKey(fact);
+      const existing = bySignature.get(key);
+      if (!existing) {
+        bySignature.set(key, {
+          ...fact,
+          kbSources: kbSourcesOf(fact),
+          provenance: sortedUniqueStrings(fact.provenance ?? []),
+        });
+        continue;
+      }
+      existing.kbSources = mergeSources(existing, fact);
+      existing.provenance = sortedUniqueStrings([...(existing.provenance ?? []), ...(fact.provenance ?? [])]);
     }
   }
-  return values;
+  return [...bySignature.values()];
+}
+
+function ruleSemanticKey(rule) {
+  return stableStringify({
+    semantics: rule.semantics ?? 'strict',
+    when: rule.when,
+    then: rule.then,
+    contextRef: rule.contextRef ?? null,
+    priority: rule.priority ?? null,
+    validity: rule.validity ?? null,
+    abductive: rule.abductive ?? false,
+  });
+}
+
+function mergeRules(models) {
+  const bySignature = new Map();
+  for (const model of models) {
+    for (const rule of model.rules) {
+      const key = ruleSemanticKey(rule);
+      const existing = bySignature.get(key);
+      if (!existing) {
+        bySignature.set(key, {
+          ...rule,
+          kbSources: kbSourcesOf(rule),
+          sources: sortedUniqueStrings([rule.source, ...(rule.sources ?? [])]),
+        });
+        continue;
+      }
+      existing.kbSources = mergeSources(existing, rule);
+      existing.sources = sortedUniqueStrings([...(existing.sources ?? []), rule.source, ...(rule.sources ?? [])]);
+    }
+  }
+  return [...bySignature.values()];
+}
+
+function withoutSourceIdentity(value) {
+  const { sourceKbVersions: _sourceKbVersions, ...semantic } = value;
+  return semantic;
+}
+
+function sameSemantics(left, right) {
+  return stableStringify(withoutSourceIdentity(left)) === stableStringify(withoutSourceIdentity(right));
+}
+
+function modelIdentityKey(model) {
+  return stableStringify({
+    modelId: model.manifest.modelId,
+    knowledgeBaseVersions: kbSourcesOf({ kbSources: model.manifest.knowledgeBaseVersions ?? [] }),
+  });
+}
+
+function canonicalKnowledgeBaseOrder(knowledgeBases) {
+  return [...knowledgeBases].toSorted((left, right) => {
+    const identityOrder = compareText(modelIdentityKey(left), modelIdentityKey(right));
+    if (identityOrder !== 0) return identityOrder;
+    return compareText(stableStringify(left), stableStringify(right));
+  });
+}
+
+function sortedObject(value) {
+  return Object.fromEntries(Object.entries(value).toSorted(([left], [right]) => compareText(left, right)));
 }
 
 export function mergeModels(base, knowledgeBases) {
   if (knowledgeBases.length === 0) return base;
-  const models = [base, ...knowledgeBases];
-  const facts = mergeUnique(models, 'facts', (fact) =>
-    JSON.stringify([fact.subject, fact.predicate, fact.object ?? fact.value, fact.contextRef]));
-  const propertyValues = { ...(base.reasoning?.propertyValues ?? {}) };
+  const orderedKnowledgeBases = canonicalKnowledgeBaseOrder(knowledgeBases);
+  const models = [base, ...orderedKnowledgeBases];
+  const facts = mergeFacts(models);
+  const propertyValues = Object.fromEntries(Object.entries(base.reasoning?.propertyValues ?? {})
+    .map(([predicate, values]) => [predicate, sortedUniqueStrings(values)]));
   const induction = {
     ...(base.reasoning?.induction ?? {}),
-    predicates: [...(base.reasoning?.induction?.predicates ?? [])],
-    implicitPredicates: [...(base.reasoning?.induction?.implicitPredicates ?? [])],
+    predicates: sortedUniqueStrings(base.reasoning?.induction?.predicates ?? []),
+    implicitPredicates: sortedUniqueStrings(base.reasoning?.induction?.implicitPredicates ?? []),
     byPredicate: { ...(base.reasoning?.induction?.byPredicate ?? {}) },
   };
   const relationAlgebras = { ...(base.reasoning?.relationAlgebras ?? {}) };
-  for (const model of knowledgeBases) {
+  for (const [algebraId, algebra] of Object.entries(relationAlgebras)) {
+    relationAlgebras[algebraId] = {
+      ...algebra,
+      sourceKbVersions: kbSourcesOf({ kbSources: algebra.sourceKbVersions ?? [] }),
+    };
+  }
+  for (const [predicate, policy] of Object.entries(induction.byPredicate)) {
+    induction.byPredicate[predicate] = {
+      ...policy,
+      sourceKbVersions: kbSourcesOf({ kbSources: policy.sourceKbVersions ?? [] }),
+    };
+  }
+  for (const model of orderedKnowledgeBases) {
     for (const [algebraId, algebra] of Object.entries(model.reasoning?.relationAlgebras ?? {})) {
       const existing = relationAlgebras[algebraId];
-      if (existing && JSON.stringify(existing) !== JSON.stringify(algebra)) {
+      if (existing && !sameSemantics(existing, algebra)) {
         throw new Error(`Conflicting typed relation algebras for ${algebraId}.`);
       }
-      relationAlgebras[algebraId] = algebra;
+      relationAlgebras[algebraId] = existing ? {
+        ...existing,
+        sourceKbVersions: mergeSources(
+          { kbSources: existing.sourceKbVersions }, { kbSources: algebra.sourceKbVersions },
+        ),
+      } : {
+        ...algebra,
+        sourceKbVersions: kbSourcesOf({ kbSources: algebra.sourceKbVersions ?? [] }),
+      };
     }
     for (const [predicate, values] of Object.entries(model.reasoning?.propertyValues ?? {})) {
-      propertyValues[predicate] = [...new Set([...(propertyValues[predicate] ?? []), ...values])].sort();
+      propertyValues[predicate] = sortedUniqueStrings([...(propertyValues[predicate] ?? []), ...values]);
     }
     const policy = model.reasoning?.induction;
     if (!policy?.enabled) continue;
     induction.enabled = true;
-    induction.predicates = [...new Set([...induction.predicates, ...policy.predicates])].sort();
-    induction.implicitPredicates = [...new Set([...induction.implicitPredicates, ...policy.implicitPredicates])].sort();
+    induction.predicates = sortedUniqueStrings([...induction.predicates, ...policy.predicates]);
+    induction.implicitPredicates = sortedUniqueStrings([
+      ...induction.implicitPredicates,
+      ...policy.implicitPredicates,
+    ]);
     for (const [predicate, override] of Object.entries(policy.byPredicate ?? {})) {
       const existing = induction.byPredicate[predicate];
-      if (existing && JSON.stringify(existing) !== JSON.stringify(override)) {
+      if (existing && !sameSemantics(existing, override)) {
         throw new Error(`Conflicting induction policies for predicate ${predicate}.`);
       }
-      induction.byPredicate[predicate] = override;
+      induction.byPredicate[predicate] = existing ? {
+        ...existing,
+        sourceKbVersions: mergeSources(
+          { kbSources: existing.sourceKbVersions }, { kbSources: override.sourceKbVersions },
+        ),
+      } : {
+        ...override,
+        sourceKbVersions: kbSourcesOf({ kbSources: override.sourceKbVersions ?? [] }),
+      };
     }
   }
+  const knowledgeBaseVersions = kbSourcesOf({
+    kbSources: orderedKnowledgeBases.flatMap((model) => model.manifest.knowledgeBaseVersions ?? []),
+  });
+  const knowledgeBaseIds = sortedUniqueStrings([
+    ...knowledgeBaseVersions.map((item) => item.kbId),
+    ...orderedKnowledgeBases.flatMap((model) => model.manifest.knowledgeBases ?? []),
+  ]);
   return {
     ...base,
     manifest: {
       ...base.manifest,
-      modelId: knowledgeBases.map((model) => model.manifest.modelId).join('+'),
-      knowledgeBases: knowledgeBases.flatMap((model) => model.manifest.knowledgeBases ?? []),
+      modelId: orderedKnowledgeBases.map((model) => model.manifest.modelId).join('+'),
+      knowledgeBases: knowledgeBaseIds,
+      knowledgeBaseVersions,
       benchmarkComparable: false,
     },
     entities: mergeEntities(models),
     facts,
-    rules: mergeUnique(models, 'rules', (rule) => JSON.stringify([rule.when, rule.then])),
-    reasoning: { ...base.reasoning, propertyValues, induction, relationAlgebras },
+    rules: mergeRules(models),
+    reasoning: {
+      ...base.reasoning,
+      propertyValues: sortedObject(propertyValues),
+      induction: { ...induction, byPredicate: sortedObject(induction.byPredicate) },
+      relationAlgebras: sortedObject(relationAlgebras),
+    },
+    indexes: serializedIndexes(facts),
   };
 }
 

@@ -7,14 +7,15 @@ import { ewokCacheStatus, probeEwokProtectedCache } from '../benchmark-adapters/
 import { PROJECT_ROOT } from '../paths.mjs';
 import { hashFile } from '../util.mjs';
 import { BENCHMARK_ACCESS_MANIFESTS } from './benchmark-access-manifests.mjs';
+import { benchmarkCatalogFields } from './benchmark-report-catalog.mjs';
+import { benchmarkReportFields } from './benchmark-report-contract.mjs';
 import {
-  openSimpleQaCache, runSimpleQaDiagnosticProbe, simpleQaCacheStatus,
+  openSimpleQaCache, runSimpleQaDiagnosticProbe,
 } from './simpleqa-adapter.mjs';
 import { scoreStoryClozeSelections } from './story-cloze-2018-adapter.mjs';
 import {
   openStoryCloze2018Partition, storyCloze2018CacheStatus,
 } from './story-cloze-2018-cache.mjs';
-import { researchBenchmarkReportRows } from './research-benchmark-report-rows.mjs';
 
 export const PUBLIC_PROBE_DEFAULTS = Object.freeze({
   blimpPerParadigm: 2,
@@ -43,15 +44,88 @@ function statusCounts(results) {
   return counts;
 }
 
+function engineKnowledgeBaseVersions(engine) {
+  const modelValues = engine?.model?.manifest?.knowledgeBaseVersions
+    ?? (engine?.model?.manifest?.knowledgeBases ?? []).map((kbId) => ({ kbId }));
+  const providerValues = (engine?.providers ?? []).map((provider) => ({
+    kbId: provider.manifest.kbId ?? provider.manifest.id,
+    version: provider.manifest.kbVersion,
+  }));
+  const known = new Set([...modelValues, ...providerValues].map((value) => value.kbId));
+  const selectedWithoutVersion = (engine?.selected ?? [])
+    .filter((kbId) => !known.has(kbId)).map((kbId) => ({ kbId }));
+  return aggregateKbVersions([{ usedKbVersions: [
+    ...modelValues, ...providerValues, ...selectedWithoutVersion,
+  ] }]);
+}
+
+function aggregateKbVersions(results) {
+  const byIdentity = new Map();
+  for (const value of results.flatMap((result) => result.usedKbVersions ?? [])) {
+    const kbId = value.kbId;
+    if (!kbId) continue;
+    const version = value.version;
+    byIdentity.set(`${kbId}\u0000${version ?? ''}`, Object.freeze({
+      kbId, ...(version ? { version } : {}),
+    }));
+  }
+  return [...byIdentity.values()].toSorted((left, right) =>
+    left.kbId.localeCompare(right.kbId) || String(left.version).localeCompare(String(right.version)));
+}
+
+function aggregateMethodIds(results) {
+  return [...new Set(results.map((result) => result.plan?.methodId).filter(Boolean))].toSorted();
+}
+
 function measuredRow(id, data) {
+  const reportFields = benchmarkReportFields(id, data);
+  const resultOrigin = data.resultOrigin ?? 'current-execution';
+  const executedAt = data.executedAt ?? (resultOrigin === 'current-execution'
+    ? new Date().toISOString() : null);
   return Object.freeze({
     id, evidenceState: 'development-probe-executed',
-    total: data.total, correct: data.correct, accuracy: rate(data.correct, data.total),
-    normalizationCandidates: data.normalizationCandidates,
-    normalizationCandidateRate: rate(data.normalizationCandidates, data.total),
-    directSymbolicRate: rate(data.total - data.normalizationCandidates, data.total),
-    agentInvocations: 0, agentInvocationRate: 0,
     ...data,
+    ...reportFields,
+    normalizationCandidates: reportFields.inputRoute === 'raw-language' ? data.normalizationCandidates : null,
+    normalizationCandidateRate: reportFields.inputRoute === 'raw-language'
+      ? rate(data.normalizationCandidates, data.total) : null,
+    agentInvocations: 0, agentInvocationRate: 0,
+    evaluationIdentities: Object.freeze({
+      scorer: data.scorerIdentity ?? data.protocol,
+      oracle: data.oracleIdentity ?? 'host-only source oracle joined after prediction',
+      partition: data.partitionIdentity ?? data.samplePolicy,
+    }),
+    selectedMethods: Object.freeze(data.selectedMethods ?? []),
+    usedKbVersions: Object.freeze(data.usedKbVersions ?? []),
+    selectedKbVersions: Object.freeze(data.selectedKbVersions ?? []),
+    languagePolicy: Object.freeze({
+      externalLanguageAgent: false,
+      routeMeasurement: reportFields.inputRoute === 'raw-language' ? 'measured' : 'not-applicable-to-adapter-route',
+    }),
+    resourcePolicy: Object.freeze(data.resourcePolicy ?? { state: 'command-default-or-not-recorded' }),
+    resourceEvidence: data.resourceEvidence ? Object.freeze(data.resourceEvidence) : null,
+    replayCommand: data.replayCommand ?? null,
+    behaviorDependency: data.behaviorDependency ?? null,
+    resultOrigin,
+    ...(resultOrigin === 'stored-receipt'
+      ? { checkpointState: 'historical-unverified' } : {}),
+    executionEvidence: Object.freeze({
+      origin: resultOrigin,
+      ...(executedAt ? { executedAt } : {}),
+      ...(resultOrigin === 'stored-receipt' ? {
+        checkpointVerification: Object.freeze({
+          state: 'not-audited',
+          currentnessClaim: false,
+          meaning: 'The stored receipt is historical until a registered cryptographic audit proves its checkpoint.',
+        }),
+        ...(!executedAt ? {
+          reportingCompleteness: Object.freeze({
+            state: 'incomplete', missingFields: Object.freeze(['executedAt']),
+          }),
+        } : {}),
+      } : {}),
+    }),
+    ...benchmarkCatalogFields(id),
   });
 }
 
@@ -68,13 +142,17 @@ async function frozenBlimpRow() {
     throw new Error('BLiMP frozen candidate and fresh aggregate receipts do not agree.');
   }
   return measuredRow('blimp', {
+    resultOrigin: 'stored-receipt',
     evidenceState: 'fresh-evaluation-executed',
     protocol: fresh.protocol,
     samplePolicy: 'frozen-label-blind-stratified-partition',
+    splitQuality: 'row-IID-paradigm-stratified',
     protocolDescription: 'For each minimally different sentence pair, the system earns a point only when the generic feature grammar assigns the higher acceptability score to the grammatical sentence.',
     sampleDescription: 'Every one of the 67 grammar paradigms contributes 800 development pairs and 200 fresh pairs. The candidate was frozen before the 13,400 fresh pairs were scored once, and only aggregate results were retained.',
     total: fresh.total,
     correct: fresh.correct,
+    attempted: fresh.total - fresh.ties,
+    forcedChoice: true,
     normalizationCandidates: 0,
     ties: fresh.ties,
     reversedPreferences: fresh.reverse,
@@ -104,6 +182,7 @@ async function frozenBlimpRow() {
 
 async function runClutrr(engine, perDepth) {
   const outcomes = [];
+  const runtimeResults = [];
   const fileEvidence = [];
   for (const depth of CLUTRR_DEPTHS) {
     const relativePath = `training/.cache/datasets/clutrr/official/data_089907f8/1.${depth}_test.csv`;
@@ -115,6 +194,7 @@ async function runClutrr(engine, perDepth) {
     const oracle = new Map(adapted.oracle.map((item) => [item.id, item]));
     for (const item of adapted.pool) {
       const result = engine.executeTask({ ...item.taskFrame, taskId: item.id });
+      runtimeResults.push(result);
       const score = scoreClutrrRelation(result.values?.[0] ?? result.answer, oracle.get(item.id));
       outcomes.push({ id: item.id, depth, pass: score.pass, status: result.status });
     }
@@ -124,10 +204,16 @@ async function runClutrr(engine, perDepth) {
     protocol: 'clutrr-relation-classification-development-probe-v1',
     protocolDescription: 'The system must infer the requested typed family relationship from the people and relationships stated in each story.',
     samplePolicy: 'stable-hash-equal-count-per-relation-depth',
+    splitQuality: 'row-IID-depth-stratified',
     sampleDescription: 'The development sample is selected deterministically with the same number of cases at every relationship-chain depth from 2 through 10.',
     total: outcomes.length, correct: outcomes.filter((item) => item.pass).length,
+    attempted: outcomes.filter((item) => item.status === 'SOLVED').length,
+    forcedChoice: true,
     normalizationCandidates: outcomes.filter((item) => item.status === 'UNPARSED').length,
     statusCounts: statusCounts(outcomes), strata: { relationDepths: CLUTRR_DEPTHS, perDepth },
+    selectedMethods: aggregateMethodIds(runtimeResults),
+    usedKbVersions: aggregateKbVersions(runtimeResults),
+    selectedKbVersions: engineKnowledgeBaseVersions(engine),
     sourceEvidence: fileEvidence,
     sampleCoverage: {
       tested: outcomes.length,
@@ -152,8 +238,10 @@ async function runEntityTracking(engine, count) {
   });
   const oracle = new Map(adapted.oracle.map((item) => [item.id, item]));
   const outcomes = [];
+  const runtimeResults = [];
   for (const item of adapted.pool) {
     const result = engine.executeTask({ ...item.taskFrame, taskId: item.id });
+    runtimeResults.push(result);
     outcomes.push({
       id: item.id, status: result.status,
       pass: scoreEntityTrackingSpan(result.values, oracle.get(item.id)).pass,
@@ -163,10 +251,15 @@ async function runEntityTracking(engine, count) {
     protocol: 'entity-tracking-masked-span-development-probe-v1',
     protocolDescription: 'The system executes the stated object movements and must return the exact final contents of the queried container.',
     samplePolicy: 'stable-hash-round-robin-operation-count',
+    splitQuality: 'row-IID-operation-stratified',
     sampleDescription: 'The development sample is selected deterministically while cycling across stories with different numbers of operations.',
     total: outcomes.length, correct: outcomes.filter((item) => item.pass).length,
+    attempted: outcomes.filter((item) => item.status === 'SOLVED').length,
     normalizationCandidates: outcomes.filter((item) => item.status === 'UNPARSED').length,
     statusCounts: statusCounts(outcomes),
+    selectedMethods: aggregateMethodIds(runtimeResults),
+    usedKbVersions: aggregateKbVersions(runtimeResults),
+    selectedKbVersions: engineKnowledgeBaseVersions(engine),
     sourceEvidence: [{ path: ENTITY_TRACKING_DEV, sha256: await hashFile(path), sourceRows: adapted.sourceRows }],
     sampleCoverage: {
       tested: outcomes.length,
@@ -191,10 +284,15 @@ async function runSimpleQa(engine, count) {
     protocolDescription: 'This local diagnostic compares a normalized short answer exactly; it is deliberately not presented as the official semantic-grader score.',
     comparability: report.comparability,
     samplePolicy: 'stable topic-stratified evaluation-visible questions; host-only answers',
+    splitQuality: 'row-IID-topic-stratified',
     sampleDescription: 'The diagnostic sample is selected deterministically across question topics. Questions are visible to the runtime, while reference answers remain available only to the local evaluator.',
     total: report.total, correct: report.exact,
+    attempted: report.statusCounts.SOLVED ?? report.statusCounts.ANSWERED ?? 0,
     normalizationCandidates: report.wouldRequireLanguageFallback,
     statusCounts: report.statusCounts,
+    selectedMethods: report.selectedMethods,
+    usedKbVersions: report.usedKbVersions,
+    selectedKbVersions: engineKnowledgeBaseVersions(engine),
     sourceEvidence: [manifest.artifact],
     sampleCoverage: {
       tested: report.total,
@@ -216,10 +314,12 @@ async function runStoryCloze(engine) {
   const adapted = await openStoryCloze2018Partition(partition, 'development');
   const predictions = new Map();
   const statuses = [];
+  const runtimeResults = [];
   for (const item of adapted.pool) {
     const result = typeof engine.executeTaskWithKnowledge === 'function'
       ? await engine.executeTaskWithKnowledge({ ...item.taskFrame, taskId: item.id })
       : engine.executeTask({ ...item.taskFrame, taskId: item.id });
+    runtimeResults.push(result);
     predictions.set(item.id, result.values?.[0]);
     statuses.push({ status: result.status });
   }
@@ -228,13 +328,18 @@ async function runStoryCloze(engine) {
     protocol: score.protocol,
     protocolDescription: 'The system compiles the four-sentence story into bounded narrative state, evaluates both candidate events with structural and typed commonsense evidence, and abstains when neither candidate has a sufficient margin.',
     samplePolicy: 'frozen-label-blind-development-partition',
+    splitQuality: 'row-IID-hash-partition',
     sampleDescription: 'A label-blind SHA-256 partition reserves 314 validation cases as fresh and exposes the remaining 1,257 cases for development. This row measures only that development partition; the official label-free test split was not used.',
     total: score.total,
     correct: score.correct,
+    attempted: score.total - score.omissions,
+    forcedChoice: true,
     normalizationCandidates: 0,
     omissions: score.omissions,
     statusCounts: statusCounts(statuses),
-    usedKbVersions: ['world-relations-1.0', 'atomic-2020', 'conceptnet-5.7.0-en'],
+    selectedMethods: aggregateMethodIds(runtimeResults),
+    usedKbVersions: aggregateKbVersions(runtimeResults),
+    selectedKbVersions: engineKnowledgeBaseVersions(engine),
     sourceEvidence: [{
       path: STORY_CLOZE_PARTITION,
       sha256: await hashFile(join(PROJECT_ROOT, STORY_CLOZE_PARTITION)),
@@ -268,13 +373,16 @@ async function runEwok(engine, count) {
     throw new Error('EWoK fresh aggregate does not match the frozen partition receipt.');
   }
   return measuredRow('ewok', {
+    resultOrigin: 'stored-receipt',
     evidenceState: 'fresh-evaluation-executed',
     protocol: 'ewok-symbolic-context-preference-fresh-v1',
     protocolDescription: 'For each target statement, the system must prefer the context in which that statement is more plausible according to ordinary physical, social, spatial, material, and quantitative knowledge.',
     samplePolicy: 'frozen-complement-of-development-probe',
+    splitQuality: 'row-IID-source-item-grouped',
     sampleDescription: 'The candidate was frozen after a balanced 110-decision development probe. Every other decision in the protected analysis snapshot formed an 8,634-decision fresh partition, which was scored once without retaining item outcomes.',
     comparability: 'Direct scalar-preference diagnostic over the protected paper-analysis snapshot; not the official language-model probability protocol.',
-    total: fresh.total, correct: fresh.correct, normalizationCandidates: 0,
+    total: fresh.total, correct: fresh.correct, attempted: fresh.total - fresh.ties,
+    forcedChoice: true, normalizationCandidates: 0,
     ties: fresh.ties, reversedPreferences: fresh.wrong,
     statusCounts: { SCORED: fresh.total },
     sourceEvidence: [...probe.archives, {
@@ -300,16 +408,24 @@ async function runEwok(engine, count) {
 }
 
 function gatedRow(id, manifest) {
+  const reportFields = benchmarkReportFields(id, { total: null, correct: null, attempted: null });
   return Object.freeze({
-    id, evidenceState: manifest.scoreState, total: null, correct: null, accuracy: null,
-    normalizationCandidates: null, normalizationCandidateRate: null, directSymbolicRate: null,
+    id, evidenceState: manifest.scoreState, ...reportFields,
+    splitQuality: null,
+    normalizationCandidates: null, normalizationCandidateRate: null,
     agentInvocations: null, agentInvocationRate: null,
-    access: manifest.access,
+    evaluationIdentities: null,
+    selectedMethods: Object.freeze([]), usedKbVersions: Object.freeze([]), selectedKbVersions: Object.freeze([]),
+    languagePolicy: null, resourcePolicy: null, resourceEvidence: null,
+    replayCommand: null, behaviorDependency: null,
+    resultOrigin: 'access-gated',
+    executionEvidence: Object.freeze({ origin: 'not-executed' }),
     diagnosis: manifest.access.reason,
+    ...benchmarkCatalogFields(id),
   });
 }
 
-export async function runPublicBenchmarkProbes(engines, options = {}) {
+export async function executePublicBenchmarkRows(engines, options = {}) {
   const settings = { ...PUBLIC_PROBE_DEFAULTS, ...options };
   const selected = new Set(options.selected ?? ['blimp', 'babi', 'clutrr', 'entityTracking', 'ewok', 'storyCloze', 'simpleqa']);
   const rows = [];
@@ -319,10 +435,13 @@ export async function runPublicBenchmarkProbes(engines, options = {}) {
   if (selected.has('babi')) {
     const score = JSON.parse(await readFile(join(PROJECT_ROOT, BABI_ALL_TWENTY_RECEIPT), 'utf8'));
     rows.push(measuredRow('babi', {
+      resultOrigin: 'stored-receipt', executedAt: score.createdAt,
       protocol: score.protocol, samplePolicy: 'complete-official-English-10k-training-split-all-twenty-families',
+      splitQuality: 'official-development',
       protocolDescription: 'The adapter compiles each visible story into a finite typed episode. The registered generic executor applies state changes, relations, event roles, paths, vectors, counting, and source-declared policies, then returns semantic values with replayable operation references.',
       sampleDescription: 'The latest run executed every one of the 200,000 questions in all twenty official English 10k training files. These train-visible cases are development evidence, not an untouched test score.',
       total: score.tested, correct: score.correct,
+      attempted: score.statusCounts.SOLVED ?? score.correct,
       normalizationCandidates: 0,
       statusCounts: score.statusCounts, byTask: score.byTask,
       sourceEvidence: [{
@@ -339,7 +458,8 @@ export async function runPublicBenchmarkProbes(engines, options = {}) {
         comprehensive: true,
         scope: 'The latest development run executed all 10,000 questions in each of all twenty task families. Official test files were not opened or scored.',
       },
-      usedKbVersions: ['babi-v1.2-language@1.0.0'],
+      usedKbVersions: [{ kbId: 'babi-v1.2-language', version: '1.0.0' }],
+      selectedKbVersions: [{ kbId: 'babi-v1.2-language', version: '1.0.0' }],
       diagnosis: `${score.correct}/${score.tested} cases match the single-label development oracle and all ${score.witnessesVerified} execution witnesses replay. Tasks 1–4 and 6–20 are each 10,000/10,000. Task 5 is 9,872/10,000; its 128 remaining inputs each expose at least two distinct transfer themes satisfying the same visible event-role query. Five alpha-renamed structural signatures require contradictory oracle choices, which falsifies first, latest, and verb-priority tie-breakers. The sound runtime returns AMBIGUOUS instead of reading host-only support-line annotations.`,
       capabilityCoverage: {
         level: 'complete-all-twenty-development-family-coverage',
@@ -362,36 +482,5 @@ export async function runPublicBenchmarkProbes(engines, options = {}) {
       : gatedRow('storyCloze', BENCHMARK_ACCESS_MANIFESTS['story-cloze-winter-2018']));
   }
   if (selected.has('simpleqa')) rows.push(await runSimpleQa(engines.simpleqa ?? engines.base, settings.simpleqa));
-  if (options.includeResearch !== false) rows.push(...await researchBenchmarkReportRows());
-  return Object.freeze({
-    format: 'eslm-public-benchmark-probe-report-v1', createdAt: new Date().toISOString(),
-    evidenceRegime: 'frozen fresh evaluations, development probes, and diagnostic probes are labeled separately; inaccessible sources and sources without a valid symbolic method remain unscored',
-    languageAgentPolicy: 'No Language Agent calls were made. normalizationCandidateRate counts direct UNPARSED cases that would trigger the optional profile; null means that direct-language eligibility was not measured.',
-    rows: Object.freeze(rows),
-  });
-}
-
-export async function publicBenchmarkCacheStatus() {
-  const statuses = [];
-  for (const [id, path] of [
-    ['blimp', 'training/.cache/datasets/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/blimp.tar.gz'],
-    ['babi', 'training/.cache/datasets/babi-v1.2/babi_tasks_1-20_v1-2.tar.gz'],
-    ['clutrr', 'training/.cache/datasets/clutrr/cache-manifest.json'],
-    ['entityTracking', 'training/.cache/datasets/entity-tracking/cache-manifest.json'],
-  ]) {
-    try {
-      const bytes = await readFile(join(PROJECT_ROOT, path));
-      statuses.push({ id, cached: true, path, bytes: bytes.length });
-    } catch (error) {
-      if (error.code !== 'ENOENT') throw error;
-      statuses.push({ id, cached: false, path });
-    }
-  }
-  const ewok = await ewokCacheStatus();
-  statuses.push(ewok.cached ? ewok : {
-    ...ewok, access: BENCHMARK_ACCESS_MANIFESTS['ewok-core-1.0'].access,
-  });
-  statuses.push({ id: 'storyCloze', ...await storyCloze2018CacheStatus() });
-  statuses.push({ id: 'simpleqa', ...await simpleQaCacheStatus() });
-  return Object.freeze(statuses);
+  return Object.freeze(rows);
 }

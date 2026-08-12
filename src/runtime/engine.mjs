@@ -4,7 +4,10 @@ import {
   abduceExplanations, answerQuery, deriveClosure, deriveInductiveFacts, indexFacts,
 } from '../reasoning/datalog.mjs';
 import { realize } from '../language/realizer.mjs';
-import { compileSessionEpisode, modelWithSession } from '../language/session.mjs';
+import {
+  compileSessionEpisode, emptySessionContext, modelWithSession, SessionContextValidationError,
+  SessionInputValidationError, SessionResourceLimitError, sessionContextSnapshot,
+} from '../language/session.mjs';
 import { ExecutionProfiler } from '../profiling.mjs';
 import { CapabilityRegistry, CORE_METHOD_DESCRIPTORS } from '../reasoning/capability-registry.mjs';
 import { capabilityGap, createPlan, taskFrameFromQuery } from '../reasoning/planner.mjs';
@@ -20,6 +23,21 @@ import { decideBooleanEntailment } from '../reasoning/sat-entailment.mjs';
 import { constructFiniteFirstOrderCountermodel } from '../reasoning/finite-first-order-model.mjs';
 import { induceFiniteConjunctiveRule } from '../reasoning/finite-conjunctive-rule-induction.mjs';
 import { executeEpisodicWorldTask } from '../reasoning/episodic-world.mjs';
+import { createModelGroundingIndex } from '../reasoning/grounding-model-retrieval.mjs';
+import { retrieveCoreRelatedEvidence } from './core-grounding.mjs';
+import {
+  assertRuntimeTextResultContract, directCoreMemorySnapshot, normalizeRuntimeStatus,
+} from './result-contract.mjs';
+import { executeTypedTask } from './typed-task-execution.mjs';
+
+function uniqueKbVersions(values) {
+  const byIdentity = new Map(values.filter((item) => item?.kbId).map((item) => [
+    `${item.kbId}\u0000${item.version ?? ''}`,
+    { kbId: item.kbId, ...(item.version ? { version: item.version } : {}) },
+  ]));
+  return [...byIdentity.values()].toSorted((left, right) =>
+    left.kbId.localeCompare(right.kbId) || String(left.version).localeCompare(String(right.version)));
+}
 
 export class EslmEngine {
   constructor(model, options = {}) {
@@ -44,13 +62,15 @@ export class EslmEngine {
     const profiler = new ExecutionProfiler('engine-initialization', this.profileEnabled, {
       modelId: model.manifest.modelId,
     });
-    this.facts = profiler.measureSync('reasoning.full-closure', () => deriveClosure(model), {
+    this.closure = profiler.measureSync('reasoning.full-closure', () => deriveClosure(model), {
       directFacts: model.facts.length, rules: model.rules.length,
     });
+    this.facts = this.closure.facts;
     profiler.annotate('reasoning.full-closure', { closureFacts: this.facts.length });
     this.index = profiler.measureSync('retrieval.build-index', () => indexFacts(this.facts), {
       facts: this.facts.length,
     });
+    this.groundingIndex = createModelGroundingIndex(this.model, this.index);
     this.initializationProfile = profiler.finish('ok', {
       entities: model.entities.length,
       directFacts: model.facts.length,
@@ -59,6 +79,48 @@ export class EslmEngine {
   }
 
   ask(text, context = {}) {
+    try {
+      return this.#askValidated(text, context);
+    } catch (error) {
+      const resourceFailure = error instanceof SessionResourceLimitError;
+      const contextFailure = error instanceof SessionContextValidationError;
+      const inputFailure = error instanceof SessionInputValidationError;
+      if (!resourceFailure && !contextFailure && !inputFailure) throw error;
+      let safeContext;
+      try { safeContext = sessionContextSnapshot(context); } catch { safeContext = emptySessionContext(); }
+      return assertRuntimeTextResultContract({
+        protocol: 'eslm-runtime-result-v1',
+        status: resourceFailure ? 'RESOURCE_LIMIT' : contextFailure ? 'INCONSISTENT_CONTEXT' : 'UNPARSED',
+        answer: resourceFailure
+          ? `I refused the request because the bounded session ${error.resource} limit was exceeded.`
+          : contextFailure
+            ? 'I refused the supplied session context because its shape is invalid.'
+            : 'I could not interpret the request because runtime input must be text.',
+        languageRoute: 'direct-symbolic', values: [], provenance: [],
+        usedKbVersions: [], selectedKbVersions: this.model.manifest.knowledgeBaseVersions
+          ?? (this.model.manifest.knowledgeBases ?? []).map((kbId) => ({ kbId })),
+        consultedKbVersions: [],
+        unresolvedSubgoals: [{
+          operation: contextFailure ? 'validate-session-context' : inputFailure ? 'validate-input' : 'compile-session',
+          ...(resourceFailure ? { resource: error.resource, observed: error.observed, limit: error.limit }
+            : { field: error.field ?? 'input', diagnostic: error.message }),
+        }],
+        context: safeContext,
+        episode: {
+          original: error.resource === 'inputBytes' ? '' : typeof text === 'string' ? text : '',
+          segments: [], unsupportedStatements: [], resourceRefused: true,
+        },
+        model: {
+          id: this.model.manifest.modelId, knowledgeBases: this.model.manifest.knowledgeBases ?? [],
+          benchmarkComparable: this.model.manifest.benchmarkComparable !== false,
+          memory: this.memorySnapshot(),
+        },
+      });
+    }
+  }
+
+  #askValidated(text, context = {}) {
+    context = sessionContextSnapshot(context);
     const profiler = new ExecutionProfiler('query', this.profileEnabled, {
       modelId: this.model.manifest.modelId, inputCharacters: text.length,
     });
@@ -66,6 +128,18 @@ export class EslmEngine {
     const episode = profiler.measureSync(
       'language.compile-session', () => compileSessionEpisode(text, this.model, context),
     );
+    if (episode.unsupportedStatements.length > 0) {
+      const rejectedSession = context.session ?? { entities: [], facts: [], rules: [], history: [] };
+      return complete({
+        status: 'UNSUPPORTED',
+        answer: 'I rejected the mixed episode because at least one statement was unsupported; '
+          + 'no session changes were committed.',
+        learned: [], learnedRules: [], provenance: [],
+        context: { ...context, session: rejectedSession },
+        episode: { original: text, segments: episode.segments,
+          unsupportedStatements: episode.unsupportedStatements, transaction: 'rolled-back' },
+      });
+    }
     profiler.annotate('language.compile-session', {
       segments: episode.segments.length,
       sessionFacts: episode.session.facts.length,
@@ -74,6 +148,7 @@ export class EslmEngine {
     const activeModel = profiler.measureSync(
       'model.session-overlay', () => modelWithSession(this.model, episode.session),
     );
+    const hasSessionOverlay = episode.session.facts.length > 0 || episode.session.rules.length > 0;
     if (!episode.question) {
       if ((episode.learned.length > 0 || episode.learnedRules.length > 0)
         && episode.unsupportedStatements.length === 0) {
@@ -93,7 +168,8 @@ export class EslmEngine {
       }
       return complete({
         status: 'UNSUPPORTED',
-        answer: 'I could not interpret that as a supported statement or question yet. Try /examples for forms I can execute.',
+        answer: 'I could not interpret that as a supported statement or question yet. '
+          + 'Try /examples for forms I can execute.',
         learned: episode.learned,
         learnedRules: episode.learnedRules,
         provenance: [],
@@ -113,8 +189,10 @@ export class EslmEngine {
         answer: query.status === 'AMBIGUOUS'
           ? 'The question matches more than one known entity.'
           : query.status === 'UNKNOWN'
-            ? `I understand the question, but I do not know “${query.missingEntity}” in the active session or loaded knowledge bases.`
-            : 'I do not know how to handle that kind of question yet. Try /examples to see the question families I can execute.',
+            ? `I understand the question, but I do not know “${query.missingEntity}” in the active session or `
+              + 'loaded knowledge bases.'
+            : 'I do not know how to handle that kind of question yet. '
+              + 'Try /examples to see the question families I can execute.',
         input: normalized,
         query,
         provenance: [],
@@ -127,7 +205,8 @@ export class EslmEngine {
     if (query.intent === 'system-identity') {
       return complete({
         status: 'ANSWERED',
-        answer: 'I am ESLM, an offline executable symbolic language model. I answer by running generated knowledge and explicit reasoning rules, without calling an LLM at runtime.',
+        answer: 'I am ESLM, an offline executable symbolic language model. I answer by running generated knowledge '
+          + 'and explicit reasoning rules, without calling an LLM at runtime.',
         values: ['eslm'], provenance: [], reasoning: { method: 'system-description' }, query,
         input: normalized, learned: episode.learned, learnedRules: episode.learnedRules,
         context: { ...context, session: episode.session },
@@ -137,7 +216,8 @@ export class EslmEngine {
     if (query.intent === 'user-identity') {
       return complete({
         status: 'UNKNOWN',
-        answer: 'I do not know who you are from this session yet. You can tell me a supported fact about yourself, but I will not guess your identity.',
+        answer: 'I do not know who you are from this session yet. You can tell me a supported fact about yourself, '
+          + 'but I will not guess your identity.',
         values: [], provenance: [], reasoning: { method: 'epistemic-abstention' }, query,
         input: normalized, learned: episode.learned, learnedRules: episode.learnedRules,
         context: { ...context, session: episode.session },
@@ -147,7 +227,9 @@ export class EslmEngine {
     if (query.intent === 'system-capabilities') {
       return complete({
         status: 'ANSWERED',
-        answer: 'I can learn bounded session facts, retrieve loaded knowledge, run explicit deduction and configured induction, return defeasible event candidates, and show provenance. Use /examples for tested questions and /kbs for available knowledge.',
+        answer: 'I can learn bounded session facts, retrieve loaded knowledge, run explicit deduction and configured '
+          + 'induction, return defeasible event candidates, and show provenance. Use /examples for tested questions '
+          + 'and /kbs for available knowledge.',
         values: ['session-learning', 'retrieval', 'deduction', 'induction', 'provenance'],
         provenance: [], reasoning: { method: 'system-description' }, query, input: normalized,
         learned: episode.learned, learnedRules: episode.learnedRules,
@@ -158,7 +240,8 @@ export class EslmEngine {
     if (query.intent === 'system-operational-status') {
       return complete({
         status: 'ANSWERED',
-        answer: 'I am ready. I am running as a deterministic symbolic system and waiting for a supported question or fact.',
+        answer: 'I am ready. I am running as a deterministic symbolic system and waiting for a supported question '
+          + 'or fact.',
         values: ['ready'], provenance: [], reasoning: { method: 'system-description' }, query,
         input: normalized, learned: episode.learned, learnedRules: episode.learnedRules,
         context: { ...context, session: episode.session },
@@ -167,24 +250,30 @@ export class EslmEngine {
     }
     const taskFrame = taskFrameFromQuery(query, {
       assertions: episode.session.facts.map((fact) => fact.id),
-      contextStack: ['context:runtime:baseline', ...(episode.session.facts.length > 0 ? ['context:session:current'] : [])],
+      contextStack: ['context:runtime:baseline', ...(hasSessionOverlay ? ['context:session:current'] : [])],
     });
     const plan = createPlan(taskFrame, this.capabilities);
     if (plan.status === 'NO_APPLICABLE_METHOD') {
       return complete({
-        status: 'NO_APPLICABLE_METHOD', answer: 'The input was understood, but no registered method can solve the requested subproblem.',
+        status: 'NO_APPLICABLE_METHOD',
+        answer: 'The input was understood, but no registered method can solve the requested subproblem.',
         input: normalized, query, taskFrame, plan, capabilityGap: capabilityGap(taskFrame, plan),
         values: [], provenance: [], context: { ...context, session: episode.session },
+        episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
       });
     }
-    const activeFacts = episode.session.facts.length > 0
+    const activeClosure = hasSessionOverlay
       ? profiler.measureSync('reasoning.session-closure', () => deriveClosure(activeModel), {
         directFacts: activeModel.facts.length, rules: activeModel.rules.length,
-      }) : this.facts;
-    if (episode.session.facts.length > 0) {
+      }) : this.closure;
+    const activeFacts = activeClosure.facts;
+    if (hasSessionOverlay) {
       profiler.annotate('reasoning.session-closure', { closureFacts: activeFacts.length });
     }
     if (query.reasoning === 'abduction') {
+      if (!activeClosure.complete) return complete(this.#closureResourceResponse({
+        text, context, episode, normalized, query, taskFrame, plan, closure: activeClosure,
+      }));
       const hypotheses = profiler.measureSync('reasoning.abduction', () => abduceExplanations(
         query, activeFacts, activeModel.rules, activeModel.reasoning?.abduction?.maxHypotheses,
       ), { facts: activeFacts.length, rules: activeModel.rules.length });
@@ -211,20 +300,32 @@ export class EslmEngine {
       }, profiler));
     }
     const inducedFacts = query.reasoning === 'induction'
-      ? profiler.measureSync('reasoning.induction', () => deriveInductiveFacts(activeModel, activeFacts), {
+      ? activeClosure.complete
+        ? profiler.measureSync('reasoning.induction', () => deriveInductiveFacts(activeModel, activeFacts), {
         facts: activeFacts.length,
-      }) : [];
+        }) : []
+      : [];
+    if (query.reasoning === 'induction' && !activeClosure.complete) {
+      return complete(this.#closureResourceResponse({
+        text, context, episode, normalized, query, taskFrame, plan, closure: activeClosure,
+      }));
+    }
     const activeIndex = inducedFacts.length > 0
       ? profiler.measureSync('retrieval.query-index', () => indexFacts([...activeFacts, ...inducedFacts]), {
         facts: activeFacts.length + inducedFacts.length,
       })
-      : episode.session.facts.length > 0
+      : hasSessionOverlay
         ? profiler.measureSync('retrieval.query-index', () => indexFacts(activeFacts), { facts: activeFacts.length })
         : this.index;
     const result = profiler.measureSync('retrieval.answer', () => answerQuery(query, activeIndex));
     profiler.annotate('retrieval.answer', { values: result.values.length, evidence: result.evidence.length });
     const inferred = result.evidence.find((fact) => fact.reasoning === 'induction');
     const derived = result.evidence.filter((fact) => fact.reasoning === 'deduction');
+    if (result.values.length === 0 && !activeClosure.complete) {
+      return complete(this.#closureResourceResponse({
+        text, context, episode, normalized, query, taskFrame, plan, closure: activeClosure,
+      }));
+    }
     return complete(this.#response({
       text, context, episode, activeModel, normalized, query, result, taskFrame, plan,
       status: result.values.length === 0 ? 'UNKNOWN' : inferred ? 'INDUCTIVE' : 'ANSWERED',
@@ -237,9 +338,39 @@ export class EslmEngine {
     }, profiler));
   }
 
-  #response({ text, context, episode, activeModel, normalized, query, result, status, reasoning, taskFrame, plan }, profiler) {
+  #closureResourceResponse({ text, context, episode, normalized, query, taskFrame, plan, closure }) {
+    return {
+      status: 'RESOURCE_LIMIT',
+      answer: 'I could not establish an answer because bounded Horn deduction did not reach its fixed point.',
+      input: normalized,
+      query,
+      taskFrame,
+      plan: { methodId: plan?.methodId, steps: plan?.steps },
+      values: [],
+      provenance: [],
+      reasoning: {
+        method: 'deduction', complete: false, rounds: closure.rounds,
+        joinAttempts: closure.joinAttempts, frontierSize: closure.frontierSize,
+      },
+      learned: episode.learned,
+      learnedRules: episode.learnedRules,
+      context: { ...context, session: episode.session },
+      episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
+      unresolvedSubgoals: [{ operation: 'safe-horn-deduction', diagnostic: closure.diagnostic }],
+    };
+  }
+
+  #response({
+    text, context, episode, activeModel, normalized, query, result, status, reasoning, taskFrame, plan,
+  }, profiler) {
     const evidence = result.evidence.map((fact) => ({
       fact: fact.id,
+      kbId: fact.kbId,
+      kbVersion: fact.kbVersion,
+      kbSources: fact.kbSources ?? (fact.kbId ? [{
+        kbId: fact.kbId,
+        ...(fact.kbVersion ? { version: fact.kbVersion } : {}),
+      }] : []),
       source: fact.provenance ?? (fact.ruleSource ? [fact.ruleSource] : []),
       rule: fact.rule,
       support: fact.support,
@@ -275,26 +406,37 @@ export class EslmEngine {
   }
 
   #profiled(response, profiler) {
-    const statusMap = {
-      ANSWERED: 'SOLVED', LEARNED: 'SOLVED', INDUCTIVE: 'SOLVED', ABDUCTIVE: 'SOLVED',
-      UNSUPPORTED: 'UNPARSED',
-    };
-    const status = statusMap[response.status] ?? response.status;
+    const status = normalizeRuntimeStatus(response.status);
+    const usedKbVersions = uniqueKbVersions((response.provenance ?? []).flatMap((item) =>
+      item.kbSources?.length > 0 ? item.kbSources : item.kbId ? [{
+        kbId: item.kbId,
+        ...(item.kbVersion ? { version: item.kbVersion } : {}),
+      }] : []));
     const annotated = {
       ...response,
       protocol: 'eslm-runtime-result-v1',
       status,
       languageRoute: 'direct-symbolic',
-      usedKbVersions: (this.model.manifest.knowledgeBases ?? []).map((id) => ({ kbId: id })),
-      unresolvedSubgoals: response.capabilityGap ? [response.capabilityGap] : [],
+      usedKbVersions,
+      selectedKbVersions: this.model.manifest.knowledgeBaseVersions
+        ?? (this.model.manifest.knowledgeBases ?? []).map((id) => ({ kbId: id })),
+      consultedKbVersions: response.query
+        && !String(response.query.intent ?? '').startsWith('system-')
+        && response.query.intent !== 'user-identity'
+        ? this.model.manifest.knowledgeBaseVersions
+          ?? (this.model.manifest.knowledgeBases ?? []).map((id) => ({ kbId: id }))
+        : [],
+      unresolvedSubgoals: response.unresolvedSubgoals
+        ?? (response.capabilityGap ? [response.capabilityGap] : []),
       model: {
         id: this.model.manifest.modelId,
         knowledgeBases: this.model.manifest.knowledgeBases ?? [],
         benchmarkComparable: this.model.manifest.benchmarkComparable !== false,
+        memory: this.memorySnapshot(),
       },
     };
-    if (!this.profileEnabled) return annotated;
-    return {
+    if (!this.profileEnabled) return assertRuntimeTextResultContract(annotated);
+    return assertRuntimeTextResultContract({
       ...annotated,
       profile: {
         initialization: this.initializationProfile,
@@ -303,132 +445,26 @@ export class EslmEngine {
           provenanceItems: response.provenance?.length ?? 0,
         }),
       },
-    };
+    });
   }
 
   score(text) {
     return grammarScore(text, this.model);
   }
 
+  memorySnapshot() {
+    return directCoreMemorySnapshot();
+  }
+
+  retrieveRelatedEvidence(request, context = {}) {
+    return retrieveCoreRelatedEvidence({
+      model: this.model,
+      factIndex: this.index,
+      groundingIndex: this.groundingIndex,
+    }, request, context);
+  }
+
   executeTask(task) {
-    const methods = {
-      'complete-container-contents': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.containerState,
-        execute: executeContainerStateTask,
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'select-narrative-continuation': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.narrativeContinuation,
-        execute: selectNarrativeContinuation,
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'induce-symbolic-classification-rule': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.finiteConjunctiveRuleInduction,
-        execute: (value) => {
-          const result = induceFiniteConjunctiveRule(value.inductionTask);
-          return {
-            ...result,
-            values: result.status === 'SOLVED' ? [result.rule] : [],
-          };
-        },
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'execute-finite-episodic-world': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.finiteEpisodicWorld,
-        execute: (value) => executeEpisodicWorldTask(value.episodicWorldTask),
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'classify-typed-relation': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.typedRelationAlgebra,
-        execute: (value) => executeTypedRelationTask(
-          value.relationTask,
-          this.model.reasoning?.relationAlgebras?.[value.relationTask?.algebraId],
-        ),
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'spatial-vector-relation': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.spatialVectorConstraints,
-        execute: (value) => executeSpatialVectorTask(value.relationTask, value.vectorSystem),
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'spatial-extent-relations': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.spatialExtentInequalities,
-        execute: (value) => executeSpatialExtentTask(value.extentTask, value.extentSystem),
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'qualitative-spatial-relations': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.qualitativeRelationClosure,
-        execute: (value) => executeQualitativeRelationTask(value.qualitativeTask, value.qualitativeSystem),
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'judge-categorical-opposition': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.categoricalLogic,
-        execute: executeCategoricalTask,
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'transform-categorical-proposition': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.categoricalLogic,
-        execute: executeCategoricalTask,
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'derive-categorical-syllogism': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.categoricalLogic,
-        execute: executeCategoricalTask,
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'decide-boolean-entailment': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.scalableBooleanEntailment,
-        execute: (value) => {
-          const result = decideBooleanEntailment(value);
-          return {
-            ...result,
-            values: result.status === 'SOLVED' ? [result.entailed] : [],
-          };
-        },
-        route: 'direct-symbolic-task-adapter',
-      }),
-      'construct-finite-countermodel': Object.freeze({
-        descriptor: CORE_METHOD_DESCRIPTORS.finiteFirstOrderCountermodel,
-        execute: (value) => {
-          const result = constructFiniteFirstOrderCountermodel(value.argument, {
-            domainSize: value.domainSize,
-            maximumConstantAssignments: value.maximumConstantAssignments,
-            booleanBudgets: value.booleanBudgets,
-          });
-          return {
-            ...result,
-            countermodel: result.model,
-            values: result.status === 'SOLVED' ? [result.model] : [],
-          };
-        },
-        route: 'direct-symbolic-task-adapter',
-      }),
-    };
-    const method = methods[task?.operation];
-    if (!method) {
-      return { status: 'NO_APPLICABLE_METHOD', protocol: 'eslm-runtime-result-v1', values: [] };
-    }
-    const result = method.execute(task);
-    return {
-      ...result,
-      protocol: 'eslm-runtime-result-v1',
-      languageRoute: method.route,
-      taskFrame: {
-        taskId: task.taskId,
-        goals: [{
-          operation: task.operation,
-          mask: task.mask,
-          query: task.query ?? task.relationTask?.query ?? task.extentTask?.query,
-        }],
-        outputContract: {
-          kind: task.operation === 'decide-boolean-entailment' ? 'entailed-boolean'
-            : task.operation === 'construct-finite-countermodel' ? 'finite-countermodel' : 'semantic-values',
-        },
-      },
-      plan: { methodId: method.descriptor.methodId },
-      usedKbVersions: (this.model.manifest.knowledgeBases ?? []).map((kbId) => ({ kbId })),
-      unresolvedSubgoals: [],
-      model: { id: this.model.manifest.modelId, knowledgeBases: this.model.manifest.knowledgeBases ?? [] },
-    };
+    return executeTypedTask(this.model, task);
   }
 }

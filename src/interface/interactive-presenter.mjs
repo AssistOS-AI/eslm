@@ -76,7 +76,7 @@ Seed: ${style.blue(seed)} — reuse it with /examples or /smoke.
 Page: ${style.green(`${page} of ${pageCount}`)} — ${generated.length} cases shown, cases ${start + 1}–${start + generated.length} of ${all.length}. Use ${style.blue(`/examples ${page === pageCount ? 1 : page + 1} ${seed}`)} for the next page.
 Current executable evidence: ${style.green('generated nonce regressions plus fixed fixtures')} for controlled language, state replacement, task planning, retrieval, preference scoring, and safe Horn deduction.
 WordNet and ATOMIC checks are source-exposed integration evidence, ${style.yellow('not public benchmark scores')}.
-The generated public report includes every registered public and research benchmark row, with fresh, development, diagnostic, unscored-method, and unavailable-oracle evidence kept distinct. Use ${style.blue('benchmark status')} and ${style.blue('benchmark probe')} for source-specific denominators and receipts; generated examples never substitute for those probes.
+The ${style.blue('benchmark probe --benchmark all')} report includes every registered public and research row. A single-ID probe returns only that benchmark. Each row distinguishes current execution from stored receipt assembly and current from stale frozen dependencies; generated examples never substitute for those receipts.
 
 ${catalog}`;
 }
@@ -132,11 +132,32 @@ export async function interactiveSmoke(engine, selected, style, seed, count = RE
 }
 
 export function interactiveResultText(result, original, style) {
+  const appendGrounding = (primary) => {
+    if (!result.grounding) return primary;
+    const bundle = result.grounding;
+    const lines = [primary, '', style.bold('Related KB evidence — not an answer')];
+    if (bundle.entries.length === 0) {
+      lines.push(bundle.search.complete
+        ? '  The bounded search found no related records.'
+        : '  The bounded search was incomplete and found no related records.');
+    } else {
+      for (const [index, entry] of bundle.entries.entries()) {
+        const source = `${entry.kbId}${entry.kbVersion ? `@${entry.kbVersion}` : ''}`;
+        lines.push(`  ${index + 1}. ${entry.statement} [${source}]`);
+      }
+    }
+    if (!bundle.search.complete) {
+      const reasons = [...new Set(bundle.search.receipts.flatMap((receipt) => receipt.truncationReasons))];
+      lines.push(style.yellow(`  Search coverage is incomplete${reasons.length ? `: ${reasons.join(', ')}` : '.'}`));
+    }
+    lines.push(style.dim('  These records may help a person or downstream model reformulate the question; they do not support the primary answer.'));
+    return lines.join('\n');
+  };
   if (result.languageRoute === 'language-agent-normalized') {
     const operation = result.normalization.candidate.operation === 'translation' ? 'Translation' : 'Simplification';
     const cache = result.normalization.cacheHit ? ' (validated cache hit)' : '';
     const activity = `${result.normalization.proposalCount ?? 1}/${result.normalization.proposalLimit ?? 3} proposal slots; ${result.normalization.externalInvocations ?? 0} external invocation(s)`;
-    return `${style.yellow(`Language Agent ${operation.toLocaleLowerCase('en-US')} accepted${cache}`)}\n  Original: ${original}\n  ${operation}: ${result.normalization.candidate.normalizedEnglish}\n  Agent activity: ${activity}\n  Symbolic result: ${style.status(result.status, `[${result.status}]`)} ${result.answer}`;
+    return appendGrounding(`${style.yellow(`Language Agent ${operation.toLocaleLowerCase('en-US')} accepted${cache}`)}\n  Original: ${original}\n  ${operation}: ${result.normalization.candidate.normalizedEnglish}\n  Agent activity: ${activity}\n  Symbolic result: ${style.status(result.status, `[${result.status}]`)} ${result.answer}`);
   }
   const lines = [`${style.status(result.status, `[${result.status}]`)} ${result.answer}`];
   if (result.normalization?.attempted && result.normalization.status !== 'accepted') {
@@ -153,7 +174,7 @@ export function interactiveResultText(result, original, style) {
       ?? result.normalization.validation?.errors?.join('; ')
       ?? `the second symbolic parse returned ${result.normalization.reparseStatus ?? 'an unsupported result'}`}`);
   }
-  return lines.join('\n');
+  return appendGrounding(lines.join('\n'));
 }
 
 function formatBytes(bytes) {
@@ -189,9 +210,18 @@ export function traceText(last, style) {
   if (!last) return style.yellow('Ask a question first; there is no trace yet.');
   const lines = [style.bold('Last answer trace'), `Status: ${style.status(last.status)}`, `Method: ${last.reasoning?.method ?? 'not recorded'}`];
   for (const [index, item] of (last.provenance ?? []).entries()) {
-    lines.push(`  ${index + 1}. ${item.fact ?? 'fact'} — ${(item.source ?? []).join(', ') || 'source not recorded'}`);
+    const kb = item.kbId ? `; ${item.kbId}${item.kbVersion ? `@${item.kbVersion}` : ''}` : '';
+    lines.push(`  ${index + 1}. ${item.fact ?? 'fact'} — ${(item.source ?? []).join(', ') || 'source not recorded'}${kb}`);
   }
   if (!(last.provenance ?? []).length) lines.push('  No source facts were used.');
+  if (last.grounding) {
+    lines.push('', style.bold('Separate related-evidence search'));
+    lines.push(`  Status: ${last.grounding.status}; complete: ${last.grounding.search.complete ? 'yes' : 'no'}.`);
+    for (const receipt of last.grounding.search.receipts) {
+      lines.push(`  Searched ${receipt.kbId}${receipt.kbVersion ? `@${receipt.kbVersion}` : ''}: ${receipt.status}; ${receipt.coverage}.`);
+    }
+    lines.push('  Related records were not used as answer premises.');
+  }
   return lines.join('\n');
 }
 

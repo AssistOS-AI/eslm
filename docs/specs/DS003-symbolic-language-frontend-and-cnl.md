@@ -44,6 +44,25 @@ The second phase builds syntactic alternatives with features. The third phase co
 
 The acceptance gate verifies complete syntactic coverage, complete semantic coverage, preservation of logical operators, safe scope, reference status and compatibility with the Semantic IR schema. A parse may be accepted with unresolved lexical meaning if the symbol remains usable. It may not be accepted when negation, quantification, modality or relation direction has been dropped.
 
+### Present implementation boundary
+
+The current direct frontend is a bounded deterministic collection of token, sentence, pattern, morphology, discourse,
+and task-frame compilers. It handles the documented controlled forms and several explicit task projections; it is not
+the general chart/feature parser described as a target above and does not satisfy the full Semantic IR inventory in
+Section 4. This is why ordinary requests such as open-ended report generation, many broad “why” questions, nested
+scope, and unrestricted prose can still return `UNPARSED` even when a loaded KB contains related facts.
+
+The distinction is deliberate and observable. A direct accepted CNL question, a recognized factoid routed to public
+providers, and a source/host structured task use different route metadata. Solver success on the latter two does not
+increase raw-language coverage. A future chart parser must preserve current accepted semantics and statuses rather
+than relabeling every existing adapter as generic language.
+
+Session compilation is transactional. If an episode contains any unsupported statement, its tentative entities, facts,
+rules, and history events are discarded and the result is `UNPARSED`; a later request cannot observe a fact learned by
+a rejected partial interpretation. Input bytes, segment count and size, and accumulated session entities, facts, rules,
+and history are bounded before inference. Crossing one of those gates returns `RESOURCE_LIMIT` with the exhausted field
+and leaves the caller's prior context unchanged.
+
 ### 4. Semantic IR obligations
 
 The front-end must be able to represent entities, classes, properties, binary relations, n-ary events, semantic roles, quantifiers, negation, conjunction, disjunction, implication, equality, inequality, temporal order, spatial relations, modality, defaults, confidence, reference alternatives and question goals.
@@ -104,8 +123,13 @@ explicit knowledge gap containing the factoid frame and the providers considered
 
 This projection does not guess a predicate from an answer and does not make arbitrary English equivalent to a supported
 provider query. Provider results are normalized and compared as semantic value sets. Agreement merges provenance;
-disagreement returns ambiguity; no response returns missing knowledge. The original question, generated provider
+disagreement returns ambiguity; no response returns an explicit `UNKNOWN` knowledge gap. The original question, generated provider
 candidate, provider identity, and route remain observable.
+
+After an `UNPARSED` or recognized-but-unanswered question, DS009 may attach a related-evidence grounding bundle. Its
+lexical terms come from the original surface rather than parser spelling repairs. The bundle does not make the input
+parsed, does not become Semantic IR, and is not included in Language Agent feedback. Its presence therefore does not
+change the direct-language route or primary status.
 
 Story continuation records use a separate explicit task adapter because a four-sentence context plus candidate endings
 is already a machine-declared selection task. Each sentence is compiled into a bounded narrative event frame with
@@ -139,7 +163,8 @@ general parser merely because it improves a benchmark.
 Response: The frontend has established the communicative operation and preserved its relation surface, direction, and
 arguments. Failure after every loaded provider declines the frame is evidence about available knowledge or provider
 coverage, not evidence that the question was linguistically uninterpretable. Keeping those statuses separate prevents
-Language Agent normalization from being misused as factual retrieval.
+Language Agent normalization from being misused as factual retrieval. DS009 may additionally return bounded related
+KB records, but they remain outside the answer and do not change `UNKNOWN` into `SOLVED`.
 
 ### Question #3: Why does Language Agent normalization have a separate authority?
 

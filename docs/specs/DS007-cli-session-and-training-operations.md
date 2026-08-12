@@ -32,13 +32,21 @@ An unregister operation removes the catalog entry without deleting the package u
 
 ### 4. One-shot execution
 
-A one-shot execution accepts text containing instructions, facts, contextual information and one or more goals. The runtime identifies these discourse roles, constructs a task frame, selects KBs and methods, executes the symbolic plan and emits a structured result.
+The target one-shot contract accepts text containing instructions, facts, contextual information, and one or more
+goals. The current Stage A text path is narrower: it accepts zero or more supported session statements followed by at
+most one final question, and it constructs exactly one executable goal. An episode containing any unsupported
+statement is rejected transactionally; tentative facts and history do not leak into later requests. Multi-goal AND/OR
+planning remains a target owned by DS008 rather than a current CLI claim.
 
 The user may supply temporary facts or assumptions. These enter a session-scoped context and do not modify persistent KBs unless a separate persistence operation is authorized.
 
 ### 5. Interactive execution
 
-Interactive mode maintains a session context, prior entities, accepted assumptions, loaded shard cache and unresolved questions. The user can inspect interpretations, request explanations, add facts, retract session facts and ask follow-up questions.
+Interactive mode currently maintains bounded accepted entities, facts, rules, history, and one salient entity, while
+the configured runtime separately maintains its loaded shard cache. Users can add supported session facts, ask
+follow-up questions, inspect the last trace or profile, and clear the complete session. Fine-grained fact retraction,
+an unresolved-question queue, and an interactive clarification dialogue are target operations, not implemented
+commands. Current ambiguity is returned as `AMBIGUOUS` for the user to reformulate.
 
 The session must not silently treat a previous uncertain conclusion as a fact. The status and provenance of every retained item remain available.
 
@@ -48,12 +56,32 @@ Benchmark operations cache immutable source data, select development and holdout
 
 A regression operation runs all suites required by a candidate change. A shadow operation reports aggregate metrics without exposing held-out examples to the coding agent.
 
-The implemented public-benchmark surface separates three operations that must not be conflated. `benchmark status` reports whether each immutable source or access manifest is locally available; it does not execute cases and does not return a score. `benchmark probe --benchmark all|ID[,ID]` executes the versioned development or diagnostic probe for the selected families, and `--publish` writes the complete report to `docs/results/latest-public-benchmark-probes.json`. `benchmark run --suite FILE` executes a frozen repository or operator-supplied JSONL suite through the generic scorer. Public catalog probes reject `--external-language-agent`; an assisted comparison must use a separately frozen suite so its model, cache, prompt policy, and route accounting cannot alter the published direct baseline.
+The public-benchmark surface separates operations that must not be conflated. `benchmark status` reports source,
+adapter, and frozen-receipt availability; it does not execute cases and does not return a score. `benchmark probe
+--benchmark all|ID[,ID]` executes only the selected adapters that have a live probe and may assemble selected frozen
+rows from immutable receipts. Every row labels whether it was executed in this invocation or assembled from earlier
+evidence, and report assembly time is never presented as row execution time. Selecting one ID never appends unrelated
+research rows. `--publish` writes the resulting portfolio receipt to
+`docs/results/latest-public-benchmark-probes.json`. `benchmark run --suite FILE` executes a frozen repository or
+operator-supplied JSONL suite through the generic scorer. Public catalog probes reject
+`--external-language-agent`; an assisted comparison uses a separately frozen suite so its model, cache, prompt policy,
+and route accounting cannot alter the published direct baseline.
 
-The benchmark portfolio is data-driven. `benchmark status` reads the typed research and access catalogs and returns
-actionable official URLs without exposing credentials. `benchmark probe` dispatches through registered DS017 adapters,
-not a hardcoded prose list in this specification. Adding a benchmark updates its catalog, adapter, source receipt,
-tests, and detailed benchmark page; the CLI command contract remains unchanged.
+A static receipt audit verifies frozen result and dependency digests. It classifies an audited receipt as current,
+historical-stale, historical-unrecoverable, invalid, or unavailable rather than inferring currentness from a cache
+directory. A stored execution whose receipt family has no complete currentness audit is explicitly
+`historical-unverified`, never implicitly current. The ordinary
+repository check may report historical receipts without re-running costly public sources; a publication gate that
+claims current behavior uses the strict audit mode and fails on stale behavioral dependencies.
+
+The benchmark status inventory is data-driven: `benchmark status` reads the typed research and access catalogs and
+returns actionable official URLs without exposing credentials. The current probe executor is less general. Its command
+module has an explicit allowlist of portfolio IDs, and its public-probe module maps the legacy live rows through explicit
+branches while research rows use typed factories. Those branches are host-side benchmark adapters, not reasoning-core
+dispatch, but adding a live probe currently requires changing that executor as well as its catalog, source receipt,
+tests, and detailed benchmark page. A future typed executor registry should remove this maintenance duplication; until
+then, catalog inclusion must not be described as automatic probe registration. The CLI command syntax can remain stable
+through that refactor.
 
 ### 7. Input contract
 
@@ -61,13 +89,51 @@ The runtime accepts ordinary text, but internally distinguishes instruction, ass
 
 ### 8. Output contract
 
-Every execution result contains a status, answer or partial answer, confidence semantics, parsed task frame, used KB versions, loaded shards, selected methods, proof or execution trace, unresolved subgoals, fallback route and resource usage.
+The durable target result contains a status, answer or partial answer, confidence semantics, accepted Semantic IR,
+task frame, selected, consulted, and actually used KB versions, loaded shards, selected methods, proof or execution
+trace, unresolved subgoals, language route, optional failure-time grounding bundle, and measured resource use.
+
+The current `eslm-runtime-result-v1` is an implemented, stage-dependent subset. Every text result exposes the protocol,
+status, answer, session and episode state, language route, the three KB-version sets, unresolved subgoals, and
+model/memory metadata. Normalized `input`, accepted `query`, `taskFrame`, `plan`, semantic `values`, answer
+`provenance`, and a `reasoning` summary appear only when execution reached the stage that can truthfully construct
+them; an early `UNPARSED` result can omit all of those fields. The result may additionally expose grounding, a
+typed-task witness, normalization receipts, or profiler measurements. It does not yet promise a confidence object, a
+standalone accepted-Semantic-IR field, loaded-shard identifiers, complete per-step receipts, or measured resources on
+an ordinary non-profiled call. Clients must branch on status and feature-detect optional fields rather than infer them
+from the target example in DS008.
+
+Every direct `EslmEngine` text and typed-task result carries a validated `eslm-memory-plan-v1` snapshot under
+`model.memory`, including early input, context, method, and resource failures. That direct snapshot reports the already
+resident core as eager, with no soft target, no reserve, and no public providers. The CLI's `EslmRuntime` wrapper
+reports its configured provider memory plan instead, even when no public provider is selected. An empty provider list
+therefore means “no provider cache is in this execution route”; it does not mean that the core model occupies zero
+memory. Consumers must read the requested policy and reserve from the same snapshot rather than infer them from the
+provider count.
+
+`usedKbVersions` lists only KBs whose records or policy contributed to the primary result. Merely loading, selecting,
+consulting, or returning a KB in the grounding bundle does not make it used.
 
 Human-readable output may be concise, but a machine-readable result must be available for benchmark evaluation and agent diagnostics.
 
+When the runtime cannot answer but returns related KB records, one-shot JSON keeps the primary `answer` unchanged and
+serializes `grounding` separately. Interactive output prints the primary status and answer first, then a visibly
+separated “Related KB evidence — not an answer” section. `/trace` distinguishes answer premises from grounding search
+receipts and exposes incomplete coverage. This presentation is not permission to synthesize a new answer inside the
+symbolic runtime.
+
 ### 9. Determinism and reproducibility
 
-The CLI records the system commit, configuration, KB versions, planner policy, random seed, LLM configuration when used and resource budgets. Deterministic modes must reproduce the same parse, plan and answer from the same inputs and packages.
+The durable reproducibility envelope records the system commit or content-addressed worktree, configuration, KB
+versions, planner policy, random seed, external-model configuration when used, resource budgets, and measured
+resources. Deterministic modes must reproduce the same parse, plan, and answer from the same inputs and packages.
+
+That full envelope is not yet attached to every ordinary `ask` result. Current public live benchmark rows record a
+content-addressed source-tree digest, runtime identity, replay command, requested memory policy, sampled peak RSS, and
+wall time. The current ordinary runtime result records selected KB versions and model/memory policy; `--profile` adds
+the implemented profiler fields. It does not promise a Git identity, seed, complete CLI configuration, or measured
+resources without profiling. Frozen benchmark and external-process receipts carry their own execution identities under
+DS010 and DS013. Documentation must not project those receipt-only fields onto every inference call.
 
 ### Required command families
 
@@ -81,15 +147,25 @@ Dataset acquisition, source probing, compilation, evaluation, benchmark executio
 
 ### Interactive commands and session state
 
-Interactive mode must expose help, loaded and registered KBs, current model and versions, memory and resource policy, last trace, last profile, session facts and assumptions, retraction of session facts, clarification, and session clearing. Session items retain status and provenance. An uncertain conclusion is not silently reused as a fact.
+The current interactive command set exposes help, installed and loaded KBs, model and selected versions, memory policy,
+normalization policy, last trace, last available profile, whole-session clearing, bounded examples, and the smoke
+regression. `/model` reports the retained fact count; structured results expose the full overlay and provenance.
+Fine-grained fact inspection and retraction plus interactive clarification remain acceptance criteria for a later
+command revision. Session assertions retain provenance, and an uncertain conclusion is never inserted as a fact.
 
 Readline Tab completion covers slash-command names, the declared values of `/normalize` and `/memory`, and cataloged or registered KB identifiers for `/load` and `/unload`, including the active comma-separated identifier fragment. Completion proposes syntax and identifiers only. It never executes a command, loads a KB, changes the normalization profile, or mutates session state. Ordinary language input is returned unchanged so pressing Tab while composing a question cannot rewrite its meaning.
 
-The session context is an explicit overlay and can be serialized in structured output. It does not mutate a published KB. A follow-up may refer to prior entities and goals only through bounded discourse state that remains inspectable. When several reference candidates remain and answers differ, the CLI asks for clarification or returns `AMBIGUOUS`.
+The session context is an explicit overlay and can be serialized in structured output. It does not mutate a published
+KB. A follow-up may refer to prior entities only through bounded discourse state that remains inspectable. When several
+reference candidates remain and answers differ, the current CLI returns `AMBIGUOUS`; a future explicit clarification
+dialogue may resolve it without changing that one-shot status contract.
 
 ### Stable machine output
 
-Every result includes a protocol version, status, answer or partial answer, accepted Semantic IR, task frame, selected KB versions, loaded shards or blocks, selected methods, proof or execution trace, unresolved subgoals, language route, fallback validation, and resource use. Human output is a view over this result. ANSI styling and progress text must never enter JSON or JSONL.
+The current required and optional `eslm-runtime-result-v1` fields are the implemented subset enumerated in section 8;
+the richer shape in DS008 is a target contract. Human output is a view over the machine result. ANSI styling and
+progress text must never enter JSON or JSONL. Adding target fields must be backward-readable and must not silently
+change the meaning of an existing status, answer, provenance item, or KB-version set.
 
 ### Generated examples and regression smoke
 
@@ -129,6 +205,12 @@ Response: The 4,096-case default is useful as a regression denominator but unrea
 ### Question #3: Why does `/smoke` print representative executions and totals?
 
 Response: An aggregate alone cannot show whether the runtime was really invoked or whether status and semantic values were interpreted honestly. One actual input/output record per template keeps a default run readable while exposing the computation behind the total. Failures are always printed even when their template was already represented.
+
+### Question #4: Why is related KB evidence not appended to the answer string?
+
+Response: Machine consumers and scorers must be able to distinguish what the reasoner established from what retrieval
+merely found relevant. A structural field preserves that boundary, while the interactive renderer can still provide a
+useful, clearly labeled human view.
 
 ## Conclusion
 

@@ -2,6 +2,7 @@ import { performance } from 'node:perf_hooks';
 import { relative } from 'node:path';
 import { readJsonLines, writeJson } from './io.mjs';
 import { PROJECT_ROOT } from './paths.mjs';
+import { hashFile } from './util.mjs';
 
 function equalValues(actual = [], expected = []) {
   return JSON.stringify([...actual].sort()) === JSON.stringify([...expected].sort());
@@ -20,9 +21,16 @@ export async function evaluate(engine, suitePath, publishPath) {
     outcomes.push({ id: testCase.id, pass, expected: testCase.values ?? testCase.status, actual: result.values ?? result.status, answer: result.answer });
   }
   const report = {
-    format: 'eslm-evaluation-report-v1',
+    format: 'eslm-evaluation-report-v2',
+    protocol: 'eslm-internal-regression-v1',
     createdAt: new Date().toISOString(),
-    suite: relative(PROJECT_ROOT, suitePath),
+    evidenceRegime: 'internal-authored-smoke-fixture',
+    claimScope: 'implementation-regression-only',
+    dataset: {
+      path: relative(PROJECT_ROOT, suitePath),
+      sha256: await hashFile(suitePath),
+      authoredFixture: true,
+    },
     model: {
       id: engine.model.manifest.modelId,
       knowledgeBases: engine.model.manifest.knowledgeBases ?? [],

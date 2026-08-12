@@ -5,31 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Specification Matrix — ESLM Documentation</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
-  </script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
   <main class="page">
     <div class="page__panel loader-frame">
       <div class="loader-heading">
-        <div>
-          <p class="kicker">Specification Viewer</p>
-          <h1 id="spec-title">Specification Matrix</h1>
-        </div>
         <small>
           <a href="index.html">Home</a> |
           <a href="specsLoader.html?spec=matrix.md">Specs</a> |
           <span id="current-spec">Loading...</span>
         </small>
+        <div>
+          <p class="kicker">Specification Viewer</p>
+          <h1 id="spec-title">Specification Matrix</h1>
+        </div>
       </div>
 
       <div id="spec-meta"></div>
+      <details id="spec-toc" class="spec-toc" hidden>
+        <summary id="spec-toc-title">On this page</summary>
+        <nav aria-labelledby="spec-toc-title"><ol id="spec-toc-list"></ol></nav>
+      </details>
       <div id="content" class="content">
         <div class="loading">Loading specification...</div>
       </div>
+      <nav id="spec-navigation" class="spec-navigation" aria-label="Adjacent specifications" hidden></nav>
     </div>
   </main>
   <div data-include="partials/footer.html"></div>
@@ -41,6 +42,9 @@
         this.currentSpecSpan = document.getElementById('current-spec');
         this.specTitle = document.getElementById('spec-title');
         this.specMeta = document.getElementById('spec-meta');
+        this.specToc = document.getElementById('spec-toc');
+        this.specTocList = document.getElementById('spec-toc-list');
+        this.specNavigation = document.getElementById('spec-navigation');
         this.specPath = this.getSpecPath();
         this.load();
       }
@@ -81,6 +85,9 @@
         }
 
         try {
+          if (!/^(?:matrix|DS\d{3}-[A-Za-z0-9-]+)\.md$/u.test(this.specPath)) {
+            throw new Error('Invalid specification path. Open a DS file from the specification matrix.');
+          }
           this.currentSpecSpan.textContent = `Loading: ${this.specPath}`;
           const response = await fetch(`specs/${this.specPath}`);
           if (!response.ok) {
@@ -89,16 +96,18 @@
 
           const markdown = await response.text();
           const { metadata, body } = this.parseFrontmatter(markdown);
-          const html = this.markdownToHtml(body);
-
-          this.content.innerHTML = html;
-          this.renderMetadata(metadata);
-          this.currentSpecSpan.textContent = this.specPath;
-          this.scrollToHash();
-
           const title = metadata.title || body.match(/^#\s+(.+)$/m)?.[1] || this.specPath;
+          const rendered = this.markdownToHtml(this.removeLeadingHeading(body));
+
+          this.content.innerHTML = rendered.html;
+          this.renderMetadata(metadata);
+          this.renderTableOfContents(rendered.headings);
+          this.currentSpecSpan.textContent = metadata.id ?? (this.specPath === 'matrix.md' ? 'Matrix' : this.specPath);
+          this.currentSpecSpan.title = this.specPath;
           this.specTitle.textContent = title;
           document.title = `${title} — ESLM Documentation`;
+          await this.renderSpecNavigation();
+          this.scrollToHash();
         } catch (error) {
           this.showError(error.message);
         }
@@ -118,7 +127,7 @@
           items.push(
             this.renderMetaItem(
               'Status',
-              `<span class="spec-status spec-status--${this.normalizeStatus(metadata.status)}">${this.escapeHtml(metadata.status)}</span>`
+              `${this.renderStatus(metadata.status)}<span class="spec-status-context">${this.escapeHtml(this.statusContext(metadata.status))}</span>`
             )
           );
         }
@@ -142,6 +151,104 @@
         return String(status).trim().toLowerCase().replace(/\s+/g, '-');
       }
 
+      statusContext(status) {
+        const descriptions = {
+          implemented: 'The frontmatter marks this contract as implemented. Its stated limits and acceptance evidence still apply.',
+          'in-progress': 'This contract is authoritative direction, but not every requirement is implemented. Read its current-state and acceptance passages before inferring support.',
+          planned: 'This is a design target, not a claim about current runtime behavior.',
+          draft: 'This text is still being shaped and must not be treated as a settled implementation contract.',
+          'review-needed': 'This contract remains active but has an explicit review requirement.',
+          deprecated: 'This contract is retained for context and should not guide new implementation.',
+        };
+        return descriptions[this.normalizeStatus(status)] ?? 'Read the specification text and linked evidence to determine implementation support.';
+      }
+
+      removeLeadingHeading(markdown) {
+        const lines = markdown.split('\n');
+        const firstContent = lines.findIndex((line) => line.trim().length > 0);
+        if (firstContent >= 0 && /^#\s+/u.test(lines[firstContent].trim())) {
+          lines.splice(firstContent, 1);
+        }
+        return lines.join('\n');
+      }
+
+      headingLabel(markdown) {
+        return String(markdown)
+          .replace(/`([^`]+)`/g, '$1')
+          .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+          .replace(/[\*_]/g, '')
+          .trim();
+      }
+
+      headingId(label, usedIds) {
+        const base = label.toLowerCase()
+          .normalize('NFKD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '') || 'section';
+        const seen = usedIds.get(base) ?? 0;
+        usedIds.set(base, seen + 1);
+        return seen === 0 ? base : `${base}-${seen + 1}`;
+      }
+
+      renderTableOfContents(headings) {
+        this.specTocList.replaceChildren();
+        const visibleHeadings = headings.filter(({ level }) => level >= 2 && level <= 3);
+        if (visibleHeadings.length === 0) {
+          this.specToc.hidden = true;
+          return;
+        }
+        for (const heading of visibleHeadings) {
+          const item = document.createElement('li');
+          item.className = `spec-toc__level-${heading.level}`;
+          const link = document.createElement('a');
+          link.href = `#${heading.id}`;
+          link.textContent = heading.label;
+          item.append(link);
+          this.specTocList.append(item);
+        }
+        this.specToc.hidden = false;
+      }
+
+      async renderSpecNavigation() {
+        this.specNavigation.replaceChildren();
+        this.specNavigation.hidden = true;
+        if (!this.specPath.startsWith('DS')) return;
+
+        try {
+          const response = await fetch('specs/matrix.md');
+          if (!response.ok) return;
+          const matrix = await response.text();
+          const pattern = /^\|\s*\[([^\]]+)\]\(specsLoader\.html\?spec=([^)]+)\)\s*\|\s*([^|]+?)\s*\|/gmu;
+          const entries = [...matrix.matchAll(pattern)].map((match) => ({
+            id: match[1].trim(),
+            file: decodeURIComponent(match[2].trim()),
+            title: match[3].trim(),
+          }));
+          const current = entries.findIndex(({ file }) => file === this.specPath);
+          if (current < 0) return;
+          if (current > 0) this.specNavigation.append(this.specNavigationLink(entries[current - 1], 'Previous'));
+          if (current < entries.length - 1) this.specNavigation.append(this.specNavigationLink(entries[current + 1], 'Next'));
+          this.specNavigation.hidden = this.specNavigation.childElementCount === 0;
+        } catch {
+          this.specNavigation.hidden = true;
+        }
+      }
+
+      specNavigationLink(entry, direction) {
+        const link = document.createElement('a');
+        link.className = `spec-navigation__${direction.toLowerCase()}`;
+        link.href = `specsLoader.html?spec=${encodeURIComponent(entry.file)}`;
+        const directionLabel = document.createElement('span');
+        directionLabel.className = 'spec-navigation__direction';
+        directionLabel.textContent = direction;
+        const title = document.createElement('span');
+        title.className = 'spec-navigation__title';
+        title.textContent = `${entry.id} — ${entry.title}`;
+        link.append(directionLabel, title);
+        return link;
+      }
+
       scrollToHash() {
         const hash = decodeURIComponent(window.location.hash.slice(1));
         if (!hash) return;
@@ -153,6 +260,8 @@
 
       showError(message) {
         this.specMeta.innerHTML = '';
+        this.specToc.hidden = true;
+        this.specNavigation.hidden = true;
         this.content.innerHTML = `
           <div class="error-panel">
             <h3>Error Loading Specification</h3>
@@ -241,21 +350,37 @@
       markdownToHtml(markdown) {
         const lines = markdown.split('\n');
         const htmlParts = [];
+        const headings = [];
+        const usedHeadingIds = new Map();
         let paragraph = [];
         let listItems = [];
+        let listKind = null;
+        let listStart = 1;
         let inCode = false;
         let codeBuffer = [];
 
         const flushParagraph = () => {
           if (!paragraph.length) return;
-          htmlParts.push(`<p>${paragraph.map((line) => this.applyInline(line)).join('<br>')}</p>`);
+          htmlParts.push(`<p>${this.applyInline(paragraph.map((line) => line.trim()).join(' '))}</p>`);
           paragraph = [];
         };
 
         const flushList = () => {
           if (!listItems.length) return;
-          htmlParts.push(`<ul>${listItems.map((item) => `<li>${item}</li>`).join('')}</ul>`);
+          const start = listKind === 'ol' && listStart !== 1 ? ` start="${listStart}"` : '';
+          htmlParts.push(`<${listKind}${start}>${listItems.map((item) => `<li>${item}</li>`).join('')}</${listKind}>`);
           listItems = [];
+          listKind = null;
+          listStart = 1;
+        };
+
+        const appendListItem = (kind, item, start = 1) => {
+          if (listKind && listKind !== kind) flushList();
+          if (!listKind) {
+            listKind = kind;
+            listStart = start;
+          }
+          listItems.push(item);
         };
 
         const flushCode = () => {
@@ -308,22 +433,30 @@
             flushParagraph();
             flushList();
             const level = headingMatch[1].length;
+            const label = this.headingLabel(headingMatch[2]);
+            const id = this.headingId(label, usedHeadingIds);
             const text = this.applyInline(headingMatch[2]);
-            htmlParts.push(`<h${level}>${text}</h${level}>`);
+            htmlParts.push(`<h${level} id="${id}">${text}</h${level}>`);
+            headings.push({ level, id, label });
             continue;
           }
 
-          const numberedMatch = trimmed.match(/^\d+\.\s+(.+)/);
+          const numberedMatch = trimmed.match(/^(\d+)\.\s+(.+)/);
           if (numberedMatch) {
             flushParagraph();
-            listItems.push(this.applyInline(numberedMatch[1]));
+            appendListItem('ol', this.applyInline(numberedMatch[2]), Number(numberedMatch[1]));
             continue;
           }
 
           const bulletMatch = trimmed.match(/^-\s+(.+)/);
           if (bulletMatch) {
             flushParagraph();
-            listItems.push(this.applyInline(bulletMatch[1]));
+            appendListItem('ul', this.applyInline(bulletMatch[1]));
+            continue;
+          }
+
+          if (listItems.length > 0 && /^\s{2,}\S/u.test(rawLine)) {
+            listItems[listItems.length - 1] += ` ${this.applyInline(trimmed)}`;
             continue;
           }
 
@@ -334,7 +467,7 @@
         flushCode();
         flushList();
         flushParagraph();
-        return htmlParts.join('\n');
+        return { html: htmlParts.join('\n'), headings };
       }
     }
 

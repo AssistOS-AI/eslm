@@ -3,7 +3,7 @@ id: DS012
 title: Documentation, Generated Status, and Repository Operations
 status: in-progress
 owner: repository
-summary: Defines specification ownership, detailed HTML documentation, generated empirical status, navigation and diagram rules, skill-catalog synchronization, canonical checks, and change-locality requirements.
+summary: Defines specification ownership, non-redundant HTML information architecture, generated empirical status, readable layout, diagram use, canonical checks, and change-locality requirements.
 ---
 
 # DS012 Documentation, Generated Status, and Repository Operations
@@ -56,9 +56,17 @@ Academic background links to primary papers, books, standards, and clearly ident
 
 ### Navigation and page layout
 
-The site uses one shared header navigation and breadcrumbs. The home page has exactly three substantive sections: project presentation, a client-rendered table from `latest-public-benchmark-probes.json`, and a compact two-dimensional sitemap. Other material receives a dedicated page linked from the sitemap and menu.
+The site uses one shared header navigation and breadcrumbs. The home page is a short “start here” view: project
+identity and actual boundary, a compact evidence warning and link to the current report, and a two-dimensional sitemap.
+`evaluation.html` is the only page that renders the complete public benchmark dashboard. `status.html` shows capability
+and roadmap state, links to the evidence report, and does not embed a second dashboard. Other material receives a
+dedicated page linked from the sitemap and menu.
 
-Pages use the browser width with 3% left and right padding. The benchmark table uses approximately 30% for benchmark identity, execution mark, concise score, tested/possible scope, and normalization percentage, and 70% for human-readable outcomes, protocol, diagnosis, and action. Technical identifiers wrap; source hashes remain in raw or secondary audit views.
+Long prose is bounded to a readable measure and left-aligned. Wide tables and code blocks scroll inside their own
+containers instead of widening paragraphs; benchmark rows stack into labeled blocks on narrow screens. The desktop
+benchmark table uses approximately 30% for benchmark identity, execution mark, concise score, tested/possible scope,
+and route coverage, and 70% for human-readable outcomes, protocol, diagnosis, and action. Technical identifiers wrap;
+source hashes remain in raw or secondary audit views.
 
 ### Diagrams
 
@@ -66,7 +74,12 @@ Use a diagram only when spatial structure clarifies data flow, sequence, hierarc
 
 ### Generated status and empirical values
 
-The home benchmark table reads `docs/results/latest-public-benchmark-probes.json` in the browser. Current dates, denominators, percentages, failure counts, adapter state, access state, and next actions exist only there or in the typed source receipts that generate it. Hand-authored HTML explains fields and protocols but does not copy temporary numbers.
+The evaluation benchmark table reads `docs/results/latest-public-benchmark-probes.json` in the browser. Current dates,
+denominators, percentages, failure counts, adapter state, access state, and next actions exist only there or in typed
+source receipts. Hand-authored HTML explains stable task semantics, metric meanings, limitations, and protocols but
+does not copy temporary numbers. Per-benchmark pages may render a generated row selected from the same JSON; they do
+not hand-maintain counts. Dashboard diagnoses and coverage text come from report rows, never hardcoded
+benchmark-specific JavaScript branches.
 
 Roadmap coverage uses `docs/results/current-status.json` with named capability bands, evidence, and boundaries. It remains separate from benchmark accuracy. A check beside a benchmark means the declared probe executed; it does not mean the complete official benchmark is solved.
 
@@ -80,7 +93,10 @@ Imported maintenance skills under `.agents/skills/` remain read-only during prod
 
 The repository exposes focused tests, full `npm test`, evaluation, benchmark, public-probe publication, KB build and validation, random source-KB checks, scale profiling, spec-matrix generation, documentation validation, source-size checks, and composed `npm run check`. Commands that acquire network data remain explicit and are never hidden inside inference or verification.
 
-Documentation verification checks required pages, shared navigation, local links, assets, Mermaid availability and diagram constraints, DS structure, contiguous numbering, and specs-loader targets. Behavioral tests check generated report schemas and that every registered reasoning method is documented.
+Documentation verification checks required pages, shared navigation, local links, assets, diagram constraints when a
+diagram is actually used, DS structure, contiguous numbering, and specs-loader targets. A page is not required to add
+a decorative diagram. Behavioral tests check generated report schemas, report-owned diagnoses, receipt currentness,
+and that every registered reasoning method is documented.
 
 ### Synchronization rule
 
@@ -95,6 +111,12 @@ Response: Measurements and adapter states change after executions, while contrac
 ### Question #2: When are multiple explanations useful rather than redundant?
 
 Response: It is useful when it answers a different reviewer question, such as algorithm semantics versus operational diagnosis, and explicitly references the normative owner. Repeating the same contract in several DS files is redundant and creates contradictory update obligations.
+
+### Question #3: Why is the full benchmark dashboard rendered on only one page?
+
+Response: A single generated view prevents three pages from competing as the empirical authority and reduces visual
+noise. Home and status still link to the same raw report, while evaluation explains its fields and limitations in the
+appropriate context.
 
 ## Conclusion
 

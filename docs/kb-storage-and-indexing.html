@@ -23,7 +23,7 @@
   "contextRef": "context:manual:revision-3",
   "provenanceRefs": ["prov:manual:section-4.2:p3"]
 }</code></pre>
-<p>Stable IDs are semantic identities, not array indexes. Terms referenced from assertions, rules, events, roles, contexts, and retractions must exist locally or through a validated dependency. Rule head variables must be bound by positive body atoms. These checks prevent a visually plausible JSON file from becoming an inconsistent executable model.</p>
+<p>Stable IDs are semantic identities, not array indexes. The current generic v1 audit proves local provenance, term, predicate, context, event, rule, and retraction references across all shards. It resolves package dependencies to exact immutable identities but does not yet use a dependency term directory to prove an imported record identifier, so a v1 record that names a term found only in another package is rejected. Rule head variables must be bound by positive body atoms. These checks prevent a visually plausible JSON file from becoming an inconsistent executable model.</p>
 
 <h2>Current generic package v1</h2>
 <p><code>compileKnowledgeBase</code> currently reads one canonical JSONL file, validates it, groups records by record type and a two-hex-digit predicate or language hash prefix, sorts each group by <code>recordId</code>, and writes stable JSON arrays under <code>segments/</code>. Assertions declare access path <code>predicate-arguments</code>; other v1 groups declare <code>record-id</code>. Each shard descriptor records kind, predicates, data path, record count, stored bytes, checksum, and dependencies.</p>
@@ -38,13 +38,13 @@
   "checksum": "sha256:...",
   "dependencies": []
 }</code></pre>
-<p>The loader allowlists <code>shards.json</code> and <code>segments/[a-z0-9-]+.json</code>, verifies the SHA-256 digest and record count, parses inert data, and revalidates every canonical record. The local catalog persists only package ID, version, relative manifest path, namespace, languages, domains, capabilities, and trust level. Registering a package opens its manifest and shard directory but does not load every record.</p>
+<p>The generic loader closes the package root to exactly the manifest, <code>shards.json</code>, and a real <code>segments/</code> directory; that directory may contain only the regular files declared by <code>segments/[a-z0-9-]+.json</code> references. Registration reads one complete shard at a time, verifies its SHA-256 digest, bytes, count, schema, record kind, namespace, and local cross-record references, then releases its record array before the next shard. It applies iterative per-record bounds to cumulative UTF-8 string bytes, JSON depth, nodes, array entries, and object keys, while separate global entry and UTF-8 byte bounds govern the retained identity/reference index. The catalog persists the immutable package and compiler identities, exact dependency resolutions, and a receipt containing work limits, structural maxima, and reconciled reference counts. It never treats an undeclared root file or symbolic link as package content.</p>
 
 <h2>Current limitation: generic v1 is eager</h2>
-<p>The v1 compiler calls <code>readFile</code> for the complete canonical file and retains both all records and grouping arrays. The v1 loader reads a complete selected JSON shard. This is correct for the small authored packages but is not the DS019 large-corpus compiler. The target implementation must stream JSONL, spill bounded partitions, merge deterministic sorted runs, and decode selectable blocks. The documentation does not describe that target as already implemented.</p>
+<p>The v1 compiler calls <code>readFile</code> for the complete canonical file and retains both all records and grouping arrays. Registration is sequential across shards, but JSON parsing still materializes one complete shard before structural and semantic checks; the explicit shard-byte limit bounds that exposure without making it a streaming decoder. This is correct for the small authored packages but is not the DS019 large-corpus compiler. The target implementation must stream JSONL, spill bounded partitions, merge deterministic sorted runs, and decode selectable blocks.</p>
 
-<h2>Target manifest and package identity</h2>
-<p>DS006 requires an immutable package identity composed from KB ID and version, schema, namespace, canonical digest, compiler version and configuration digest, dependencies, catalog summary, and complete shard inventory. A representative envelope is:</p>
+<h2>Registered generic v1 identity</h2>
+<p>DS006 binds KB ID and stable semantic version, schema, namespace, canonical digest and count, compiler version and configuration digest, trust metadata, exact dependencies, and the complete shard inventory. The current allowlisted v1 envelope includes:</p>
 <pre><code>{
   "manifestType": "knowledgeBasePackage",
   "format": "eslm-kb-package-v1",
@@ -60,10 +60,22 @@
     "version": "eslm-kb-compiler-vNext",
     "configurationHash": "sha256:..."
   },
-  "catalogSummaryRef": "catalog-summary.json",
-  "shardDirectoryRef": "shards.jsonl"
+  "counts": {
+    "provenance": 1000,
+    "term": 19000,
+    "lexeme": 40000,
+    "assertion": 60000
+  },
+  "languages": ["en"],
+  "domains": ["technical-documentation"],
+  "dependencies": [],
+  "capabilities": ["document-fact-retrieval"],
+  "trustLevel": "schema-and-equivalence-validated",
+  "benchmarkEligible": false,
+  "license": "declared-source-license",
+  "shardDirectoryRef": "shards.json"
 }</code></pre>
-<p>Dependencies are resolved to exact immutable package versions in the registration receipt. Package-relative paths are allowlisted and confined to the package root. Registration validates identity and discovery metadata; unregistration removes only the catalog entry. Overlays add or retract records through explicit context and precedence rather than rewriting a baseline or trusting load order.</p>
+<p>Dependencies are resolved to exact immutable package identities in the registration receipt. Package-relative paths are allowlisted and confined, while exact inventory checks reject undeclared neighbors. Registration validates identity, all shard bytes, and the local record graph before an atomic catalog write; unregistration removes only the catalog entry and refuses to strand a registered dependent. Overlays add or retract records through explicit context and precedence rather than rewriting a baseline or trusting load order.</p>
 
 <h2>Access paths and block design</h2>
 <p>The large-package compiler must emit indexes for the queries the methods actually execute. Unary facts need predicate–subject and subject–predicate order. Binary facts need predicate–subject–object and predicate–object–subject order. Events need event-type, event–role–filler, and filler–role–event. Rules need head-predicate and body-dependency indexes. Document KBs add lexical, mention, hierarchy, procedure, temporal, and provenance-span indexes.</p>

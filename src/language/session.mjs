@@ -1,4 +1,25 @@
 import { tokenize } from './normalization.mjs';
+import {
+  SESSION_LIMITS,
+  SessionInputValidationError,
+  SessionResourceLimitError,
+  sessionContextSnapshot,
+  validateSessionContext,
+} from './session-context.mjs';
+
+export {
+  SESSION_LIMITS,
+  SessionContextValidationError,
+  SessionInputValidationError,
+  SessionResourceLimitError,
+  emptySessionContext,
+  sessionContextSnapshot,
+  validateSessionContext,
+} from './session-context.mjs';
+
+function requireCapacity(resource, observed, limit) {
+  if (observed > limit) throw new SessionResourceLimitError(resource, observed, limit);
+}
 
 function normalizedPhrase(value) {
   return tokenize(value).filter((token) => !/^[?.!,;:]$/u.test(token)).join(' ');
@@ -154,18 +175,32 @@ function assertionFrom(text, model, entities, ruleNumber) {
 }
 
 export function splitEpisode(text) {
+  if (typeof text !== 'string') throw new SessionInputValidationError('Runtime input must be a string.');
+  const inputBytes = Buffer.byteLength(text, 'utf8');
+  requireCapacity('inputBytes', inputBytes, SESSION_LIMITS.maximumInputBytes);
   return text.match(/[^.!?]+[.!?]?/gu)?.map((part) => part.trim()).filter(Boolean) ?? [];
 }
 
+export function validateSessionRequest(text, context = {}) {
+  validateSessionContext(context);
+  const segments = splitEpisode(text);
+  requireCapacity('segments', segments.length, SESSION_LIMITS.maximumSegments);
+  for (const segment of segments) requireCapacity(
+    'segmentBytes', Buffer.byteLength(segment, 'utf8'), SESSION_LIMITS.maximumSegmentBytes,
+  );
+  return segments;
+}
+
 export function compileSessionEpisode(text, model, context = {}) {
-  const previous = context.session ?? { entities: [], facts: [], rules: [] };
+  const boundedContext = sessionContextSnapshot(context);
+  const previous = boundedContext.session;
   const entities = previous.entities.map((entity) => ({ ...entity, names: [...entity.names] }));
   let facts = previous.facts.map((fact) => ({ ...fact, provenance: [...fact.provenance] }));
   const rules = (previous.rules ?? []).map((rule) => ({
     ...rule, when: rule.when.map((premise) => [...premise]), then: [...rule.then],
   }));
   const history = (previous.history ?? []).map((event) => ({ ...event }));
-  const segments = splitEpisode(text);
+  const segments = validateSessionRequest(text, boundedContext);
   const final = segments.at(-1) ?? '';
   const finalWords = normalizedPhrase(final).split(' ');
   const questionStarters = new Set(['where', 'what', 'who', 'which', 'why', 'how', 'is', 'does', 'can', 'will', 'would', 'in', 'tell', 'show']);
@@ -199,6 +234,7 @@ export function compileSessionEpisode(text, model, context = {}) {
       session: true,
     };
     facts.push(fact);
+    requireCapacity('facts', facts.length, SESSION_LIMITS.maximumFacts);
     learned.push(fact);
     nextFactNumber += 1;
     if (fact.predicate === 'located_in') {
@@ -207,6 +243,7 @@ export function compileSessionEpisode(text, model, context = {}) {
         subject: fact.subject, predicate: fact.predicate, object: fact.object,
         factId: fact.id, provenance: fact.provenance, sourceText: fact.sourceText,
       });
+      requireCapacity('historyEvents', history.length, SESSION_LIMITS.maximumHistoryEvents);
       nextEventNumber += 1;
     }
     return fact;
@@ -222,6 +259,7 @@ export function compileSessionEpisode(text, model, context = {}) {
         && JSON.stringify(rule.then) === JSON.stringify(assertion.then));
       if (!duplicate) {
         rules.push(assertion);
+        requireCapacity('rules', rules.length, SESSION_LIMITS.maximumRules);
         learnedRules.push(assertion);
       }
       continue;
@@ -237,6 +275,7 @@ export function compileSessionEpisode(text, model, context = {}) {
       continue;
     }
     addFact(assertion);
+    requireCapacity('entities', entities.length, SESSION_LIMITS.maximumEntities);
     if (assertion.transition === 'move') {
       const carriedObjects = facts.filter((fact) => fact.subject === assertion.subject && fact.predicate === 'owns');
       for (const possession of carriedObjects) addFact({
@@ -252,6 +291,7 @@ export function compileSessionEpisode(text, model, context = {}) {
       });
     }
   }
+  validateSessionContext({ session: { entities, facts, rules, history } });
   return {
     question: hasQuestion ? final.replace(/[.!?]+$/u, '').trim() : undefined,
     session: { entities, facts, rules, history },

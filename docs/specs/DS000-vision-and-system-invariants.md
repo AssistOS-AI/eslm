@@ -14,6 +14,31 @@ This specification defines the system that the repository is intended to build. 
 
 ## Core Content
 
+### 0. How to read this specification set
+
+The DS files are normative design contracts, not release notes. Words such as **must** and **may** describe required
+behavior even when the frontmatter status is `in-progress` or `planned`. A sentence in the present tense describes
+current behavior only when it is explicitly introduced as a present implementation boundary or backed by a named
+test or execution receipt. This distinction matters because a production target, a working subsystem, and a measured
+benchmark result are three different kinds of claim.
+
+For a new programmer, the system can be read in this order:
+
+1. **Input:** DS003 defines which text can become symbolic meaning; DS013 defines the optional operator-only language
+   normalization loop.
+2. **Knowledge:** DS005 defines inert canonical records; DS006, DS019, DS020, and DS021 define packages, physical
+   compilation, retrieval, and memory.
+3. **Execution:** DS008 and DS015 define task frames, method selection, and the methods themselves.
+4. **Output and failure:** DS009 defines statuses, provenance, and the strict separation between an answer and merely
+   related evidence.
+5. **Evidence:** DS010 and DS017 define what benchmark and comparison claims mean.
+
+At the present checkpoint, direct controlled-language parsing, session overlays, indexed lookup, positive safe-Horn
+deduction, several bounded finite task methods, declarative packages, selected public-source providers, structured
+results, and the CLI normalization wrapper are executable. Capability-aware dispatch, general language, trust and
+conflict policy, large-corpus routing, document ingestion, and multi-step planning cover only documented subsets or
+remain target contracts. The existence of a DS section does not prove its implementation.
+
 ### 1. System identity
 
 The target system is an executable symbolic language model. It is not a statistical next-token model and it is not a wrapper that delegates reasoning to an LLM. It is a runtime that accepts linguistic instructions and contextual information, constructs explicit semantic representations, retrieves declarative knowledge, plans a reasoning procedure, executes that procedure and produces a result with traceable justification.
@@ -44,6 +69,7 @@ This separation is the primary architectural invariant. It prevents each dataset
 | Runtime uncertainty is explicit | The system distinguishes solved, unknown, ambiguous, inconsistent, unsupported and resource-limited outcomes. |
 | Generated runtime artifacts are rebuildable | Indexes and binary shards can be regenerated from canonical KB records and manifests. |
 | Correct answers do not excuse invalid traces | Where the task is deterministic, proof or execution validity is independently evaluated. |
+| Related evidence is not an answer | Failure-time retrieval may expose useful KB records, but those records remain outside answer values, answer provenance, and `usedKbVersions` unless a registered method actually uses them as premises. |
 
 ### 4. System lifecycle
 
@@ -61,7 +87,12 @@ preserve the system identity and invariants above.
 
 The system must retain the history necessary to study executable learning. Each substantial benchmark failure should be linked to the parse, selected KB records, attempted methods, result, diagnosis, patch and post-patch measurements. This creates a dataset of program repair and knowledge acquisition rather than merely a final score.
 
-The most important longitudinal measurements are answer accuracy, direct symbolic parsing rate, proof validity, fresh-sample generalization, regression rate, KB growth, reusable core growth, dynamic loading cost and the distribution of honest failure statuses. These measurements reveal whether progress comes from better language understanding, better knowledge, stronger reasoning, broader fallback use or unsafe special casing.
+The most important longitudinal measurements are end-to-end answer accuracy, attempt coverage, selective accuracy,
+direct raw-language coverage, task-adapter coverage, proof validity, structurally held-out generalization, regression
+rate, KB growth, reusable core growth, dynamic loading cost, grounding retrieval quality, unsupported-claim rate, and
+the distribution of honest failure statuses. These measurements reveal whether progress comes from better language
+understanding, better knowledge, stronger reasoning, useful failure grounding, broader assisted language use, or
+unsafe special casing.
 
 ### 6. Definition of success
 

@@ -13,24 +13,60 @@ for (const name of ['relations', 'binaryConstructions', 'prefixComparatives', 'u
   if (!ontology[name] || (name !== 'relations' && !Array.isArray(ontology[name]))) throw new Error(`World relation ontology is missing ${name}.`);
 }
 const sha = (value) => createHash('sha256').update(value).digest('hex');
+const groundingKey = (value) => String(value ?? '').normalize('NFKD').replace(/\p{M}+/gu, '')
+  .toLocaleLowerCase('en-US').replace(/[^\p{L}\p{N}]+/gu, ' ').replace(/\s+/gu, ' ').trim();
+const groundingPostingMaps = new Map();
+const addGroundingPosting = (term, id, record) => {
+  const key = groundingKey(term);
+  if (!key) return;
+  const posting = groundingPostingMaps.get(key) ?? new Map();
+  posting.set(id, record);
+  groundingPostingMaps.set(key, posting);
+};
+for (const [relation, definition] of Object.entries(ontology.relations).toSorted(([left], [right]) =>
+  left.localeCompare(right))) {
+  const id = `relation:${relation}`;
+  const record = { kind: 'relation-definition', relation, definition };
+  addGroundingPosting(relation, id, record);
+  addGroundingPosting(relation.replaceAll('-', ' '), id, record);
+}
+for (const [index, affordance] of (ontology.affordances ?? []).entries()) {
+  const id = `affordance:${index}`;
+  const record = { kind: 'material-affordance', index, ...affordance };
+  addGroundingPosting(affordance.materialClass, id, record);
+  addGroundingPosting(affordance.action, id, record);
+}
+const groundingPostings = Object.fromEntries([...groundingPostingMaps.entries()]
+  .toSorted(([left], [right]) => left.localeCompare(right))
+  .map(([key, posting]) => [key, [...posting.values()].toSorted((left, right) =>
+    `${left.kind}:${left.relation ?? left.index}`.localeCompare(`${right.kind}:${right.relation ?? right.index}`))]));
+const groundingIndex = { schema: 'world-relations-grounding-postings-v1', postings: groundingPostings };
 const constructionCount = Object.values(ontology).filter(Array.isArray)
   .reduce((sum, values) => sum + values.length, 0);
 await mkdir(join(output, 'ontology'), { recursive: true });
 await writeFile(join(output, 'ontology', 'all.json'), `${JSON.stringify(ontology)}\n`, 'utf8');
+await writeFile(join(output, 'ontology', 'grounding.json'), `${JSON.stringify(groundingIndex)}\n`, 'utf8');
 const shardBytes = await readFile(join(output, 'ontology', 'all.json'));
-const shards = [{ shardId: 'ontology-all', shardKind: 'semanticRelationOntology', accessPath: 'semantic-frame',
-  dataRef: 'ontology/all.json', recordCount: constructionCount,
-  compressedBytes: shardBytes.length, checksum: `sha256:${sha(shardBytes)}`, dependencies: [] }];
+const groundingBytes = await readFile(join(output, 'ontology', 'grounding.json'));
+const shards = [
+  { shardId: 'ontology-all', shardKind: 'semanticRelationOntology', accessPath: 'semantic-frame',
+    dataRef: 'ontology/all.json', recordCount: constructionCount,
+    compressedBytes: shardBytes.length, checksum: `sha256:${sha(shardBytes)}`, dependencies: [] },
+  { shardId: 'ontology-grounding', shardKind: 'exactGroundingPostings', accessPath: 'normalized-term',
+    dataRef: 'ontology/grounding.json', recordCount: Object.keys(groundingPostings).length,
+    compressedBytes: groundingBytes.length, checksum: `sha256:${sha(groundingBytes)}`, dependencies: [] },
+];
 const manifest = {
   manifestType: 'knowledgeBasePackage', format: 'eslm-kb-package-v1', schemaVersion: '1',
   kbId: 'world-relations-1.0', kbVersion: '1.0.0', namespace: 'world-relations', id: 'world-relations-1.0',
   title: 'Authored general semantic relation ontology', version: '1.0.0', kind: 'semantic-relation-ontology',
   generatedBy: 'deterministic-node-compiler', license: 'MIT', trainOnly: false, benchmarkEligible: false,
-  counts: { relations: Object.keys(ontology.relations).length, constructions: shards[0].recordCount },
+  counts: { relations: Object.keys(ontology.relations).length, constructions: constructionCount,
+    groundingTerms: Object.keys(groundingPostings).length },
   capabilities: ['argument-sensitive-compatibility', 'inverse-relations', 'polarity', 'property-implication'],
   limitations: ['reviewed English constructions only', 'plausibility evidence is graded rather than deductively certain'],
   provider: 'world-relations-v1', shardDirectoryRef: 'shards.json',
-  canonicalSource: { path: '../canonical/ontology.json', checksum: `sha256:${sha(bytes)}`, recordCount: shards[0].recordCount },
+  canonicalSource: { path: '../canonical/ontology.json', checksum: `sha256:${sha(bytes)}`, recordCount: constructionCount },
 };
 await writeFile(join(output, 'shards.json'), `${JSON.stringify(shards, null, 2)}\n`, 'utf8');
 await writeFile(join(output, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');

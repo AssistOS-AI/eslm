@@ -61,7 +61,13 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - The default runtime is Stage A: deterministic English controlled-language parsing, explicit task frames, capability-aware plans, direct retrieval, safe Horn deduction, provenance, structured gaps, and declarative KB packages.
 - The general CLI enables the direct-first Language Agent normalization wrapper by default. Only `UNPARSED` input may trigger it. Use `--no-external-language-agent` for confidential input, offline reproduction, tests, canonical evaluation, and published direct benchmarks. One episode permits at most three language proposals and may return only parser-form feedback, never answers, KB evidence, or proof state. This interface default never changes the offline `EslmRuntime` contract.
 - The core starts without domain knowledge. `quick` is the small deterministic smoke-test KB. `oewn-2025` and `atomic-2020` are source-derived, query-directed JSON packages loaded within explicit memory policy. `babi-v1.2-language` is a small source-derived package that declares a property domain and an explicitly defeasible induction policy without embedding evaluation answers.
-- Results use `eslm-runtime-result-v1` and expose status, answer, normalized input, parsed query, task frame, selected plan, values, provenance, reasoning trace, used KB versions, unresolved subgoals, and memory policy.
+- Results use `eslm-runtime-result-v1`. Every text result exposes protocol, status, answer, session and episode state,
+  language route, selected, consulted, and answer-contributing KB versions, unresolved subgoals, and memory policy.
+  Normalized input, parsed query, task frame, selected plan, values, provenance, and reasoning are stage-dependent and
+  may be absent after an early `UNPARSED`. Eligible inability results may also expose an
+  `eslm-grounding-bundle-v1`: bounded related records and per-source search receipts with
+  `answerSupported: false`. Grounding is never copied into the primary answer, values, provenance, or
+  `usedKbVersions`.
 - Training packets use train-visible records only. A Coding Agent subprocess receives one packet and one copied skill inside an isolated workspace; it cannot mutate the host repository.
 - Promotion is explicit. Candidate records do not become runtime knowledge merely because an agent generated them.
 
@@ -86,7 +92,10 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Evaluation: `npm run evaluate`
 - Benchmark: `npm run benchmark`
 - Public benchmark cache status: `node src/cli.mjs benchmark status`
-- Direct-only public development probes: `npm run benchmark:public-probe`
+- Direct-only public portfolio assembly and live development rows: `npm run benchmark:public-probe`. The generated
+  report distinguishes rows executed during assembly from stored receipts; it is not a rerun of every catalog row.
+- Frozen benchmark receipt audit: `npm run benchmark:receipts:audit`; require every audited checkpoint to be current
+  with `node scripts/audit-benchmark-receipts.mjs --require-current`.
 - Interactive 4,096-case regression: run `node src/cli.mjs`, then `/smoke`; use `/examples` for a bounded representative view.
 - Documentation matrix/check: `npm run docs:matrix` and `npm run docs:check`
 - Full verification: `npm run check`

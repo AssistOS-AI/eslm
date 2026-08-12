@@ -1,6 +1,9 @@
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { PROJECT_ROOT } from '../paths.mjs';
+import {
+  auditFreshBenchmarkReceipts, FRESH_RECEIPT_AUDIT_DEFINITIONS,
+} from './benchmark-receipt-audit.mjs';
 
 function freezeEntry(definition) {
   return Object.freeze({
@@ -404,14 +407,36 @@ export function validateResearchBenchmarkCatalog(catalog = RESEARCH_BENCHMARK_CA
     if (entry.evaluationState !== 'not-run' && entry.adapterState === 'not-implemented') {
       throw new Error(`${key}: an executed development probe requires an implemented adapter.`);
     }
+    if (entry.evaluationState === 'fresh-evaluation-executed') {
+      if (entry.adapterState !== 'implemented-fresh') {
+        throw new Error(`${key}: a fresh evaluation requires an implemented-fresh adapter.`);
+      }
+      if (!FRESH_RECEIPT_AUDIT_DEFINITIONS.some((definition) => definition.id === key)) {
+        throw new Error(`${key}: a fresh evaluation requires a registered receipt audit definition.`);
+      }
+    }
   }
   return true;
 }
 
 export async function researchBenchmarkCacheStatus(catalog = RESEARCH_BENCHMARK_CATALOG) {
   validateResearchBenchmarkCatalog(catalog);
+  const researchIds = new Set(Object.keys(catalog));
+  const receiptAudit = await auditFreshBenchmarkReceipts({
+    definitions: FRESH_RECEIPT_AUDIT_DEFINITIONS.filter((definition) => researchIds.has(definition.id)),
+  });
+  const receiptAuditsById = new Map(receiptAudit.rows.map((row) => [row.id, row]));
   const statuses = [];
+  const effectiveFreshState = (state) => {
+    if (state === 'current') return 'fresh-evaluation-executed';
+    if (['historical-stale', 'historical-unrecoverable'].includes(state)) {
+      return 'historical-fresh-evaluation';
+    }
+    if (state === 'invalid') return 'invalid-fresh-evaluation';
+    return 'unavailable-fresh-evaluation';
+  };
   for (const entry of Object.values(catalog)) {
+    const freshReceipt = receiptAuditsById.get(entry.id);
     let cached = false;
     let bytes;
     try {
@@ -434,12 +459,17 @@ export async function researchBenchmarkCacheStatus(catalog = RESEARCH_BENCHMARK_
       actionUrl: entry.access.actionUrl,
       license: entry.license,
       cached,
-      cacheState: cached && entry.evaluationState !== 'not-run' ? 'validated-frozen'
+      cacheState: entry.evaluationState === 'fresh-evaluation-executed'
+        ? freshReceipt.state
+        : cached && entry.evaluationState !== 'not-run' ? 'validated-frozen'
         : cached ? 'cached-unvalidated' : 'absent',
       cachePath: entry.cache.path,
       ...(bytes === undefined ? {} : { bytes }),
       adapterState: entry.adapterState,
       evaluationState: entry.evaluationState,
+      effectiveEvaluationState: entry.evaluationState === 'fresh-evaluation-executed'
+        ? effectiveFreshState(freshReceipt.state) : entry.evaluationState,
+      ...(freshReceipt ? { freshReceiptState: freshReceipt.state } : {}),
       nextAction: entry.nextAction,
       ...(entry.sourceRevision ? { sourceRevision: entry.sourceRevision } : {}),
       ...(entry.sourceArtifact ? { sourceArtifact: entry.sourceArtifact } : {}),

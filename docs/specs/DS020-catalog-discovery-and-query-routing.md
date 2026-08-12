@@ -58,6 +58,37 @@ For a fixed package set and semantic resource bounds, exhaustive mode opens ever
 
 Routing tests include negative queries, ambiguous names, multi-hop rule dependencies, cycles, irrelevant high-similarity packages, version overlays, and terms introduced only after one derivation step.
 
+### Failure-time related-evidence routing
+
+When DS009 permits grounding after an inability result, the runtime creates one bounded
+`eslm-grounding-request-v1`. It derives informative terms from the original NFKC surface, removes only a fixed set of
+function/request words, and may add conservative morphology such as singular variants. It does not trust a corrected
+parser token from an unsuccessful parse. Accepted semantic subject, predicate, object, and factoid fields may add exact
+identity lookups.
+
+Every selected source implements a provider-neutral `retrieveGrounding(request)` operation or returns an explicit
+unsupported-interface receipt. The runtime does not dispatch on KB IDs. Canonical in-memory packages use prebuilt
+subject, predicate, object, and alias postings. Sharded providers use their own exact lemma, term, entity, relation, or
+event indexes. Automatic fallback must not linearly scan all facts, all closure records, all source events, or all
+shards. Output limits do not substitute for work limits: the request bounds terms, lookups, posting expansion,
+candidates per lookup, returned entries, semantic payload bytes, provenance items, and structural depth.
+
+Entries are ranked deterministically by explicit identity and overlap reasons, with stable tie-breaking and bounded
+cross-KB diversity. Provider order cannot choose an answer or change the selected set. Derived canonical entries carry
+their rule and support witness. Each source emits a receipt naming KB version, searched access path, candidates
+considered, completion, provider failure, and truncation reasons. A complete empty search can support
+`NO_RELATED_EVIDENCE`; any failed or truncated source makes absence inconclusive. The primary answer, status, values,
+and provenance remain unchanged.
+
+### Present implementation boundary
+
+The current runtime implements exact loaded-model postings plus bounded grounding projections for the session overlay,
+Open English WordNet, ATOMIC exact events, GeoNames, ConceptNet, and the reviewed World Relations ontology. The broader
+always-resident multi-package catalog, conservative no-false-negative directory construction, general proof-frontier
+expansion, and exhaustive/lazy equivalence across arbitrary future packages remain partial target work. Existing
+provider-specific indexes are evidence for the access-path design; they do not establish the entire catalog-routing
+contract.
+
 ## Decisions & Questions
 
 ### Question #1: May approximate relevance exclude evidence?
@@ -67,6 +98,12 @@ Response: Ordering affects cost; exclusion affects truth. Approximate signals ca
 ### Question #2: Why does routing expand from proof subgoals?
 
 Response: A typed subgoal identifies the predicate, arguments, qualifiers, and method dependency that can contribute. Query-directed expansion keeps I/O proportional to the actual derivation while preserving an exhaustive widening path and a reviewable trace.
+
+### Question #3: Why may failure grounding use lexical overlap when answer routing cannot?
+
+Response: Grounding claims only bounded relevance and sets `answerSupported: false`; it does not derive truth or safely
+exclude evidence. The answer path still requires typed premises and a registered method. Receipts and explicit
+incompleteness prevent a lexical miss from being reported as semantic absence.
 
 ## Conclusion
 

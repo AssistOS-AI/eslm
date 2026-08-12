@@ -9,6 +9,7 @@ import { GeoNamesProvider } from './public-kb-providers/geonames.mjs';
 import { ConceptNetProvider } from './public-kb-providers/conceptnet.mjs';
 import { WorldRelationsProvider } from './public-kb-providers/world-relations.mjs';
 import { sha256 } from './util.mjs';
+import { makeGroundingEntry } from './reasoning/grounding-retrieval.mjs';
 
 export const PUBLIC_KB_CATALOG = Object.freeze({
   'oewn-2025': Object.freeze({
@@ -67,14 +68,20 @@ function conversationalQuestion(text) {
     .replace(/[.!]+$/u, '?');
 }
 
-function provenance(id, source, detail) {
-  return [{ fact: `${id}:${source}`, source: [detail], method: 'source-retrieval' }];
+function provenance(provider, source, detail) {
+  return [{
+    fact: `${provider.manifest.id}:${source}`,
+    kbId: provider.manifest.kbId,
+    kbVersion: provider.manifest.kbVersion,
+    source: [detail],
+    method: 'source-retrieval',
+  }];
 }
 
 function response(provider, answer, values, source, detail, reasoning = 'retrieval') {
   return {
-    status: values.length > 0 ? 'ANSWERED' : 'UNKNOWN', answer, values,
-    provenance: provenance(provider.manifest.id, source, detail),
+    status: values.length > 0 ? 'SOLVED' : 'UNKNOWN', answer, values,
+    provenance: provenance(provider, source, detail),
     reasoning: { method: reasoning }, query: { provider: provider.manifest.id, source },
     learned: [], learnedRules: [], context: {},
   };
@@ -169,6 +176,59 @@ class WordNetProvider {
     return this.mode === 'eager'
       ? { mode: 'eager', estimatedBytes: PUBLIC_KB_CATALOG[this.manifest.id].estimatedEagerRssBytes }
       : { mode: 'lazy', ...this.cache.snapshot() };
+  }
+
+  async retrieveGrounding(request) {
+    const maximumLookups = Math.min(request.limits.maximumLookups, request.terms.length);
+    const maximumValues = request.limits.maximumValuesPerLookup;
+    const entries = [];
+    const truncationReasons = [];
+    let lookups = 0;
+    for (const [termIndex, term] of request.terms.slice(0, maximumLookups).entries()) {
+      const senseIds = (await this.lemmaData(term))[normalizedLemma(term)] ?? [];
+      lookups += 1;
+      if (senseIds.length > maximumValues) truncationReasons.push('sense-value-budget');
+      for (const [senseIndex, senseId] of senseIds.slice(0, maximumValues).entries()) {
+        const sense = { id: senseId, ...await this.synset(senseId) };
+        const definition = sense.d?.[0] ?? 'definition unavailable';
+        entries.push(makeGroundingEntry({
+          kbId: this.manifest.kbId,
+          kbVersion: this.manifest.kbVersion,
+          recordId: `oewn:${sense.id}`,
+          statement: `${term}: ${definition}`,
+          semantic: {
+            kind: 'lexical-sense',
+            lemma: term,
+            synsetId: sense.id,
+            partOfSpeech: sense.p,
+            definition,
+            synonyms: (sense.m ?? []).slice(0, 12),
+          },
+          epistemicStatus: 'lexical-source-record',
+          provenance: [`oewn-2025:${sense.l}`],
+          relevance: {
+            score: 30 - termIndex * 0.25 - senseIndex * 0.01,
+            reasons: ['exact-lemma-match', 'lexical-sense-neighborhood'],
+          },
+        }));
+      }
+    }
+    if (request.terms.length > maximumLookups) truncationReasons.push('lookup-budget');
+    return {
+      entries,
+      receipt: {
+        kbId: this.manifest.kbId,
+        kbVersion: this.manifest.kbVersion,
+        status: entries.length > 0 ? 'matches-found' : 'no-match',
+        coverage: 'bounded-exact-lemma-and-sense-lookup',
+        complete: truncationReasons.length === 0 && request.termSelection.complete,
+        candidatesConsidered: lookups,
+        truncationReasons: [...new Set([
+          ...truncationReasons,
+          ...(!request.termSelection.complete ? ['term-selection-budget'] : []),
+        ])],
+      },
+    };
   }
 
   async ask(text) {
@@ -286,8 +346,16 @@ class AtomicProvider {
     const answer = `${label} candidates for “${event.h}”: ${selected.map((item) => item.tail).join('; ')}. These are defeasible possibilities, not certain facts.`;
     return {
       ...response(this, answer, selected.map((item) => item.tail), match.key, `atomic-2020:train:${selected[0].line}`, 'defeasible-retrieval'),
+      status: 'DEFEASIBLE',
       match: { event: event.h, score: match.score },
-      provenance: selected.map((item) => ({ fact: `atomic-2020:train:${item.line}`, source: [`atomic-2020:train.tsv:${item.line}`], relation: item.relation, method: 'source-retrieval' })),
+      provenance: selected.map((item) => ({
+        fact: `atomic-2020:train:${item.line}`,
+        kbId: this.manifest.kbId,
+        kbVersion: this.manifest.kbVersion,
+        source: [`atomic-2020:train.tsv:${item.line}`],
+        relation: item.relation,
+        method: 'source-retrieval',
+      })),
     };
   }
 
@@ -299,6 +367,62 @@ class AtomicProvider {
     return this.mode === 'eager'
       ? { mode: 'eager', estimatedBytes: PUBLIC_KB_CATALOG[this.manifest.id].estimatedEagerRssBytes }
       : { mode: 'lazy', ...this.cache.snapshot() };
+  }
+
+  async retrieveGrounding(request) {
+    const maximumLookups = Math.min(request.limits.maximumLookups, request.terms.length, 6);
+    const maximumValues = request.limits.maximumValuesPerLookup;
+    const entries = [];
+    const truncationReasons = [];
+    let considered = 0;
+    for (const [termIndex, term] of request.terms.slice(0, maximumLookups).entries()) {
+      const exact = normalizedEvent(term);
+      const source = this.mode === 'eager' ? this.events : await this.eventData(sha256(exact)[0]);
+      const event = source[exact];
+      const match = event ? { key: exact, score: 1, event } : undefined;
+      considered += 1;
+      if (!match) continue;
+      const tuples = Object.entries(match.event.r).flatMap(([relation, values]) =>
+        values.map(([tail, line]) => ({ relation, tail, line })));
+      if (tuples.length > maximumValues) truncationReasons.push('event-neighborhood-budget');
+      for (const tuple of tuples.slice(0, maximumValues)) {
+        entries.push(makeGroundingEntry({
+          kbId: this.manifest.kbId,
+          kbVersion: this.manifest.kbVersion,
+          recordId: `atomic:train:${tuple.line}`,
+          statement: `ATOMIC relates “${match.event.h}” to the defeasible ${tuple.relation} candidate “${tuple.tail}”.`,
+          semantic: {
+            kind: 'defeasible-event-relation',
+            event: match.event.h,
+            relation: tuple.relation,
+            value: tuple.tail,
+            lexicalMatchScore: match.score,
+          },
+          epistemicStatus: 'defeasible-source-tuple',
+          provenance: [`atomic-2020:train.tsv:${tuple.line}`],
+          relevance: {
+            score: 20 - termIndex * 0.25 + match.score * 10,
+            reasons: ['bounded-event-token-overlap', 'source-relation-neighborhood'],
+          },
+        }));
+      }
+    }
+    if (request.terms.length > maximumLookups) truncationReasons.push('lookup-budget');
+    return {
+      entries,
+      receipt: {
+        kbId: this.manifest.kbId,
+        kbVersion: this.manifest.kbVersion,
+        status: entries.length > 0 ? 'matches-found' : 'no-match',
+        coverage: 'bounded-exact-event-and-relation-neighborhood',
+        complete: truncationReasons.length === 0 && request.termSelection.complete,
+        candidatesConsidered: considered,
+        truncationReasons: [...new Set([
+          ...truncationReasons,
+          ...(!request.termSelection.complete ? ['term-selection-budget'] : []),
+        ])],
+      },
+    };
   }
 
   async ask(text) {
@@ -429,7 +553,7 @@ export async function validatePublicKnowledgeBase(id) {
   }
   if (id === 'conceptnet-5.7.0-en') {
     const smoke = await provider.ask('What is a knife used for?');
-    if (smoke?.status !== 'ANSWERED') throw new Error('ConceptNet purpose smoke test failed.');
+    if (smoke?.status !== 'DEFEASIBLE') throw new Error('ConceptNet purpose smoke test failed.');
     return { id, valid: true, counts: provider.manifest.counts, smoke: smoke.answer };
   }
   if (id === 'world-relations-1.0') {
@@ -440,6 +564,6 @@ export async function validatePublicKnowledgeBase(id) {
   const events = Object.keys(provider.events).length;
   if (events !== provider.manifest.counts.uniqueEvents) throw new Error('ATOMIC generated event count does not match its index.');
   const smoke = await provider.ask('Why might apologize?');
-  if (smoke?.status !== 'ANSWERED') throw new Error('ATOMIC intent smoke test failed.');
+  if (smoke?.status !== 'DEFEASIBLE') throw new Error('ATOMIC intent smoke test failed.');
   return { id, valid: true, counts: provider.manifest.counts, smoke: smoke.answer };
 }

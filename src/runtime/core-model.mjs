@@ -90,6 +90,7 @@ export async function createCoreModel(candidate) {
       format: 'eslm-runtime-projection-v1',
       modelId: 'eslm-core-stage-a',
       knowledgeBases: [],
+      knowledgeBaseVersions: [],
       benchmarkComparable: true,
     },
     entities: [], facts, rules: [],

@@ -4,6 +4,7 @@ import { ShardCache } from '../memory-policy.mjs';
 import { sha256 } from '../util.mjs';
 import { CONCEPTNET_RELATIONS, conceptBucket, normalizeConceptTerm } from './conceptnet-relations.mjs';
 import { collectCompatibilityEvidence } from './compatibility-evidence.mjs';
+import { makeGroundingEntry } from '../reasoning/grounding-retrieval.mjs';
 
 async function readShard(path, expectedChecksum) {
   const bytes = await readFile(path);
@@ -24,14 +25,24 @@ function answer(provider, relation, subject, edges, direction) {
   if (edges.length === 0) return undefined;
   const selected = edges.slice(0, 12);
   const values = selected.map((edge) => edge[0]);
+  const policy = CONCEPTNET_RELATIONS[relation].inference;
+  const status = policy === 'defeasible-edge' ? 'DEFEASIBLE' : 'SOLVED';
   return {
-    status: 'ANSWERED', answer: values.join(', '), values,
+    status, answer: values.join(', '), values,
     provenance: selected.flatMap((edge) => edge[3].slice(0, 4).map((row) => ({
-      fact: `conceptnet:${row}`, source: [`ConceptNet-5.7.0:${row}`], relation,
+      fact: `conceptnet:${row}`,
+      kbId: provider.manifest.kbId,
+      kbVersion: provider.manifest.kbVersion,
+      source: [`ConceptNet-5.7.0:${row}`], relation,
       method: 'source-retrieval', weight: edge[1], provenanceIds: edge[2],
     }))),
-    reasoning: { method: 'typed-defeasible-relation-retrieval', relation,
-      policy: CONCEPTNET_RELATIONS[relation].inference, direction },
+    reasoning: {
+      method: status === 'DEFEASIBLE'
+        ? 'typed-defeasible-relation-retrieval' : 'typed-declared-relation-retrieval',
+      relation,
+      policy,
+      direction,
+    },
     query: { provider: provider.manifest.id, relation, subject, direction },
     learned: [], learnedRules: [], context: {},
   };
@@ -136,6 +147,76 @@ export class ConceptNetProvider {
   memorySnapshot() {
     return this.mode === 'eager' ? { mode: 'eager', estimatedBytes: 220 * 1024 * 1024 }
       : { mode: 'lazy', ...this.cache.snapshot() };
+  }
+
+  async retrieveGrounding(request) {
+    const preferredRelations = [
+      'IsA', 'UsedFor', 'CapableOf', 'AtLocation', 'HasProperty', 'PartOf', 'HasA',
+      'MadeOf', 'Causes', 'MotivatedByGoal', 'ReceivesAction', 'Synonym', 'Antonym', 'InstanceOf',
+    ];
+    const maximumLookups = Math.min(request.limits.maximumLookups, 48);
+    const maximumValues = request.limits.maximumValuesPerLookup;
+    const maximumCandidateEntries = request.limits.maximumEntries * 4;
+    const terms = [...request.terms];
+    const entries = [];
+    const truncationReasons = [];
+    let lookups = 0;
+    outer: for (const relation of preferredRelations) {
+      for (const [termIndex, term] of terms.entries()) {
+        if (lookups >= maximumLookups) { truncationReasons.push('lookup-budget'); break outer; }
+        const edges = await this.relationEdges('forward', relation, term);
+        lookups += 1;
+        if (edges.length > maximumValues) truncationReasons.push('relation-value-budget');
+        for (const edge of edges.slice(0, maximumValues)) {
+          if (entries.length >= maximumCandidateEntries) {
+            truncationReasons.push('candidate-entry-budget');
+            break outer;
+          }
+          const row = edge[3]?.[0];
+          if (row === undefined) continue;
+          entries.push(makeGroundingEntry({
+            kbId: this.manifest.kbId,
+            kbVersion: this.manifest.kbVersion,
+            recordId: `conceptnet:${row}`,
+            statement: `ConceptNet records the ${relation} relation from “${normalizeConceptTerm(term)}” to “${edge[0]}”.`,
+            semantic: {
+              kind: 'typed-relation-edge',
+              subject: normalizeConceptTerm(term),
+              relation,
+              object: edge[0],
+              direction: 'forward',
+              weight: edge[1],
+              inferencePolicy: CONCEPTNET_RELATIONS[relation].inference,
+            },
+            epistemicStatus: CONCEPTNET_RELATIONS[relation].inference === 'defeasible-edge'
+              ? 'defeasible-source-edge' : 'source-assertion',
+            provenance: edge[3].slice(0, 8).map((sourceRow) => `ConceptNet-5.7.0:${sourceRow}`),
+            relevance: {
+              score: 20 - termIndex * 0.25 + Math.log1p(edge[1]),
+              reasons: ['exact-concept-endpoint-match', 'typed-relation-neighborhood'],
+            },
+          }));
+        }
+      }
+    }
+    if (lookups < terms.length * preferredRelations.length && !truncationReasons.includes('lookup-budget')) {
+      truncationReasons.push('lookup-budget');
+    }
+    return {
+      entries,
+      receipt: {
+        kbId: this.manifest.kbId,
+        kbVersion: this.manifest.kbVersion,
+        status: entries.length > 0 ? 'matches-found' : 'no-match',
+        coverage: 'bounded-exact-forward-relation-neighborhood',
+        complete: truncationReasons.length === 0 && request.termSelection.complete,
+        candidatesConsidered: lookups,
+        truncationReasons: [...new Set([
+          ...truncationReasons,
+          ...(!request.termSelection.complete ? ['term-selection-budget'] : []),
+        ])],
+      },
+    };
   }
 
   async edgeWeight(relation, subject, object) {

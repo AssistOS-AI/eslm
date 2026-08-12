@@ -82,7 +82,7 @@ Usage:
   eslm benchmark probe --benchmark all|ID[,ID] [--publish]
   eslm benchmark run --suite FILE [--publish]
   eslm benchmark export --suite FILE --output FILE
-  eslm benchmark score-predictions --suite FILE --input FILE --model-name NAME [--output FILE]
+  eslm benchmark score-predictions --suite FILE --input FILE --protocol-metadata FILE [--output FILE]
   eslm benchmark import-results --input FILE [--output FILE]
   eslm docs check|publish
 

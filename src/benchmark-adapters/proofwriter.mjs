@@ -390,11 +390,15 @@ function executeLogicalCase(item) {
   const query = symbolicLiteral(parseProofWriterLiteral(
     item.visible.queryRepresentation, `${item.visible.id}.query`,
   ));
-  const closure = deriveClosure({
+  const closureResult = deriveClosure({
     facts: item.visible.program.facts,
     rules: item.visible.program.rules,
     reasoning: { deduction: { maxRounds: 8 } },
   }, 8);
+  if (!closureResult.complete) {
+    return Object.freeze({ predicted: 'RESOURCE_LIMIT', proofValid: true, witnessDepth: 0 });
+  }
+  const closure = closureResult.facts;
   const bySignature = new Map(closure.map((fact) => [tripleSignature(factTriple(fact)), fact]));
   const queryWitness = bySignature.get(tripleSignature(query));
   const inverseWitness = bySignature.get(tripleSignature(inverseTriple(query)));

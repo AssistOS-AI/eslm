@@ -1,9 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EslmEngine } from '../src/runtime/engine.mjs';
+import { EslmRuntime } from '../src/runtime/runtime.mjs';
 import { createCoreModel } from '../src/runtime/core-model.mjs';
 import { loadKnowledgeBase, mergeModels } from '../src/kbs.mjs';
 import { regressionSmokeCases, smokeCatalogSummary, smokeExamples } from '../src/conversation-smoke.mjs';
+import { SESSION_LIMITS } from '../src/language/session.mjs';
+import { directCoreMemorySnapshot } from '../src/runtime/result-contract.mjs';
 
 test('runtime compiles session language, plans deduction, and emits a proof-bearing result', async () => {
   const engine = new EslmEngine(await createCoreModel());
@@ -14,6 +17,23 @@ test('runtime compiles session language, plans deduction, and emits a proof-bear
   assert.equal(result.taskFrame.languageRoute, 'direct-symbolic');
   assert.equal(result.plan.methodId, 'method:core:safe-horn-deduction');
   assert.equal(result.provenance[0].support[0], 'session:f0');
+  assert.deepEqual(result.model.memory, directCoreMemorySnapshot());
+});
+
+test('a committed session rule composes with loaded KB facts in a later turn', async () => {
+  const model = mergeModels(await createCoreModel(), [await loadKnowledgeBase('quick')]);
+  const engine = new EslmEngine(model);
+  const learned = engine.ask('Every bird fears wolves.');
+  assert.equal(learned.status, 'SOLVED');
+  assert.equal(learned.context.session.facts.length, 0);
+  assert.equal(learned.context.session.rules.length, 1);
+
+  const result = engine.ask('What is Penguin afraid of?', learned.context);
+  assert.equal(result.status, 'SOLVED');
+  assert.deepEqual(result.values, ['wolf']);
+  assert.equal(result.reasoning.method, 'deduction');
+  assert.deepEqual(result.taskFrame.contextStack,
+    ['context:runtime:baseline', 'context:session:current']);
 });
 
 test('unsupported language is UNPARSED and missing evidence is UNKNOWN', async () => {
@@ -21,6 +41,87 @@ test('unsupported language is UNPARSED and missing evidence is UNKNOWN', async (
   assert.equal(engine.ask('Write a poem about rain.').status, 'UNPARSED');
   const learned = engine.ask('Ada is a person.');
   assert.equal(engine.ask('Can Ada fly?', learned.context).status, 'UNKNOWN');
+});
+
+test('mixed supported and unsupported episodes roll back atomically', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  for (const input of [
+    'Zara is a pilot. Sing a song about Zara.',
+    'Sing a song about Zara. Zara is a pilot.',
+    'Zara is a pilot. Sing a song about Zara. Is Zara a pilot?',
+  ]) {
+    const result = engine.ask(input);
+    assert.equal(result.status, 'UNPARSED', input);
+    assert.equal(result.episode.transaction, 'rolled-back', input);
+    assert.deepEqual(result.learned, [], input);
+    assert.equal(result.context.session.facts.length, 0, input);
+    assert.equal(engine.ask('Is Zara a pilot?', result.context).status, 'UNKNOWN', input);
+  }
+});
+
+test('oversized input and accumulated sessions fail before mutation with structured resource accounting', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  const oversized = engine.ask('a'.repeat(SESSION_LIMITS.maximumInputBytes + 1));
+  assert.equal(oversized.status, 'RESOURCE_LIMIT');
+  assert.equal(oversized.unresolvedSubgoals[0].resource, 'inputBytes');
+  assert.equal(oversized.episode.original, '');
+  assert.deepEqual(oversized.model.memory, directCoreMemorySnapshot());
+
+  const facts = Array.from({ length: SESSION_LIMITS.maximumFacts }, (_, index) => ({
+    id: `session:f${index}`, subject: `entity-${index}`, predicate: 'is_a', value: 'nonce',
+    provenance: [`session:${index}`], session: true,
+  }));
+  const context = { session: { entities: [], facts, rules: [], history: [] } };
+  const exhausted = engine.ask('Zara is a pilot.', context);
+  assert.equal(exhausted.status, 'RESOURCE_LIMIT');
+  assert.equal(exhausted.unresolvedSubgoals[0].resource, 'facts');
+  assert.equal(exhausted.context.session.facts.length, SESSION_LIMITS.maximumFacts);
+  assert.equal(exhausted.context.session.facts.some((fact) => fact.subject === 'zara'), false);
+
+  const hiddenOversize = engine.ask('Is Zara a pilot?', { session: {
+    entities: [], rules: [], history: [], facts: [{
+      id: 'session:f0', subject: 'zara', predicate: 'is_a', value: 'pilot',
+      provenance: ['session:1'], session: true,
+      sourceText: 'x'.repeat(SESSION_LIMITS.maximumStringBytes + 1),
+    }],
+  } });
+  assert.equal(hiddenOversize.status, 'RESOURCE_LIMIT');
+  assert.equal(hiddenOversize.unresolvedSubgoals[0].resource,
+    'context.session.facts[0].sourceText');
+  assert.deepEqual(hiddenOversize.context.session.facts, []);
+});
+
+test('the provider runtime enforces request bounds before consulting selected KBs', async () => {
+  const core = new EslmEngine(await createCoreModel());
+  let calls = 0;
+  const provider = {
+    manifest: { id: 'bounded-provider', kbId: 'bounded-provider', kbVersion: '1' },
+    async ask() { calls += 1; return undefined; },
+  };
+  const runtime = new EslmRuntime(core, [provider], ['bounded-provider']);
+  const result = await runtime.ask('a'.repeat(SESSION_LIMITS.maximumInputBytes + 1));
+  assert.equal(result.status, 'RESOURCE_LIMIT');
+  assert.equal(calls, 0);
+});
+
+test('invalid session and non-text input produce structured failures without provider consultation', async () => {
+  const core = new EslmEngine(await createCoreModel());
+  let calls = 0;
+  const provider = {
+    manifest: { id: 'guarded-provider', kbId: 'guarded-provider', kbVersion: '1' },
+    async ask() { calls += 1; return undefined; },
+  };
+  const runtime = new EslmRuntime(core, [provider], ['guarded-provider']);
+  const invalidContext = await runtime.ask('Is Zara a pilot?', {
+    session: { entities: [], facts: [], rules: [], history: [], hidden: { payload: 'x' } },
+  });
+  assert.equal(invalidContext.status, 'INCONSISTENT_CONTEXT');
+  assert.deepEqual(invalidContext.context.session.facts, []);
+  assert.equal(invalidContext.unresolvedSubgoals[0].operation, 'validate-session-context');
+  const invalidInput = await runtime.ask({ text: 'Is Zara a pilot?' });
+  assert.equal(invalidInput.status, 'UNPARSED');
+  assert.equal(invalidInput.unresolvedSubgoals[0].operation, 'validate-input');
+  assert.equal(calls, 0);
 });
 
 test('selected QUICK package supplies declarative facts and safe rules', async () => {

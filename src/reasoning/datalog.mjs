@@ -1,9 +1,44 @@
+import { stableStringify } from '../util.mjs';
+
 function valueOf(fact) {
   return fact.object ?? fact.value;
 }
 
+function compareText(left, right) {
+  return left < right ? -1 : left > right ? 1 : 0;
+}
+
+function kbSourcesOf(...values) {
+  const sources = values.flatMap((value) => value?.kbSources
+    ?? value?.sourceKbVersions
+    ?? (value?.kbId ? [{ kbId: value.kbId, version: value.kbVersion }] : []));
+  const unique = new Map(sources.filter((item) => item?.kbId).map((item) => [
+    `${item.kbId}\u0000${item.version ?? ''}`,
+    { kbId: item.kbId, ...(item.version ? { version: item.version } : {}) },
+  ]));
+  return [...unique.values()].toSorted((left, right) =>
+    compareText(left.kbId, right.kbId) || compareText(String(left.version), String(right.version)));
+}
+
 function signature(fact) {
   return `${fact.subject}\u0000${fact.predicate}\u0000${valueOf(fact)}`;
+}
+
+function factOutputKey(fact) {
+  return stableStringify({
+    subject: fact.subject,
+    predicate: fact.predicate,
+    term: Object.hasOwn(fact, 'object')
+      ? { kind: 'object', value: fact.object }
+      : { kind: 'value', value: fact.value },
+    contextRef: fact.contextRef ?? null,
+    epistemicStatus: fact.epistemicStatus ?? null,
+    confidence: fact.confidence ?? null,
+    validity: fact.validity ?? null,
+    reasoning: fact.reasoning ?? null,
+    rule: fact.rule ?? null,
+    id: fact.id,
+  });
 }
 
 function unify(pattern, fact, bindings) {
@@ -62,11 +97,38 @@ function addIndexedFact(index, fact) {
   add(index.byObject, valueOf(fact));
 }
 
-export function deriveClosure(model, maxRounds = model.reasoning?.deduction?.maxRounds ?? 8) {
+function nonNegativeInteger(value, label) {
+  if (!Number.isSafeInteger(value) || value < 0) {
+    throw new TypeError(`${label} must be a non-negative safe integer.`);
+  }
+  return value;
+}
+
+export function deriveClosure(model, options = {}) {
+  const configured = typeof options === 'number' ? { maxRounds: options } : options;
+  const maxRounds = nonNegativeInteger(
+    configured.maxRounds ?? model.reasoning?.deduction?.maxRounds ?? 8, 'Horn maximum rounds',
+  );
+  const maximumFacts = nonNegativeInteger(configured.maximumFacts
+    ?? model.reasoning?.deduction?.maximumFacts ?? 100_000, 'Horn maximum facts');
+  const maximumJoinAttempts = nonNegativeInteger(configured.maximumJoinAttempts
+    ?? model.reasoning?.deduction?.maximumJoinAttempts ?? 250_000,
+  'Horn maximum join attempts');
   const facts = model.facts.map((fact) => ({ ...fact, derived: false }));
   const seen = new Set(facts.map(signature));
   const index = indexFacts(facts);
-  for (let round = 0; round < maxRounds; round += 1) {
+  let joinAttempts = 0;
+  let rounds = 0;
+  const result = (complete, diagnostic, frontierSize = 0) => ({
+    facts, complete, rounds, joinAttempts, frontierSize,
+    ...(complete ? {} : { resourceLimit: true, diagnostic }),
+  });
+  if (facts.length > maximumFacts) {
+    return result(false,
+      `Horn deduction initial fact inventory ${facts.length} exceeds its ${maximumFacts}-fact budget.`,
+      facts.length - maximumFacts);
+  }
+  const deriveRound = () => {
     const additions = [];
     for (const rule of model.rules) {
       let matches = [{ bindings: {}, support: [] }];
@@ -74,6 +136,10 @@ export function deriveClosure(model, maxRounds = model.reasoning?.deduction?.max
         const expanded = [];
         for (const match of matches) {
           for (const fact of candidateFacts(premise, match.bindings, index)) {
+            joinAttempts += 1;
+            if (joinAttempts > maximumJoinAttempts) {
+              return { additions, resourceLimit: 'Horn deduction exhausted its join-attempt budget.' };
+            }
             const bindings = unify(premise, fact, match.bindings);
             if (bindings) expanded.push({ bindings, support: [...match.support, fact] });
           }
@@ -84,10 +150,16 @@ export function deriveClosure(model, maxRounds = model.reasoning?.deduction?.max
         const [subject, predicate, object] = instantiate(rule.then, match.bindings);
         const fact = {
           id: `derived:${rule.id}:${facts.length + additions.length}`,
+          kbId: rule.kbId,
+          kbVersion: rule.kbVersion,
+          kbSources: kbSourcesOf(rule, ...match.support),
           subject,
           predicate,
           object,
-          provenance: [rule.source, ...match.support.flatMap((item) => item.provenance)],
+          provenance: [...new Set([
+            ...(rule.sources ?? [rule.source]),
+            ...match.support.flatMap((item) => item.provenance ?? []),
+          ].filter(Boolean))].toSorted(compareText),
           support: match.support.map((item) => item.id),
           rule: rule.id,
           reasoning: 'deduction',
@@ -97,16 +169,32 @@ export function deriveClosure(model, maxRounds = model.reasoning?.deduction?.max
         if (!seen.has(signature(fact))) {
           seen.add(signature(fact));
           additions.push(fact);
+          if (facts.length + additions.length > maximumFacts) {
+            return { additions, resourceLimit: 'Horn deduction exhausted its fact budget.' };
+          }
         }
       }
     }
-    if (additions.length === 0) break;
+    return { additions };
+  };
+  for (let round = 0; round < maxRounds; round += 1) {
+    const derived = deriveRound();
+    if (derived.resourceLimit) return result(false, derived.resourceLimit, derived.additions.length);
+    const { additions } = derived;
+    if (additions.length === 0) return result(true, undefined, 0);
     for (const fact of additions) {
       facts.push(fact);
       addIndexedFact(index, fact);
     }
+    rounds += 1;
   }
-  return facts;
+  const completenessProbe = deriveRound();
+  if (completenessProbe.resourceLimit) {
+    return result(false, completenessProbe.resourceLimit, completenessProbe.additions.length);
+  }
+  if (completenessProbe.additions.length === 0) return result(true, undefined, 0);
+  return result(false, `Horn deduction reached its ${maxRounds}-round limit before the fixed point.`,
+    completenessProbe.additions.length);
 }
 
 export function deriveInductiveFacts(model, facts) {
@@ -142,7 +230,13 @@ export function deriveInductiveFacts(model, facts) {
     const supportCount = new Set(candidate.supports.map((fact) => fact.subject)).size;
     const confidence = supportCount / candidate.members.size;
     if (supportCount < predicatePolicy.minSupport || confidence < predicatePolicy.minCoverage) continue;
-    accepted.push({ ...candidate, supportCount, confidence, selection: predicatePolicy.selection ?? 'all' });
+    accepted.push({
+      ...candidate,
+      supportCount,
+      confidence,
+      selection: predicatePolicy.selection ?? 'all',
+      sourceKbVersions: predicatePolicy.sourceKbVersions ?? [],
+    });
   }
   const selected = [];
   const groups = new Map();
@@ -182,6 +276,7 @@ export function deriveInductiveFacts(model, facts) {
       induced.push({
         id: `induced:${candidate.className}:${candidate.predicate}:${candidate.value}:${subject}`,
         ...proposed,
+        kbSources: kbSourcesOf(candidate, ...allSupports),
         provenance: [...new Set(allSupports.flatMap((fact) => fact.provenance))],
         support: allSupports.map((fact) => fact.id),
         reasoning: 'induction',
@@ -241,10 +336,12 @@ export function answerQuery(query, index) {
   if (query.object) postings.push(index.byObject.get(query.object) ?? []);
   const smallest = postings.toSorted((left, right) => left.length - right.length)[0];
   const membership = postings.filter((posting) => posting !== smallest).map((posting) => new Set(posting));
-  const matches = smallest.filter((fact) => membership.every((set) => set.has(fact)));
+  const matches = smallest.filter((fact) => membership.every((set) => set.has(fact)))
+    .toSorted((left, right) => compareText(factOutputKey(left), factOutputKey(right)));
   if (query.target === 'boolean') return { values: matches.length > 0 ? [true] : [], evidence: matches };
   return {
-    values: [...new Set(matches.map((fact) => query.target === 'subject' ? fact.subject : valueOf(fact)))],
+    values: [...new Set(matches.map((fact) => query.target === 'subject' ? fact.subject : valueOf(fact)))]
+      .toSorted((left, right) => compareText(stableStringify(left), stableStringify(right))),
     evidence: matches,
   };
 }

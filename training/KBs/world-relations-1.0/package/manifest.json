@@ -15,7 +15,8 @@
   "benchmarkEligible": false,
   "counts": {
     "relations": 22,
-    "constructions": 257
+    "constructions": 257,
+    "groundingTerms": 44
   },
   "capabilities": [
     "argument-sensitive-compatibility",

@@ -361,7 +361,7 @@ export async function runLogicSkillsDevelopmentProbe(engine, root, { freshFracti
     const status = result?.status ?? 'MISSING_STATUS';
     statusCounts[status] = (statusCounts[status] ?? 0) + 1;
     testedByTask[task.taskFamily] = (testedByTask[task.taskFamily] ?? 0) + 1;
-    if (status === 'ANSWERED' || status === 'SOLVED') answered += 1;
+    if (status === 'SOLVED') answered += 1;
     if (task.taskFamily === 'countermodel' && status === 'SOLVED'
       && verifyFiniteFirstOrderCountermodel(task.argument, result.countermodel)) verifiedCountermodels += 1;
   }

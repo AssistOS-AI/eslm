@@ -57,7 +57,45 @@ returns `RESOURCE_LIMIT`.
 
 ### Operator observability
 
-Structured results and profiling expose the requested policy, selected packages, shard and block loads, bytes, hits, misses, evictions, oversize bypasses, pinned data, expansion count, search limits, and any refusal. Interactive `/memory` explains current settings and recent use. Human output may condense these fields, but machine JSON remains authoritative.
+The target structured result and profiler expose the requested policy, selected packages, shard and block loads, bytes,
+hits, misses, evictions, oversize bypasses, pinned data, expansion count, search limits, and any refusal. Interactive
+`/memory` explains current settings and recent use. Human output may condense these fields, but machine JSON remains
+authoritative.
+
+Every direct `EslmEngine` text and typed-task result exposes an `eslm-memory-plan-v1` snapshot. Its core-only snapshot
+has `requestedPolicy: eager`, `effectivePolicy: eager`, `softTarget: false`, `reserveMiB: 0`, and `providers: []`.
+Those fields mean that the already constructed core model is resident and has no provider retention target; the empty
+provider array is not a zero-byte claim. The CLI runtime replaces that route-local view with its configured provider
+plan, including the requested and effective policy, reserve, soft-target status, and bounded provider summaries. This
+replacement also occurs when the CLI selected no public provider: the current automatic plan then has an empty
+provider list and the CLI's fixed 96 MiB planning reserve, while a library caller using `EslmEngine` directly sees the
+zero-reserve core snapshot.
+
+The result-contract validator checks the snapshot format, policies, numeric target and reserve, provider identities,
+and provider modes whenever memory metadata is present. `--profile` adds the profiler fields currently implemented by
+the engine and providers. Neither snapshot promises the complete per-query block ledger, loaded-shard list,
+pin/eviction history, or expansion frontier described above. Those omissions are part of the partial boundary below,
+not permission to infer zero bytes or no loads.
+
+### Failure-grounding budget
+
+Failure-time grounding is optional work with its own bounded request. A primary `RESOURCE_LIMIT` result does not
+automatically launch more retrieval: doing so would hide the exhausted resource and could amplify an adversarial
+query. A product that requires grounding after primary exhaustion reserves a separate time, byte, lookup, posting, and
+entry budget before execution and reports both budgets independently.
+
+For other inability statuses, grounding still obeys provider-local shard caches and exact lookup limits. A source that
+cannot complete returns a search receipt with truncation or provider failure; the bundle reports
+`SEARCH_INCOMPLETE` when no record was returned and never translates a cache miss into complete absence. Grounding
+latency and bytes belong in profiling, not in deterministic semantic values, sorting keys, or answer text.
+
+### Present implementation boundary
+
+The present public-provider cache is byte-estimated and LRU-like, and `--memory-mb` is an advisory application target
+with a fixed reserve. It is not a hard whole-process RSS limit. Published probes must record measured peak RSS and
+elapsed time when making resource claims, and costly benchmark families should execute in isolated processes under a
+real OS or container limit when a hard cap is required. The broader per-query block accounting and reserved grounding
+budget described above remain only partially implemented.
 
 ## Decisions & Questions
 
@@ -68,6 +106,17 @@ Response: No. A miss triggers loading or a visible resource refusal. `UNKNOWN` i
 ### Question #2: May a memory target reduce a benchmark denominator?
 
 Response: No. Every case in the declared scope remains evaluated. Cases that exceed an execution budget count under the benchmark's scorer and are reported as `RESOURCE_LIMIT`; they are not removed from data or denominator.
+
+### Question #3: Why does grounding not run automatically after RESOURCE_LIMIT?
+
+Response: The primary execution has already consumed its declared authority. Starting unreserved retrieval would make
+the limit misleading and could worsen overload. Grounding is allowed only when a separate predeclared budget remains.
+
+### Question #4: Why does the direct-core snapshot list no providers?
+
+Response: `providers` describes independently planned public-provider stores and their caches. The core model is
+already materialized before a direct task begins, so it is represented by the eager effective policy rather than by a
+fictional provider entry. The profiler, not this policy snapshot, is responsible for measured process memory.
 
 ## Conclusion
 

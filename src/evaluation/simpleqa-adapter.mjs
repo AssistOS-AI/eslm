@@ -255,6 +255,8 @@ export async function runSimpleQaDiagnosticProbe(engine, pool, options = {}) {
       topic: item.strata.topic,
       status: result.status,
       languageRoute: result.languageRoute,
+      methodId: result.plan?.methodId,
+      usedKbVersions: Object.freeze(result.usedKbVersions ?? []),
       exactMatch: normalizedExactAnswer(result.answer) === normalizedExactAnswer(expected),
       wouldRequireLanguageFallback: result.status === 'UNPARSED',
     }));
@@ -267,6 +269,14 @@ export async function runSimpleQaDiagnosticProbe(engine, pool, options = {}) {
   }
   const exact = outcomes.filter((outcome) => outcome.exactMatch).length;
   const fallback = outcomes.filter((outcome) => outcome.wouldRequireLanguageFallback).length;
+  const selectedMethods = [...new Set(outcomes.map((outcome) => outcome.methodId).filter(Boolean))].toSorted();
+  const usedKbVersionsByIdentity = new Map();
+  for (const value of outcomes.flatMap((outcome) => outcome.usedKbVersions)) {
+    if (!value?.kbId) continue;
+    usedKbVersionsByIdentity.set(`${value.kbId}\u0000${value.version ?? ''}`, Object.freeze({
+      kbId: value.kbId, ...(value.version ? { version: value.version } : {}),
+    }));
+  }
   return Object.freeze({
     format: 'eslm-simpleqa-diagnostic-report-v1',
     benchmarkId: SIMPLEQA_ID,
@@ -282,6 +292,9 @@ export async function runSimpleQaDiagnosticProbe(engine, pool, options = {}) {
     languageFallbackRate: fallback / outcomes.length,
     statusCounts: Object.freeze(statusCounts),
     topicCounts: Object.freeze(topicCounts),
+    selectedMethods: Object.freeze(selectedMethods),
+    usedKbVersions: Object.freeze([...usedKbVersionsByIdentity.values()].toSorted((left, right) =>
+      left.kbId.localeCompare(right.kbId) || String(left.version).localeCompare(String(right.version)))),
     outcomes: Object.freeze(outcomes),
   });
 }

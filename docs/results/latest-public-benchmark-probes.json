@@ -1,24 +1,87 @@
 {
-  "format": "eslm-public-benchmark-probe-report-v1",
-  "createdAt": "2026-08-11T18:22:08.515Z",
-  "evidenceRegime": "frozen fresh evaluations, development probes, and diagnostic probes are labeled separately; inaccessible sources and sources without a valid symbolic method remain unscored",
+  "format": "eslm-public-benchmark-probe-report-v2",
+  "assembledAt": "2026-08-12T13:17:10.970Z",
+  "assembly": {
+    "mode": "mixed-current-execution-and-stored-receipts",
+    "requestedBenchmarkIds": [
+      "blimp",
+      "babi",
+      "clutrr",
+      "ewok",
+      "simpleqa",
+      "entityTracking",
+      "storyCloze",
+      "logicbench",
+      "iibench",
+      "proofwriter",
+      "prontoqa",
+      "slr-bench",
+      "logicskills",
+      "folio",
+      "proverqa",
+      "stepgame",
+      "sparc-sparp",
+      "satbench",
+      "zebralogic",
+      "defeasible-nli",
+      "alpha-nli-art",
+      "reclor",
+      "logiqa"
+    ],
+    "executedNowIds": [
+      "clutrr",
+      "simpleqa",
+      "entityTracking",
+      "storyCloze"
+    ],
+    "receiptIds": [
+      "blimp",
+      "babi",
+      "ewok",
+      "logicbench",
+      "iibench",
+      "proofwriter",
+      "prontoqa",
+      "slr-bench",
+      "logicskills",
+      "folio",
+      "proverqa",
+      "stepgame",
+      "sparc-sparp",
+      "satbench",
+      "zebralogic",
+      "defeasible-nli",
+      "alpha-nli-art",
+      "reclor",
+      "logiqa"
+    ],
+    "notExecutedIds": [],
+    "receiptAudit": {
+      "checked": 9,
+      "current": 0,
+      "historicalStale": 6,
+      "historicalUnrecoverable": 0,
+      "invalid": 3,
+      "unavailable": 0
+    }
+  },
+  "evidenceRegime": "Current fresh evaluations, historical or invalid receipts, development probes, and diagnostics are labeled separately; forced-choice abstentions remain in the end-to-end denominator while selective accuracy stays null when there are no attempts.",
   "languageAgentPolicy": "No Language Agent calls were made. normalizationCandidateRate counts direct UNPARSED cases that would trigger the optional profile; null means that direct-language eligibility was not measured.",
   "rows": [
     {
       "id": "blimp",
-      "evidenceState": "fresh-evaluation-executed",
-      "total": 13400,
-      "correct": 11767,
-      "accuracy": 0.8781343283582089,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
-      "agentInvocations": 0,
-      "agentInvocationRate": 0,
+      "evidenceState": "historical-fresh-evaluation",
+      "resultOrigin": "stored-receipt",
       "protocol": "blimp-feature-acceptability-fresh-v1",
       "samplePolicy": "frozen-label-blind-stratified-partition",
+      "splitQuality": "row-IID-paradigm-stratified",
       "protocolDescription": "For each minimally different sentence pair, the system earns a point only when the generic feature grammar assigns the higher acceptability score to the grammatical sentence.",
       "sampleDescription": "Every one of the 67 grammar paradigms contributes 800 development pairs and 200 fresh pairs. The candidate was frozen before the 13,400 fresh pairs were scored once, and only aggregate results were retained.",
+      "total": 13400,
+      "correct": 11767,
+      "attempted": 12173,
+      "forcedChoice": true,
+      "normalizationCandidates": 0,
       "ties": 1227,
       "reversedPreferences": 406,
       "statusCounts": {
@@ -58,23 +121,116 @@
         "level": "broad-but-incomplete",
         "description": "All 67 BLiMP grammar paradigms are represented in the fresh partition. The remaining gap is concentrated in phrase structure, attachment, lexical selection, and binding rather than missing paradigm sampling."
       },
-      "diagnosis": "The remaining failures cluster in long-distance subject-gap attachment, adjunct islands, lexical animacy selection, N-bar ellipsis, adjective-mediated and relative-clause agreement, optional or inchoative valency, participle ambiguity, and binding-domain attachment. Progress requires a fuller phrase-structure and clause-attachment representation, not paradigm-name dispatch or memorized sentences."
+      "diagnosis": "The remaining failures cluster in long-distance subject-gap attachment, adjunct islands, lexical animacy selection, N-bar ellipsis, adjective-mediated and relative-clause agreement, optional or inchoative valency, participle ambiguity, and binding-domain attachment. Progress requires a fuller phrase-structure and clause-attachment representation, not paradigm-name dispatch or memorized sentences.",
+      "track": "raw-language",
+      "inputRoute": "raw-language",
+      "endToEndAccuracy": 0.8781343283582089,
+      "attemptCoverage": 0.9084328358208955,
+      "selectiveAccuracy": 0.9666474985623922,
+      "accuracy": 0.8781343283582089,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": 1,
+      "normalizationCandidateRate": 0,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "evaluationIdentities": {
+        "scorer": "blimp-feature-acceptability-fresh-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "frozen-label-blind-stratified-partition"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "measured"
+      },
+      "resourcePolicy": {
+        "state": "command-default-or-not-recorded"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "checkpointState": "historical-stale",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "checkpointVerification": {
+          "state": "cryptographic-audit",
+          "outcome": "historical-stale",
+          "currentnessClaim": false
+        },
+        "reportingCompleteness": {
+          "state": "incomplete",
+          "missingFields": [
+            "executedAt"
+          ]
+        },
+        "frozenAt": "2026-08-11T00:00:00Z",
+        "freeze": {
+          "path": "training/benchmark-sources/blimp-acceptability/candidate-manifest.json",
+          "sha256": "88209c1220f8665994744d5c758224d0e12ebf2fa03123dc95cea0bea6e67630"
+        },
+        "result": {
+          "path": "training/benchmark-sources/blimp-acceptability/fresh-result.json",
+          "sha256": "c8549ce7919075ad77ecd03aba3e7b00d20318873a1c904418d31cdbb4c1d878"
+        },
+        "auxiliaryArtifacts": [],
+        "receiptBindingState": "match",
+        "receiptValidity": {
+          "integrity": "valid",
+          "reportingCompleteness": "incomplete",
+          "issues": [
+            "execution timestamp is not recorded as an ISO-compatible date",
+            "result has no cryptographic freeze or behavior-dependency binding",
+            "behaviorDependency must record a content-addressed execution identity",
+            "resourcePolicy.requestedMemoryMb is not recorded",
+            "resourceEvidence must record non-negative sampled peak RSS and wall time",
+            "replayCommand is not recorded",
+            "evaluationIdentities must name scorer, oracle, and partition",
+            "selectedMethods is not recorded as a method-identifier array",
+            "selectedKbVersions is not recorded as a KB-version array",
+            "usedKbVersions is not recorded as a KB-version array",
+            "languagePolicy.externalLanguageAgent is not recorded"
+          ]
+        },
+        "dependencyAudit": {
+          "state": "historical-stale",
+          "checked": 6,
+          "matching": 5,
+          "changed": 1,
+          "missing": 0,
+          "mismatches": [
+            {
+              "path": "src/benchmark-adapters/blimp-babi.mjs",
+              "expectedSha256": "75685e986858746b481bc7c4418563540ad6d21151601577b029f569d8cd5444",
+              "actualSha256": "96bbee39234198904487931653bbb7b78901a43c2ebc7c0f1822b2322b55d834",
+              "state": "changed"
+            }
+          ]
+        }
+      },
+      "adapterState": "implemented-fresh",
+      "evaluationState": "fresh-evaluation-executed",
+      "access": {
+        "state": "public-direct-repository",
+        "actionUrl": "https://github.com/alexwarstadt/blimp"
+      },
+      "recordedEvidenceState": "fresh-evaluation-executed"
     },
     {
       "id": "babi",
       "evidenceState": "development-probe-executed",
-      "total": 200000,
-      "correct": 199872,
-      "accuracy": 0.99936,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
-      "agentInvocations": 0,
-      "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "executedAt": "2026-08-11T18:01:28Z",
       "protocol": "finite-episodic-world-train-visible-v1",
       "samplePolicy": "complete-official-English-10k-training-split-all-twenty-families",
+      "splitQuality": "official-development",
       "protocolDescription": "The adapter compiles each visible story into a finite typed episode. The registered generic executor applies state changes, relations, event roles, paths, vectors, counting, and source-declared policies, then returns semantic values with replayable operation references.",
       "sampleDescription": "The latest run executed every one of the 200,000 questions in all twenty official English 10k training files. These train-visible cases are development evidence, not an untouched test score.",
+      "total": 200000,
+      "correct": 199872,
+      "attempted": 199872,
+      "normalizationCandidates": null,
       "statusCounts": {
         "SOLVED": 199872,
         "AMBIGUOUS": 128
@@ -200,29 +356,80 @@
         "scope": "The latest development run executed all 10,000 questions in each of all twenty task families. Official test files were not opened or scored."
       },
       "usedKbVersions": [
-        "babi-v1.2-language@1.0.0"
+        {
+          "kbId": "babi-v1.2-language",
+          "version": "1.0.0"
+        }
+      ],
+      "selectedKbVersions": [
+        {
+          "kbId": "babi-v1.2-language",
+          "version": "1.0.0"
+        }
       ],
       "diagnosis": "199872/200000 cases match the single-label development oracle and all 200000 execution witnesses replay. Tasks 1–4 and 6–20 are each 10,000/10,000. Task 5 is 9,872/10,000; its 128 remaining inputs each expose at least two distinct transfer themes satisfying the same visible event-role query. Five alpha-renamed structural signatures require contradictory oracle choices, which falsifies first, latest, and verb-priority tie-breakers. The sound runtime returns AMBIGUOUS instead of reading host-only support-line annotations.",
       "capabilityCoverage": {
         "level": "complete-all-twenty-development-family-coverage",
         "description": "Every official English 10k training question in all twenty families was executed. The method covers the delivered finite episode operations; this does not establish unrestricted natural-language, temporal, spatial, or causal reasoning outside the declared schemas."
+      },
+      "track": "structured-task",
+      "inputRoute": "source-template",
+      "forcedChoice": false,
+      "endToEndAccuracy": 0.99936,
+      "attemptCoverage": 0.99936,
+      "selectiveAccuracy": 1,
+      "accuracy": 0.99936,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidateRate": null,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "evaluationIdentities": {
+        "scorer": "finite-episodic-world-train-visible-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete-official-English-10k-training-split-all-twenty-families"
+      },
+      "selectedMethods": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "command-default-or-not-recorded"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11T18:01:28Z",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        }
+      },
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-archive",
+        "actionUrl": "https://github.com/facebookarchive/bAbI-tasks"
       }
     },
     {
       "id": "clutrr",
       "evidenceState": "development-probe-executed",
-      "total": 108,
-      "correct": 104,
-      "accuracy": 0.9629629629629629,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
-      "agentInvocations": 0,
-      "agentInvocationRate": 0,
       "protocol": "clutrr-relation-classification-development-probe-v1",
       "protocolDescription": "The system must infer the requested typed family relationship from the people and relationships stated in each story.",
       "samplePolicy": "stable-hash-equal-count-per-relation-depth",
+      "splitQuality": "row-IID-depth-stratified",
       "sampleDescription": "The development sample is selected deterministically with the same number of cases at every relationship-chain depth from 2 through 10.",
+      "total": 108,
+      "correct": 104,
+      "attempted": 104,
+      "forcedChoice": true,
+      "normalizationCandidates": null,
       "statusCounts": {
         "SOLVED": 104,
         "AMBIGUOUS": 4
@@ -241,6 +448,21 @@
         ],
         "perDepth": 12
       },
+      "selectedMethods": [
+        "method:core:typed-relation-algebra"
+      ],
+      "usedKbVersions": [
+        {
+          "kbId": "clutrr-kinship-algebra",
+          "version": "1.0.0"
+        }
+      ],
+      "selectedKbVersions": [
+        {
+          "kbId": "clutrr-kinship-algebra",
+          "version": "1.0.0"
+        }
+      ],
       "sourceEvidence": [
         {
           "path": "training/.cache/datasets/clutrr/official/data_089907f8/1.2_test.csv",
@@ -308,62 +530,90 @@
       "capabilityCoverage": {
         "level": "broad-for-structured-kinship",
         "description": "The probe covers relation chains at every depth from 2 through 10. Coverage is strong for structured typed graphs, while narrative extraction and source-label ambiguity remain separate limits."
-      }
-    },
-    {
-      "id": "entityTracking",
-      "evidenceState": "development-probe-executed",
-      "total": 100,
-      "correct": 100,
-      "accuracy": 1,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
+      },
+      "track": "structured-task",
+      "inputRoute": "structured-task",
+      "endToEndAccuracy": 0.9629629629629629,
+      "attemptCoverage": 0.9629629629629629,
+      "selectiveAccuracy": 1,
+      "accuracy": 0.9629629629629629,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
-      "protocol": "entity-tracking-masked-span-development-probe-v1",
-      "protocolDescription": "The system executes the stated object movements and must return the exact final contents of the queried container.",
-      "samplePolicy": "stable-hash-round-robin-operation-count",
-      "sampleDescription": "The development sample is selected deterministically while cycling across stories with different numbers of operations.",
-      "statusCounts": {
-        "SOLVED": 100
+      "evaluationIdentities": {
+        "scorer": "clutrr-relation-classification-development-probe-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "stable-hash-equal-count-per-relation-depth"
       },
-      "sourceEvidence": [
-        {
-          "path": "training/.cache/datasets/entity-tracking/extracted/boxes-dataset-v1/few_shot_boxes_nso_exp2_max3/dev-t5.jsonl",
-          "sha256": "5b369e51daf03147b1dceb4265b5fec61a3e9596ba780db76a9aedd7b2f4fc8b",
-          "sourceRows": 20020
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "declared-soft-process-target",
+        "requestedMemoryMb": 256,
+        "executionIsolation": "sequential-row-in-one-cli-process"
+      },
+      "resourceEvidence": {
+        "measurement": "in-process-25ms-rss-sampling",
+        "wallMilliseconds": 219.22913800000015,
+        "cpuUserMicroseconds": 264067,
+        "cpuSystemMicroseconds": 10756,
+        "startRssBytes": 373633024,
+        "endRssBytes": 380698624,
+        "sampledPeakRssBytes": 380698624,
+        "rssSamples": 9
+      },
+      "replayCommand": "node src/cli.mjs benchmark probe --benchmark clutrr --memory-mb 256 --no-external-language-agent",
+      "behaviorDependency": {
+        "format": "eslm-benchmark-behavior-identity-v1",
+        "state": "content-addressed-worktree",
+        "scope": {
+          "roots": [
+            "src"
+          ],
+          "explicitFiles": [
+            "package.json"
+          ],
+          "includedExtension": ".mjs"
+        },
+        "digest": "cbdb9191c82a91ae6b6a967e5c0fd789a59a31ef5733d35778b07734c431718c",
+        "files": 134,
+        "runtime": {
+          "node": "v22.23.1",
+          "platform": "linux",
+          "architecture": "x64"
         }
-      ],
-      "sampleCoverage": {
-        "tested": 100,
-        "available": 20020,
-        "unit": "development stories",
-        "comprehensive": false,
-        "scope": "The latest run used a deterministic operation-count-stratified sample from the validated development file."
       },
-      "diagnosis": "The reviewed adapter projects the story into generic container-state operations. The core executes additions, removals, moves, and final-content queries as finite state transitions rather than treating the task as raw mask completion.",
-      "capabilityCoverage": {
-        "level": "complete-for-current-bounded-schema",
-        "description": "The measured schema covers the declared add, remove, and move operations through the sampled operation depths. It does not establish unrestricted event language or arbitrary container programs."
+      "resultOrigin": "current-execution",
+      "executionEvidence": {
+        "origin": "current-execution",
+        "executedAt": "2026-08-12T13:13:16.963Z"
+      },
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-repository",
+        "actionUrl": "https://github.com/facebookresearch/clutrr"
       }
     },
     {
       "id": "ewok",
-      "evidenceState": "fresh-evaluation-executed",
-      "total": 8634,
-      "correct": 3361,
-      "accuracy": 0.3892749594625898,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
-      "agentInvocations": 0,
-      "agentInvocationRate": 0,
+      "evidenceState": "historical-fresh-evaluation",
+      "resultOrigin": "stored-receipt",
       "protocol": "ewok-symbolic-context-preference-fresh-v1",
       "protocolDescription": "For each target statement, the system must prefer the context in which that statement is more plausible according to ordinary physical, social, spatial, material, and quantitative knowledge.",
       "samplePolicy": "frozen-complement-of-development-probe",
+      "splitQuality": "row-IID-source-item-grouped",
       "sampleDescription": "The candidate was frozen after a balanced 110-decision development probe. Every other decision in the protected analysis snapshot formed an 8,634-decision fresh partition, which was scored once without retaining item outcomes.",
       "comparability": "Direct scalar-preference diagnostic over the protected paper-analysis snapshot; not the official language-model probability protocol.",
+      "total": 8634,
+      "correct": 3361,
+      "attempted": 4389,
+      "forcedChoice": true,
+      "normalizationCandidates": null,
       "ties": 4245,
       "reversedPreferences": 1028,
       "statusCounts": {
@@ -501,73 +751,167 @@
         "level": "low-generalization-coverage",
         "description": "The large fresh partition spans all 11 EWoK domains and shows that the current ontology covers only a minority of required world-knowledge preferences; spatial relations are strongest and social interactions are weakest."
       },
-      "diagnosis": "The typed world-relation method achieved complete coverage of its 110-case development probe but generalized poorly to the frozen fresh complement, with many ties. The authored ontology is therefore too narrow. A new candidate must broaden source-independent physical, social, material, quantitative, and spatial knowledge under a new version and a new untouched evaluation partition; it must not patch the opened fresh cases. The protected inventory contains 4,397 rows and its explicit removal list excludes 25, leaving 4,372."
-    },
-    {
-      "id": "storyCloze",
-      "evidenceState": "development-probe-executed",
-      "total": 1257,
-      "correct": 734,
-      "accuracy": 0.5839299920445505,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
+      "diagnosis": "The typed world-relation method achieved complete coverage of its 110-case development probe but generalized poorly to the frozen fresh complement, with many ties. The authored ontology is therefore too narrow. A new candidate must broaden source-independent physical, social, material, quantitative, and spatial knowledge under a new version and a new untouched evaluation partition; it must not patch the opened fresh cases. The protected inventory contains 4,397 rows and its explicit removal list excludes 25, leaving 4,372.",
+      "track": "solver-conformance",
+      "inputRoute": "source-template",
+      "endToEndAccuracy": 0.3892749594625898,
+      "attemptCoverage": 0.5083391243919388,
+      "selectiveAccuracy": 0.7657780815675552,
+      "accuracy": 0.3892749594625898,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
-      "protocol": "story-cloze-binary-ending-selection-v1",
-      "protocolDescription": "The system compiles the four-sentence story into bounded narrative state, evaluates both candidate events with structural and typed commonsense evidence, and abstains when neither candidate has a sufficient margin.",
-      "samplePolicy": "frozen-label-blind-development-partition",
-      "sampleDescription": "A label-blind SHA-256 partition reserves 314 validation cases as fresh and exposes the remaining 1,257 cases for development. This row measures only that development partition; the official label-free test split was not used.",
-      "omissions": 53,
-      "statusCounts": {
-        "DEFEASIBLE": 1204,
-        "UNKNOWN": 53
+      "evaluationIdentities": {
+        "scorer": "ewok-symbolic-context-preference-fresh-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "frozen-complement-of-development-probe"
       },
-      "usedKbVersions": [
-        "world-relations-1.0",
-        "atomic-2020",
-        "conceptnet-5.7.0-en"
-      ],
-      "sourceEvidence": [
-        {
-          "path": "training/benchmark-sources/story-cloze-2018/fresh-partition.json",
-          "sha256": "f2b8d43eb755a92c0dd73e2089331418be48b4320b721e844685fd95329c0625",
-          "partitionDigest": "df208d36029d86c020cbc7ec49cf7937f8cac785230fdeab6f222968b61180b1"
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "command-default-or-not-recorded"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "checkpointState": "historical-stale",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "checkpointVerification": {
+          "state": "cryptographic-audit",
+          "outcome": "historical-stale",
+          "currentnessClaim": false
+        },
+        "reportingCompleteness": {
+          "state": "incomplete",
+          "missingFields": [
+            "executedAt"
+          ]
+        },
+        "frozenAt": null,
+        "freeze": {
+          "path": "training/benchmark-sources/ewok-core-1.0/pre-fresh-freeze.json",
+          "sha256": "498ac8f8a7fb449eb41b948a123c946d6c4c14c1f4db96b0e3b802e768930946"
+        },
+        "result": {
+          "path": "training/benchmark-sources/ewok-core-1.0/fresh-result.json",
+          "sha256": "b2d1ff66c120b6e36d3d7e856deb5e898616b06443fb6298b54beab41b3abcef"
+        },
+        "auxiliaryArtifacts": [
+          {
+            "role": "partition",
+            "path": "training/benchmark-sources/ewok-core-1.0/fresh-partition.json",
+            "sha256": "ffd2b88231c41f4699d5a0ec26149012f36b481c7917d4ea12b8be55127ab542",
+            "state": "available"
+          }
+        ],
+        "receiptBindingState": "match",
+        "receiptValidity": {
+          "integrity": "valid",
+          "reportingCompleteness": "incomplete",
+          "issues": [
+            "execution timestamp is not recorded as an ISO-compatible date",
+            "behaviorDependency must record a content-addressed execution identity",
+            "resourcePolicy.requestedMemoryMb is not recorded",
+            "resourceEvidence must record non-negative sampled peak RSS and wall time",
+            "replayCommand is not recorded",
+            "evaluationIdentities must name scorer, oracle, and partition",
+            "selectedMethods is not recorded as a method-identifier array",
+            "selectedKbVersions is not recorded as a KB-version array",
+            "usedKbVersions is not recorded as a KB-version array",
+            "languagePolicy.externalLanguageAgent is not recorded"
+          ]
+        },
+        "dependencyAudit": {
+          "state": "historical-stale",
+          "checked": 7,
+          "matching": 4,
+          "changed": 3,
+          "missing": 0,
+          "mismatches": [
+            {
+              "path": "src/runtime/runtime.mjs",
+              "expectedSha256": "f3c4d3fbde2a81954a45ee4509f7cd2cef2e6fd360b9321946346702709bb3b8",
+              "actualSha256": "6c0b1573afc717a9c21238eefd01764d60f597d118189216784559a6ee5841d9",
+              "state": "changed"
+            },
+            {
+              "path": "src/public-kb-providers/world-relations.mjs",
+              "expectedSha256": "db260742469bb2a624e8bc51f1f8d2b0b57a77cd788be2ed3438344d38206068",
+              "actualSha256": "351f29b7c0dc01b09438d1a3e1157408da6d8ed2248596305a1c39aee6eb31db",
+              "state": "changed"
+            },
+            {
+              "path": "training/KBs/world-relations-1.0/package/manifest.json",
+              "expectedSha256": "eec8cf15701288f86282ce9a655815e847af9916f794d0965b6d065d96a520d5",
+              "actualSha256": "52903e36135d7e24411ee6a6216b1e877e91445a7fc97c67f43e16c6bc273c2c",
+              "state": "changed"
+            }
+          ]
         }
-      ],
-      "sampleCoverage": {
-        "tested": 1257,
-        "available": 1571,
-        "unit": "labeled validation stories",
-        "comprehensive": false,
-        "scope": "The latest run measured the 1,257-case development partition. The other 314 validation stories are reserved fresh evidence for a separately frozen candidate; the 1,571-case official test file has no local labels."
       },
-      "diagnosis": "The method is executable and auditable, but current narrative state and public KB evidence do not yet cover enough goals, causal consequences, social expectations, contradictions, and multi-event temporal dependencies. This is an unresolved capability gap, not a proof that the task is impossible.",
-      "capabilityCoverage": {
-        "level": "partial-narrative-coverage",
-        "description": "The current method models participants, lexical bridges, polarity, tense, goals, causes, events, social effects, and states. Its development score shows that this inventory is not yet a complete account of story coherence."
-      }
+      "adapterState": "implemented-fresh",
+      "evaluationState": "fresh-evaluation-executed",
+      "access": {
+        "state": "gated-explicit-acceptance-required",
+        "reason": "The official host requires an authenticated user to acknowledge the license and Terms of Use.",
+        "operatorAction": "Sign in to Hugging Face, accept the dataset conditions in the browser, then provide an authenticated protected download.",
+        "actionLabel": "Open EWoK on Hugging Face and accept the terms",
+        "actionUrl": "https://huggingface.co/datasets/ewok-core/ewok-core-1.0",
+        "credentialPolicy": "Use an individual read token only in the operator environment; never commit or log it."
+      },
+      "recordedEvidenceState": "fresh-evaluation-executed"
     },
     {
       "id": "simpleqa",
       "evidenceState": "development-probe-executed",
-      "total": 100,
-      "correct": 0,
-      "accuracy": 0,
-      "normalizationCandidates": 35,
-      "normalizationCandidateRate": 0.35,
-      "directSymbolicRate": 0.65,
-      "agentInvocations": 0,
-      "agentInvocationRate": 0,
       "protocol": "deterministic-normalized-exact-match-diagnostic",
       "protocolDescription": "This local diagnostic compares a normalized short answer exactly; it is deliberately not presented as the official semantic-grader score.",
       "comparability": "not-an-official-simpleqa-score",
       "samplePolicy": "stable topic-stratified evaluation-visible questions; host-only answers",
+      "splitQuality": "row-IID-topic-stratified",
       "sampleDescription": "The diagnostic sample is selected deterministically across question topics. Questions are visible to the runtime, while reference answers remain available only to the local evaluator.",
+      "total": 100,
+      "correct": 0,
+      "attempted": 0,
+      "normalizationCandidates": 36,
       "statusCounts": {
-        "UNPARSED": 35,
-        "UNKNOWN": 65
+        "UNPARSED": 36,
+        "UNKNOWN": 64
       },
+      "selectedMethods": [
+        "method:core:indexed-lookup"
+      ],
+      "usedKbVersions": [],
+      "selectedKbVersions": [
+        {
+          "kbId": "atomic-2020",
+          "version": "2020.2"
+        },
+        {
+          "kbId": "conceptnet-5.7.0-en",
+          "version": "5.7.0"
+        },
+        {
+          "kbId": "geonames-2026",
+          "version": "2026-08-11"
+        },
+        {
+          "kbId": "oewn-2025",
+          "version": "2025"
+        },
+        {
+          "kbId": "quick",
+          "version": "1.0.0"
+        }
+      ],
       "sourceEvidence": [
         {
           "path": "training/.cache/benchmarks/simpleqa-official-test-2024/raw/simple_qa_test_set.csv",
@@ -592,23 +936,388 @@
       "capabilityCoverage": {
         "level": "low-factoid-coverage",
         "description": "The frontend recognizes a bounded set of factoid frames and the loaded public KBs cover selected lexical, geographic, commonsense, and relational facts. The stratified diagnostic exposes large gaps in both question forms and encyclopedic breadth."
+      },
+      "track": "raw-language",
+      "inputRoute": "raw-language",
+      "forcedChoice": false,
+      "endToEndAccuracy": 0,
+      "attemptCoverage": 0,
+      "selectiveAccuracy": null,
+      "accuracy": 0,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": 0.64,
+      "normalizationCandidateRate": 0.36,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "evaluationIdentities": {
+        "scorer": "deterministic-normalized-exact-match-diagnostic",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "stable topic-stratified evaluation-visible questions; host-only answers"
+      },
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "measured"
+      },
+      "resourcePolicy": {
+        "state": "declared-soft-process-target",
+        "requestedMemoryMb": 256,
+        "executionIsolation": "sequential-row-in-one-cli-process"
+      },
+      "resourceEvidence": {
+        "measurement": "in-process-25ms-rss-sampling",
+        "wallMilliseconds": 38995.406831,
+        "cpuUserMicroseconds": 61805112,
+        "cpuSystemMicroseconds": 2873363,
+        "startRssBytes": 947511296,
+        "endRssBytes": 1097064448,
+        "sampledPeakRssBytes": 1131765760,
+        "rssSamples": 687
+      },
+      "replayCommand": "node src/cli.mjs benchmark probe --benchmark simpleqa --memory-mb 256 --no-external-language-agent",
+      "behaviorDependency": {
+        "format": "eslm-benchmark-behavior-identity-v1",
+        "state": "content-addressed-worktree",
+        "scope": {
+          "roots": [
+            "src"
+          ],
+          "explicitFiles": [
+            "package.json"
+          ],
+          "includedExtension": ".mjs"
+        },
+        "digest": "cbdb9191c82a91ae6b6a967e5c0fd789a59a31ef5733d35778b07734c431718c",
+        "files": 134,
+        "runtime": {
+          "node": "v22.23.1",
+          "platform": "linux",
+          "architecture": "x64"
+        }
+      },
+      "resultOrigin": "current-execution",
+      "executionEvidence": {
+        "origin": "current-execution",
+        "executedAt": "2026-08-12T13:17:10.919Z"
+      },
+      "adapterState": "implemented-development",
+      "evaluationState": "diagnostic-probe-executed",
+      "access": {
+        "state": "public-direct-download",
+        "actionUrl": "https://github.com/openai/simple-evals"
+      }
+    },
+    {
+      "id": "entityTracking",
+      "evidenceState": "development-probe-executed",
+      "protocol": "entity-tracking-masked-span-development-probe-v1",
+      "protocolDescription": "The system executes the stated object movements and must return the exact final contents of the queried container.",
+      "samplePolicy": "stable-hash-round-robin-operation-count",
+      "splitQuality": "row-IID-operation-stratified",
+      "sampleDescription": "The development sample is selected deterministically while cycling across stories with different numbers of operations.",
+      "total": 100,
+      "correct": 100,
+      "attempted": 100,
+      "normalizationCandidates": null,
+      "statusCounts": {
+        "SOLVED": 100
+      },
+      "selectedMethods": [
+        "method:core:container-state-transitions"
+      ],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "sourceEvidence": [
+        {
+          "path": "training/.cache/datasets/entity-tracking/extracted/boxes-dataset-v1/few_shot_boxes_nso_exp2_max3/dev-t5.jsonl",
+          "sha256": "5b369e51daf03147b1dceb4265b5fec61a3e9596ba780db76a9aedd7b2f4fc8b",
+          "sourceRows": 20020
+        }
+      ],
+      "sampleCoverage": {
+        "tested": 100,
+        "available": 20020,
+        "unit": "development stories",
+        "comprehensive": false,
+        "scope": "The latest run used a deterministic operation-count-stratified sample from the validated development file."
+      },
+      "diagnosis": "The reviewed adapter projects the story into generic container-state operations. The core executes additions, removals, moves, and final-content queries as finite state transitions rather than treating the task as raw mask completion.",
+      "capabilityCoverage": {
+        "level": "complete-for-current-bounded-schema",
+        "description": "The measured schema covers the declared add, remove, and move operations through the sampled operation depths. It does not establish unrestricted event language or arbitrary container programs."
+      },
+      "track": "structured-task",
+      "inputRoute": "source-template",
+      "forcedChoice": false,
+      "endToEndAccuracy": 1,
+      "attemptCoverage": 1,
+      "selectiveAccuracy": 1,
+      "accuracy": 1,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidateRate": null,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "evaluationIdentities": {
+        "scorer": "entity-tracking-masked-span-development-probe-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "stable-hash-round-robin-operation-count"
+      },
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "declared-soft-process-target",
+        "requestedMemoryMb": 256,
+        "executionIsolation": "sequential-row-in-one-cli-process"
+      },
+      "resourceEvidence": {
+        "measurement": "in-process-25ms-rss-sampling",
+        "wallMilliseconds": 1815.454593,
+        "cpuUserMicroseconds": 1979258,
+        "cpuSystemMicroseconds": 49864,
+        "startRssBytes": 380698624,
+        "endRssBytes": 507097088,
+        "sampledPeakRssBytes": 507219968,
+        "rssSamples": 3
+      },
+      "replayCommand": "node src/cli.mjs benchmark probe --benchmark entity-tracking --memory-mb 256 --no-external-language-agent",
+      "behaviorDependency": {
+        "format": "eslm-benchmark-behavior-identity-v1",
+        "state": "content-addressed-worktree",
+        "scope": {
+          "roots": [
+            "src"
+          ],
+          "explicitFiles": [
+            "package.json"
+          ],
+          "includedExtension": ".mjs"
+        },
+        "digest": "cbdb9191c82a91ae6b6a967e5c0fd789a59a31ef5733d35778b07734c431718c",
+        "files": 134,
+        "runtime": {
+          "node": "v22.23.1",
+          "platform": "linux",
+          "architecture": "x64"
+        }
+      },
+      "resultOrigin": "current-execution",
+      "executionEvidence": {
+        "origin": "current-execution",
+        "executedAt": "2026-08-12T13:13:18.779Z"
+      },
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-research-artifact-license-uncertain",
+        "actionUrl": "https://aclanthology.org/2023.acl-long.213/"
+      }
+    },
+    {
+      "id": "storyCloze",
+      "evidenceState": "development-probe-executed",
+      "protocol": "story-cloze-binary-ending-selection-v1",
+      "protocolDescription": "The system compiles the four-sentence story into bounded narrative state, evaluates both candidate events with structural and typed commonsense evidence, and abstains when neither candidate has a sufficient margin.",
+      "samplePolicy": "frozen-label-blind-development-partition",
+      "splitQuality": "row-IID-hash-partition",
+      "sampleDescription": "A label-blind SHA-256 partition reserves 314 validation cases as fresh and exposes the remaining 1,257 cases for development. This row measures only that development partition; the official label-free test split was not used.",
+      "total": 1257,
+      "correct": 734,
+      "attempted": 1204,
+      "forcedChoice": true,
+      "normalizationCandidates": null,
+      "omissions": 53,
+      "statusCounts": {
+        "DEFEASIBLE": 1204,
+        "UNKNOWN": 53
+      },
+      "selectedMethods": [
+        "method:core:bounded-narrative-continuation-ranking"
+      ],
+      "usedKbVersions": [
+        {
+          "kbId": "atomic-2020",
+          "version": "2020.2"
+        },
+        {
+          "kbId": "conceptnet-5.7.0-en",
+          "version": "5.7.0"
+        }
+      ],
+      "selectedKbVersions": [
+        {
+          "kbId": "atomic-2020",
+          "version": "2020.2"
+        },
+        {
+          "kbId": "conceptnet-5.7.0-en",
+          "version": "5.7.0"
+        },
+        {
+          "kbId": "world-relations-1.0",
+          "version": "1.0.0"
+        }
+      ],
+      "sourceEvidence": [
+        {
+          "path": "training/benchmark-sources/story-cloze-2018/fresh-partition.json",
+          "sha256": "f2b8d43eb755a92c0dd73e2089331418be48b4320b721e844685fd95329c0625",
+          "partitionDigest": "df208d36029d86c020cbc7ec49cf7937f8cac785230fdeab6f222968b61180b1"
+        }
+      ],
+      "sampleCoverage": {
+        "tested": 1257,
+        "available": 1571,
+        "unit": "labeled validation stories",
+        "comprehensive": false,
+        "scope": "The latest run measured the 1,257-case development partition. The other 314 validation stories are reserved fresh evidence for a separately frozen candidate; the 1,571-case official test file has no local labels."
+      },
+      "diagnosis": "The method is executable and auditable, but current narrative state and public KB evidence do not yet cover enough goals, causal consequences, social expectations, contradictions, and multi-event temporal dependencies. This is an unresolved capability gap, not a proof that the task is impossible.",
+      "capabilityCoverage": {
+        "level": "partial-narrative-coverage",
+        "description": "The current method models participants, lexical bridges, polarity, tense, goals, causes, events, social effects, and states. Its development score shows that this inventory is not yet a complete account of story coherence."
+      },
+      "track": "structured-task",
+      "inputRoute": "source-template",
+      "endToEndAccuracy": 0.5839299920445505,
+      "attemptCoverage": 0.9578361177406524,
+      "selectiveAccuracy": 0.6096345514950167,
+      "accuracy": 0.5839299920445505,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidateRate": null,
+      "agentInvocations": 0,
+      "agentInvocationRate": 0,
+      "evaluationIdentities": {
+        "scorer": "story-cloze-binary-ending-selection-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "frozen-label-blind-development-partition"
+      },
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "declared-soft-process-target",
+        "requestedMemoryMb": 256,
+        "executionIsolation": "sequential-row-in-one-cli-process"
+      },
+      "resourceEvidence": {
+        "measurement": "in-process-25ms-rss-sampling",
+        "wallMilliseconds": 193144.173917,
+        "cpuUserMicroseconds": 322143288,
+        "cpuSystemMicroseconds": 15195705,
+        "startRssBytes": 507097088,
+        "endRssBytes": 947511296,
+        "sampledPeakRssBytes": 1018015744,
+        "rssSamples": 5818
+      },
+      "replayCommand": "node src/cli.mjs benchmark probe --benchmark story-cloze --memory-mb 256 --no-external-language-agent",
+      "behaviorDependency": {
+        "format": "eslm-benchmark-behavior-identity-v1",
+        "state": "content-addressed-worktree",
+        "scope": {
+          "roots": [
+            "src"
+          ],
+          "explicitFiles": [
+            "package.json"
+          ],
+          "includedExtension": ".mjs"
+        },
+        "digest": "cbdb9191c82a91ae6b6a967e5c0fd789a59a31ef5733d35778b07734c431718c",
+        "files": 134,
+        "runtime": {
+          "node": "v22.23.1",
+          "platform": "linux",
+          "architecture": "x64"
+        }
+      },
+      "resultOrigin": "current-execution",
+      "executionEvidence": {
+        "origin": "current-execution",
+        "executedAt": "2026-08-12T13:16:31.923Z"
+      },
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "authorized-delivered-links",
+        "reason": "The operator completed the official access flow and supplied the delivered Winter 2018 validation and test links.",
+        "operatorAction": "Acquire and validate the delivered Winter 2018 files in the ignored local cache.",
+        "actionLabel": "Open the official ROCStories landing page",
+        "actionUrl": "https://cs.rochester.edu/nlp/rocstories/"
       }
     },
     {
       "id": "logicbench",
-      "evidenceState": "fresh-evaluation-executed",
+      "evidenceState": "invalid-fresh-evaluation",
       "protocol": "logicbench-pinned-fresh-aggregate-v1",
       "protocolDescription": "The adapter compiles controlled logical arguments into finite classical or prioritized-default tasks, then scores binary answers or multiple-choice selections against the isolated oracle.",
       "samplePolicy": "complete one-shot official evaluation source after development freeze",
       "sampleDescription": "The candidate was frozen on LogicBench(Aug) before every BQA and MCQA case in LogicBench(Eval) was scored once. Only aggregate and family counts were retained.",
+      "splitQuality": "source-version",
+      "track": "raw-language",
+      "inputRoute": "source-template",
+      "forcedChoice": true,
       "total": 2020,
       "correct": 217,
+      "attempted": 315,
+      "endToEndAccuracy": 0.10742574257425742,
+      "attemptCoverage": 0.15594059405940594,
+      "selectiveAccuracy": 0.6888888888888889,
       "accuracy": 0.10742574257425742,
-      "normalizationCandidates": 1635,
-      "normalizationCandidateRate": 0.8094059405940595,
-      "directSymbolicRate": 0.1905940594059406,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "invalid",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11T12:56:29.046Z",
+        "checkpointVerification": {
+          "state": "cryptographic-audit",
+          "outcome": "invalid",
+          "currentnessClaim": false
+        },
+        "frozenAt": null,
+        "freeze": {
+          "path": "training/benchmark-sources/logicbench/candidate-manifest.json",
+          "sha256": "e47345c94905ac02a4665e3e528584d8cb974fbc8606b6efae7e9d7fbd2f5f33"
+        },
+        "result": {
+          "path": "training/benchmark-sources/logicbench/fresh-result.json",
+          "sha256": "65cea6b81560c9302a92b87deb3a842704327a2bf839f996ba6d098e2692f8fb"
+        },
+        "auxiliaryArtifacts": [],
+        "receiptBindingState": "match",
+        "receiptValidity": {
+          "integrity": "valid",
+          "reportingCompleteness": "incomplete",
+          "issues": [
+            "behaviorDependency must record a content-addressed execution identity",
+            "resourcePolicy.requestedMemoryMb is not recorded",
+            "resourceEvidence must record non-negative sampled peak RSS and wall time",
+            "replayCommand is not recorded",
+            "evaluationIdentities must name scorer, oracle, and partition",
+            "selectedMethods is not recorded as a method-identifier array",
+            "selectedKbVersions is not recorded as a KB-version array",
+            "usedKbVersions is not recorded as a KB-version array",
+            "languagePolicy.externalLanguageAgent is not recorded"
+          ]
+        },
+        "dependencyAudit": {
+          "state": "invalid",
+          "checked": 5,
+          "matching": 5,
+          "changed": 0,
+          "missing": 0,
+          "mismatches": []
+        }
+      },
       "statusCounts": {
         "SOLVED": 315,
         "UNPARSED": 1635,
@@ -631,25 +1340,182 @@
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/logicbench/source-manifest.json",
-          "sourceRevision": "c014153303c98de4d5f09d41c3a235cd869be5c8"
+          "sourceRevision": "c014153303c98de4d5f09d41c3a235cd869be5c8",
+          "sha256": "a3460c8a793c0bd06266db6769983abcd72f09490c85a6b172add60c27d70114"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "logicbench-pinned-fresh-aggregate-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete one-shot official evaluation source after development freeze"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "strata": {
+        "BQA": {
+          "tested": 1520,
+          "correct": 204,
+          "accuracy": 0.13421052631578947,
+          "statuses": {
+            "SOLVED": 300,
+            "UNPARSED": 1220
+          },
+          "families": {
+            "first_order_logic": {
+              "tested": 520,
+              "correct": 107
+            },
+            "non_monotonic_logic": {
+              "tested": 440,
+              "correct": 34
+            },
+            "propositional_logic": {
+              "tested": 560,
+              "correct": 63
+            }
+          }
+        },
+        "MCQA": {
+          "tested": 500,
+          "correct": 13,
+          "accuracy": 0.026,
+          "statuses": {
+            "SOLVED": 15,
+            "UNPARSED": 415,
+            "UNKNOWN": 62,
+            "UNDERDETERMINED": 8
+          },
+          "families": {
+            "first_order_logic": {
+              "tested": 180,
+              "correct": 1
+            },
+            "non_monotonic_logic": {
+              "tested": 160,
+              "correct": 10
+            },
+            "propositional_logic": {
+              "tested": 160,
+              "correct": 2
+            }
+          },
+          "malformedSourceCases": 1
+        }
+      },
+      "adapterState": "implemented-fresh",
+      "evaluationState": "fresh-evaluation-executed",
+      "access": {
+        "state": "public-direct-repository",
+        "actionUrl": "https://github.com/Mihir3009/LogicBench"
+      },
+      "recordedEvidenceState": "fresh-evaluation-executed"
     },
     {
       "id": "iibench",
-      "evidenceState": "fresh-evaluation-executed",
+      "evidenceState": "historical-fresh-evaluation",
       "protocol": "iibench-categorical-core-fresh-v1",
       "protocolDescription": "The typed adapter executes the traditional square of opposition, required-form immediate transformations, and exhaustive finite-population syllogistic entailment. Syllogism scoring accepts only the source-declared reversible equivalence closure.",
       "samplePolicy": "frozen label-blind 80/20 reclassification of the author release",
       "sampleDescription": "The categorical candidate, adapter, tests, and specification were frozen before all 1,088 protected members were scored once. Only aggregate and source-family counts were retained.",
+      "splitQuality": "row-IID-stratified",
+      "track": "structured-task",
+      "inputRoute": "source-template",
+      "forcedChoice": true,
       "total": 1088,
       "correct": 1071,
+      "attempted": 1088,
+      "endToEndAccuracy": 0.984375,
+      "attemptCoverage": 1,
+      "selectiveAccuracy": 0.984375,
       "accuracy": 0.984375,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
       "normalizationCandidates": null,
       "normalizationCandidateRate": null,
-      "directSymbolicRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-stale",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11T17:47:00+03:00",
+        "checkpointVerification": {
+          "state": "cryptographic-audit",
+          "outcome": "historical-stale",
+          "currentnessClaim": false
+        },
+        "frozenAt": "2026-08-11T17:39:02+03:00",
+        "freeze": {
+          "path": "training/benchmark-sources/iibench/pre-fresh-freeze.json",
+          "sha256": "e5600ab97f7fd995617d61d5c46eb8a584f33c7949a6ad437e6ad997ef16d28e"
+        },
+        "result": {
+          "path": "training/benchmark-sources/iibench/fresh-result.json",
+          "sha256": "6c78dbdd2897f719f4099b0879ae8f7350dc49f4424914524d2c35a0db4ae9ae"
+        },
+        "auxiliaryArtifacts": [],
+        "receiptBindingState": "match",
+        "receiptValidity": {
+          "integrity": "valid",
+          "reportingCompleteness": "incomplete",
+          "issues": [
+            "result has no cryptographic freeze or behavior-dependency binding",
+            "behaviorDependency must record a content-addressed execution identity",
+            "resourcePolicy.requestedMemoryMb is not recorded",
+            "resourceEvidence must record non-negative sampled peak RSS and wall time",
+            "replayCommand is not recorded",
+            "evaluationIdentities must name scorer, oracle, and partition",
+            "selectedMethods is not recorded as a method-identifier array",
+            "selectedKbVersions is not recorded as a KB-version array",
+            "usedKbVersions is not recorded as a KB-version array",
+            "languagePolicy.externalLanguageAgent is not recorded"
+          ]
+        },
+        "dependencyAudit": {
+          "state": "historical-stale",
+          "checked": 7,
+          "matching": 3,
+          "changed": 4,
+          "missing": 0,
+          "mismatches": [
+            {
+              "path": "src/reasoning/capability-registry.mjs",
+              "expectedSha256": "bdf3012bb958f28390e2098e5d66be04335075403750284c4bfc437e6927e847",
+              "actualSha256": "1d761b83efd13b1b20e3350006eeacc570e4ce16765c8b4e9e1df7b41927b91b",
+              "state": "changed"
+            },
+            {
+              "path": "src/runtime/engine.mjs",
+              "expectedSha256": "4081dfeb82530b9dd59cbeca06949df984b08f26e16b9c6e394c8bff2fe88dda",
+              "actualSha256": "e2719910b7ac3e9b990e396253f2ceeb8513c43b4582d9355263b626715af1b3",
+              "state": "changed"
+            },
+            {
+              "path": "src/benchmark-adapters/iibench.mjs",
+              "expectedSha256": "56a12c6c65133932a850707fc1f21172facecc18b7021f74f7054727b50ae42d",
+              "actualSha256": "4d9773de470fb5550a2efd36963f2a05cdb068868bcaf423a515cc0ece7c5b1a",
+              "state": "changed"
+            },
+            {
+              "path": "docs/specs/DS015-reasoning-method-semantics.md",
+              "expectedSha256": "25940bfb78dfe79e987610d504ac00c9bb925b879d7a622657f10813628ed7a4",
+              "actualSha256": "c462f45072aa7f6c0995de5eeee1c983bc71de729b1cb3a30cbe9d5194b65b58",
+              "state": "changed"
+            }
+          ]
+        }
+      },
       "statusCounts": {
         "ANSWERED": 1088
       },
@@ -668,15 +1534,64 @@
       "comparability": "One-shot fresh local partition under the pinned typed protocol; not an official natural-language leaderboard score.",
       "sourceEvidence": [
         {
-          "path": "training/benchmark-sources/iibench/pre-fresh-freeze.json"
+          "path": "training/benchmark-sources/iibench/pre-fresh-freeze.json",
+          "sha256": "e5600ab97f7fd995617d61d5c46eb8a584f33c7949a6ad437e6ad997ef16d28e"
         },
         {
-          "path": "training/benchmark-sources/iibench/fresh-result.json"
+          "path": "training/benchmark-sources/iibench/fresh-result.json",
+          "sha256": "6c78dbdd2897f719f4099b0879ae8f7350dc49f4424914524d2c35a0db4ae9ae"
         },
         {
-          "path": "training/benchmark-sources/iibench/impossibility-proof.json"
+          "path": "training/benchmark-sources/iibench/impossibility-proof.json",
+          "sha256": "86177172e10cf61240578ed3d7f5d0f816a0a33d237e04cc37d94b8c3695cefb"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "iibench-categorical-core-fresh-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "frozen label-blind 80/20 reclassification of the author release"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "developmentResult": {
+        "tested": 4196,
+        "correct": 4139,
+        "accuracy": 0.986415633937083
+      },
+      "strata": {
+        "testedBySourceFile": {
+          "AEIO_truth.jsonl": 236,
+          "Conversion_generation.jsonl": 272,
+          "Obversion_generation.jsonl": 240,
+          "Contraposition_generation.jsonl": 260,
+          "Syllogism_generation.jsonl": 80
+        },
+        "correctBySourceFile": {
+          "AEIO_truth.jsonl": 236,
+          "Conversion_generation.jsonl": 272,
+          "Obversion_generation.jsonl": 240,
+          "Contraposition_generation.jsonl": 260,
+          "Syllogism_generation.jsonl": 63
+        }
+      },
+      "adapterState": "implemented-fresh",
+      "evaluationState": "fresh-evaluation-executed",
+      "access": {
+        "state": "official-author-release-license-clarification-required",
+        "actionUrl": "https://github.com/michaellu5475/IIBench/issues"
+      },
+      "recordedEvidenceState": "fresh-evaluation-executed"
     },
     {
       "id": "proofwriter",
@@ -685,14 +1600,39 @@
       "protocolDescription": "The logical-form track computes open-world safe-Horn closure, distinguishes true, false, and unknown, and validates every returned support witness. A separate direct-language pass measures whether the ordinary frontend can construct the same task.",
       "samplePolicy": "20 cases for each of 15 depth-by-answer strata",
       "sampleDescription": "The sample contains 20 development questions in each official depth-by-answer stratum across depths 0, 1, 2, 3, and 5.",
+      "splitQuality": "row-IID-stratified",
+      "track": "solver-conformance",
+      "inputRoute": "source-annotation",
+      "forcedChoice": true,
       "total": 300,
       "correct": 300,
+      "attempted": 300,
+      "endToEndAccuracy": 1,
+      "attemptCoverage": 1,
+      "selectiveAccuracy": 1,
       "accuracy": 1,
-      "normalizationCandidates": 300,
-      "normalizationCandidateRate": 1,
-      "directSymbolicRate": 0,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        },
+        "reportingCompleteness": {
+          "state": "incomplete",
+          "missingFields": [
+            "executedAt"
+          ]
+        }
+      },
       "statusCounts": {
         "SOLVED_LOGICAL_FORM": 300
       },
@@ -711,25 +1651,134 @@
       "comparability": "Development diagnostic through the official logical representation; not a full ProofWriter or natural-language leaderboard score.",
       "sourceEvidence": [
         {
-          "path": "training/benchmark-sources/proofwriter/development-result.json"
+          "path": "training/benchmark-sources/proofwriter/development-result.json",
+          "sha256": "5d6485e49f87727c327a0a7d030ceb10d7e7f026e53137993948cc5ab7d380aa"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "proofwriter-owa-main-depth-stratified-development-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "20 cases for each of 15 depth-by-answer strata"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "subtrackResults": [
+        {
+          "id": "direct-natural-language-diagnostic",
+          "label": "Ordinary runtime language frontend",
+          "track": "raw-language",
+          "inputRoute": "raw-language",
+          "tested": 300,
+          "attempted": 0,
+          "correct": 0,
+          "endToEndAccuracy": 0,
+          "attemptCoverage": 0,
+          "selectiveAccuracy": null,
+          "statusCounts": {
+            "UNPARSED": 300
+          }
+        }
+      ],
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-official-archive-terms-not-bundled",
+        "actionUrl": "https://allenai.org/data/proofwriter"
+      }
     },
     {
       "id": "prontoqa",
-      "evidenceState": "sealed-fresh-aggregate-only",
+      "evidenceState": "historical-fresh-evaluation",
       "protocol": "eslm-prontoqa-sealed-fresh-aggregate-v1",
       "protocolDescription": "The adapter grounds the controlled ontology formulas, explicitly declares the source calculus inconsistency policy, and invokes generic Tseitin-CNF plus query-directed DPLL entailment. Every certificate or countermodel is independently replayed before scoring.",
       "samplePolicy": "complete one-shot sealed fresh partition after behavior freeze",
       "sampleDescription": "All 6,320 label-blind fresh members were executed once after source, adapter, solver, verifier, tests, and membership were frozen. Only aggregate and rule-family counts left the evaluator.",
+      "splitQuality": "row-IID-generated",
+      "track": "solver-conformance",
+      "inputRoute": "source-annotation",
+      "forcedChoice": true,
       "total": 6320,
       "correct": 6320,
+      "attempted": 6320,
+      "endToEndAccuracy": 1,
+      "attemptCoverage": 1,
+      "selectiveAccuracy": 1,
       "accuracy": 1,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-stale",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11",
+        "checkpointVerification": {
+          "state": "cryptographic-audit",
+          "outcome": "historical-stale",
+          "currentnessClaim": false
+        },
+        "frozenAt": "2026-08-11",
+        "freeze": {
+          "path": "training/benchmark-sources/prontoqa-ood/pre-fresh-freeze.json",
+          "sha256": "ad0de7d6faf9863447ed341cfdd8e1fbae11baa7643b0b605d607996d1536e60"
+        },
+        "result": {
+          "path": "training/benchmark-sources/prontoqa-ood/fresh-aggregate.json",
+          "sha256": "c57041b2bd8996475dd28c0ea85388fe6d9d61bd6a7cf8690b3aa0a6d35f9442"
+        },
+        "auxiliaryArtifacts": [],
+        "receiptBindingState": "match",
+        "receiptValidity": {
+          "integrity": "valid",
+          "reportingCompleteness": "incomplete",
+          "issues": [
+            "behaviorDependency must record a content-addressed execution identity",
+            "resourcePolicy.requestedMemoryMb is not recorded",
+            "resourceEvidence must record non-negative sampled peak RSS and wall time",
+            "replayCommand is not recorded",
+            "evaluationIdentities must name scorer, oracle, and partition",
+            "selectedMethods is not recorded as a method-identifier array",
+            "selectedKbVersions is not recorded as a KB-version array",
+            "usedKbVersions is not recorded as a KB-version array",
+            "languagePolicy.externalLanguageAgent is not recorded"
+          ]
+        },
+        "dependencyAudit": {
+          "state": "historical-stale",
+          "checked": 9,
+          "matching": 7,
+          "changed": 2,
+          "missing": 0,
+          "mismatches": [
+            {
+              "path": "src/reasoning/capability-registry.mjs",
+              "expectedSha256": "144538d606f5a0da927a8f0f005fa8d58620b5e9c3c80afa8170c421d18b9e64",
+              "actualSha256": "1d761b83efd13b1b20e3350006eeacc570e4ce16765c8b4e9e1df7b41927b91b",
+              "state": "changed"
+            },
+            {
+              "path": "src/runtime/engine.mjs",
+              "expectedSha256": "436bed8af06d314a40ae3f39777451d5beed868465d16c69c6e83e0101116eb1",
+              "actualSha256": "e2719910b7ac3e9b990e396253f2ceeb8513c43b4582d9355263b626715af1b3",
+              "state": "changed"
+            }
+          ]
+        }
+      },
       "statusCounts": {
         "SOLVED": 6320
       },
@@ -748,15 +1797,92 @@
       "comparability": "One-shot sealed fresh semantic execution under the pinned local protocol; not an official natural-language proof-trace leaderboard submission.",
       "sourceEvidence": [
         {
-          "path": "training/benchmark-sources/prontoqa-ood/pre-fresh-freeze.json"
+          "path": "training/benchmark-sources/prontoqa-ood/pre-fresh-freeze.json",
+          "sha256": "ad0de7d6faf9863447ed341cfdd8e1fbae11baa7643b0b605d607996d1536e60"
         },
         {
-          "path": "training/benchmark-sources/prontoqa-ood/fresh-aggregate.json"
+          "path": "training/benchmark-sources/prontoqa-ood/fresh-aggregate.json",
+          "sha256": "c57041b2bd8996475dd28c0ea85388fe6d9d61bd6a7cf8690b3aa0a6d35f9442"
         },
         {
-          "path": "training/benchmark-sources/prontoqa-ood/development-scalable-result.json"
+          "path": "training/benchmark-sources/prontoqa-ood/development-scalable-result.json",
+          "sha256": "7ee98f5f6760a4955737cfe74016d9d2e51d84c7c24d45340616d469d73ae237"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "eslm-prontoqa-sealed-fresh-aggregate-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete one-shot sealed fresh partition after behavior freeze"
+      },
+      "selectedMethods": [
+        "method:core:scalable-boolean-entailment"
+      ],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "developmentResult": {
+        "tested": 1580,
+        "correct": 1580,
+        "accuracy": 1
+      },
+      "strata": {
+        "AndElim": {
+          "tested": 1360,
+          "correct": 1360,
+          "accuracy": 1
+        },
+        "AndIntro": {
+          "tested": 1760,
+          "correct": 1760,
+          "accuracy": 1
+        },
+        "Composed": {
+          "tested": 720,
+          "correct": 720,
+          "accuracy": 1
+        },
+        "ModusPonens": {
+          "tested": 80,
+          "correct": 80,
+          "accuracy": 1
+        },
+        "OrElim": {
+          "tested": 560,
+          "correct": 560,
+          "accuracy": 1
+        },
+        "OrIntro": {
+          "tested": 400,
+          "correct": 400,
+          "accuracy": 1
+        },
+        "ProofByContra": {
+          "tested": 320,
+          "correct": 320,
+          "accuracy": 1
+        },
+        "ProofsOnly": {
+          "tested": 1120,
+          "correct": 1120,
+          "accuracy": 1
+        }
+      },
+      "adapterState": "implemented-fresh",
+      "evaluationState": "fresh-evaluation-executed",
+      "access": {
+        "state": "public-generated-source",
+        "actionUrl": "https://github.com/asaparov/prontoqa"
+      },
+      "recordedEvidenceState": "sealed-fresh-aggregate-only"
     },
     {
       "id": "slr-bench",
@@ -765,14 +1891,35 @@
       "protocolDescription": "The adapter compiles visible demonstrations to typed positive and negative relational examples. The registered generic method enumerates connected alpha-canonical conjunctive rules by increasing body length. A separate verifier replays every positive join and every exhaustive negative rejection. Validation programs remain inert ground-fact AST data; corpus text and Prolog are never executed.",
       "samplePolicy": "complete official validation split with the official test split sealed",
       "sampleDescription": "All ten validation cases at each of the twenty curriculum levels were submitted through the typed task boundary. Ground-truth rules, validation programs, shortcuts, and symbols remained host-only. The 1,000 official test cases were not executed.",
+      "splitQuality": "official-development",
+      "track": "structured-task",
+      "inputRoute": "structured-task",
+      "forcedChoice": false,
       "total": 200,
       "correct": 126,
+      "attempted": 126,
+      "endToEndAccuracy": 0.63,
+      "attemptCoverage": 0.63,
+      "selectiveAccuracy": 1,
       "accuracy": 0.63,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11T20:53:51+03:00",
+        "executionRoute": "registered-public-engine-task-route",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        }
+      },
       "statusCounts": {
         "SOLVED": 126,
         "UNKNOWN": 10,
@@ -793,24 +1940,54 @@
       "comparability": "Complete development execution with a safe finite conjunctive fragment; not an official SWI-Prolog score.",
       "sourceEvidence": [
         {
-          "path": "training/benchmark-sources/slr-bench/source-manifest.json"
+          "path": "training/benchmark-sources/slr-bench/source-manifest.json",
+          "sha256": "52572bb1be2e7aa775fa713003e04f2f79d36708877f0934faa8a2f727065ce0"
         },
         {
-          "path": "training/benchmark-sources/slr-bench/schema-inventory.json"
+          "path": "training/benchmark-sources/slr-bench/schema-inventory.json",
+          "sha256": "f5895954df632af0d07bfcfad3a54b6f283f72d2617ff6f8a8f3a55e5406e94b"
         },
         {
-          "path": "training/benchmark-sources/slr-bench/lifecycle-manifest.json"
+          "path": "training/benchmark-sources/slr-bench/lifecycle-manifest.json",
+          "sha256": "ec9b8a76f18c63fc94bd2319daa79f7158315bb471aee13fc78c9c1c0b01974a"
         },
         {
-          "path": "training/benchmark-sources/slr-bench/development-result.json"
+          "path": "training/benchmark-sources/slr-bench/development-result.json",
+          "sha256": "21ed40bd8f261c5cf0e64fdc98141b8800d70e1d2c1d4f7916548ab5e0594b7e"
         },
         {
-          "path": "training/benchmark-sources/slr-bench/core-change-proposal.json"
+          "path": "training/benchmark-sources/slr-bench/core-change-proposal.json",
+          "sha256": "b176dde83a1c192dc340369dd803eac548a65b113f3ca58af8ff9204ffb55d82"
         },
         {
-          "path": "training/benchmark-sources/slr-bench/core-change-guardian-result.json"
+          "path": "training/benchmark-sources/slr-bench/core-change-guardian-result.json",
+          "sha256": "e6f47988d26d1f496f83b3518e803dda3d2496e02e107b2069163d2f4315b593"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "slr-bench-current-development-result-v2",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete official validation split with the official test split sealed"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-dataset",
+        "actionUrl": "https://huggingface.co/datasets/AIML-TUDA/SLR-Bench"
+      }
     },
     {
       "id": "logicskills",
@@ -819,14 +1996,34 @@
       "protocolDescription": "The strict adapter preserves three different output contracts: a formula whose correctness requires semantic equivalence, a validity selection whose oracle is isolated, and a finite countermodel that must be verified rather than string-matched.",
       "samplePolicy": "label-blind task-and-language-stratified 80/20 public-evaluation reclassification",
       "sampleDescription": "All 1,200 development members were submitted through the typed task boundary. A previous frozen candidate executed the 60-member fresh countermodel stratum once; the 240 fresh symbolization and validity members remain sealed.",
+      "splitQuality": "row-IID-stratified",
+      "track": "solver-conformance",
+      "inputRoute": "source-annotation",
+      "forcedChoice": false,
       "total": 1200,
       "correct": null,
+      "attempted": null,
+      "endToEndAccuracy": null,
+      "attemptCoverage": null,
+      "selectiveAccuracy": null,
       "accuracy": null,
+      "accuracySemantics": null,
+      "directSymbolicRate": null,
       "normalizationCandidates": null,
       "normalizationCandidateRate": null,
-      "directSymbolicRate": 0.44,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11T20:48:57+03:00",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        }
+      },
       "statusCounts": {
         "SOLVED": 528,
         "NO_APPLICABLE_METHOD": 672
@@ -842,49 +2039,189 @@
         "level": "controlled-symbolization-partial-countermodel-complete-validity-absent",
         "description": "The development-only controlled symbolizer emitted 288/480 formulas, all witness-verified with no emitted mismatch under the sound incomplete equivalence checker. The generic finite-model method verified 240/240 development and 60/60 sealed fresh countermodels. No complete validity method is registered."
       },
-      "diagnosis": "Symbolization is 288/480 over the complete development track: every emitted formula has a replayed derivation and accepted semantic equivalence, while 192 unsupported cases remain explicit. Countermodels are 240/240 with independent semantic verification. Validity has 0 attempts, so its accuracy remains absent rather than 0%. The row does not fabricate one aggregate percentage across unlike output contracts.",
+      "diagnosis": "Symbolization is 288/480 over the complete development track: every emitted formula has a replayed derivation and accepted semantic equivalence, while 192 unsupported cases remain explicit. Countermodels are 240/240 with independent semantic verification. Validity has 0 attempts, so end-to-end forced-choice accuracy is 0% and selective accuracy remains undefined. The row does not fabricate one aggregate percentage across unlike output contracts.",
       "comparability": "Development candidate and capability diagnostic, not an official LogicSkills aggregate score.",
       "sourceEvidence": [
         {
-          "path": "training/benchmark-sources/logicskills/source-manifest.json"
+          "path": "training/benchmark-sources/logicskills/source-manifest.json",
+          "sha256": "0c922241da19048446027df04441d7c7893ca5defd9ac0a4db3dcfb2e354fab2"
         },
         {
-          "path": "training/benchmark-sources/logicskills/partition-manifest.json"
+          "path": "training/benchmark-sources/logicskills/partition-manifest.json",
+          "sha256": "5567af672a581796aeb3e7158ff618e32ad0894dea1de6686a339968ef88e364"
         },
         {
-          "path": "training/benchmark-sources/logicskills/development-result.json"
+          "path": "training/benchmark-sources/logicskills/development-result.json",
+          "sha256": "f3347956f1b1f8596d19ded97f53a2965fd202bb9b9f3579372cba3602c7f2c8"
         },
         {
-          "path": "training/benchmark-sources/logicskills/pre-fresh-countermodel-freeze.json"
+          "path": "training/benchmark-sources/logicskills/pre-fresh-countermodel-freeze.json",
+          "sha256": "75f738f558494559ed74cd9d7a9e9b20a7df82921d0fa75ad397573ac61afeaa"
         },
         {
-          "path": "training/benchmark-sources/logicskills/fresh-countermodel-aggregate.json"
+          "path": "training/benchmark-sources/logicskills/fresh-countermodel-aggregate.json",
+          "sha256": "a1433dd4599b874c677f9907b2add5b7b9e8fd429d47ce327af19cdbbb940b33"
         }
       ],
+      "evaluationIdentities": {
+        "scorer": "logicskills-development-symbolization-candidate-v3",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "label-blind task-and-language-stratified 80/20 public-evaluation reclassification"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
       "subtrackResults": [
         {
           "id": "symbolization-development",
           "label": "Symbolization development track",
+          "track": "raw-language",
+          "inputRoute": "source-template",
           "evidenceState": "development-probe-executed",
           "tested": 480,
+          "attempted": 288,
           "correct": 288,
+          "endToEndAccuracy": 0.6,
+          "attemptCoverage": 0.6,
+          "selectiveAccuracy": 1,
           "accuracy": 0.6
+        },
+        {
+          "id": "validity-development",
+          "label": "Validity development track",
+          "track": "structured-task",
+          "inputRoute": "source-annotation",
+          "evidenceState": "development-probe-executed",
+          "tested": 480,
+          "attempted": 0,
+          "correct": 0,
+          "endToEndAccuracy": 0,
+          "attemptCoverage": 0,
+          "selectiveAccuracy": null,
+          "accuracy": 0
         },
         {
           "id": "countermodel-development",
           "label": "Countermodel development track",
+          "track": "solver-conformance",
+          "inputRoute": "source-annotation",
           "evidenceState": "development-probe-executed",
           "tested": 240,
+          "attempted": 240,
           "correct": 240,
+          "endToEndAccuracy": 1,
+          "attemptCoverage": 1,
+          "selectiveAccuracy": 1,
           "accuracy": 1
         },
         {
           "id": "countermodel-fresh",
           "label": "Countermodel fresh subtrack",
-          "evidenceState": "sealed-fresh-countermodel-subtrack",
+          "evidenceState": "historical-fresh-evaluation",
+          "track": "solver-conformance",
+          "inputRoute": "source-annotation",
           "tested": 60,
           "correct": 60,
-          "accuracy": 1
+          "attempted": 60,
+          "endToEndAccuracy": 1,
+          "attemptCoverage": 1,
+          "selectiveAccuracy": 1,
+          "accuracy": 1,
+          "executedAt": "2026-08-11T19:22:00+03:00",
+          "recordedEvidenceState": "sealed-fresh-countermodel-subtrack",
+          "checkpointState": "historical-stale",
+          "executionEvidence": {
+            "executedAt": "2026-08-11T19:22:00+03:00",
+            "frozenAt": "2026-08-11T19:20:00+03:00",
+            "freeze": {
+              "path": "training/benchmark-sources/logicskills/pre-fresh-countermodel-freeze.json",
+              "sha256": "75f738f558494559ed74cd9d7a9e9b20a7df82921d0fa75ad397573ac61afeaa"
+            },
+            "result": {
+              "path": "training/benchmark-sources/logicskills/fresh-countermodel-aggregate.json",
+              "sha256": "a1433dd4599b874c677f9907b2add5b7b9e8fd429d47ce327af19cdbbb940b33"
+            },
+            "auxiliaryArtifacts": [],
+            "receiptBindingState": "match",
+            "receiptValidity": {
+              "integrity": "valid",
+              "reportingCompleteness": "incomplete",
+              "issues": [
+                "behaviorDependency must record a content-addressed execution identity",
+                "resourcePolicy.requestedMemoryMb is not recorded",
+                "resourceEvidence must record non-negative sampled peak RSS and wall time",
+                "replayCommand is not recorded",
+                "evaluationIdentities must name scorer, oracle, and partition",
+                "selectedMethods is not recorded as a method-identifier array",
+                "selectedKbVersions is not recorded as a KB-version array",
+                "usedKbVersions is not recorded as a KB-version array",
+                "languagePolicy.externalLanguageAgent is not recorded"
+              ]
+            },
+            "checkpointVerification": {
+              "state": "cryptographic-audit",
+              "outcome": "historical-stale",
+              "currentnessClaim": false
+            },
+            "dependencyAudit": {
+              "state": "historical-stale",
+              "checked": 9,
+              "matching": 5,
+              "changed": 4,
+              "missing": 0,
+              "mismatches": [
+                {
+                  "path": "src/benchmark-adapters/logicskills.mjs",
+                  "expectedSha256": "9592b8bf3980cb116d96288e217a1d731558db7aba4d77709852c25e6643ce85",
+                  "actualSha256": "dc34af6e73a8821b9e931d003cd7ffeda48861fe863090633940f674d4040c6c",
+                  "state": "changed"
+                },
+                {
+                  "path": "src/runtime/engine.mjs",
+                  "expectedSha256": "e813a570adf186d093651ff41b600f4f59ebeca7fdad0d692e7108b6a5a47d01",
+                  "actualSha256": "e2719910b7ac3e9b990e396253f2ceeb8513c43b4582d9355263b626715af1b3",
+                  "state": "changed"
+                },
+                {
+                  "path": "tests/logicskills-adapter.test.mjs",
+                  "expectedSha256": "74d19007ff2427362fb6ac5a2cc8912ab904ef4bbe42a37b13eafca493705891",
+                  "actualSha256": "d3981bf269b3f0f5db3b342175a9311faf24c6cd02a4742a194628cb632c228a",
+                  "state": "changed"
+                },
+                {
+                  "path": "training/benchmark-sources/logicskills/partition-manifest.json",
+                  "expectedSha256": "435fd2b6c9c0157b2632f448f57837ec1d7f9750a867f38f0df6772ac7769e89",
+                  "actualSha256": "5567af672a581796aeb3e7158ff618e32ad0894dea1de6686a339968ef88e364",
+                  "state": "changed"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-repository",
+        "actionUrl": "https://github.com/brianrabern/LogicSkills"
+      },
+      "receiptAudits": [
+        {
+          "scope": {
+            "kind": "subtrack",
+            "id": "countermodel-fresh"
+          },
+          "state": "historical-stale"
         }
       ]
     },
@@ -895,14 +2232,34 @@
       "protocolDescription": "The formula track parses official FOL annotations, grounds the supported finite fragment, and returns entailment, counterevidence, inconsistency, unsupported syntax, or resource limits. Direct natural-language coverage is measured separately.",
       "samplePolicy": "complete pinned official v0.0 validation file",
       "sampleDescription": "Every validation record was executed. Both available labeled files are development-visible and the official v0.0 test set is unreleased, so this is not fresh evidence.",
+      "splitQuality": "official-development",
+      "track": "solver-conformance",
+      "inputRoute": "source-annotation",
+      "forcedChoice": true,
       "total": 204,
       "correct": 161,
+      "attempted": 175,
+      "endToEndAccuracy": 0.7892156862745098,
+      "attemptCoverage": 0.8578431372549019,
+      "selectiveAccuracy": 0.92,
       "accuracy": 0.7892156862745098,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
       "normalizationCandidates": null,
       "normalizationCandidateRate": null,
-      "directSymbolicRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11T18:07:52Z",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        }
+      },
       "statusCounts": {
         "SOLVED": 175,
         "UNSUPPORTED_FORMULA": 5,
@@ -923,13 +2280,34 @@
       "comparability": "Complete development run over official v0.0 validation formulas; not an untouched test score and not direct natural-language accuracy.",
       "sourceEvidence": [
         {
-          "path": "training/benchmark-sources/folio/development-result.json"
+          "path": "training/benchmark-sources/folio/development-result.json",
+          "sha256": "16bf3263bdefbbd210011d542656ad874e17746deef48288cce900a7dbd491ea"
         }
       ],
+      "evaluationIdentities": {
+        "scorer": "folio-v0.0-complete-validation-development-v2",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete pinned official v0.0 validation file"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
       "subtrackResults": [
         {
           "id": "full-natural-language-development-candidate",
           "label": "All-premises-and-query natural-language candidate",
+          "track": "raw-language",
+          "inputRoute": "source-template",
           "tested": 204,
           "correct": 4,
           "accuracy": 0.0196078431372549
@@ -937,27 +2315,108 @@
         {
           "id": "premise-vocabulary-assisted-query-diagnostic",
           "label": "Natural-language query with premise-annotation vocabulary",
+          "track": "raw-language",
+          "inputRoute": "source-annotation",
           "tested": 204,
           "correct": 75,
           "accuracy": 0.36764705882352944
         }
-      ]
+      ],
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-repository",
+        "actionUrl": "https://github.com/Yale-LILY/FOLIO"
+      }
     },
     {
       "id": "proverqa",
-      "evidenceState": "sealed-fresh-aggregate-only",
+      "evidenceState": "historical-fresh-evaluation",
       "protocol": "source-annotation-assisted-finite-entailment",
       "protocolDescription": "The adapter reads the source-provided first-order annotations, performs label-blind predicate-morphology reconciliation, and invokes the generic finite entailment core. A prediction counts only after its proof or countermodel witness passes independent verification.",
       "samplePolicy": "complete aggregate-only execution of the protected partition after the development candidate and dependencies were frozen",
       "sampleDescription": "The candidate first passed all 300 development-visible cases. The latest run then executed all 1,200 protected members and returned only aggregate and declared difficulty/answer counts.",
+      "splitQuality": "row-IID",
+      "track": "solver-conformance",
+      "inputRoute": "source-annotation",
+      "forcedChoice": true,
       "total": 1200,
       "correct": 1196,
+      "attempted": 1198,
+      "endToEndAccuracy": 0.9966666666666667,
+      "attemptCoverage": 0.9983333333333333,
+      "selectiveAccuracy": 0.998330550918197,
       "accuracy": 0.9966666666666667,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-stale",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11",
+        "checkpointVerification": {
+          "state": "cryptographic-audit",
+          "outcome": "historical-stale",
+          "currentnessClaim": false
+        },
+        "frozenAt": "2026-08-11T22:15:00+03:00",
+        "freeze": {
+          "path": "training/benchmark-sources/proverqa/pre-fresh-freeze-v2.json",
+          "sha256": "1d786f7ed6a0ad19992be3d92cfc469a66c6f75362cdccc747cc2c5a88202221"
+        },
+        "result": {
+          "path": "training/benchmark-sources/proverqa/fresh-aggregate.json",
+          "sha256": "325312f8711d0b1df3bebb4acafe96bff646a5af534067fefde4a1e0f99f4777"
+        },
+        "auxiliaryArtifacts": [],
+        "receiptBindingState": "match",
+        "receiptValidity": {
+          "integrity": "valid",
+          "reportingCompleteness": "incomplete",
+          "issues": [
+            "behaviorDependency must record a content-addressed execution identity",
+            "resourcePolicy.requestedMemoryMb is not recorded",
+            "resourceEvidence must record non-negative sampled peak RSS and wall time",
+            "replayCommand is not recorded",
+            "evaluationIdentities must name scorer, oracle, and partition",
+            "selectedMethods is not recorded as a method-identifier array",
+            "selectedKbVersions is not recorded as a KB-version array",
+            "usedKbVersions is not recorded as a KB-version array",
+            "languagePolicy.externalLanguageAgent is not recorded"
+          ]
+        },
+        "dependencyAudit": {
+          "state": "historical-stale",
+          "checked": 7,
+          "matching": 4,
+          "changed": 3,
+          "missing": 0,
+          "mismatches": [
+            {
+              "path": "src/benchmark-adapters/folio.mjs",
+              "expectedSha256": "a2309bd3bebd5d1cc0687e015c76a26ee131a40531e6857c462527d2c89e37c0",
+              "actualSha256": "c88a2dabb49f82e55ee29bcf32af60ecfbfc066e22a4d1ad953211ddba539c96",
+              "state": "changed"
+            },
+            {
+              "path": "tests/proverqa-adapter.test.mjs",
+              "expectedSha256": "bdb0cb2fafa2c8003320dd85535822d56e7e73b03db9b58e9d298777f3b7642f",
+              "actualSha256": "2d09b1e526e54568e39e0809977a0ae876ab72cd7e8666394232555a70116950",
+              "state": "changed"
+            },
+            {
+              "path": "training/benchmark-sources/proverqa/partition-manifest.json",
+              "expectedSha256": "c124c9580bac2cfe3cd8e1ddfef94ce47d610c43c8ba8ec7699b7a9895e5465a",
+              "actualSha256": "deb0d97169e3a369b5fa03803fc391e959245e910a5254f61dd66532f814d8e3",
+              "state": "changed"
+            }
+          ]
+        }
+      },
       "statusCounts": {
         "SOLVED": 1198,
         "INCONSISTENT_CONTEXT": 2
@@ -978,21 +2437,81 @@
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/proverqa/source-manifest.json",
-          "sourceRevision": "e2561beed450272690da658d21ae667570dbbafc"
+          "sourceRevision": "e2561beed450272690da658d21ae667570dbbafc",
+          "sha256": "3e481a163ead897b6a17aac2e531f1e137ae83d3ec03634c8900941fc16c14eb"
         },
         {
-          "path": "training/benchmark-sources/proverqa/partition-manifest.json"
+          "path": "training/benchmark-sources/proverqa/partition-manifest.json",
+          "sha256": "deb0d97169e3a369b5fa03803fc391e959245e910a5254f61dd66532f814d8e3"
         },
         {
-          "path": "training/benchmark-sources/proverqa/development-result.json"
+          "path": "training/benchmark-sources/proverqa/development-result.json",
+          "sha256": "d296e45055e5baaa32c4b7815d6f46dee59d1d18661e9de0d98f97788408f84f"
         },
         {
-          "path": "training/benchmark-sources/proverqa/pre-fresh-freeze-v2.json"
+          "path": "training/benchmark-sources/proverqa/pre-fresh-freeze-v2.json",
+          "sha256": "1d786f7ed6a0ad19992be3d92cfc469a66c6f75362cdccc747cc2c5a88202221"
         },
         {
-          "path": "training/benchmark-sources/proverqa/fresh-aggregate.json"
+          "path": "training/benchmark-sources/proverqa/fresh-aggregate.json",
+          "sha256": "325312f8711d0b1df3bebb4acafe96bff646a5af534067fefde4a1e0f99f4777"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "source-annotation-assisted-finite-entailment",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete aggregate-only execution of the protected partition after the development candidate and dependencies were frozen"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "strata": {
+        "byLevel": {
+          "easy": {
+            "tested": 400,
+            "correct": 400
+          },
+          "medium": {
+            "tested": 400,
+            "correct": 398
+          },
+          "hard": {
+            "tested": 400,
+            "correct": 398
+          }
+        },
+        "byAnswer": {
+          "A": {
+            "tested": 377,
+            "correct": 376
+          },
+          "B": {
+            "tested": 387,
+            "correct": 385
+          },
+          "C": {
+            "tested": 436,
+            "correct": 435
+          }
+        }
+      },
+      "adapterState": "implemented-fresh",
+      "evaluationState": "fresh-evaluation-executed",
+      "access": {
+        "state": "public-academic-research-license-clarification-required",
+        "actionUrl": "https://huggingface.co/datasets/opendatalab/ProverQA"
+      },
+      "recordedEvidenceState": "sealed-fresh-aggregate-only"
     },
     {
       "id": "stepgame",
@@ -1001,14 +2520,35 @@
       "protocolDescription": "The adapter maps validated official direction templates to a declarative vector relation system and submits the resulting task through the public engine route. The generic core propagates exact displacements and accepts a prediction only with a replayable path-sum witness.",
       "samplePolicy": "complete corrected official validation split across hop depths one through five",
       "sampleDescription": "All 5,000 official validation cases were processed. The source template catalog and task labels remained adapter/evaluator concerns; the generic vector solver received only typed entities, vectors, facts, and query endpoints. The 100,000-case official test split was not executed.",
+      "splitQuality": "official-development",
+      "track": "structured-task",
+      "inputRoute": "source-template",
+      "forcedChoice": true,
       "total": 5000,
       "correct": 4710,
+      "attempted": 4710,
+      "endToEndAccuracy": 0.942,
+      "attemptCoverage": 0.942,
+      "selectiveAccuracy": 1,
       "accuracy": 0.942,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11T16:34:29.854Z",
+        "executionRoute": "EslmEngine.executeTask",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        }
+      },
       "statusCounts": {
         "SOLVED": 4710,
         "UNKNOWN": 290
@@ -1029,15 +2569,42 @@
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/stepgame/source-manifest.json",
-          "sourceRevision": "6d859381dfd518cae3f073b268aaa323bf4dcf04"
+          "sourceRevision": "6d859381dfd518cae3f073b268aaa323bf4dcf04",
+          "sha256": "cc8c28266178a30838e8e8a8854867ad314d863c17845da75ee1ceadf79471bf"
         },
         {
-          "path": "training/benchmark-sources/stepgame/schema-inventory.json"
+          "path": "training/benchmark-sources/stepgame/schema-inventory.json",
+          "sha256": "edcd772d97d7ca0a3de4d18d6252585e31d8a43e20874b4c8a67be6c2511ebb9"
         },
         {
-          "path": "training/benchmark-sources/stepgame/development-result.json"
+          "path": "training/benchmark-sources/stepgame/development-result.json",
+          "sha256": "4d246e0696a40eec49c8bd25ee84d69e9cf5dce128bb9674f247abdaaa50b542"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "stepgame-current-core-development-result-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete corrected official validation split across hop depths one through five"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-dataset",
+        "actionUrl": "https://huggingface.co/datasets/ZhengyanShi/StepGame"
+      }
     },
     {
       "id": "sparc-sparp",
@@ -1046,14 +2613,35 @@
       "protocolDescription": "PS1 executes a declarative qualitative relation closure with reciprocal inverses, explicit binary composition and selective containment lifting. PS2 and PS3 compile point tasks into generic vector constraints; PS4 compiles extended-object directions into generic extent inequalities. Every output has an independently replayed proof tree or path witness.",
       "samplePolicy": "complete official full validation configurations PS1 through PS4; small validation configurations retained only as overlapping controls",
       "sampleDescription": "The headline combines every full-validation PS1–PS4 property regime. It does not count small configurations as independent evidence because they are transformed subsets. All official test configurations remain sealed.",
+      "splitQuality": "official-development",
+      "track": "solver-conformance",
+      "inputRoute": "source-annotation",
+      "forcedChoice": false,
       "total": 15647,
       "correct": 15578,
+      "attempted": 15647,
+      "endToEndAccuracy": 0.995590208985748,
+      "attemptCoverage": 1,
+      "selectiveAccuracy": 0.995590208985748,
       "accuracy": 0.995590208985748,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11T17:19:30.132Z",
+        "executionRoute": "mixed-see-configuration-records",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        }
+      },
       "statusCounts": {
         "SOLVED": 15647
       },
@@ -1073,25 +2661,50 @@
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/sparp/source-manifest.json",
-          "sourceRevision": "2706ed464416758c67a09716ed0262c880ee6bdd"
+          "sourceRevision": "2706ed464416758c67a09716ed0262c880ee6bdd",
+          "sha256": "f075f7b0848ae9e2e391817cc36677f02ccba20ae9d2518b4bdc2eacb3cfb57c"
         },
         {
-          "path": "training/benchmark-sources/sparp/schema-inventory.json"
+          "path": "training/benchmark-sources/sparp/schema-inventory.json",
+          "sha256": "7ff568a347c60fde54e79c4192f40e4d5d3a445dfe155c91736080c8ea54ae99"
         },
         {
-          "path": "training/benchmark-sources/sparp/overlap-audit.json"
+          "path": "training/benchmark-sources/sparp/overlap-audit.json",
+          "sha256": "d800c8b91df7e986d9676e6a722f1fe97238dd9d879cfbb322e532449114a574"
         },
         {
-          "path": "training/benchmark-sources/sparp/development-result.json"
+          "path": "training/benchmark-sources/sparp/development-result.json",
+          "sha256": "7d517ce6c37d7c25bca31ac730101dc9c62b92e703a971265369dad92557ddd9"
         },
         {
-          "path": "training/benchmark-sources/sparp/core-change-proposal-ps1.json"
+          "path": "training/benchmark-sources/sparp/core-change-proposal-ps1.json",
+          "sha256": "4f1ad935fec364042f8573b9a85c3efe5a1d44c46410c90e4d7f39c671c52d57"
         }
       ],
+      "evaluationIdentities": {
+        "scorer": "sparp-current-core-development-result-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete official full validation configurations PS1 through PS4; small validation configurations retained only as overlapping controls"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
       "subtrackResults": [
         {
           "id": "ps1",
           "label": "Full PS1 exact",
+          "track": "solver-conformance",
+          "inputRoute": "source-annotation",
           "tested": 2397,
           "correct": 2397,
           "accuracy": 1
@@ -1099,6 +2712,8 @@
         {
           "id": "ps2",
           "label": "Full PS2 exact",
+          "track": "solver-conformance",
+          "inputRoute": "source-annotation",
           "tested": 4976,
           "correct": 4907,
           "accuracy": 0.9861334405144695
@@ -1106,6 +2721,8 @@
         {
           "id": "ps3",
           "label": "Full PS3 exact",
+          "track": "solver-conformance",
+          "inputRoute": "source-annotation",
           "tested": 4499,
           "correct": 4499,
           "accuracy": 1
@@ -1113,27 +2730,89 @@
         {
           "id": "ps4",
           "label": "Full PS4 exact",
+          "track": "solver-conformance",
+          "inputRoute": "source-annotation",
           "tested": 3775,
           "correct": 3775,
           "accuracy": 1
         }
-      ]
+      ],
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-dataset",
+        "actionUrl": "https://huggingface.co/datasets/UKPLab/sparp"
+      }
     },
     {
       "id": "satbench",
-      "evidenceState": "fresh-evaluation-executed",
+      "evidenceState": "invalid-fresh-evaluation",
       "protocol": "source-annotated-formula-symbolic",
       "protocolDescription": "The adapter converts the official signed-integer CNF annotation into generic Boolean premises. SAT answers require a satisfying assignment checked against every source clause; UNSAT answers require a replayable DPLL inconsistency certificate accepted by an independent verifier.",
       "samplePolicy": "complete one-shot sealed fresh partition after source, adapter, solver, verifier, and membership freeze",
       "sampleDescription": "All 1,680 fresh members were scored exactly once after the 420-case development partition passed. The evaluator returned only aggregate and declared stratum counts.",
+      "splitQuality": "row-IID-stratified",
+      "track": "solver-conformance",
+      "inputRoute": "source-annotation",
+      "forcedChoice": true,
       "total": 1680,
       "correct": 1680,
+      "attempted": 1680,
+      "endToEndAccuracy": 1,
+      "attemptCoverage": 1,
+      "selectiveAccuracy": 1,
       "accuracy": 1,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "invalid",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11",
+        "checkpointVerification": {
+          "state": "cryptographic-audit",
+          "outcome": "invalid",
+          "currentnessClaim": false
+        },
+        "frozenAt": "2026-08-11",
+        "freeze": {
+          "path": "training/benchmark-sources/satbench/pre-fresh-freeze.json",
+          "sha256": "67e5548b983fef13ae52b6d86abcc99ca0d7caead5e14e565c5d62ff8b9e9e82"
+        },
+        "result": {
+          "path": "training/benchmark-sources/satbench/fresh-aggregate.json",
+          "sha256": "8116945a788039fc03ce08420ba73f3b1044d442be4f573b2ccdef1896e8826c"
+        },
+        "auxiliaryArtifacts": [],
+        "receiptBindingState": "match",
+        "receiptValidity": {
+          "integrity": "valid",
+          "reportingCompleteness": "incomplete",
+          "issues": [
+            "behaviorDependency must record a content-addressed execution identity",
+            "resourcePolicy.requestedMemoryMb is not recorded",
+            "resourceEvidence must record non-negative sampled peak RSS and wall time",
+            "replayCommand is not recorded",
+            "evaluationIdentities must name scorer, oracle, and partition",
+            "selectedMethods is not recorded as a method-identifier array",
+            "selectedKbVersions is not recorded as a KB-version array",
+            "usedKbVersions is not recorded as a KB-version array",
+            "languagePolicy.externalLanguageAgent is not recorded"
+          ]
+        },
+        "dependencyAudit": {
+          "state": "invalid",
+          "checked": 6,
+          "matching": 6,
+          "changed": 0,
+          "missing": 0,
+          "mismatches": []
+        }
+      },
       "statusCounts": {
         "SOLVED": 1680
       },
@@ -1153,31 +2832,147 @@
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/satbench/source-manifest.json",
-          "sourceRevision": "186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9"
+          "sourceRevision": "186740e5fb7c0fede11d13f3fbcf7d7d92d70dc9",
+          "sha256": "2b6dc9cd2fb5f9bb5c6a62e46dd0224771627f6c3f5e0142ad6035d70de855e2"
         },
         {
-          "path": "training/benchmark-sources/satbench/pre-fresh-freeze.json"
+          "path": "training/benchmark-sources/satbench/pre-fresh-freeze.json",
+          "sha256": "67e5548b983fef13ae52b6d86abcc99ca0d7caead5e14e565c5d62ff8b9e9e82"
         },
         {
-          "path": "training/benchmark-sources/satbench/fresh-aggregate.json"
+          "path": "training/benchmark-sources/satbench/fresh-aggregate.json",
+          "sha256": "8116945a788039fc03ce08420ba73f3b1044d442be4f573b2ccdef1896e8826c"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "source-annotated-formula-symbolic",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete one-shot sealed fresh partition after source, adapter, solver, verifier, and membership freeze"
+      },
+      "selectedMethods": [
+        "method:core:scalable-boolean-entailment"
+      ],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "strata": {
+        "easy-SAT": {
+          "tested": 442,
+          "correct": 442,
+          "accuracy": 1
+        },
+        "easy-UNSAT": {
+          "tested": 454,
+          "correct": 454,
+          "accuracy": 1
+        },
+        "medium-SAT": {
+          "tested": 173,
+          "correct": 173,
+          "accuracy": 1
+        },
+        "medium-UNSAT": {
+          "tested": 163,
+          "correct": 163,
+          "accuracy": 1
+        },
+        "hard-SAT": {
+          "tested": 221,
+          "correct": 221,
+          "accuracy": 1
+        },
+        "hard-UNSAT": {
+          "tested": 227,
+          "correct": 227,
+          "accuracy": 1
+        }
+      },
+      "adapterState": "implemented-fresh",
+      "evaluationState": "fresh-evaluation-executed",
+      "access": {
+        "state": "public-direct-dataset",
+        "actionUrl": "https://huggingface.co/datasets/LLM4Code/SATBench"
+      },
+      "recordedEvidenceState": "fresh-evaluation-executed"
     },
     {
       "id": "zebralogic",
-      "evidenceState": "fresh-evaluation-executed",
+      "evidenceState": "invalid-fresh-evaluation",
       "protocol": "eslm-zebralogic-sealed-fresh-aggregate-v1",
       "protocolDescription": "The adapter parses every public clue into typed finite-domain constraints, encodes the all-different puzzle as Boolean clauses, and invokes the generic SAT method. A result passes only when a direct interpreter replays every clue against the complete assignment and a second blocked-assignment search proves uniqueness.",
       "samplePolicy": "complete one-shot sealed public-clue partition after development freeze",
       "sampleDescription": "The public 1,000-puzzle grid configuration was partitioned by size before puzzle inspection: eight development and thirty-two sealed members in each of twenty-five size strata. After 200/200 development puzzles passed, all 800 sealed members were executed once and only aggregates left the evaluator.",
+      "splitQuality": "row-IID-size-stratified",
+      "track": "solver-conformance",
+      "inputRoute": "source-template",
+      "forcedChoice": false,
       "total": 800,
-      "correct": 791,
-      "accuracy": 0.98875,
-      "normalizationCandidates": 0,
-      "normalizationCandidateRate": 0,
-      "directSymbolicRate": 1,
+      "correct": null,
+      "attempted": null,
+      "endToEndAccuracy": null,
+      "attemptCoverage": null,
+      "selectiveAccuracy": null,
+      "accuracy": null,
+      "accuracySemantics": null,
+      "directSymbolicRate": null,
+      "normalizationCandidates": null,
+      "normalizationCandidateRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "invalid",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "executedAt": "2026-08-11",
+        "checkpointVerification": {
+          "state": "cryptographic-audit",
+          "outcome": "invalid",
+          "currentnessClaim": false
+        },
+        "frozenAt": "2026-08-11",
+        "freeze": {
+          "path": "training/benchmark-sources/zebralogic/pre-fresh-freeze.json",
+          "sha256": "f339705115e242dda6f6dbc0f9c8a7a511ec74d40f5498ba78717edde35d5491"
+        },
+        "result": {
+          "path": "training/benchmark-sources/zebralogic/fresh-aggregate.json",
+          "sha256": "d4c64146f81af9dc2c42f29113f85748c9f3417d3ec562267fa82bbf9f3228d5"
+        },
+        "auxiliaryArtifacts": [],
+        "receiptBindingState": "match",
+        "receiptValidity": {
+          "integrity": "valid",
+          "reportingCompleteness": "incomplete",
+          "issues": [
+            "behaviorDependency must record a content-addressed execution identity",
+            "resourcePolicy.requestedMemoryMb is not recorded",
+            "resourceEvidence must record non-negative sampled peak RSS and wall time",
+            "replayCommand is not recorded",
+            "evaluationIdentities must name scorer, oracle, and partition",
+            "selectedMethods is not recorded as a method-identifier array",
+            "selectedKbVersions is not recorded as a KB-version array",
+            "usedKbVersions is not recorded as a KB-version array",
+            "languagePolicy.externalLanguageAgent is not recorded"
+          ]
+        },
+        "dependencyAudit": {
+          "state": "invalid",
+          "checked": 8,
+          "matching": 8,
+          "changed": 0,
+          "missing": 0,
+          "mismatches": []
+        }
+      },
       "statusCounts": {
         "PARSE_ERROR": 9,
         "SOLVED": 791
@@ -1198,18 +2993,200 @@
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/zebralogic/source-manifest.json",
-          "sourceRevision": "2f94a445d7079f20146f5443e2606049de8543e0"
+          "sourceRevision": "2f94a445d7079f20146f5443e2606049de8543e0",
+          "sha256": "2ec3277cc9cdbcbbfa2a7f4b7f058fcac1c139e782d9d525f3d91d4f897a7ede"
         },
         {
-          "path": "training/benchmark-sources/zebralogic/partition-manifest.json"
+          "path": "training/benchmark-sources/zebralogic/partition-manifest.json",
+          "sha256": "d3a938832a7c8515ea7ef468c2647a334b870798093f8295558eb8860ccf3e7b"
         },
         {
-          "path": "training/benchmark-sources/zebralogic/development-result.json"
+          "path": "training/benchmark-sources/zebralogic/development-result.json",
+          "sha256": "88b89b76b8a6c9dd3fab48f6ac69f8e7d87313aa273bd8cc1ef046bd8ef88c63"
         },
         {
-          "path": "training/benchmark-sources/zebralogic/fresh-aggregate.json"
+          "path": "training/benchmark-sources/zebralogic/fresh-aggregate.json",
+          "sha256": "d4c64146f81af9dc2c42f29113f85748c9f3417d3ec562267fa82bbf9f3228d5"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "eslm-zebralogic-sealed-fresh-aggregate-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete one-shot sealed public-clue partition after development freeze"
+      },
+      "selectedMethods": [
+        "method:core:scalable-boolean-entailment"
+      ],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": {
+        "solve.searchNodes": 2245,
+        "solve.clauseInspections": 73147334,
+        "solve.propagations": 70906,
+        "solve.decisions": 1123,
+        "solve.conflicts": 1121,
+        "solve.maxDepth": 48,
+        "solve.fullVariables": 2541,
+        "solve.fullClauses": 8582,
+        "solve.queryVariables": 2541,
+        "solve.queryClauses": 8582,
+        "solve.totalPremises": 1823,
+        "solve.relevantPremises": 1823,
+        "solve.omittedPremises": 121,
+        "uniqueness.searchNodes": 2539,
+        "uniqueness.clauseInspections": 90043105,
+        "uniqueness.propagations": 97406,
+        "uniqueness.decisions": 1269,
+        "uniqueness.conflicts": 1270,
+        "uniqueness.maxDepth": 49,
+        "uniqueness.fullVariables": 2576,
+        "uniqueness.fullClauses": 8688
+      },
+      "completionCount": 791,
+      "completionRate": 0.98875,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "strata": {
+        "2*2": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "2*3": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "2*4": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "2*5": {
+          "tested": 32,
+          "passed": 31,
+          "completionRate": 0.96875
+        },
+        "2*6": {
+          "tested": 32,
+          "passed": 31,
+          "completionRate": 0.96875
+        },
+        "3*2": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "3*3": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "3*4": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "3*5": {
+          "tested": 32,
+          "passed": 31,
+          "completionRate": 0.96875
+        },
+        "3*6": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "4*2": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "4*3": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "4*4": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "4*5": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "4*6": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "5*2": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "5*3": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "5*4": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "5*5": {
+          "tested": 32,
+          "passed": 29,
+          "completionRate": 0.90625
+        },
+        "5*6": {
+          "tested": 32,
+          "passed": 30,
+          "completionRate": 0.9375
+        },
+        "6*2": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "6*3": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "6*4": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "6*5": {
+          "tested": 32,
+          "passed": 32,
+          "completionRate": 1
+        },
+        "6*6": {
+          "tested": 32,
+          "passed": 31,
+          "completionRate": 0.96875
+        }
+      },
+      "adapterState": "implemented-fresh",
+      "evaluationState": "fresh-evaluation-executed",
+      "access": {
+        "state": "public-clues-private-oracle-gated",
+        "actionUrl": "https://huggingface.co/datasets/allenai/ZebraLogicBench-private"
+      },
+      "recordedEvidenceState": "fresh-evaluation-executed"
     },
     {
       "id": "defeasible-nli",
@@ -1218,14 +3195,39 @@
       "protocolDescription": "The adapter preserves premise or social situation, hypothesis, and the proposed update as a typed strengthen-or-weaken task. Owner-declared impossible updates remain in source accounting but are excluded from scoring exactly as required by the published protocol. Labels and impossible reasons remain host-only.",
       "samplePolicy": "complete official development split after the source-declared impossible-update exclusion",
       "sampleDescription": "All 14,968 paper-eligible development rows across ATOMIC, SNLI, and Social Chemistry were submitted to the direct typed-task boundary. All 1,040 owner-declared impossible development rows remain retained and separately counted. The official test split was not executed.",
+      "splitQuality": "official-development",
+      "track": "structured-task",
+      "inputRoute": "structured-task",
+      "forcedChoice": true,
       "total": 14968,
-      "correct": null,
-      "accuracy": null,
+      "correct": 0,
+      "attempted": 0,
+      "endToEndAccuracy": 0,
+      "attemptCoverage": 0,
+      "selectiveAccuracy": null,
+      "accuracy": 0,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
       "normalizationCandidates": null,
       "normalizationCandidateRate": null,
-      "directSymbolicRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        },
+        "reportingCompleteness": {
+          "state": "incomplete",
+          "missingFields": [
+            "executedAt"
+          ]
+        }
+      },
       "statusCounts": {
         "NO_APPLICABLE_METHOD": 14968
       },
@@ -1240,38 +3242,70 @@
         "level": "complete-adapter-no-general-semantic-update-method",
         "description": "Source identity, complete streaming retention, compound-family schema validation, official eligibility policy, oracle isolation, and the strengthen-or-weaken task contract are implemented. The core does not yet compile arbitrary event, causal, physical, and normative prose into comparable provenance-bearing default theories."
       },
-      "diagnosis": "The registered runtime still returns NO_APPLICABLE_METHOD because no sound source-to-evidence compiler exists. A development-only frame-overlap experiment exercised the generic typed comparator, but its accuracy on answered binary cases was below chance, so Core Guardian rejected that automatic projection instead of promoting a misleading lexical classifier.",
+      "diagnosis": "The registered runtime still returns NO_APPLICABLE_METHOD because no sound source-to-evidence compiler exists. End-to-end forced-choice accuracy is 0% over the complete denominator, attempt coverage is 0%, and selective accuracy is undefined because no answer was attempted. A development-only frame-overlap experiment exercised the generic typed comparator, but its accuracy on answered binary cases was below chance, so Core Guardian rejected that automatic projection instead of promoting a misleading lexical classifier.",
       "comparability": "Complete direct-only development task-contract diagnostic; no answers were produced, the official test split remains sealed, and this is not an official accuracy score.",
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/defeasible-nli/source-manifest.json",
-          "sourceRevision": "c675ffc1b0eec5fa56287f08490da8ed43c1ecc5"
+          "sourceRevision": "c675ffc1b0eec5fa56287f08490da8ed43c1ecc5",
+          "sha256": "f14597409165f79652a1b0878debe96f8850c76007a2d6c95d8d24b8db016923"
         },
         {
-          "path": "training/benchmark-sources/defeasible-nli/schema-inventory.json"
+          "path": "training/benchmark-sources/defeasible-nli/schema-inventory.json",
+          "sha256": "f5613aa39fb3b09c1caa9465a693851598ae17d6f0a41ca53368b9948c248f1a"
         },
         {
-          "path": "training/benchmark-sources/defeasible-nli/development-result.json"
+          "path": "training/benchmark-sources/defeasible-nli/development-result.json",
+          "sha256": "b68190ab6d5e95aec7dfaa92720d69219ad5ddcde2c6406e1b49564e2c4ba607"
         },
         {
-          "path": "training/benchmark-sources/defeasible-nli/core-change-proposal.json"
+          "path": "training/benchmark-sources/defeasible-nli/core-change-proposal.json",
+          "sha256": "097ca26a9c9db5bca03a9e8c803767879ff57d19361779b9f44da767818e7db9"
         },
         {
-          "path": "training/benchmark-sources/defeasible-nli/typed-evidence-development-result.json"
+          "path": "training/benchmark-sources/defeasible-nli/typed-evidence-development-result.json",
+          "sha256": "3f6fd293464a29abe00183cfbe2ad8bb2024161a28dc18b0d043496f3ba56b8b"
         },
         {
-          "path": "training/benchmark-sources/defeasible-nli/typed-evidence-core-review.json"
+          "path": "training/benchmark-sources/defeasible-nli/typed-evidence-core-review.json",
+          "sha256": "060a972505753f8a88bd07140fc4c48b97ef4f2335122f2ef812bbefa9de0c3e"
         }
       ],
+      "evaluationIdentities": {
+        "scorer": "eslm-defeasible-nli-development-result-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete official development split after the source-declared impossible-update exclusion"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
       "subtrackResults": [
         {
           "id": "rejected-typed-frame-overlap",
           "label": "Rejected typed-frame experiment, accuracy on answered cases",
+          "track": "structured-task",
+          "inputRoute": "structured-task",
           "tested": 5519,
           "correct": 2721,
           "accuracy": 0.49302409856858126
         }
-      ]
+      ],
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-compound-source",
+        "actionUrl": "https://github.com/rudinger/defeasible-nli"
+      }
     },
     {
       "id": "alpha-nli-art",
@@ -1280,14 +3314,39 @@
       "protocolDescription": "The adapter exposes the earlier observation, two candidate bridge events, and the later observation as a typed narrative-bridge selection task. The preferred candidate remains in a host-only oracle. A future method must rank causal and temporal compatibility with explicit evidence rather than infer from candidate position.",
       "samplePolicy": "complete official development split with the official test split sealed",
       "sampleDescription": "All 1,532 official development cases exercised the label-free task boundary. The complete 169,654-row training split remains available for train-visible analysis; all 3,059 official test cases remain sealed and no test loader is exported.",
+      "splitQuality": "official-development",
+      "track": "structured-task",
+      "inputRoute": "structured-task",
+      "forcedChoice": true,
       "total": 1532,
-      "correct": null,
-      "accuracy": null,
+      "correct": 0,
+      "attempted": 0,
+      "endToEndAccuracy": 0,
+      "attemptCoverage": 0,
+      "selectiveAccuracy": null,
+      "accuracy": 0,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
       "normalizationCandidates": null,
       "normalizationCandidateRate": null,
-      "directSymbolicRate": null,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        },
+        "reportingCompleteness": {
+          "state": "incomplete",
+          "missingFields": [
+            "executedAt"
+          ]
+        }
+      },
       "statusCounts": {
         "NO_APPLICABLE_METHOD": 1532
       },
@@ -1302,38 +3361,70 @@
         "level": "complete-adapter-no-general-narrative-bridge-method",
         "description": "Source identity, complete retention, split isolation, label-free candidate projection, and the narrative-bridge output contract are implemented. Arbitrary observations and alternatives are not yet compiled into typed event, temporal, causal, goal, state, and contradiction relations backed by sufficient commonsense evidence."
       },
-      "diagnosis": "The registered runtime still returns NO_APPLICABLE_METHOD because no sound source-to-evidence compiler exists. A development-only event-frame overlap experiment exercised the generic comparator but remained near chance on answered cases, so Core Guardian rejected its automatic projection instead of promoting surface overlap as narrative abduction.",
+      "diagnosis": "The registered runtime still returns NO_APPLICABLE_METHOD because no sound source-to-evidence compiler exists. End-to-end forced-choice accuracy is 0% over the complete denominator, attempt coverage is 0%, and selective accuracy is undefined because no answer was attempted. A development-only event-frame overlap experiment exercised the generic comparator but remained near chance on answered cases, so Core Guardian rejected its automatic projection instead of promoting surface overlap as narrative abduction.",
       "comparability": "Direct typed narrative-bridge coverage diagnostic; not an official leaderboard submission and not evidence of unrestricted English plausibility judgment.",
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/alpha-nli-art/source-manifest.json",
-          "sourceRevision": "8ed901f038df77b7a4d0d8889255160d351d2b49"
+          "sourceRevision": "8ed901f038df77b7a4d0d8889255160d351d2b49",
+          "sha256": "2651b16c34af2b8a1f6dc14609819c197b8be076ab0c375b701ddb8f970e294b"
         },
         {
-          "path": "training/benchmark-sources/alpha-nli-art/schema-inventory.json"
+          "path": "training/benchmark-sources/alpha-nli-art/schema-inventory.json",
+          "sha256": "a6e892183f41c7a63d424dcf53c0dc6f9d071035634887642539807c8509f456"
         },
         {
-          "path": "training/benchmark-sources/alpha-nli-art/development-result.json"
+          "path": "training/benchmark-sources/alpha-nli-art/development-result.json",
+          "sha256": "5a04410f59543a0de78712a6b478145fb1e28b58f3bb9477cc880ad6bc57c843"
         },
         {
-          "path": "training/benchmark-sources/alpha-nli-art/core-change-proposal.json"
+          "path": "training/benchmark-sources/alpha-nli-art/core-change-proposal.json",
+          "sha256": "b8b188db4fbe357ee40c31e7103a1774873e932a6627d2571dbf888aa6e26a82"
         },
         {
-          "path": "training/benchmark-sources/alpha-nli-art/typed-evidence-development-result.json"
+          "path": "training/benchmark-sources/alpha-nli-art/typed-evidence-development-result.json",
+          "sha256": "460f104845a158adecb74f4c2587d50e53ddcf305055d72f4874f1a6e19ef8a6"
         },
         {
-          "path": "training/benchmark-sources/alpha-nli-art/typed-evidence-core-review.json"
+          "path": "training/benchmark-sources/alpha-nli-art/typed-evidence-core-review.json",
+          "sha256": "35f73a1f05b022fcea88c9aae0d04928655b6748e7ece3291a174a82c7ed25ff"
         }
       ],
+      "evaluationIdentities": {
+        "scorer": "alpha-nli-art-complete-official-development-direct-symbolic-baseline-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete official development split with the official test split sealed"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
       "subtrackResults": [
         {
           "id": "rejected-typed-frame-overlap",
           "label": "Rejected typed-frame experiment, accuracy on answered cases",
+          "track": "structured-task",
+          "inputRoute": "structured-task",
           "tested": 826,
           "correct": 440,
           "accuracy": 0.5326876513317191
         }
-      ]
+      ],
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-direct-archive",
+        "actionUrl": "https://github.com/allenai/abductive-commonsense-reasoning"
+      }
     },
     {
       "id": "reclor",
@@ -1342,14 +3433,39 @@
       "protocolDescription": "The source adapter preserves the passage, question, and four ordered candidates as a typed logical-reading-comprehension task while keeping the preferred candidate in a host-only oracle. The capability registry is then asked for a method; it must abstain when no method can justify a choice.",
       "samplePolicy": "complete official validation split",
       "sampleDescription": "All 500 official validation records were streamed and projected. The 4,638 training records remain development-visible; the 1,000-case test file stayed sealed and was checked only by byte identity.",
+      "splitQuality": "official-development",
+      "track": "structured-task",
+      "inputRoute": "structured-task",
+      "forcedChoice": true,
       "total": 500,
-      "correct": null,
-      "accuracy": null,
+      "correct": 0,
+      "attempted": 0,
+      "endToEndAccuracy": 0,
+      "attemptCoverage": 0,
+      "selectiveAccuracy": null,
+      "accuracy": 0,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
       "normalizationCandidates": null,
       "normalizationCandidateRate": null,
-      "directSymbolicRate": 1,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        },
+        "reportingCompleteness": {
+          "state": "incomplete",
+          "missingFields": [
+            "executedAt"
+          ]
+        }
+      },
       "statusCounts": {
         "NO_APPLICABLE_METHOD": 500
       },
@@ -1364,23 +3480,51 @@
         "level": "complete-development-task-construction-no-applicable-argument-method",
         "description": "Every visible development record reached the typed task boundary, but no registered generic method can yet compile unrestricted passages into argument structures and prove which candidate follows, weakens, strengthens, resolves, or diagnoses the argument. Abstention is evidence of a missing method, not an incorrect option choice."
       },
-      "diagnosis": "All 500 available validation tasks were executed. A strict categorical argument projection recognized 34 question operations but rejected every case before reasoning because the complete passage or explicit argument boundary could not be compiled safely. The runtime therefore returned no candidate on every task. Accuracy is absent rather than 0% because there were no evidential attempts.",
+      "diagnosis": "All 500 available validation tasks were executed. A strict categorical argument projection recognized 34 question operations but rejected every case before reasoning because the complete passage or explicit argument boundary could not be compiled safely. The runtime therefore returned no candidate on every task. End-to-end forced-choice accuracy is 0% over the complete denominator, attempt coverage is 0%, and selective accuracy is undefined because no answer was attempted.",
       "comparability": "Source-native typed logical-reading-comprehension coverage diagnostic; not an official leaderboard submission and not evidence of unrestricted English argument understanding.",
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/reclor/source-manifest.json",
-          "sourceRevision": "release official GitHub release v1; code 19b9d6c6025866ceafb4a4028819654b3817069b"
+          "sourceRevision": "release official GitHub release v1; code 19b9d6c6025866ceafb4a4028819654b3817069b",
+          "sha256": "1124e68c1859f9efb6673605c78ee279f9585bb2e8bb44e8897ea841f3464342"
         },
         {
-          "path": "training/benchmark-sources/reclor/development-result.json"
+          "path": "training/benchmark-sources/reclor/development-result.json",
+          "sha256": "abfb04d1bf856f005f23d4553b23b0f953ea79c47f4fba244fb8f484a7e4230b"
         },
         {
-          "path": "training/benchmark-sources/reclor/schema-inventory.json"
+          "path": "training/benchmark-sources/reclor/schema-inventory.json",
+          "sha256": "6d2279edc5331a10eeb63d8cdc55b3bd73a412b29ba5ddf14f3dbd0877e2eee8"
         },
         {
-          "path": "training/benchmark-sources/reclor/core-change-decision.json"
+          "path": "training/benchmark-sources/reclor/core-change-decision.json",
+          "sha256": "be0a85a6ab34f98d6eab6cfd8efb77551b3f833059b3c3d89cd4c4416620790c"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "reclor-complete-official-validation-direct-symbolic-baseline-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete official validation split"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "official-noncommercial-research-release",
+        "actionUrl": "https://github.com/yuweihao/reclor"
+      }
     },
     {
       "id": "logiqa",
@@ -1389,14 +3533,39 @@
       "protocolDescription": "The source adapter preserves the passage, question, and four ordered candidates as a typed logical-reading-comprehension task while keeping the preferred candidate in a host-only oracle. The capability registry is then asked for a method; it must abstain when no method can justify a choice.",
       "samplePolicy": "complete official English development split",
       "sampleDescription": "All 651 English development records were streamed and projected. The parallel 651 Chinese development records are retained outside this English-only execution profile; both 651-case test files stayed byte-sealed.",
+      "splitQuality": "official-development",
+      "track": "structured-task",
+      "inputRoute": "structured-task",
+      "forcedChoice": true,
       "total": 651,
-      "correct": null,
-      "accuracy": null,
+      "correct": 0,
+      "attempted": 0,
+      "endToEndAccuracy": 0,
+      "attemptCoverage": 0,
+      "selectiveAccuracy": null,
+      "accuracy": 0,
+      "accuracySemantics": "end-to-end-over-declared-denominator",
+      "directSymbolicRate": null,
       "normalizationCandidates": null,
       "normalizationCandidateRate": null,
-      "directSymbolicRate": 1,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
+      "resultOrigin": "stored-receipt",
+      "checkpointState": "historical-unverified",
+      "executionEvidence": {
+        "origin": "stored-receipt",
+        "checkpointVerification": {
+          "state": "not-audited",
+          "currentnessClaim": false,
+          "meaning": "The stored receipt is historical until a registered cryptographic audit proves its checkpoint."
+        },
+        "reportingCompleteness": {
+          "state": "incomplete",
+          "missingFields": [
+            "executedAt"
+          ]
+        }
+      },
       "statusCounts": {
         "NO_APPLICABLE_METHOD": 651
       },
@@ -1411,23 +3580,51 @@
         "level": "complete-development-task-construction-no-applicable-argument-method",
         "description": "Every visible development record reached the typed task boundary, but no registered generic method can yet compile unrestricted passages into argument structures and prove which candidate follows, weakens, strengthens, resolves, or diagnoses the argument. Abstention is evidence of a missing method, not an incorrect option choice."
       },
-      "diagnosis": "All 651 available English development tasks were executed. A strict categorical argument projection recognized 38 necessary-conclusion questions but rejected every case before reasoning because the complete passage was outside the supported monadic fragment. The runtime therefore returned no candidate on every task. Accuracy is absent rather than 0% because there were no evidential attempts.",
+      "diagnosis": "All 651 available English development tasks were executed. A strict categorical argument projection recognized 38 necessary-conclusion questions but rejected every case before reasoning because the complete passage was outside the supported monadic fragment. The runtime therefore returned no candidate on every task. End-to-end forced-choice accuracy is 0% over the complete denominator, attempt coverage is 0%, and selective accuracy is undefined because no answer was attempted.",
       "comparability": "Source-native typed logical-reading-comprehension coverage diagnostic; not an official leaderboard submission, not a Chinese-language score, and not evidence of unrestricted argument understanding.",
       "sourceEvidence": [
         {
           "path": "training/benchmark-sources/logiqa/source-manifest.json",
-          "sourceRevision": "ff6c4cbca47627b3ac2da94a29fa28204a167b41"
+          "sourceRevision": "ff6c4cbca47627b3ac2da94a29fa28204a167b41",
+          "sha256": "8330063e05afa0c38d72fb65100be52fb8232ccbe3f794573bad6a67dd1c8d49"
         },
         {
-          "path": "training/benchmark-sources/logiqa/development-result.json"
+          "path": "training/benchmark-sources/logiqa/development-result.json",
+          "sha256": "898464ffa59b1ad67dccf5c2a8fb3127a6edd1f2c5659701af1ef8e1a7f687fe"
         },
         {
-          "path": "training/benchmark-sources/logiqa/schema-inventory.json"
+          "path": "training/benchmark-sources/logiqa/schema-inventory.json",
+          "sha256": "f81867a4629f158a409a3c18e9f974c3f204cdbfbf0b4554e18c455bdebebc23"
         },
         {
-          "path": "training/benchmark-sources/logiqa/core-change-decision.json"
+          "path": "training/benchmark-sources/logiqa/core-change-decision.json",
+          "sha256": "801307977ad18500f989c470aac8488b6609e51ff1d67ad155d6f79f802ca4cc"
         }
-      ]
+      ],
+      "evaluationIdentities": {
+        "scorer": "logiqa-complete-official-english-evaluation-direct-symbolic-baseline-v1",
+        "oracle": "host-only source oracle joined after prediction",
+        "partition": "complete official English development split"
+      },
+      "selectedMethods": [],
+      "usedKbVersions": [],
+      "selectedKbVersions": [],
+      "languagePolicy": {
+        "externalLanguageAgent": false,
+        "routeMeasurement": "not-applicable-to-adapter-route"
+      },
+      "resourcePolicy": {
+        "state": "not-recorded-in-source-receipt"
+      },
+      "resourceEvidence": null,
+      "replayCommand": null,
+      "behaviorDependency": null,
+      "adapterState": "implemented-development",
+      "evaluationState": "development-probe-executed",
+      "access": {
+        "state": "public-repository-license-uncertain",
+        "actionUrl": "https://github.com/lgw863/LogiQA-dataset"
+      }
     }
   ]
 }

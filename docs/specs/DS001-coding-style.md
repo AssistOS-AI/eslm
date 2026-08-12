@@ -62,7 +62,13 @@ documentation policy here.
 
 ### Required checks
 
-`npm test` runs unit and integration tests. `npm run evaluate` runs fixed local evaluation. `npm run benchmark` runs implemented benchmark adapters without silently downloading data. `npm run docs:check` checks documentation structure, links, explanatory captions, left-to-right Mermaid direction, and the maximum five-edge diagram budget. `npm run check` composes all required verification. `npm run source:size` reports source-file size and long-line risks while excluding declarative data whose canonical representation is intentionally one record per line.
+`npm test` runs unit and integration tests. `npm run evaluate` and `npm run benchmark` run the fixed five-case authored
+integration fixtures; they do not execute the public adapter portfolio. `npm run benchmark:public-probe` performs the
+separately labeled public execution-and-receipt workflow and never downloads sources silently. `npm run docs:check`
+checks documentation structure, links, explanatory captions, left-to-right Mermaid direction, and the maximum
+five-edge diagram budget. `npm run check` composes the required offline verification without silently rerunning every
+costly public probe. `npm run source:size` reports source-file size and long-line risks while excluding declarative data
+whose canonical representation is intentionally one record per line.
 
 ## Decisions & Questions
 

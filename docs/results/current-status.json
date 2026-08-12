@@ -1,24 +1,26 @@
 {
-  "format": "eslm-current-roadmap-status-v1",
-  "updatedAt": "2026-08-11T17:13:19.396Z",
+  "format": "eslm-current-roadmap-status-v2",
+  "updatedAt": "2026-08-12T00:00:00.000Z",
+  "assessmentKind": "editorial-capability-rubric",
+  "warning": "This artifact is a review checklist, not an empirical measurement, probability, benchmark score, or percentage of general intelligence.",
   "coverage": {
-    "method": "Ten equally weighted target bands per area. Implemented contributes 1, partial contributes 0.5, and absent contributes 0. Percentages are engineering roadmap estimates, not benchmark accuracy.",
+    "method": "Each named capability band receives an editorial state: implemented, partial, or absent. Bands are not equally difficult and are never added into a percentage. Follow the cited executable evidence before accepting a state.",
     "areas": [
       {
         "id": "knowledge",
         "label": "Knowledge breadth",
         "mainGap": "Broad encyclopedic, physical, spatial, narrative, temporal-world, scientific, domain, and multilingual knowledge remain incomplete even though several large typed sources now exist.",
         "bands": [
-          { "label": "Lexical and taxonomic knowledge", "credit": 1, "state": "implemented", "evidence": "Open English WordNet supplies validated lexical and typed relation shards." },
-          { "label": "Event and social commonsense", "credit": 1, "state": "implemented", "evidence": "ATOMIC supplies provenance-bearing defeasible event tuples and typed continuation evidence." },
-          { "label": "Broad encyclopedic facts", "credit": 0.5, "state": "partial", "evidence": "GeoNames and selected ConceptNet relations answer bounded factual families; SimpleQA shows that coverage is far from encyclopedic." },
-          { "label": "Physical and spatial knowledge", "credit": 0.5, "state": "partial", "evidence": "ConceptNet and world-relations provide reviewed affordance, material, direction, comparison, and transition evidence, but EWoK exposes large missing areas." },
-          { "label": "Kinship and typed social relations", "credit": 1, "state": "implemented", "evidence": "The CLUTRR package declares typed relation classes, inverses, refinements, and compositions without storing case answers." },
-          { "label": "Narrative and script schemas", "credit": 0.5, "state": "partial", "evidence": "ATOMIC and bounded narrative event frames support continuation evidence; richer goals, causality, conflict, and scripts remain incomplete." },
-          { "label": "Temporal and world-state knowledge", "credit": 0.5, "state": "partial", "evidence": "Discrete histories and authored state-change relations exist; broad temporal-world knowledge and interval facts do not." },
-          { "label": "Scientific and technical knowledge", "credit": 0, "state": "absent", "evidence": "No reviewed scientific or technical document corpus has crossed the DS014 and DS018–DS021 compiler gates." },
-          { "label": "User or project domain knowledge", "credit": 0, "state": "absent", "evidence": "The canonical compiler exists, but no substantial operator-domain document package is promoted." },
-          { "label": "Multilingual knowledge", "credit": 0, "state": "absent", "evidence": "Language Agent translation does not create a multilingual KB." }
+          { "label": "Lexical and taxonomic knowledge", "state": "implemented", "evidence": "Open English WordNet supplies validated lexical and typed relation shards." },
+          { "label": "Event and social commonsense", "state": "implemented", "evidence": "ATOMIC supplies provenance-bearing defeasible event tuples and typed continuation evidence." },
+          { "label": "Broad encyclopedic facts", "state": "partial", "evidence": "GeoNames and selected ConceptNet relations answer bounded factual families; SimpleQA shows that coverage is far from encyclopedic." },
+          { "label": "Physical and spatial knowledge", "state": "partial", "evidence": "ConceptNet and world-relations provide reviewed affordance, material, direction, comparison, and transition evidence, but EWoK exposes large missing areas." },
+          { "label": "Kinship and typed social relations", "state": "implemented", "evidence": "The CLUTRR package declares typed relation classes, inverses, refinements, and compositions without storing case answers." },
+          { "label": "Narrative and script schemas", "state": "partial", "evidence": "ATOMIC and bounded narrative event frames support continuation evidence; richer goals, causality, conflict, and scripts remain incomplete." },
+          { "label": "Temporal and world-state knowledge", "state": "partial", "evidence": "Discrete histories and authored state-change relations exist; broad temporal-world knowledge and interval facts do not." },
+          { "label": "Scientific and technical knowledge", "state": "absent", "evidence": "No reviewed scientific or technical document corpus has crossed the DS014 and DS018–DS021 compiler gates." },
+          { "label": "User or project domain knowledge", "state": "absent", "evidence": "The canonical compiler exists, but no substantial operator-domain document package is promoted." },
+          { "label": "Multilingual knowledge", "state": "absent", "evidence": "Language Agent translation does not create a multilingual KB." }
         ]
       },
       {
@@ -26,16 +28,16 @@
         "label": "Language coverage",
         "mainGap": "Broad interrogatives, unrestricted scope, embedded clauses, direct multilingual parsing, and long natural-language theory compilation remain incomplete.",
         "bands": [
-          { "label": "Controlled atomic assertions and direct questions", "credit": 1, "state": "implemented", "evidence": "Supported class, property, relation, ability, location, WH, and yes/no forms compile to symbolic structures." },
-          { "label": "Movement, possession, and bounded state language", "credit": 1, "state": "implemented", "evidence": "Movement, acquisition, release, location, and predecessor forms execute with witnesses." },
-          { "label": "Session discourse and reference", "credit": 0.5, "state": "partial", "evidence": "Session entities and bounded salience exist; general coreference remains incomplete." },
-          { "label": "Broad factual interrogatives", "credit": 0.5, "state": "partial", "evidence": "A typed factoid frontend and provider router exist, but the SimpleQA diagnostic still contains many unsupported question forms." },
-          { "label": "Feature grammar and acceptability", "credit": 0.5, "state": "partial", "evidence": "A generic feature grammar spans every BLiMP paradigm but fresh performance remains incomplete." },
-          { "label": "Quantification, negation scope, and modality", "credit": 0.5, "state": "partial", "evidence": "Typed finite formulas and categorical A/E/I/O tasks execute; the ordinary prose parser covers only a narrow subset." },
-          { "label": "Embedded clauses and complex coordination", "credit": 0, "state": "absent", "evidence": "No general parser path supports the declared final-stage forms." },
-          { "label": "Direct multilingual parsing", "credit": 0, "state": "absent", "evidence": "Assisted translation does not count as direct parsing." },
-          { "label": "Narrative discourse", "credit": 0.5, "state": "partial", "evidence": "A bounded four-sentence narrative compiler exists, but it does not provide unrestricted story understanding." },
-          { "label": "Realization and structured task projection", "credit": 0.5, "state": "partial", "evidence": "Several strict adapters and typed realizers exist; open-ended realization and source-independent theory compilation remain incomplete." }
+          { "label": "Controlled atomic assertions and direct questions", "state": "implemented", "evidence": "Supported class, property, relation, ability, location, WH, and yes/no forms compile to symbolic structures." },
+          { "label": "Movement, possession, and bounded state language", "state": "implemented", "evidence": "Movement, acquisition, release, location, and predecessor forms execute with witnesses." },
+          { "label": "Session discourse and reference", "state": "partial", "evidence": "Session entities and bounded salience exist; general coreference remains incomplete." },
+          { "label": "Broad factual interrogatives", "state": "partial", "evidence": "A typed factoid frontend and provider router exist, but the SimpleQA diagnostic still contains many unsupported question forms." },
+          { "label": "Feature grammar and acceptability", "state": "partial", "evidence": "A generic feature grammar spans every BLiMP paradigm but fresh performance remains incomplete." },
+          { "label": "Quantification, negation scope, and modality", "state": "partial", "evidence": "Typed finite formulas and categorical A/E/I/O tasks execute; the ordinary prose parser covers only a narrow subset." },
+          { "label": "Embedded clauses and complex coordination", "state": "absent", "evidence": "No general parser path supports the declared final-stage forms." },
+          { "label": "Direct multilingual parsing", "state": "absent", "evidence": "Assisted translation does not count as direct parsing." },
+          { "label": "Narrative discourse", "state": "partial", "evidence": "A bounded four-sentence narrative compiler exists, but it does not provide unrestricted story understanding." },
+          { "label": "Realization and structured task projection", "state": "partial", "evidence": "Several strict adapters and typed realizers exist; open-ended realization and source-independent theory compilation remain incomplete." }
         ]
       },
       {
@@ -43,16 +45,16 @@
         "label": "Reasoning-mechanism coverage",
         "mainGap": "Scalable unrestricted first-order proof search, broad argument comprehension, rule synthesis, complete planning, and mature belief revision remain incomplete. Propositional SAT, finite-domain CSP, declarative qualitative relation closure, point-vector composition, and extent inequalities are implemented with checked witnesses.",
         "bands": [
-          { "label": "Indexed retrieval", "credit": 1, "state": "implemented", "evidence": "Canonical and public indexes support deterministic lookup and query-directed loading." },
-          { "label": "Safe Horn deduction", "credit": 1, "state": "implemented", "evidence": "Range-restricted rules execute with premise and rule provenance; ProofWriter logical forms validate the path." },
-          { "label": "Finite classical, scalable Boolean, categorical, and finite-model reasoning", "credit": 1, "state": "implemented", "evidence": "Small finite formulas support exhaustive models, larger propositional theories support verified DPLL certificates or countermodels, categorical A/E/I/O tasks produce opposition, transformation, and syllogistic witnesses, and function-free first-order arguments support independently verified countermodels over a declared finite domain." },
-          { "label": "Discrete state transitions", "credit": 1, "state": "implemented", "evidence": "bAbI and Entity Tracking execute generic movement, possession, add, remove, and transfer semantics." },
-          { "label": "Temporal reasoning", "credit": 0.5, "state": "partial", "evidence": "One adjacent predecessor method exists; interval algebra and unrestricted temporal projection do not." },
-          { "label": "Induction and defeasible defaults", "credit": 0.5, "state": "partial", "evidence": "Source-policy induction and finite preferred models are explicit and bounded; general nonmonotonic reasoning is not." },
-          { "label": "Abduction", "credit": 0.5, "state": "partial", "evidence": "A guarded bounded hypothesis path exists; broad explanatory and narrative abduction does not." },
-          { "label": "Typed relation and spatial composition", "credit": 1, "state": "implemented", "evidence": "Typed relation algebra, declarative qualitative closure with selective containment lifting, exact point-vector constraints, and extent inequalities execute through the runtime with replayable witnesses. The methods remain explicit finite calculi rather than unrestricted geometric theorem proving." },
-          { "label": "Constraint, SAT, and CSP solving", "credit": 0.5, "state": "partial", "evidence": "Tseitin-CNF and deterministic DPLL produce verified assignments, conflict certificates, countermodels, and finite-domain all-different solutions with uniqueness checks. CDCL, optimization, broad mixed-domain CSP, and unrestricted first-order search remain absent." },
-          { "label": "Planning, conflict, and method composition", "credit": 0.5, "state": "partial", "evidence": "Capability descriptors, explicit plans, and bounded preference semantics exist; complete AND/OR planning and belief revision do not." }
+          { "label": "Indexed retrieval", "state": "implemented", "evidence": "Canonical and public indexes support deterministic lookup and query-directed loading." },
+          { "label": "Safe Horn deduction", "state": "implemented", "evidence": "Range-restricted rules execute with premise and rule provenance; ProofWriter logical forms validate the path." },
+          { "label": "Finite classical, scalable Boolean, categorical, and finite-model reasoning", "state": "implemented", "evidence": "Small finite formulas support exhaustive models, larger propositional theories support verified DPLL certificates or countermodels, categorical A/E/I/O tasks produce opposition, transformation, and syllogistic witnesses, and function-free first-order arguments support independently verified countermodels over a declared finite domain." },
+          { "label": "Discrete state transitions", "state": "implemented", "evidence": "bAbI and Entity Tracking execute generic movement, possession, add, remove, and transfer semantics." },
+          { "label": "Temporal reasoning", "state": "partial", "evidence": "One adjacent predecessor method exists; interval algebra and unrestricted temporal projection do not." },
+          { "label": "Induction and defeasible defaults", "state": "partial", "evidence": "Source-policy induction and finite preferred models are explicit and bounded; general nonmonotonic reasoning is not." },
+          { "label": "Abduction", "state": "partial", "evidence": "A guarded bounded hypothesis path exists; broad explanatory and narrative abduction does not." },
+          { "label": "Typed relation and spatial composition", "state": "implemented", "evidence": "Typed relation algebra, declarative qualitative closure with selective containment lifting, exact point-vector constraints, and extent inequalities execute through the runtime with replayable witnesses. The methods remain explicit finite calculi rather than unrestricted geometric theorem proving." },
+          { "label": "Constraint, SAT, and CSP solving", "state": "partial", "evidence": "Tseitin-CNF and deterministic DPLL produce verified assignments, conflict certificates, countermodels, and finite-domain all-different solutions with uniqueness checks. CDCL, optimization, broad mixed-domain CSP, and unrestricted first-order search remain absent." },
+          { "label": "Planning, conflict, and method composition", "state": "partial", "evidence": "Capability descriptors, explicit plans, and bounded preference semantics exist; complete AND/OR planning and belief revision do not." }
         ]
       }
     ]

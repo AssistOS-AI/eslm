@@ -38,11 +38,32 @@ The witness contains the query atom, matched record identifiers, package version
 
 `method:core:safe-horn-deduction` computes the least fixed point of positive, range-restricted Horn rules over a finite active domain. Every variable in a rule head must occur in a positive body atom. The engine indexes body atoms, joins substitutions deterministically, emits a ground conclusion only after all body atoms match, and repeats until no new fact is produced or a declared round or resource bound is reached.
 
-For the supported fragment, the least fixed point is independent of rule and fact insertion order. Each derived atom carries a rule-derivation graph whose leaves are accepted assertions and whose internal nodes identify the rule and substitution used. Negation as failure, function symbols, unsafe existential heads, unrestricted recursion through negation, and probabilistic implication are outside this method. Exhausting an execution bound returns `RESOURCE_LIMIT`; it cannot be interpreted as non-entailment.
+For the supported fragment, the least fixed point is independent of rule and fact insertion order. Internally, each
+derived atom keeps its immediate support identifiers, rule, depth, and flattened source lineage. The current public text
+result exposes that final derivation node; it does not yet serialize every intermediate node or the complete substitution
+table as an independently replayable proof DAG. That stronger proof-table protocol remains required before documentation
+may call the ordinary Horn trace independently replayable. Negation as failure, function symbols, unsafe existential
+heads, unrestricted recursion through negation, and probabilistic implication are outside this method. Round, fact, and
+join-attempt exhaustion returns `RESOURCE_LIMIT`. The fact bound includes the initial active inventory: a request whose
+direct fact count already exceeds that bound is incomplete before any rule fires. Limits are non-negative safe integers;
+invalid limit metadata is rejected rather than coerced. A bounded completeness probe distinguishes an exact fixed point reached
+on the final allowed round from an unresolved frontier. Bound exhaustion cannot be interpreted as non-entailment.
 
 ### Configured induction
 
-`method:core:configured-induction` evaluates a finite property-generalization policy supplied as declarative knowledge. The policy identifies the predicate, admissible property domain, minimum support, minimum coverage, counterevidence behavior, whether an implicit question may trigger induction, and the selection rule. The executor counts observed supporting and conflicting class members and returns a ranked hypothesis only when the declared gate is satisfied.
+`method:core:configured-induction` evaluates a finite property-generalization policy supplied as declarative knowledge.
+The current version-1 policy identifies the predicate, admissible property domain, minimum support, minimum coverage,
+whether an implicit question may trigger induction, and the selection rule. The executor counts distinct supporting
+class members, computes coverage over the observed class population, and reports the count of class members that have an
+observed different value. It emits selected inductive facts only when the declared support and coverage gates are
+satisfied. `selection: all` preserves every qualifying value. The explicit `latest-support` and `latest-member` modes
+use retained fact order as observation order to select one qualifying value; without one of those declared modes, order
+cannot silently break a tie. A future counterevidence strategy beyond the current count and gates requires an explicit
+policy field, semantics, and tests; it cannot be inferred from a benchmark label.
+
+The output is explicitly inductive. It does not become a strict class rule, and a later counterexample may defeat it.
+The method cannot infer the policy from benchmark answer frequencies, file order, or evaluation labels. Renaming the
+predicate, class, entities, and values while preserving the policy must preserve behavior.
 
 ### Finite conjunctive rule induction
 
@@ -65,8 +86,6 @@ Execution folds ordered state-changing operations into finite maps and sets, whi
 Every result contains the complete semantic value set and the operation identifiers used to derive it. `verifyEpisodicWorldResult` validates the task again, reconstructs the episode, recomputes the value set and status, checks that every witness identifier belongs to the task or declared policy, and rejects altered values or references. A single value returns `SOLVED`. Several distinct values satisfying the same visible event-role constraints return `AMBIGUOUS`; insertion order and recency may not silently select one unless the typed query declares such a selector. No determined value returns `UNKNOWN`. Malformed operations return `UNPARSED`; operation-count, identifier, or path-depth exhaustion returns `RESOURCE_LIMIT` without dropping the case.
 
 The method is sound and complete for accepted finite operations within the declared bounds and policies. It does not claim unrestricted discourse understanding, interval logic, metric geometry, causal discovery, probabilistic inference, or open-ended planning. Its breadth comes from composing small typed operations under one finite episode, not from treating raw text or benchmark metadata as executable semantics.
-
-The output is explicitly inductive. It does not become a strict class rule, and a later counterexample may defeat it. The method cannot infer the policy from benchmark answer frequencies, file order, or evaluation labels. Renaming the predicate, class, entities, and values while preserving the policy must preserve behavior.
 
 ### Guarded abduction
 
@@ -162,7 +181,18 @@ Every feature has a visible value, weight, contribution, and provenance referenc
 
 ### Provider coordination surfaces
 
-Semantic compatibility and factoid routing coordinate providers but do not themselves create world facts. Compatibility converts supported constructions into typed frames, applies only declared inverses and implications, and aggregates signed support or conflict with provider provenance. Factoid routing sends a typed question frame and conservative paraphrases to every selected provider, merges equal normalized value sets, returns `AMBIGUOUS` on disagreement, and returns a knowledge gap when no provider supplies evidence.
+Semantic compatibility and factoid routing coordinate providers but do not themselves create world facts. Compatibility converts supported constructions into typed frames, applies only declared inverses and implications, and aggregates signed support or conflict with provider provenance. Factoid routing sends a typed question frame and conservative paraphrases to every selected provider, merges equal normalized value sets, returns `AMBIGUOUS` on disagreement, and returns a knowledge gap when no provider supplies evidence. Agreement preserves the weakest successful epistemic status: any agreeing `DEFEASIBLE` answer keeps the merged answer `DEFEASIBLE` and cannot be upgraded by an agreeing strict source.
+
+Provider-native retrieval inherits the relation's declared semantics. ATOMIC event tuples are defeasible possibilities.
+ConceptNet relations marked `defeasible-edge` are likewise `DEFEASIBLE`, while reviewed declared-edge, lexical, or
+taxonomic relations may be `SOLVED`. Open English WordNet and GeoNames exact source retrieval remains strict within its
+documented source meaning. The coordination layer never infers epistemic strength from an adapter name.
+
+Every optional provider call uses one lifecycle transaction. A begin failure prevents the operation; an operation
+failure supplies no value; an end failure invalidates a tentative value. All three produce bounded diagnostics, and
+the core or other providers continue. The same rule applies to factoid answers, plausibility and compatibility scores,
+and narrative semantic evidence. Provider evidence is admitted only when its adapter ID and version equal the provider
+manifest, its candidate IDs belong to the task, and its bounded support records have finite scores.
 
 Feature-grammar preference is likewise a language decision surface. It compares two feature profiles under declarative construction-sensitive constraints. A strict preference requires a positive score difference; a tie is an abstention or failed preference according to the task contract. None of these surfaces may infer an answer from provider order or a benchmark label.
 
@@ -211,6 +241,12 @@ Selection requires substitution and proof traces, independently verified counter
 constants, equivalence with Boolean methods after valid finite grounding, scaling curves over development-visible
 quantified theories, and nonce, reordering, irrelevant-premise, and meaning-changing controls. Until selection, ESLM
 claims only the grounded finite-domain and propositional methods already specified above.
+
+### Question #4: Why does provider agreement use the weakest successful epistemic status?
+
+Response: Equal values do not make non-strict evidence strict. Preserving `DEFEASIBLE` prevents a strict source from
+laundering an agreeing default, commonsense edge, or preference into a proof, while still merging provenance and making
+the agreement visible. Disagreement remains `AMBIGUOUS` rather than becoming a provider-priority decision.
 
 ## Conclusion
 

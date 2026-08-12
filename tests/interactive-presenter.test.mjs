@@ -3,12 +3,37 @@ import assert from 'node:assert/strict';
 import { EslmEngine } from '../src/runtime/engine.mjs';
 import { createCoreModel } from '../src/runtime/core-model.mjs';
 import {
-  interactiveExamplePage, interactiveExamples, interactiveResultText, interactiveSmoke,
+  interactiveExamplePage, interactiveExamples, interactiveResultText, interactiveSmoke, traceText,
 } from '../src/interface/interactive-presenter.mjs';
 
 const style = Object.freeze({
   blue: String, bold: String, dim: String, green: String, magenta: String, red: String,
   yellow: String, status: (_status, text) => text ?? _status,
+});
+
+test('related KB records render below an explicit not-an-answer boundary', () => {
+  const grounding = {
+    status: 'RELATED_EVIDENCE_FOUND',
+    search: { complete: false, receipts: [{
+      kbId: 'nonce-kb', kbVersion: '3', status: 'matches-found', coverage: 'exact-postings',
+      truncationReasons: ['lookup-budget'],
+    }] },
+    entries: [{ kbId: 'nonce-kb', kbVersion: '3', statement: 'Qorin is a tool.' }],
+  };
+  const output = interactiveResultText({
+    status: 'UNKNOWN', answer: 'I cannot establish the requested answer.', grounding,
+  }, 'Can Qorin fly?', style);
+  assert.match(output, /^\[UNKNOWN\] I cannot establish/u);
+  assert.match(output, /Related KB evidence — not an answer/u);
+  assert.match(output, /Qorin is a tool\. \[nonce-kb@3\]/u);
+  assert.match(output, /Search coverage is incomplete: lookup-budget/u);
+
+  const trace = traceText({
+    status: 'UNKNOWN', reasoning: { method: 'epistemic-abstention' }, provenance: [], grounding,
+  }, style);
+  assert.match(trace, /No source facts were used/u);
+  assert.match(trace, /Separate related-evidence search/u);
+  assert.match(trace, /Related records were not used as answer premises/u);
 });
 
 test('examples uses deterministic 24-case pages from the executable smoke catalog', () => {

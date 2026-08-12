@@ -427,7 +427,7 @@ export async function runSLRBenchDevelopmentDiagnostic(engine, root) {
     const status = result?.status ?? 'MISSING_STATUS';
     statusCounts[status] = (statusCounts[status] ?? 0) + 1;
     testedByLevel[task.curriculum.level] = (testedByLevel[task.curriculum.level] ?? 0) + 1;
-    if (status === 'ANSWERED') answered += 1;
+    if (status === 'SOLVED') answered += 1;
   }
   return Object.freeze({
     protocol: 'slr-bench-current-core-development-diagnostic-v1',

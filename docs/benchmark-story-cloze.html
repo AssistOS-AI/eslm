@@ -2,21 +2,22 @@
 <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / <a href="evaluation.html">Evaluation</a> / Story Cloze</p>
 <h1>Story Cloze: selecting a coherent story ending</h1>
 <p class="lead">Story Cloze presents a four-sentence story and two possible fifth sentences. The task is to choose the ending that is more coherent with the participants, events, goals, causes, social expectations, and state changes established by the story.</p>
+<div class="callout"><p><strong>Current measurements:</strong> Read the generated Story Cloze row on the <a href="evaluation.html">evaluation dashboard</a> or inspect the <a href="results/latest-public-benchmark-probes.json">raw v2 report</a>. Partition scope, omissions, accuracy, and currentness remain generated evidence.</p></div>
 <figure class="diagram"><pre class="mermaid">flowchart LR
   S[Four-sentence story] --> R[Narrative ranker]
   E[Two endings] --> R
   R --> O[Choice or omission]</pre><figcaption>The ranker builds bounded narrative state from the story and scores both endings under the same evidence policy. It selects one only when the declared margin is met.</figcaption></figure>
 
-<h2>Current narrative method</h2>
+<h2>Narrative method</h2>
 <p>The adapter supplies both candidate endings without their label. ESLM compiles the context into bounded participant and event frames, evaluates lexical bridges, polarity, tense, goals, causal consequences, social effects, and state compatibility, and asks ATOMIC, ConceptNet, and World Relations for typed evidence. The resulting rank is defeasible: it expresses which candidate has stronger current support rather than converting a plausible event into a universal fact.</p>
 
-<h2 id="protocol">Current ESLM protocol</h2>
-<p>A label-blind digest partition reserves 314 of the 1,571 validation cases and exposes 1,257 for development. The published row is a run over those 1,257 development cases, not the reserved partition and not the official label-free test file. A correct case requires the selected candidate identifier to match the host-isolated validation label.</p>
+<h2 id="protocol">ESLM protocol</h2>
+<p>The delivered validation artifact contains 1,571 labeled cases. A label-blind digest partition separates development-visible and reserved membership; the partition receipt and generated row own exact membership and execution scope. A correct case requires the selected candidate identifier to match the host-isolated validation label.</p>
 <p>The delivered official test artifact contains 1,571 cases but no answer column. ESLM can produce predictions for it, but cannot compute a local correctness percentage without the external official evaluator. That is an unavailable local oracle, not a zero score and not a claim that the cases are impossible.</p>
 
 <h2 id="omission">What an omission means</h2>
 <p>An <strong>omission</strong> is a case in which the ranker does not obtain the required margin between the two candidates and returns <code>UNKNOWN</code> instead of forcing a choice. The omission is counted as a failure in binary forced-choice accuracy. It remains separately visible because abstaining when evidence is balanced is a different engineering failure from confidently choosing the wrong ending.</p>
 
 <h2>Limits and next evidence</h2>
-<p>The current result indicates incomplete modeling of goals, longer causal chains, social expectations, contradictions, and multi-event temporal dependencies. It does not justify copying an ending, story identifier, or candidate position into policy. Improvements must operate on event roles and relations, survive swapped-candidate and renamed-participant controls, and be measured on development evidence before a new untouched partition is opened.</p>
+<p>Likely failure families include incomplete modeling of goals, longer causal chains, social expectations, contradictions, and multi-event temporal dependencies; the generated diagnosis states which were actually observed. No result justifies copying an ending, story identifier, or candidate position into policy. Improvements must operate on event roles and relations, survive swapped-candidate and renamed-participant controls, and be measured on development evidence before a new untouched partition is opened.</p>
 </main><div data-include="partials/footer.html"></div></body></html>

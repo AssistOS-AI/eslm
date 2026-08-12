@@ -24,7 +24,11 @@ Later stages may be specified and prototyped before earlier stages are complete.
 
 Stage A fixes Semantic IR, task and result schemas, status meanings, the generic-core versus declarative-KB boundary, direct controlled-language parsing, exact retrieval, safe Horn deduction, provenance, and deterministic package compilation.
 
-Acceptance requires a complete executable path from supported text to semantic values and proof, explicit `UNPARSED` and `UNKNOWN`, deterministic rebuild, no executable KB content, direct-language measurements, nonce generalization, and tests for package, parser, planner, and result boundaries.
+Acceptance requires a complete executable path from supported text to semantic values and proof, explicit `UNPARSED`
+and `UNKNOWN`, deterministic rebuild, no executable KB content, direct-language measurements, nonce generalization,
+and tests for package, parser, planner, and result boundaries. Failure-time grounding must preserve the primary status,
+keep related records outside answer provenance, report complete versus incomplete search, remain bounded, and survive
+provider-order, distractor, and provider-failure controls.
 
 ### 3. Stage B: document-to-KB construction
 
@@ -71,6 +75,12 @@ Benchmark work is ordered by prerequisite capabilities rather than dates: isolat
 ### 10. Release acceptance
 
 A release candidate rebuilds every repository-managed KB, validates registered packages, passes unit, integration, metamorphic, security, documentation, evaluation, and benchmark-regression checks, preserves direct symbolic behavior, and reproduces generated reports from frozen inputs. Every empirical claim names its protocol and current artifact.
+
+Benchmark receipt audit is part of the release evidence. Rows that claim current behavior must bind to the candidate's
+behavioral dependencies; historical-stale rows may remain visible only with that label. Forced-choice denominators,
+attempt coverage, selective accuracy, input track, split quality, actual resource measurements, and execution-versus-
+assembly identity must be reviewable. A small authored fixture or an annotation/solver track cannot serve as an
+unqualified end-to-end product score.
 
 A release may contain explicit capability gaps and benchmark exceptions. It may not claim completion merely because a visible development sample is perfect, because unsupported cases were dropped, because a Language Agent answered them, or because a benchmark-specific branch reproduces labels.
 

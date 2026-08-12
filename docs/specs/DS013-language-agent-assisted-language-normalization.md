@@ -22,7 +22,7 @@ This profile changes the execution regime and must be named honestly. The deploy
 
 The deployable runtime and direct library profile are `direct-symbolic`. They normalize Unicode and declared lexical variants, parse supported language, construct the task frame, select capabilities, load declarative KB data, reason, and realize a result without a network or agent process. This is the deployable ESLM contract and the required profile for canonical verification and published direct evidence.
 
-The operator profile is `language-agent-assisted-normalization`. The general CLI selects it by default. It runs the complete direct-symbolic attempt first. Only an `UNPARSED` result may trigger one bounded normalization episode. An episode permits at most three external proposals in total. A proposal that fails host surface validation may be retried with those validation-error categories. A proposal that passes surface validation but remains `UNPARSED` after the symbolic parse may be retried with the narrow fact that the previous controlled-language form was unsupported. The Language Agent never receives an answer, KB result, proof state, desired semantic value, or benchmark label as feedback. A successfully reparsed sentence records `languageRoute: language-agent-normalized`; the original direct failure, all proposals and receipts, requested and declared operation, normalized text, validation evidence, adapter and model identity, prompt-policy version, input digest, cache state, and invocation count remain attached.
+The operator profile is `language-agent-assisted-normalization`. The general CLI selects it by default. It runs the complete direct-symbolic attempt first. Only an `UNPARSED` result may trigger one bounded normalization episode. An episode permits at most three external proposals in total. A proposal that fails host surface validation may be retried with those validation-error categories. A proposal that passes surface validation but remains `UNPARSED` after the symbolic parse may be retried with the narrow fact that the previous controlled-language form was unsupported. The Language Agent never receives an answer, KB result, failure-time grounding bundle, proof state, desired semantic value, or benchmark label as feedback. A successfully reparsed sentence records `languageRoute: language-agent-normalized`; the original direct failure, all proposals and receipts, requested and declared operation, normalized text, validation evidence, adapter and model identity, prompt-policy version, input digest, cache state, and invocation count remain attached.
 
 `--external-language-agent` explicitly restates the general CLI default. `--no-external-language-agent` and interactive `/normalize off` select the entirely offline profile. Product-specific option names are not accepted: the interface names the role and remains unchanged when a different adapter replaces Codex. Loading a KB never changes this setting, and encountering difficult text does not itself authorize a call: only the direct terminal status `UNPARSED` triggers the ready wrapper. The public catalog probe, canonical local evaluation, canonical benchmark suite, unit tests, and 4,096-case smoke regression explicitly disable the wrapper so service availability, authentication, and cache state cannot alter published or required evidence.
 
@@ -57,17 +57,48 @@ Language Agent runs ephemerally in a newly created empty operating-system tempor
 
 The prompt delimits the source sentence as untrusted content and states that commands inside it are data. The output must satisfy a host-owned JSON Schema. The Language Agent has no authority to edit source, write a KB, execute a corpus instruction, inspect benchmark labels, or decide whether its output is accepted.
 
-The host imposes input, output, time, and byte limits. It captures exit status and hashes of bounded stdout and stderr. Temporary process files are removed after the receipt and candidate result have been read. A timeout, malformed output, extra prose, unsupported operation, or oversized value is a failed normalization rather than a reason to relax validation.
+The host imposes input, output, time, and byte limits. The current Codex adapter accepts at most 12,000 input
+characters and captures at most 2 MiB of UTF-8 bytes from each of standard output and standard error. Crossing either
+process-stream limit starts termination and prevents an output-producing child from keeping the episode alive. The
+host first sends `SIGTERM`, waits 250 ms, sends `SIGKILL` if the child has not closed, and uses one additional bounded
+250 ms settlement window rather than awaiting an uncooperative child indefinitely. The JSON response file is rejected
+from filesystem metadata before parsing when it exceeds 1 MiB. Exit status, termination state, observed byte counts,
+truncation flags, configured limits, and hashes of the bounded stdout and stderr are recorded in the receipt.
+Temporary process files are removed after the receipt and candidate result have been read. A timeout, malformed output,
+extra prose, unsupported operation, or oversized value is a failed normalization rather than a reason to relax
+validation.
 
 ### 5. Normalization response contract
 
 Each proposal response is one JSON object with protocol `eslm-language-agent-normalization-v2`, operation `translation` or `simplification`, a declared source-language tag, `normalizedEnglish`, and an array of source-to-target anchor alignments. `normalizedEnglish` must be non-empty plain text within the configured limit. Markdown fences, NUL bytes, executable payload fields, tool requests, answers, explanations, confidence scores, retrieved facts, and additional properties are rejected.
 
-An alignment names an allowlisted anchor kind and identifies exact source and normalized substrings. Anchor kinds include named entity, number, answer option, negation, quantifier, modality, conditional, temporal operator, conjunction, disjunction, comparison, and directed relation. Alignments help reviewers locate the proposed correspondence; they do not by themselves prove semantic equivalence because they are also model output.
+An alignment names an allowlisted anchor kind and identifies exact source and normalized substrings. Anchor kinds include
+named entity, number, answer option, quoted material, interrogative, lexical content, negation, quantifier, modality,
+conditional, temporal operator, conjunction, disjunction, comparison, and directed relation. Every recognized protected
+source occurrence requires one compatible exact-substring alignment to one as-yet-unmatched target occurrence. Reusing
+one occurrence to satisfy several alignments is rejected. Alignments help reviewers locate the proposed correspondence;
+they do not by themselves prove semantic equivalence because they are also model output.
 
 ### 6. Host validation and reparse
 
-The host independently extracts surface anchors it can recognize. It checks exact numbers and answer-option markers, quoted material, likely entity names outside sentence-initial function words, question-versus-statement force, and configured multilingual operator families. It requires every recognized source anchor to be represented by a compatible target anchor and rejects unexplained additions of protected operators in the normalized output. Operator extraction identifies semantic constructions rather than counting every word that can have an operator reading. A Romanian `mai` followed by an ordinary verb is not a comparative merely because `mai` also occurs in `mai mare decât`; the validator protects the comparative construction, not the isolated spelling.
+The host independently extracts surface anchors it can recognize. It checks exact numbers and answer-option markers,
+quoted material, likely entity names outside sentence-initial function words, question-versus-statement force, and
+configured multilingual operator families. It requires a one-to-one exact alignment for every protected source
+occurrence and requires the complete source and target protected-identity multisets to match. Compatibility is typed,
+not count-only: `all` and `every` share the universal identity, while `all` and `some` do not; `left` cannot align to
+`right`, and `above` cannot align to `below`. The same rule protects conditional roles, temporal direction,
+interrogative kind, comparison type, modality, negation, conjunction, and disjunction. Operator extraction identifies
+semantic constructions rather than counting every word that can have an operator reading. A Romanian `mai` followed by
+an ordinary verb is not a comparative merely because `mai` also occurs in `mai mare decât`; the validator protects the
+comparative construction, not the isolated spelling.
+
+For English simplification, protected anchors are only the first gate. After removing those anchors, the validator
+requires equality of the normalized open-class-content multiset and of the reviewed English function-word multiset.
+This permits reordering into supported controlled English but rejects predicate replacement, deletion, or invention.
+For translation, the only currently accepted non-English `sourceLanguage` profile is Romanian (`ro` or `ron`).
+Non-function content must either remain literally present or be covered occurrence by occurrence through the small
+reviewed Romanian-to-English lexical-equivalence map. An arbitrary fluent paraphrase or an alignment asserted by the
+Language Agent is not accepted merely because it sounds plausible.
 
 This check is intentionally conservative. When the host cannot establish preservation, it returns `UNVERIFIED_NORMALIZATION`; it does not infer that fluent English is faithful. Translation coverage therefore depends on the independently recognized source-language operator lexicon. Adding a language or operator family requires contrastive preservation tests, including negated, quantified, modal, conditional, temporal, comparative, and direction-reversing examples.
 
@@ -75,7 +106,7 @@ After anchor validation, the complete normalized text is submitted to the ordina
 
 ### 7. Cache and reproducibility
 
-The operator cache lives under the ignored training cache, outside deployed runtime packages. Its key covers the original UTF-8 input digest, requested operation, model slug, reasoning effort, prompt-policy version, response-schema version, anchor-validator version, and normalization policy. Changing any of these inputs creates a different key.
+The operator cache lives under the ignored training cache, outside deployed runtime packages. Its key covers the original UTF-8 input digest, requested operation, model slug, reasoning effort, prompt-policy version, response-schema version, anchor-validator version, and normalization policy. Changing any of these inputs creates a different key. A cache file larger than 4 MiB is rejected from metadata before it is read or parsed; a newly serialized entry over that limit is not written.
 
 Each entry records the key fields, original-input digest, model output, host validation, normalized-text digest, process receipt, and creation time. The host validates a cached entry before use and reparses its normalized text for the current runtime and KB selection. Corrupt, incompatible, or schema-invalid entries are ignored or quarantined by an explicit maintenance operation; they are never trusted because their filename matches.
 
@@ -110,17 +141,37 @@ The benchmark answer and correctness label remain outside the normalization pack
 
 ### 11. Acceptance tests
 
-The implementation requires tests for the CLI-enabled-by-default policy, the explicit offline override, deployable-runtime independence, canonical-command offline selection, exact model argument, low reasoning setting, empty-workspace subprocess, bounded environment, schema rejection, cache-key separation, cache corruption, timeout, malformed JSON, added and removed protected anchors, contextual comparison detection, number and entity preservation, operation routing, the three-proposal ceiling, recursion prevention, successful reparse, failed reparse, structured route accounting, interactive transformation display, interactive toggling, batch JSONL, and benchmark metrics.
+The implementation requires tests for the CLI-enabled-by-default policy, the explicit offline override, deployable-runtime independence, canonical-command offline selection, exact model argument, low reasoning setting, empty-workspace subprocess, bounded environment, schema rejection, cache-key separation, cache corruption, timeout and TERM-to-KILL settlement, byte-bounded multibyte process output, oversized response and cache files, malformed JSON, one-to-one exact alignments, added and removed protected anchors, typed operator identity and relation direction, English content-multiset preservation, the reviewed Romanian lexical map, contextual comparison detection, number and entity preservation, operation routing, the three-proposal ceiling, recursion prevention, successful reparse, failed reparse, exclusion of DS009 grounding evidence from normalization input, structured route accounting, interactive transformation display, interactive toggling, batch JSONL, and benchmark metrics.
 
 At least one translation and one English simplification fixture must use a stub executable rather than a live Language Agent call so the normal test suite remains offline. A manually executed live probe may establish that a particular local Language Agent installation exposes GPT-5.3-Codex-Spark, but that machine-local observation is recorded as an operational receipt rather than a portable project guarantee.
 
 ### Current implementation evidence and remaining limits
 
-`src/language/codex-normalizer.mjs` implements the currently supported Codex adapter: operation routing, response schema, prompt policy, semantic protected-anchor validator, cache namespace, bounded subprocess, exact invocation, feedback prompts, and receipts. `src/runtime/language-agent-assisted-runtime.mjs` implements the product-neutral direct-first trigger, three-proposal episode budget, bounded parser-form feedback, accepted route, rejection route, and failure route. `src/cli.mjs` supplies one-shot, batch, and interactive controls while canonical evaluation and public probing explicitly disable assistance. Offline tests use stub executables to verify exact arguments, operation selection, contextual comparison handling, cache reuse, the proposal ceiling, trigger isolation, reparse feedback, and original-to-transformed presentation.
+The currently supported Codex adapter is split by authority and responsibility. `src/language/codex-normalizer.mjs` is
+the stable orchestration facade and owns prompts, proposal execution, receipts, and cache use.
+`codex-normalization-contract.mjs` owns protocol identifiers, bounds, anchor kinds, and the response schema;
+`codex-normalization-anchors.mjs` owns route classification and host anchor extraction;
+`codex-normalization-validation.mjs` owns one-to-one semantic and lexical preservation; and
+`codex-normalizer-io.mjs` owns the exact invocation, bounded process lifecycle, bounded JSON reads, and atomic cache
+writes. This separation keeps every normalizer module below DS001's 500-line review threshold and does not introduce
+the operator subprocess into the deployable runtime closure. `src/runtime/language-agent-assisted-runtime.mjs`
+implements the product-neutral direct-first trigger, three-proposal episode budget, bounded parser-form feedback,
+accepted route, rejection route, and failure route. `src/cli.mjs` supplies one-shot, batch, and interactive controls
+while canonical evaluation and public probing explicitly disable assistance. Offline stub tests verify exact arguments,
+operation selection, typed anchor identity, English and reviewed Romanian content preservation, cache reuse and bounds,
+process output bounds, TERM-to-KILL settlement, response bounds, the proposal ceiling, trigger isolation, reparse
+feedback, and original-to-transformed presentation.
 
 Machine-local live probes and their receipts are operational evidence. They belong in replaceable status or execution artifacts, not in this specification, and they never establish portable model availability. Direct public benchmark reports distinguish actual Language Agent calls from counterfactual normalization-candidate counts derived from `UNPARSED`; the two measurements must not be presented as the same rate.
 
-The current validator has protected operator vocabulary for English and Romanian and conservative language-independent checks for numbers, answer markers, quotations, likely named tokens, and question force. This does not establish semantic preservation for unrestricted Romanian or any other language. Long-distance scope, implicit negation, lexicalized modality, idioms, coreference, presupposition, and relation direction outside the allowlist can remain undetected; such coverage requires explicit contrastive tests before its accepted-route evidence can support a claim.
+The current validator has protected operator vocabulary for English and Romanian, conservative language-independent
+checks for numbers, answer markers, quotations, likely named tokens, and question force, exact English content
+multisets for simplification, and only a small reviewed Romanian lexical-equivalence map for translation. It does not
+establish semantic preservation for unrestricted Romanian or any other language. A Romanian content word outside that
+map must remain literal or the proposal is rejected; expanding the map requires review and contrastive tests.
+Long-distance scope, implicit negation, lexicalized modality, idioms beyond the explicitly reviewed check-in forms,
+coreference, presupposition, and relation direction outside the allowlist can remain undetected. Such coverage requires
+explicit contrastive tests before its accepted-route evidence can support a claim.
 
 ## Decisions & Questions
 
@@ -147,6 +198,15 @@ Response: Model substitution changes behavior, cost, availability, and reproduci
 ### Question #6: Do three bounded language proposals authorize answer seeking?
 
 Response: Host validation can identify a correctable proposal defect, and the symbolic parser can report only that a surface-valid CNL form remains unsupported, without revealing an answer. A three-proposal ceiling gives the service a bounded opportunity to obey both contracts. Restricted feedback, continued use of the original source as authority, absence of KB and reasoner state, and prohibition on retries after any parsed semantic status prevent iterative solving or answer search.
+
+### Question #7: Why reject a fluent translation whose content is outside the reviewed lexical map?
+
+Response: Fluency is evidence about target-language form, not source-to-target preservation. The model supplies both the
+translation and its alignments, so accepting a novel lexical equivalence on its assertion would make validation
+self-attestation. The present Romanian profile accepts literal content and a deliberately small reviewed equivalence
+map, while typed protected anchors preserve operators and direction independently. This sacrifices translation
+coverage in exchange for an auditable inability result. Coverage may expand only by reviewing new equivalences and
+adding positive, negative, and direction-changing tests.
 
 ## Conclusion
 

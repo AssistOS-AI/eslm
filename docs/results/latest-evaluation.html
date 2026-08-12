@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<base href="../"><title>Latest evaluation report — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head>
+<base href="../"><title>Latest evaluation report — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script></head>
 <body><div data-include="partials/header.html"></div><main><p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Results</p><h1>Latest evaluation report</h1>
-<p>Generated 2026-08-11T18:22:44.284Z. Protocol: <code>eslm-evaluation-report-v1</code>.</p>
-<div class="metric"><strong>1</strong><span>accuracy</span></div>
-<table><thead><tr><th>Case</th><th>Verdict</th><th>Actual</th></tr></thead><tbody><tr><td>quick-capability</td><td>pass</td><td><code>[true]</code></td></tr>
+<p class="lead">This is a small internal regression report, not a public benchmark score or evidence of broad language coverage.</p>
+<div class="callout"><p><strong>Evidence regime:</strong> <code>internal-authored-smoke-fixture</code>.</p>
+<p><strong>Suite:</strong> <code>tests/fixtures/evaluation.jsonl</code> (5 authored cases). <strong>Benchmark comparable:</strong> no.</p></div>
+<div class="metric"><strong>5/5</strong><span>authored cases passed · 100%</span></div>
+<p>Generated 2026-08-12T13:18:03.199Z. Protocol: <code>eslm-internal-regression-v1</code>. Claim scope: <code>implementation-regression-only</code>.</p>
+<h2>What this result means</h2>
+<p>A passing row shows that one fixed software contract still works for this runtime and fixture. It does not estimate performance on unseen language, an official dataset, or a production workload. Public benchmark evidence, route labels, split quality, and receipt freshness are reported separately on the <a href="evaluation.html">evaluation page</a>.</p>
+<div class="table-wrap"><table><thead><tr><th>Case</th><th>Verdict</th><th>Actual</th></tr></thead><tbody><tr><td>quick-capability</td><td>pass</td><td><code>[true]</code></td></tr>
 <tr><td>quick-classification</td><td>pass</td><td><code>[true]</code></td></tr>
 <tr><td>session-assertion</td><td>pass</td><td><code>[true]</code></td></tr>
 <tr><td>safe-horn-depth-three</td><td>pass</td><td><code>[true]</code></td></tr>
-<tr><td>unsupported-language</td><td>pass</td><td><code>&quot;UNPARSED&quot;</code></td></tr></tbody></table>
-<h2>Execution flow</h2><figure class="diagram"><pre class="mermaid">flowchart LR
-  Input[Fixed suite] --> Runtime[Offline ESLM]
-  Runtime --> Result[Semantic result]
-  Result --> Oracle[Deterministic oracle]
-  Oracle --> Report[Evidence report]</pre><figcaption>The runtime returns semantic values, statuses, and traces as one structured result. The deterministic oracle checks that result and preserves every case in the evidence report.</figcaption></figure>
+<tr><td>unsupported-language</td><td>pass</td><td><code>&quot;UNPARSED&quot;</code></td></tr></tbody></table></div>
 </main></body></html>

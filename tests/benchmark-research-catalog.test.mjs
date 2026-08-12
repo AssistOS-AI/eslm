@@ -33,7 +33,19 @@ test('research benchmark registrations distinguish catalog entries from validate
     assert.ok(status.nextAction.length > 40);
     if (status.evaluationState !== 'not-run') {
       assert.ok(['implemented-development', 'implemented-fresh'].includes(status.adapterState));
-      assert.equal(status.cacheState, 'validated-frozen');
+      if (status.evaluationState === 'fresh-evaluation-executed') {
+        assert.ok(['current', 'historical-stale', 'historical-unrecoverable', 'invalid', 'unavailable']
+          .includes(status.cacheState));
+        assert.equal(status.cacheState, status.freshReceiptState);
+        const expected = status.freshReceiptState === 'current' ? 'fresh-evaluation-executed'
+          : ['historical-stale', 'historical-unrecoverable'].includes(status.freshReceiptState)
+            ? 'historical-fresh-evaluation'
+            : status.freshReceiptState === 'invalid' ? 'invalid-fresh-evaluation'
+              : 'unavailable-fresh-evaluation';
+        assert.equal(status.effectiveEvaluationState, expected);
+      } else {
+        assert.equal(status.cacheState, 'validated-frozen');
+      }
     } else {
       assert.equal(status.adapterState, 'not-implemented');
       assert.equal(status.evaluationState, 'not-run');

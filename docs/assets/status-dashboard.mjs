@@ -5,13 +5,11 @@ function element(name, text, className) {
   return node;
 }
 
-function percentage(value) {
-  return `${(value * 100).toFixed(value === 0 || value === 1 ? 0 : 2)}%`;
-}
-
-function coverageScore(area) {
-  const earned = area.bands.reduce((sum, band) => sum + band.credit, 0);
-  return { earned, total: area.bands.length, rate: earned / area.bands.length };
+function stateCounts(area) {
+  return Object.fromEntries(['implemented', 'partial', 'absent'].map((state) => [
+    state,
+    area.bands.filter((band) => band.state === state).length,
+  ]));
 }
 
 function coverageSummary(status) {
@@ -19,11 +17,11 @@ function coverageSummary(status) {
   const table = element('table');
   const head = element('thead');
   const headRow = element('tr');
-  for (const label of ['Coverage area', 'Current estimate', 'Evidence represented', 'Main gap']) headRow.append(element('th', label));
+  for (const label of ['Coverage area', 'Editorial states', 'Evidence represented', 'Main gap']) headRow.append(element('th', label));
   head.append(headRow);
   const body = element('tbody');
   for (const area of status.coverage.areas) {
-    const score = coverageScore(area);
+    const counts = stateCounts(area);
     const implemented = area.bands.filter((band) => band.state === 'implemented').map((band) => band.label);
     const partial = area.bands.filter((band) => band.state === 'partial').map((band) => band.label);
     const evidence = `${implemented.length ? `Implemented: ${implemented.join(', ')}. ` : ''}`
@@ -31,7 +29,7 @@ function coverageSummary(status) {
     const tr = element('tr');
     tr.append(
       element('td', area.label),
-      element('td', `${percentage(score.rate)} (${score.earned}/${score.total} band equivalents)`),
+      element('td', `${counts.implemented} implemented · ${counts.partial} partial · ${counts.absent} absent`),
       element('td', evidence),
       element('td', area.mainGap),
     );
@@ -44,23 +42,22 @@ function coverageSummary(status) {
 
 function coverageDetails(status) {
   const container = element('div');
-  container.append(element('p', status.coverage.method));
+  container.append(element('p', status.warning), element('p', status.coverage.method));
   for (const area of status.coverage.areas) {
-    const score = coverageScore(area);
-    container.append(element('h3', `${area.label}: ${score.earned}/${score.total}, or ${percentage(score.rate)}`));
+    container.append(element('h3', area.label));
     const wrapper = element('div', undefined, 'table-wrap');
     const table = element('table');
     const head = element('thead');
     const headRow = element('tr');
-    for (const label of ['Target band', 'Credit', 'Current evidence and boundary']) headRow.append(element('th', label));
+    for (const label of ['Target band', 'Editorial state', 'Current evidence and boundary']) headRow.append(element('th', label));
     head.append(headRow);
     const body = element('tbody');
     for (const band of area.bands) {
       const tr = element('tr');
       const badgeClass = band.state === 'implemented' ? 'yes' : band.state === 'partial' ? 'partial' : 'no';
-      const credit = element('td');
-      credit.append(element('span', `${band.credit} ${band.state}`, `cap cap--${badgeClass}`));
-      tr.append(element('td', band.label), credit, element('td', band.evidence));
+      const state = element('td');
+      state.append(element('span', band.state, `cap cap--${badgeClass}`));
+      tr.append(element('td', band.label), state, element('td', band.evidence));
       body.append(tr);
     }
     table.append(head, body);
@@ -74,7 +71,9 @@ async function renderStatus() {
   const response = await fetch('results/current-status.json');
   if (!response.ok) throw new Error(`Current status request failed with HTTP ${response.status}.`);
   const status = await response.json();
-  if (status.format !== 'eslm-current-roadmap-status-v1' || !Array.isArray(status.coverage?.areas)) {
+  if (status.format !== 'eslm-current-roadmap-status-v2'
+      || status.assessmentKind !== 'editorial-capability-rubric'
+      || !Array.isArray(status.coverage?.areas)) {
     throw new Error('unsupported roadmap status format');
   }
   for (const node of document.querySelectorAll('[data-current-status-meta]')) {

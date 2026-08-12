@@ -114,7 +114,7 @@ function outcomeLine(row) {
 function subtrackLines(row) {
   return (row.subtrackResults ?? []).map((subtrack) => node(
     'p',
-    `${subtrack.label}: ${subtrack.correct.toLocaleString('en-US')}/${subtrack.tested.toLocaleString('en-US')} (${percent(subtrack.accuracy)})`,
+    `${subtrack.label}: ${subtrack.correct.toLocaleString('en-US')}/${subtrack.tested.toLocaleString('en-US')} (${percent(subtrack.accuracy)})${subtrack.checkpointState ? ` · checkpoint ${subtrack.checkpointState}` : ''}`,
     'benchmark-result-summary',
   ));
 }
@@ -125,37 +125,25 @@ function availableCoverage(row) {
     const unit = row.sampleCoverage.unit ?? 'cases';
     return `${row.sampleCoverage.tested.toLocaleString('en-US')}/${row.sampleCoverage.available.toLocaleString('en-US')} ${unit} tested`;
   }
-  if (row.id === 'blimp') {
-    const fullSource = row.total + (row.developmentResult?.total ?? 0);
-    return `${row.total.toLocaleString('en-US')} tested / ${row.total.toLocaleString('en-US')} in the frozen fresh partition; ${fullSource.toLocaleString('en-US')} source pairs`;
-  }
-  if (row.id === 'babi') {
-    return `${row.total.toLocaleString('en-US')} tested / four of 20 task families; source-case total is not recorded in this report`;
-  }
-  if (row.id === 'clutrr') {
-    const available = (row.sourceEvidence ?? []).reduce((sum, item) => sum + (item.sourceRows ?? 0), 0);
-    return `${row.total.toLocaleString('en-US')} tested / ${available.toLocaleString('en-US')} rows in the listed depth files`;
-  }
-  if (row.id === 'entityTracking') {
-    const available = row.sourceEvidence?.find((item) => Number.isInteger(item.sourceRows))?.sourceRows;
-    return `${row.total.toLocaleString('en-US')} tested / ${available?.toLocaleString('en-US') ?? 'unreported'} development rows`;
-  }
-  if (row.id === 'ewok') {
-    const available = row.sourceValidation?.decisions ?? row.total;
-    return `${row.total.toLocaleString('en-US')} tested / ${row.total.toLocaleString('en-US')} in the frozen fresh partition; ${available.toLocaleString('en-US')} retained decisions overall`;
-  }
-  if (row.id === 'storyCloze') {
-    const fresh = 314;
-    return `${row.total.toLocaleString('en-US')} tested / ${row.total.toLocaleString('en-US')} in the development partition; ${(row.total + fresh).toLocaleString('en-US')} validation cases overall`;
-  }
-  if (row.id === 'simpleqa') {
-    const available = row.sourceEvidence?.find((item) => Number.isInteger(item.records))?.records;
-    return `${row.total.toLocaleString('en-US')} tested / ${available?.toLocaleString('en-US') ?? 'unreported'} official records`;
-  }
-  return `${row.total.toLocaleString('en-US')} tested / available source denominator not recorded`;
+  return 'Coverage: tested and available counts are not recorded in this report';
 }
 
 function evidenceText(row) {
+  if (row.checkpointState === 'historical-stale') {
+    return 'Historical checkpoint: one or more frozen behavior dependencies differ from the current worktree. The result is preserved as past evidence, not presented as a current execution.';
+  }
+  if (row.checkpointState === 'historical-unrecoverable') {
+    return 'Historical checkpoint with missing dependencies: this checkout cannot reconstruct the frozen candidate. The aggregate is preserved only as explicitly unrecoverable historical evidence.';
+  }
+  if (row.checkpointState === 'historical-unverified') {
+    return 'Historical unverified receipt: the task was recorded as executed, but this receipt family has no complete currentness audit for the present worktree. Its metric is retained as historical evidence and must not be read as current behavior.';
+  }
+  if (row.checkpointState === 'invalid') {
+    return 'Invalid checkpoint: receipt identity, arithmetic, binding, or required reporting evidence failed validation. Its metric must not be treated as a current claim.';
+  }
+  if (row.checkpointState === 'unavailable') {
+    return 'Unavailable checkpoint: a required freeze, result, or binding artifact is absent. No current receipt-backed claim is available.';
+  }
   if (row.total === null) return row.evidenceState === 'source-cached-no-valid-symbolic-method'
     ? 'The source is cached and validated, but no method was valid enough to produce predictions.'
     : 'The source cannot yet provide a runnable denominator. Follow the access action below.';
@@ -168,17 +156,24 @@ function evidenceText(row) {
   return labels[row.evidenceState] ?? 'The declared probe executed.';
 }
 
-function diagnosisFor(row) {
-  const explanations = {
-    babi: 'The run solved 100 selected training cases: 25 each from the two-supporting-facts, three-supporting-facts, basic-deduction, and basic-induction tasks. It demonstrates the implemented state-history and declarative induction mechanisms on those inspected cases. It is not a run over the other 16 bAbI task families and is not an untouched official test score.',
-    blimp: 'The fresh run covers every grammar paradigm, but not every pair is solved. Most failures now concern phrase structure, attachment, lexical selection, agreement, valency, participle interpretation, and binding domains. These are grammar-model gaps; the result is not a percentage of English understood.',
-    clutrr: 'Typed relation composition solves 104 sampled graphs. Four graphs remain ambiguous because their observable typed structure is compatible with more than one official kinship label. The runtime preserves that ambiguity instead of guessing from names, row identifiers, label frequency, or answer order.',
-    entityTracking: 'The adapter converts the bounded stories into explicit add, remove, and move operations, and the core executes those operations as state transitions. This establishes the declared structured schema on the sample, not arbitrary event-language understanding.',
-    ewok: 'The small development probe was fully covered, but the much larger frozen fresh partition exposed a narrow world-relation ontology. Many targets receive equal scores in both contexts, especially in social and material domains. A new candidate needs broader independently justified knowledge; the opened fresh cases cannot be patched while still being called fresh evidence.',
-    storyCloze: 'The narrative method runs and exposes its evidence, but it still misses many goals, causal consequences, social expectations, contradictions, and multi-event temporal dependencies. This is an unresolved capability gap, not a proof that story continuation is impossible.',
-    simpleqa: 'The 100-case diagnostic found two different limitations. Thirty-five questions were outside the current parser, and 65 were parsed but lacked independently sourced facts. Exact string comparison is a local diagnostic and is not the official semantic-grader score.',
-  };
-  return explanations[row.id] ?? row.diagnosis;
+function executionSummary(report) {
+  const summary = node('div', undefined, 'callout benchmark-assembly-summary');
+  const assembly = report.assembly ?? {};
+  summary.append(node('p', `Report assembled ${report.assembledAt ?? report.createdAt ?? 'at an unrecorded time'}. Assembly mode: ${assembly.mode ?? 'not recorded'}.`));
+  if (Array.isArray(assembly.executedNowIds) && Array.isArray(assembly.receiptIds)) {
+    summary.append(node(
+      'p',
+      `${assembly.executedNowIds.length} row(s) executed during assembly; ${assembly.receiptIds.length} row(s) came from stored receipts.`,
+    ));
+  }
+  if (assembly.receiptAudit) {
+    const audit = assembly.receiptAudit;
+    summary.append(node(
+      'p',
+      `Receipt audit: ${audit.current} current, ${audit.historicalStale} historical-stale, ${audit.historicalUnrecoverable} historical-unrecoverable, ${audit.invalid} invalid, and ${audit.unavailable} unavailable of ${audit.checked} checked.`,
+    ));
+  }
+  return summary;
 }
 
 function capabilityText(row) {
@@ -187,6 +182,9 @@ function capabilityText(row) {
 }
 
 function unscoredSummary(row) {
+  if (Number.isInteger(row.completionCount) && Number.isFinite(row.completionRate)) {
+    return `${row.completionCount.toLocaleString('en-US')}/${row.total.toLocaleString('en-US')} verified completions (${percent(row.completionRate)}); private answer oracle unavailable`;
+  }
   const solved = row.statusCounts?.SOLVED ?? 0;
   if (solved > 0) {
     return `${solved.toLocaleString('en-US')}/${row.total.toLocaleString('en-US')} tasks produced verified outputs; no aggregate score across unavailable methods`;
@@ -205,6 +203,8 @@ function action(row) {
 }
 
 function render(report) {
+  const container = node('div');
+  container.append(executionSummary(report));
   const wrapper = node('div', undefined, 'table-wrap');
   const table = node('table');
   table.className = 'public-benchmark-table';
@@ -232,7 +232,27 @@ function render(report) {
           : unscoredSummary(row), 'benchmark-result-summary'),
       outcomeLine(row),
       node('p', availableCoverage(row), 'benchmark-sample-coverage'),
+      node('p', `Track: ${row.track ?? 'not recorded'} · input route: ${row.inputRoute ?? 'not recorded'}`, 'benchmark-route'),
     );
+    if (row.checkpointState) {
+      identity.append(node(
+        'p',
+        `Checkpoint: ${row.checkpointState}`,
+        row.checkpointState === 'current' ? 'benchmark-checkpoint benchmark-checkpoint--current' : 'benchmark-checkpoint benchmark-checkpoint--historical',
+      ));
+    }
+    if (row.resultOrigin) identity.append(node('p', `Result origin: ${row.resultOrigin}`, 'benchmark-result-origin'));
+    if (row.executionEvidence?.executedAt) {
+      identity.append(node('p', `Executed: ${row.executionEvidence.executedAt}`, 'benchmark-executed-at'));
+    }
+    if (Number.isFinite(row.attemptCoverage)) {
+      const selective = Number.isFinite(row.selectiveAccuracy) ? percent(row.selectiveAccuracy) : 'not applicable';
+      identity.append(node(
+        'p',
+        `Attempt coverage: ${percent(row.attemptCoverage)} · selective accuracy: ${selective}`,
+        'benchmark-attempt-metrics',
+      ));
+    }
     identity.append(...subtrackLines(row));
     if (row.total !== null && Number.isFinite(row.normalizationCandidateRate)) {
       identity.append(node('p', `Normalization candidates: ${percent(row.normalizationCandidateRate)}`, 'benchmark-normalization-rate'));
@@ -251,7 +271,7 @@ function render(report) {
     }
     const capability = capabilityText(row);
     if (capability) result.append(node('p', capability, 'benchmark-coverage'));
-    result.append(node('p', diagnosisFor(row)));
+    result.append(node('p', row.diagnosis));
     const access = action(row);
     if (access) result.append(access);
     tr.append(identity, result);
@@ -259,14 +279,15 @@ function render(report) {
   }
   table.append(head, body);
   wrapper.append(table);
-  return wrapper;
+  container.append(wrapper);
+  return container;
 }
 
 async function main() {
   const response = await fetch('results/latest-public-benchmark-probes.json');
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const report = await response.json();
-  if (report.format !== 'eslm-public-benchmark-probe-report-v1' || !Array.isArray(report.rows)) throw new Error('unsupported report format');
+  if (report.format !== 'eslm-public-benchmark-probe-report-v2' || !Array.isArray(report.rows)) throw new Error('unsupported report format');
   for (const target of document.querySelectorAll('[data-public-benchmark-dashboard]')) target.replaceChildren(render(report));
 }
 

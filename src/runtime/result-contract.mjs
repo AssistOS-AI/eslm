@@ -1,0 +1,144 @@
+const PUBLIC_RUNTIME_STATUSES = Object.freeze([
+  'SOLVED',
+  'PARTIAL',
+  'UNKNOWN',
+  'AMBIGUOUS',
+  'UNPARSED',
+  'UNVERIFIED_NORMALIZATION',
+  'DEFEASIBLE',
+  'MISSING_KNOWLEDGE',
+  'NO_APPLICABLE_METHOD',
+  'NO_COUNTERMODEL_IN_DECLARED_DOMAIN',
+  'UNDERDETERMINED',
+  'INCONSISTENT_CONTEXT',
+  'RESOURCE_LIMIT',
+  'UNSUPPORTED_OUTPUT',
+]);
+
+const PUBLIC_RUNTIME_STATUS_SET = new Set(PUBLIC_RUNTIME_STATUSES);
+
+const REQUESTED_MEMORY_POLICIES = new Set(['auto', 'eager', 'lazy']);
+const EFFECTIVE_MEMORY_POLICIES = new Set(['eager', 'lazy', 'adaptive']);
+
+export { PUBLIC_RUNTIME_STATUSES };
+
+export function normalizeRuntimeStatus(status) {
+  return ({
+    ANSWERED: 'SOLVED',
+    LEARNED: 'SOLVED',
+    INDUCTIVE: 'DEFEASIBLE',
+    ABDUCTIVE: 'DEFEASIBLE',
+    UNSUPPORTED: 'UNPARSED',
+  })[status] ?? status;
+}
+
+export function directCoreMemorySnapshot() {
+  return {
+    format: 'eslm-memory-plan-v1',
+    requestedPolicy: 'eager',
+    effectivePolicy: 'eager',
+    softTarget: false,
+    reserveMiB: 0,
+    providers: [],
+  };
+}
+
+function requireFiniteNonNegativeNumber(value, field) {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new TypeError(`Runtime memory plan ${field} must be a finite non-negative number.`);
+  }
+}
+
+export function assertRuntimeMemoryPlanContract(memory) {
+  if (!memory || typeof memory !== 'object' || Array.isArray(memory)) {
+    throw new TypeError('Runtime result model.memory must be an object when present.');
+  }
+  if (memory.format !== 'eslm-memory-plan-v1') {
+    throw new TypeError('Runtime memory plan format must be eslm-memory-plan-v1.');
+  }
+  if (!REQUESTED_MEMORY_POLICIES.has(memory.requestedPolicy)) {
+    throw new TypeError('Runtime memory plan requestedPolicy must be auto, eager, or lazy.');
+  }
+  if (!EFFECTIVE_MEMORY_POLICIES.has(memory.effectivePolicy)) {
+    throw new TypeError('Runtime memory plan effectivePolicy must be eager, lazy, or adaptive.');
+  }
+  if (typeof memory.softTarget !== 'boolean') {
+    throw new TypeError('Runtime memory plan softTarget must be a boolean.');
+  }
+  requireFiniteNonNegativeNumber(memory.reserveMiB, 'reserveMiB');
+  if (memory.targetMiB !== undefined) {
+    requireFiniteNonNegativeNumber(memory.targetMiB, 'targetMiB');
+    if (memory.targetMiB === 0) {
+      throw new TypeError('Runtime memory plan targetMiB must be positive when present.');
+    }
+  }
+  if (memory.softTarget && memory.targetMiB === undefined) {
+    throw new TypeError('Runtime memory plan with softTarget true must expose targetMiB.');
+  }
+  if (!Array.isArray(memory.providers)) {
+    throw new TypeError('Runtime memory plan providers must be an array.');
+  }
+  const providerIds = new Set();
+  for (const [index, provider] of memory.providers.entries()) {
+    if (!provider || typeof provider !== 'object' || Array.isArray(provider)) {
+      throw new TypeError(`Runtime memory plan providers[${index}] must be an object.`);
+    }
+    if (typeof provider.id !== 'string' || provider.id.length === 0) {
+      throw new TypeError(`Runtime memory plan providers[${index}].id must be a non-empty string.`);
+    }
+    if (providerIds.has(provider.id)) {
+      throw new TypeError(`Runtime memory plan provider id ${provider.id} must be unique.`);
+    }
+    providerIds.add(provider.id);
+    if (typeof provider.mode !== 'string' || provider.mode.length === 0) {
+      throw new TypeError(`Runtime memory plan providers[${index}].mode must be a non-empty string.`);
+    }
+  }
+  return memory;
+}
+
+function requireArray(result, field) {
+  if (!Array.isArray(result[field])) {
+    throw new TypeError(`Runtime result ${field} must be an array.`);
+  }
+}
+
+export function assertRuntimeResultContract(result) {
+  if (!result || typeof result !== 'object' || Array.isArray(result)) {
+    throw new TypeError('Runtime result must be an object.');
+  }
+  if (result.protocol !== 'eslm-runtime-result-v1') {
+    throw new TypeError('Runtime result protocol must be eslm-runtime-result-v1.');
+  }
+  if (!PUBLIC_RUNTIME_STATUS_SET.has(result.status)) {
+    throw new TypeError(`Runtime result has unsupported public status ${String(result.status)}.`);
+  }
+  if (typeof result.languageRoute !== 'string' || result.languageRoute.length === 0) {
+    throw new TypeError('Runtime result languageRoute must be a non-empty string.');
+  }
+  for (const field of [
+    'usedKbVersions', 'selectedKbVersions', 'consultedKbVersions', 'unresolvedSubgoals',
+  ]) requireArray(result, field);
+  if (!result.model || typeof result.model !== 'object' || Array.isArray(result.model)) {
+    throw new TypeError('Runtime result model must be an object.');
+  }
+  if (result.model.memory !== undefined) assertRuntimeMemoryPlanContract(result.model.memory);
+  return result;
+}
+
+export function assertRuntimeTextResultContract(result) {
+  assertRuntimeResultContract(result);
+  if (typeof result.answer !== 'string') {
+    throw new TypeError('Text runtime result answer must be a string.');
+  }
+  if (!result.context || typeof result.context !== 'object' || Array.isArray(result.context)
+    || !result.context.session || typeof result.context.session !== 'object') {
+    throw new TypeError('Text runtime result context must contain session state.');
+  }
+  if (!result.episode || typeof result.episode !== 'object' || Array.isArray(result.episode)
+    || typeof result.episode.original !== 'string' || !Array.isArray(result.episode.segments)
+    || !Array.isArray(result.episode.unsupportedStatements)) {
+    throw new TypeError('Text runtime result episode must expose original, segments, and unsupported statements.');
+  }
+  return result;
+}

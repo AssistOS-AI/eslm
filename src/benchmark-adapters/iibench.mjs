@@ -459,7 +459,7 @@ function strictPropositionMatch(left, right) {
 }
 
 function scoreResult(task, result, gold) {
-  if (result?.status !== 'ANSWERED') return false;
+  if (result?.status !== 'SOLVED') return false;
   if (task.operation === 'judge-categorical-opposition') {
     return normalizedAnswer(result) === normalizedAnswer({ answer: gold });
   }
@@ -544,7 +544,7 @@ export async function runIIBenchFreshEvaluation(engine, root, { freshFraction = 
     statusCounts[status] = (statusCounts[status] ?? 0) + 1;
     testedBySourceFile[task.sourceFile] = (testedBySourceFile[task.sourceFile] ?? 0) + 1;
     if (task.operation === 'derive-categorical-syllogism'
-      && result?.witness?.kind === 'categorical-model-entailment-v1' && status === 'ANSWERED') {
+      && result?.witness?.kind === 'categorical-model-entailment-v1' && status === 'SOLVED') {
       soundSyllogismConclusions += 1;
     }
     if (scoreResult(task, result, collected.oracle.get(task.taskId))) {
