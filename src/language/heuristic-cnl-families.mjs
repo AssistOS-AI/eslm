@@ -7,7 +7,9 @@ import {
   thirdPersonSingular,
   verbLemmaCandidates,
 } from './heuristic-cnl-morphology.mjs';
-import { generateComplexDecompositionProposals } from './heuristic-cnl-decomposition.mjs';
+import {
+  COMPLEX_DECOMPOSITION_FAMILIES, generateComplexDecompositionProposals,
+} from './heuristic-cnl-decomposition.mjs';
 import { makeEdit, makeInsertion } from './heuristic-cnl-surface.mjs';
 
 export const HEURISTIC_FAMILY_WEIGHTS = Object.freeze({
@@ -362,37 +364,12 @@ const FAMILY_RUNNERS = Object.freeze([
   ['sentence-segmentation', (analysis) => [sentenceSegmentationFamily(analysis)]],
 ]);
 
-export function generateHeuristicCnlProposals(analysis, budget) {
-  const proposals = [];
-  const familyReceipts = [];
-  for (const [family, runner] of FAMILY_RUNNERS) {
-    const before = proposals.length;
-    const generated = runner(analysis, budget).filter(Boolean);
-    const available = Math.max(0, budget.maximumProposals - proposals.length);
-    proposals.push(...generated.slice(0, available));
-    familyReceipts.push(Object.freeze({
-      family,
-      proposalsGenerated: generated.length,
-      proposalsRetained: proposals.length - before,
-      truncated: generated.length > available,
-    }));
-    if (proposals.length >= budget.maximumProposals) break;
-  }
-  const decomposition = generateComplexDecompositionProposals(analysis);
-  const retainedByFamily = new Map();
-  for (const candidate of decomposition.proposals) {
-    if (proposals.length >= budget.maximumProposals) break;
-    proposals.push(candidate);
-    retainedByFamily.set(candidate.family, (retainedByFamily.get(candidate.family) ?? 0) + 1);
-  }
-  for (const receipt of decomposition.familyReceipts) {
-    const retained = retainedByFamily.get(receipt.family) ?? 0;
-    familyReceipts.push(Object.freeze({
-      ...receipt,
-      proposalsRetained: retained,
-      truncated: receipt.proposalsGenerated > retained,
-      ...(receipt.proposalsGenerated > retained ? { declineReason: 'Global proposal budget was exhausted.' } : {}),
-    }));
-  }
-  return Object.freeze({ proposals: Object.freeze(proposals), familyReceipts: Object.freeze(familyReceipts) });
+export const HEURISTIC_CNL_FAMILY_NAMES = Object.freeze([
+  ...FAMILY_RUNNERS.map(([name]) => name), ...COMPLEX_DECOMPOSITION_FAMILIES,
+]);
+
+export function runHeuristicCnlFamily(family, analysis, budget) {
+  const direct = FAMILY_RUNNERS.find(([name]) => name === family);
+  if (direct) return direct[1](analysis, budget).filter(Boolean);
+  return generateComplexDecompositionProposals(analysis, new Set([family])).proposals;
 }

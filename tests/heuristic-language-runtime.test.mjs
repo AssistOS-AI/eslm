@@ -15,6 +15,13 @@ async function quickRuntime(profile = 'balanced') {
   return new HeuristicLanguageRuntime(new EslmRuntime(core, [], ['quick'], undefined, policy));
 }
 
+function exactStrategyPolicy(stage, identities) {
+  return {
+    profile: 'balanced',
+    strategies: { preset: 'all', selected: { [stage]: identities } },
+  };
+}
+
 test('offline runtime repairs a near-CNL episode, votes visibly, and keeps interpretation defeasible', async () => {
   const runtime = await quickRuntime();
   const result = await runtime.ask(
@@ -36,6 +43,31 @@ test('offline runtime repairs a near-CNL episode, votes visibly, and keeps inter
   assert.equal(result.context.session.rules.length, 0);
   assert.deepEqual(result.learned, []);
   assert.deepEqual(result.learnedRules, []);
+});
+
+test('an exact language-strategy allowlist changes the bounded proposal ensemble', async () => {
+  const source = 'Abura is an mura. All mura et bana. Is Abura eating bana?';
+  const parser = 'strategy:language:direct-controlled-parser@1';
+  const narrow = await quickRuntime(exactStrategyPolicy('runtime.language.interpret', [
+    parser, 'strategy:language:determiner-agreement@1',
+  ]));
+  const incomplete = await narrow.ask(source, {}, { grounding: false });
+  assert.equal(incomplete.status, 'UNPARSED');
+  assert.deepEqual(incomplete.approximation.receipt.strategySelection.identities, [
+    parser, 'strategy:language:determiner-agreement@1',
+  ].toSorted());
+
+  const sufficient = await quickRuntime(exactStrategyPolicy('runtime.language.interpret', [
+    parser,
+    'strategy:language:determiner-agreement@1',
+    'strategy:language:predicate-agreement@1',
+    'strategy:language:progressive-question-reduction@1',
+    'strategy:language:quantifier-canonicalization@1',
+  ]));
+  const completed = await sufficient.ask(source, {}, { grounding: false });
+  assert.equal(completed.status, 'DEFEASIBLE');
+  assert.equal(completed.approximation.selectedCandidate.text,
+    'Abura is a mura. Every mura eats bana. Does Abura eat bana?');
 });
 
 test('an approximated episode never persists its guessed facts into a later turn', async () => {
@@ -92,6 +124,47 @@ test('report intent plans KB retrieval and shapes a cited partial document', asy
     ['write', 'short', 'report'].includes(term)));
 });
 
+test('result-construction allowlists use each operation intent instead of a generic fallback', async () => {
+  const summaryOnly = await quickRuntime(exactStrategyPolicy('runtime.result.construct', [
+    'strategy:result:extractive-summary@1',
+  ]));
+  const summary = await summaryOnly.ask('Summarize Penguin.');
+  assert.equal(summary.status, 'PARTIAL');
+  assert.equal(summary.languageRoute, 'heuristic-request-synthesis');
+
+  const report = await summaryOnly.ask('Write a report about Penguin.');
+  assert.equal(report.status, 'MISSING_KNOWLEDGE');
+  assert.equal(report.languageRoute, 'heuristic-request-planned');
+  assert.match(report.answer, /result-construction strategy was not selected/u);
+
+  const summaryTable = await summaryOnly.ask(
+    'Summarize "Penguins are birds." as a table.', {}, { grounding: false },
+  );
+  assert.equal(summaryTable.status, 'MISSING_KNOWLEDGE');
+  assert.match(summaryTable.answer, /result-construction strategy was not selected/u);
+
+  const summaryAndTable = await quickRuntime(exactStrategyPolicy('runtime.result.construct', [
+    'strategy:result:extractive-summary@1', 'strategy:result:table@1',
+  ]));
+  const shaped = await summaryAndTable.ask(
+    'Summarize "Penguins are birds." as a table.', {}, { grounding: false },
+  );
+  assert.equal(shaped.status, 'PARTIAL');
+  assert.match(shaped.answer, /\| Topic \| Retrieved KB statement \| Source \|/u);
+});
+
+test('a source-only summary excludes marker topics while retaining relevant KB evidence', async () => {
+  const result = await (await quickRuntime()).ask(
+    'Summarize this text: Penguins swim in cold seas.',
+  );
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'heuristic-request-synthesis');
+  assert.deepEqual(result.requestPlanning.selectedPlan.topics, []);
+  assert.match(result.answer, /Penguin can swim\. \[quick@1\.0\.0/u);
+  assert.ok(!result.requestPlanning.receipt.topicSelection.items.some((topic) =>
+    ['this', 'text', 'following', 'passage', 'content'].includes(topic.normalized)));
+});
+
 test('planned retrieval remains local when ordinary failure grounding is deferred for an optional agent', async () => {
   const result = await (await quickRuntime()).ask(
     'Write a short report about Penguin.', {}, { grounding: false },
@@ -102,17 +175,18 @@ test('planned retrieval remains local when ordinary failure grounding is deferre
   assert.match(result.answer, /Penguin can swim/u);
 });
 
-test('a recognized document request without source material returns a knowledge gap, not a language failure', async () => {
-  const policy = resolveWorkPolicy('balanced');
-  const core = new EslmEngine(await createCoreModel(), { workPolicy: policy });
-  const runtime = new HeuristicLanguageRuntime(new EslmRuntime(core, [], [], undefined, policy));
-  const result = await runtime.ask('Write an essay about zorals.', {}, { grounding: false });
-  assert.equal(result.status, 'MISSING_KNOWLEDGE');
-  assert.equal(result.languageRoute, 'heuristic-request-planned');
-  assert.equal(result.requestPlanning.status, 'PLANNED');
-  assert.match(result.answer, /understood the requested artifact/u);
-  assert.deepEqual(result.usedKbVersions, []);
-});
+test('a recognized document request without source material returns a knowledge gap, not a language failure',
+  async () => {
+    const policy = resolveWorkPolicy('balanced');
+    const core = new EslmEngine(await createCoreModel(), { workPolicy: policy });
+    const runtime = new HeuristicLanguageRuntime(new EslmRuntime(core, [], [], undefined, policy));
+    const result = await runtime.ask('Write an essay about zorals.', {}, { grounding: false });
+    assert.equal(result.status, 'MISSING_KNOWLEDGE');
+    assert.equal(result.languageRoute, 'heuristic-request-planned');
+    assert.equal(result.requestPlanning.status, 'PLANNED');
+    assert.match(result.answer, /understood the requested artifact/u);
+    assert.deepEqual(result.usedKbVersions, []);
+  });
 
 test('explicit Language Agent mode still lets the local request planner finish first', async () => {
   let normalizerCalls = 0;

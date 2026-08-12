@@ -39,14 +39,19 @@ infer an executor from the appearance of a mechanism in this ownership list.
 A new mechanism belongs in `src` when its behavior is independent of the vocabulary and topic of the benchmark. Passive-voice semantic-role inversion, quantifier scope, temporal state supersession, unification, backtracking and proof search are representative examples.
 
 DS008 owns the planner-facing capability descriptor and DS015 owns the executable semantics, completeness boundary,
-uncertainty behavior, and witnesses of each method. This specification determines placement in trusted code; it does
-not duplicate either contract.
+uncertainty behavior, and witnesses of each method. DS027 owns the common strategy descriptor and static coordination
+contract that may wrap such a method for scheduling without redefining it. This specification determines placement in
+trusted code; it does not duplicate those contracts.
 
 ### 3. What belongs in a KB
 
 A KB contains declarative knowledge whose complete logical record contract is defined by DS005. Its package remains
 inert under DS006. A domain plan may reference registered methods through the DS008 plan contract, but neither a record
 nor a plan can define method implementation or acquire code authority.
+
+A KB or source manifest may carry a schema-validated compatibility requirement or recommendation for an exact DS027
+strategy identity. That inert reference never installs an executor, changes the host profile, disables a verifier, or
+increases a resource limit. Deployable strategy executors remain statically registered trusted code in `src`.
 
 ### 4. Decision test
 
@@ -94,7 +99,9 @@ The desired long-term shape is a compact, highly tested core; rich but declarati
 ### Runtime phase boundaries
 
 The direct answer path is language front-end → accepted Semantic IR → task frame → catalog discovery → shard and
-method planning → bounded execution → proof verification → result realization. After direct `UNPARSED`, the default
+method planning → bounded execution → proof verification → result realization. DS027 assigns these responsibilities
+to typed strategy stages with one deterministic host coordinator; a strategy cannot make an opaque cross-stage call or
+use downstream answer success to reinterpret an earlier stage. After direct `UNPARSED`, the default
 text interface may instead run the DS022 deterministic candidate ensemble, reparse an eligible candidate with
 query-local episode state, or recognize an explicit artifact request and execute bounded extractive construction. Only
 after local recovery is exhausted may an explicitly enabled DS013 Language Agent propose another reparse candidate.
@@ -113,7 +120,9 @@ not a proof method, and records every selected contributor without upgrading rel
 
 DS008 defines the machine-readable descriptor consumed by planning. DS015 defines the semantics of every method bound to
 one. Registration is permitted only when executable code and its independent witness tests exist; a descriptor alone
-does not establish a capability.
+does not establish a capability. DS027 additionally requires an `eslm-strategy-descriptor-v1` when a method
+participates in the common coordination plane. The method descriptor states semantic meaning; the strategy descriptor
+states stage, typed scheduling, resource, configuration, and receipt behavior. One cannot substitute for the other.
 
 ### Generality proof for the boundary
 
@@ -134,6 +143,12 @@ Response: Yes, as a declarative plan whose steps and type constraints reference 
 ### Question #3: How is legacy code that embeds domain facts treated?
 
 Response: It is demoted into canonical KB records and interpreted by a generic mechanism. This reduces the trusted code surface and makes cross-source regression meaningful.
+
+### Question #4: Does strategy modularity permit third-party executable KB extensions?
+
+Response: No. It permits researchers to develop independently testable generic executors and compare them through a
+shared typed coordinator. A deployable executor enters the system only through repository review and static host
+registration. KBs and configuration can reference allowed identities as data but never supply code or import paths.
 
 ## Conclusion
 

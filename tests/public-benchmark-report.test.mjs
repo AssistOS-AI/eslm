@@ -39,6 +39,8 @@ test('published public portfolio is schema-valid, current where claimed, and fre
     assert.deepEqual(row.behaviorDependency.scope, currentIdentity.scope);
     assert.equal(row.resourcePolicy.executionIsolation, 'sequential-row-in-one-cli-process');
     assert.equal(row.resourceEvidence.measurement, 'in-process-25ms-rss-sampling');
+    assert.equal(row.strategyConfiguration.format, 'eslm-benchmark-strategy-configuration-v1');
+    assert.match(row.strategyConfiguration.configurationDigest, /^sha256:[0-9a-f]{64}$/u);
   }
 
   const currentAudit = await auditFreshBenchmarkReceipts();

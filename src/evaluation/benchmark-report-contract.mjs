@@ -1,4 +1,7 @@
 import { validateBenchmarkCatalogFields } from './benchmark-report-catalog.mjs';
+import {
+  assertBenchmarkStrategyConfiguration,
+} from './benchmark-strategy-configuration.mjs';
 
 export const BENCHMARK_TRACKS = Object.freeze({
   RAW_LANGUAGE: 'raw-language',
@@ -272,6 +275,11 @@ export function validatePublicBenchmarkRow(row, options = {}) {
   ].includes(row.checkpointState)) throw new Error(`${row.id}: unsupported checkpoint state.`);
   if (row.resultOrigin === 'stored-receipt' && !row.checkpointState) {
     throw new Error(`${row.id}: every stored receipt requires an explicit checkpoint state.`);
+  }
+  if (row.resultOrigin === 'current-execution') {
+    assertBenchmarkStrategyConfiguration(row.strategyConfiguration);
+  } else if (row.strategyConfiguration !== undefined && row.strategyConfiguration !== null) {
+    assertBenchmarkStrategyConfiguration(row.strategyConfiguration, { requireCurrentCatalog: false });
   }
   if (options.requireExecutionResources && row.resultOrigin === 'current-execution') {
     if (!Number.isFinite(row.resourceEvidence?.sampledPeakRssBytes)

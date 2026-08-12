@@ -2,6 +2,9 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { PROJECT_ROOT } from '../paths.mjs';
 import { hashFile, sha256, stableStringify } from '../util.mjs';
+import {
+  assertBenchmarkStrategyConfiguration,
+} from './benchmark-strategy-configuration.mjs';
 
 const SHA256 = /^[0-9a-f]{64}$/u;
 const AUDIT_STATES = Object.freeze([
@@ -353,6 +356,11 @@ function reportingIssues(definition, freeze, result) {
   if (!isRecord(result.languagePolicy)
       || typeof result.languagePolicy.externalLanguageAgent !== 'boolean') {
     issues.push('languagePolicy.externalLanguageAgent is not recorded');
+  }
+  try {
+    assertBenchmarkStrategyConfiguration(result.strategyConfiguration, { requireCurrentCatalog: false });
+  } catch {
+    issues.push('strategyConfiguration is not recorded as a bounded strategy snapshot');
   }
   const frozenAt = freeze.frozenAt;
   if (frozenAt !== undefined && (typeof frozenAt !== 'string' || !Number.isFinite(Date.parse(frozenAt)))) {

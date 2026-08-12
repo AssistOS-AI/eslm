@@ -4,6 +4,9 @@ import {
 import { planHeuristicRequest } from '../language/heuristic-request-planning.mjs';
 import { assertRuntimeTextResultContract } from './result-contract.mjs';
 import { synthesizeHeuristicRequest } from './heuristic-request-synthesis.mjs';
+import {
+  selectedStrategyIdentities, strategyIdentitySelected,
+} from './work-policy.mjs';
 
 function canonicalizeSemanticIr(value) {
   if (Array.isArray(value)) return value.map(canonicalizeSemanticIr);
@@ -35,6 +38,9 @@ function approximationOptions(workPolicy) {
       maximumReceiptBytes: work.maximumHeuristicReceiptBytes,
     }),
     minimumCandidateConfidence: work.minimumHeuristicConfidence,
+    selectedStrategyIdentities: selectedStrategyIdentities(
+      workPolicy, 'runtime.language.interpret',
+    ),
   });
 }
 
@@ -48,6 +54,19 @@ function requestPlanningOptions(workPolicy) {
       minimumPlanConfidence: work.minimumHeuristicConfidence,
     }),
   });
+}
+
+function requiredConstructionStrategies(operation) {
+  const intentStrategy = operation.intent === 'summarize' ? 'extractive-summary'
+    : operation.intent === 'expand' ? 'extractive-expansion'
+      : operation.intent === 'compare' ? 'comparison'
+        : operation.intent === 'outline' ? 'outline' : 'sectioned-document';
+  return Object.freeze([
+    `strategy:result:${intentStrategy}@1`,
+    ...(operation.outputContract?.format === 'table' ? ['strategy:result:table@1'] : []),
+    ...(operation.outputContract?.format === 'sections' && intentStrategy !== 'sectioned-document'
+      ? ['strategy:result:sectioned-document@1'] : []),
+  ]);
 }
 
 function reparseReceipt(candidate, ir) {
@@ -185,12 +204,12 @@ function plannedSynthesisResult(primary, requestPlanning, synthesis) {
   });
 }
 
-function plannedKnowledgeGapResult(primary, requestPlanning) {
+function plannedKnowledgeGapResult(primary, requestPlanning, diagnostic) {
   return assertRuntimeTextResultContract({
     ...primary,
     status: 'MISSING_KNOWLEDGE',
-    answer: 'I understood the requested artifact, but no supplied material or directly related KB record '
-      + 'was available within the selected work policy.',
+    answer: diagnostic ?? ('I understood the requested artifact, but no supplied material or directly related KB '
+      + 'record was available within the selected work policy.'),
     languageRoute: 'heuristic-request-planned',
     values: [],
     provenance: [],
@@ -215,8 +234,9 @@ function plannedKnowledgeGapResult(primary, requestPlanning) {
       planConfidence: requestPlanning.selectedPlan.confidence,
     },
     unresolvedSubgoals: [{
-      operation: 'supply-or-retrieve-request-content',
+      operation: diagnostic ? 'select-result-construction-strategy' : 'supply-or-retrieve-request-content',
       topics: requestPlanning.selectedPlan.topics.map((topic) => topic.surface),
+      ...(diagnostic ? { diagnostic } : {}),
     }],
     requestPlanning,
   });
@@ -290,6 +310,15 @@ export class HeuristicLanguageRuntime {
   async attachGrounding(primary) {
     const grounded = await this.runtime.attachGrounding(primary);
     if (grounded.requestPlanning?.status !== 'PLANNED') return grounded;
+    const operationStrategies = grounded.requestPlanning.selectedPlan.operationPlans
+      .flatMap(requiredConstructionStrategies);
+    const constructionSelected = operationStrategies.every((identity) => strategyIdentitySelected(
+      this.workPolicy, 'runtime.result.construct', identity,
+    ));
+    if (!constructionSelected) {
+      return plannedKnowledgeGapResult(grounded, grounded.requestPlanning,
+        'A required result-construction strategy was not selected by the exact policy allowlist.');
+    }
     const synthesis = synthesizeHeuristicRequest(grounded.requestPlanning, grounded.grounding);
     return synthesis ? plannedSynthesisResult(grounded, grounded.requestPlanning, synthesis) : grounded;
   }
@@ -299,7 +328,12 @@ export class HeuristicLanguageRuntime {
     if (direct.status !== 'UNPARSED') {
       return executionOptions.grounding === false ? direct : this.attachGrounding(direct);
     }
-    const requestPlanning = planHeuristicRequest(text, requestPlanningOptions(this.workPolicy));
+    const requestStrategySelected = strategyIdentitySelected(
+      this.workPolicy, 'runtime.request.plan', 'strategy:request:reviewed-pattern-ensemble@1',
+    );
+    const requestPlanning = requestStrategySelected
+      ? planHeuristicRequest(text, requestPlanningOptions(this.workPolicy))
+      : Object.freeze({ status: 'NO_SUPPORTED_INTENT' });
     const requestAnnotated = requestPlanning.status === 'NO_SUPPORTED_INTENT'
       ? direct : assertRuntimeTextResultContract({ ...direct, requestPlanning });
     if (requestPlanning.status === 'AMBIGUOUS') {

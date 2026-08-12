@@ -3,7 +3,7 @@ id: DS026
 title: Grounded Interaction and Product Evaluation Research
 status: planned
 owner: evaluation-research
-summary: Defines realistic protected evaluation for interpretation, retrieval, reasoning, abstention, related-evidence fallback, multi-request synthesis, reproducibility, and long-horizon product progress.
+summary: Defines protected evaluation for interpretation, selectable strategies, retrieval, reasoning, grounded fallback, multi-request synthesis, reproducibility, and long-horizon product progress.
 ---
 
 # DS026 Grounded Interaction and Product Evaluation Research
@@ -54,7 +54,9 @@ The product suite contains frozen, independently authored cases in at least thes
 12. source-only summarization and expansion;
 13. compare, explain, report, essay, outline, and table requests;
 14. ordered multi-obligation requests with positive and negative constraints;
-15. work-policy exhaustion, truncation, provider failure, and corrupted receipt cases.
+15. work-policy exhaustion, truncation, provider failure, and corrupted receipt cases; and
+16. exact strategy selections, per-strategy abstention and exhaustion, correlated votes, verifier failures, and
+    compiler-acquisition alternatives.
 
 Cases use nonce and renamed domains where possible. Factual cases freeze source records and package versions without
 placing expected answers in runtime packages.
@@ -77,6 +79,11 @@ The report separates:
   schema compliance, and visible gaps;
 - **resources:** wall time, CPU time, peak RSS, bytes opened, cache behavior, candidates, lookups, proof work, and
   external invocation count.
+
+Strategy reporting overlays those layers without replacing them. It records catalog state, exact selected identity,
+eligibility, execution, abstention, invalid output, work allocation and use, correlation group, candidate contribution,
+arbiter configuration, and stage completeness. A `coordinated` executor, an `instrumented-local` gate, and a `planned`
+catalog entry remain separate denominators.
 
 Primary answers and grounding are scored independently. A relevant grounding record does not repair a wrong answer,
 and a correct abstention is not penalized because an unrelated record existed.
@@ -112,8 +119,11 @@ later progress needs a new source version or protected pool.
 
 Every executable row records source, partition, oracle, scorer, prompt or policy, selected packages, selected methods,
 work policy, process isolation, commit and tree identity, dependency digest, execution time, measured resources, result
-digest, and replay command. Stored receipts are cryptographically audited against behavior dependencies and classified
-current, historical, incomplete, invalid, unavailable, or unrecoverable.
+digest, replay command, and the DS010 `eslm-benchmark-strategy-configuration-v1` snapshot. That snapshot binds exact
+selection and configured arbiters to a content-addressed catalog and configuration and summarizes actual coordinated
+receipts across the complete batch. An adapter-local track records its own closed state instead of pretending it used
+the runtime work-policy path. Stored receipts are cryptographically audited against behavior dependencies and
+classified current, historical, incomplete, invalid, unavailable, or unrecoverable.
 
 Large suites run in isolated sequential workers under enforceable operating-system or runtime boundaries. An advisory
 memory number without measured RSS is not resource evidence. Provider failures, truncation, and missing predictions
@@ -125,6 +135,15 @@ Required comparisons include exact lookup, lexical retrieval, role-aware retriev
 co-occurrence ranking, answer-bridge ranking, no retrieval, no heuristic recovery, direct CNL, extractive synthesis,
 and every promoted verified-synthesis layer. External LLM comparisons use identical visible evidence and record model,
 revision, prompt, decoding, tools, cost, and invocation policy.
+
+Strategy experiments add exact single-strategy and leave-one-out ablations inside each eligible stage. Language
+families are compared by accepted meaning and protected-operator safety; focus and relevance strategies by retrieval
+quality; reasoning methods by applicable task semantics and independently checked witnesses; construction strategies
+by source coverage and unsupported claims. Multi-method research compares verified strict proofs, defeasible results,
+conflicts, and incomplete searches without turning agreement into extra truth. Compiler-side acquisition research
+compares manual, technical-documentation, ontology, lexical, event-graph, table, and already-canonical adapters by
+source-span fidelity, qualifier preservation, canonical validity, coverage gaps, review effort, and deterministic
+package equivalence. Extraction agreement may prioritize review but never authorizes promotion.
 
 An improvement is credible when it survives grouped splits, preserves negative controls, remains within its resource
 contract, and improves the intended layer without moving failures into a hidden denominator.
@@ -153,9 +172,20 @@ more honest than claiming that the symbolic runtime itself generated the downstr
 
 ### Question #3: How should product metrics be combined for release?
 
-Options: a published non-compensatory gate vector, a Pareto frontier, or a carefully justified composite remain open.
+Options:
+
+- publish a non-compensatory gate vector;
+- select releases from a declared Pareto frontier; or
+- adopt a carefully justified composite only after its tradeoffs survive adversarial review.
+
 Until one is selected, unsupported-claim, unsafe-interpretation, and provenance failures are hard gates and cannot be
 offset by higher retrieval recall.
+
+### Question #4: Why evaluate strategy selection separately from the final answer?
+
+Response: The same final value can hide a disabled useful technique, an invalid witness, duplicated correlated votes,
+or excessive work. Stage and ablation metrics expose which mechanism contributed and whether its benefit survives
+renaming, grouped splits, independent verification, and the declared resource policy.
 
 ## Conclusion
 

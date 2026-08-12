@@ -31,6 +31,16 @@ generic language machinery rather than KB knowledge. Its conditionals may inspec
 grammatical role, protected-operator identity, edit distance, and declared work policy. They must not inspect a
 benchmark name, dataset row, expected answer, source hash, domain entity, or KB result.
 
+DS027 defines the common registry and complete cross-stage coordinator contract around this behavior. The 24 current
+language-approximation families are already statically registered coordinated executors with typed validators,
+one preallocated coordinator invocation slot apiece, exact identities, confidence kinds, correlation groups, and
+bounded stage results. The independent edit-distance dimension is divided only among the three families whose cost
+model declares bounded edit distance; the other 21 families receive no artificial share of that quota. Every family
+result exposes invocation work separately from reserved and consumed edit-distance evaluations.
+Request, focus, relevance, reasoning, and construction techniques have exact execution gates but still run inside
+their established owner modules and are therefore cataloged as `instrumented-local`. This migration cannot change
+route order or allow a language strategy to consult answer evidence.
+
 For ordinary text, recovery follows this order:
 
 1. Execute the original input through the direct symbolic and provider routes.
@@ -99,6 +109,11 @@ The baseline families are:
 The layer may combine compatible transformations. It must reject combinations that change negation, universal versus
 existential force, modality, temporal direction, relation direction, number, quotation, named entities, or answer
 options.
+
+In the DS027 target, each family registers independently rather than being discovered through a central source-file
+switch. Families in the same correlation group cannot manufacture additional confidence by repeating equivalent
+evidence. A family cannot call another family or reparse its own result; composition, protection, reparse eligibility,
+and arbitration remain host coordinator responsibilities.
 
 ### 5. Complex-sentence decomposition lattice
 
@@ -257,18 +272,43 @@ relations, select content appropriate to the requested operation, and shape the 
 is `AMBIGUOUS`; candidate order never resolves it.
 
 Pattern matching runs only over instruction spans after supplied material has been isolated. Negated operations,
-artifacts, lengths, and formats are exclusion constraints rather than positive votes. Topics are extracted per
-instruction segment and matched to retrieved records on token and phrase boundaries instead of raw substrings.
-Instruction, material, sentence, and output truncation remain explicit in receipts and artifact coverage gaps.
+artifacts, lengths, and formats are exclusion constraints rather than positive votes. A lexical pattern becomes a
+request vote only when its instruction segment has explicit request force: an imperative or negative imperative, a
+polite modal request, a first-person desire/request frame, an explicit question form, or a bounded nominal request
+ending in `please`. A declarative mention such as `I read a report` or `The essay compares ...` remains inert text.
+Negation scope extends through coordinated operations and complements, but ends at punctuation or a contrastive
+boundary such as `but` or `instead`; the later positive instruction is analyzed independently.
+
+Quoted source material is removed from pattern matching while both the instruction prefix and suffix remain active,
+so `Summarize "..." as a table` preserves the table constraint without interpreting command-looking source text.
+Topics are extracted per instruction segment and matched to retrieved records on token and phrase boundaries instead
+of raw substrings. Source markers such as `this text`, `following passage`, and `content` are not topics; a source-only
+summary may therefore keep an empty topic list and use supplied material plus independently retrieved source claims.
+Instruction, material, sentence, topic-count, topic-character, operation-count, and output truncation remain explicit
+in receipts and artifact coverage gaps. Topic receipts distinguish observed candidates, unique candidates, returned
+topics, count omissions, character truncations, and normalization collisions.
+
+Multi-instruction requests preserve discourse order. Each accepted instruction segment produces one or more explicit
+operation plans only when coordination is visible; an uncoordinated close intent tie remains `AMBIGUOUS`. Every
+operation plan owns its topics, output contract, confidence, select node, and shape node. Later operation nodes depend
+on the preceding shaped result, and a final aggregate node combines multiple shaped artifacts. The operation and
+subrequest lists are finite; omissions caused by their budgets make the planning receipt incomplete.
 
 The current synthesis route is deliberately extractive. It may select sentences from user-supplied source material
 and statements from a DS009 grounding bundle, deduplicate them, group them by topic, identify relation labels that are
 explicitly shared across comparison topics, and render cited paragraphs, sections, bullets, outlines, or tables. It
-returns `PARTIAL`, retains each selected record as answer provenance and `usedKbVersions`, and always states that the
-artifact is a bounded extractive draft. It also states incomplete search, omitted records, missing causal support, and
-other gaps. It does not paraphrase a new claim, invent a causal
-bridge, or present related evidence as deductive proof. More generative composition requires a separately specified
-claim verifier.
+executes every accepted operation plan in discourse order rather than shaping the whole request from only the first
+intent. Each operation receives only its declared topics and output contract, emits an ordered
+`operationArtifacts` receipt with its selected source excerpts, KB records, comparison witness, and coverage gaps,
+and, once at least one obligation has material for synthesis, retains a visible gap section for every other obligation
+that found no match. A request with no supplied or selected material still yields no fabricated draft. A final
+aggregate section identifies the ordered operation artifacts without inventing a factual bridge between them.
+
+The route returns `PARTIAL`, retains the order-preserving union of every operation's selected KB records as answer
+provenance and `usedKbVersions`, and always states that the artifact is a bounded extractive draft. It also states
+incomplete search, omitted records, missing causal support, and other gaps. It does not paraphrase a new claim, invent
+a causal bridge, or present related evidence as deductive proof. More generative composition requires a separately
+specified claim verifier.
 
 The pattern catalog is versioned declarative policy. New patterns are promoted through reviewed code/data changes,
 renamed and contrastive tests, confidence calibration, and release review. Runtime observations may produce a
@@ -299,6 +339,13 @@ the result must not describe them as hard elapsed-time guarantees.
 A larger profile may convert `RESOURCE_LIMIT` or incomplete grounding into a completed search. Given the same semantic
 inputs and enough budget to complete, profiles must agree on status, values, proof, and provenance. A profile may not
 change trust, logic, tie-breaking, epistemic status, benchmark denominator, or the meaning of `UNKNOWN`.
+
+DS027 adds exact strategy selection and target multi-dimensional per-strategy allocations. `--strategy-select` and
+interactive `/strategy` choose non-empty allowlists of known executable identities; named strategy presets are only
+inventory views. Selection may change which reviewed interpretations or evidence signals are considered and is
+therefore part of execution identity. Work profiles continue to mean finite effort: once the selected strategy set
+and semantic frontier are equal and complete, a larger work profile cannot select a different truth or interpretation
+merely because it has a different name.
 
 ### 13. Language Agent escalation and disclosure
 
@@ -342,7 +389,7 @@ hash, expected answer, or motivating-example constant in executable conditions.
 ### 16. Present implementation boundary
 
 The current release implements the pure approximation ensemble in `src/language/heuristic-cnl-*.mjs`, the versioned
-request pattern catalog and planner in `heuristic-request-patterns.mjs` and `heuristic-request-planning.mjs`, runtime
+request pattern, force, structure, and planning modules in `src/language/heuristic-request-*.mjs`, runtime
 coordination in `src/runtime/heuristic-language-runtime.mjs`, extractive document construction in
 `heuristic-request-synthesis.mjs`, and exact profiles in `work-policy.mjs`. `EslmRuntime.ask(...,
 { grounding: false })` defers grounding and `attachGrounding(result)` attaches it once the final language route is
@@ -365,6 +412,18 @@ Grounding term selection currently uses typed question roles, exact phrases, sha
 auditable candidate list. Loaded canonical indexes contribute bounded posting size as active-frequency evidence; any
 provider that knows a source-global occurrence count may add the same bounded field. The relevance estimator executes
 only over at most 512 already retrieved candidates and records every statistical and answer-bridge contribution.
+
+These modules provide real independent heuristic families, votes, confidence, work bounds, and receipts. Language
+families now execute through the sealed DS027 registry and stage coordinator; immutable inputs, trusted type
+validators, canonical ordering, exact allowlists, bounded exception containment, per-family invocation slots,
+consumer-only edit-distance preallocation, and the v1 stage execution receipt are enforced. The final language
+interpretation still comes from the specialized DS022
+proposal lattice, protected-meaning gate, and semantic reparse rather than the generic confidence arbiter.
+
+The complete DS027 cross-stage scheduler, typed dependency graph, multi-dimensional per-strategy work plan, common
+stage arbiters, independent verifier stage, compiler registry, and pipeline receipt remain open. The instrumented-local
+request, focus, relevance, reasoning, and construction gates must retain their DS022 safety and epistemic contracts as
+they migrate; cataloging or gating a local owner is not the same as shared-coordinator execution.
 
 ## Decisions & Questions
 
@@ -404,6 +463,26 @@ Response: Candidate confidence cannot compensate for missing scope. Using the sa
 assertions, direct questions, and heuristic reparses prevents an ensemble from obtaining parser acceptance by moving
 an unresolved operator into an entity or class string. It also keeps positive multiword aliases independent of the
 motivating vocabulary because exact full-surface matching is structural rather than lexical special casing.
+
+### Question #7: Why does an intent word need request force?
+
+Response: The same words describe existing artifacts and actions in ordinary assertions. Treating every occurrence of
+`report`, `essay`, `summary`, `write`, or `compare` as a command would fabricate tasks from source prose. The bounded
+request-force gate separates a visible instruction from a mention before intent votes acquire planning authority.
+
+### Question #8: Why preserve ordered operation plans instead of one unordered intent set?
+
+Response: `Summarize A; compare A with B; then outline the evidence` describes three obligations whose outputs and
+dependencies differ. An unordered set loses which topic and output contract belongs to which operation. Ordered plans,
+operation-specific select/shape nodes, operation-by-operation extractive artifacts, and a final aggregate node make
+that composition executable and reviewable without silently dropping later obligations.
+
+### Question #9: Why migrate heuristic families into separate strategies?
+
+Response: Their evidence, safety preconditions, calibration, cost, and failure modes can then be tested and ablated
+independently, while one coordinator keeps composition deterministic and visible. Static registration retains the
+offline trust boundary, and correlation-aware voting prevents artificial confidence from several implementations of
+the same underlying cue.
 
 ## Conclusion
 

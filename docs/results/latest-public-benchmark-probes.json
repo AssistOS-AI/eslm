@@ -1,6 +1,6 @@
 {
   "format": "eslm-public-benchmark-probe-report-v2",
-  "assembledAt": "2026-08-12T13:17:10.970Z",
+  "assembledAt": "2026-08-12T16:57:15.158Z",
   "assembly": {
     "mode": "mixed-current-execution-and-stored-receipts",
     "requestedBenchmarkIds": [
@@ -190,7 +190,8 @@
             "selectedMethods is not recorded as a method-identifier array",
             "selectedKbVersions is not recorded as a KB-version array",
             "usedKbVersions is not recorded as a KB-version array",
-            "languagePolicy.externalLanguageAgent is not recorded"
+            "languagePolicy.externalLanguageAgent is not recorded",
+            "strategyConfiguration is not recorded as a bounded strategy snapshot"
           ]
         },
         "dependencyAudit": {
@@ -558,12 +559,12 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 219.22913800000015,
-        "cpuUserMicroseconds": 264067,
-        "cpuSystemMicroseconds": 10756,
-        "startRssBytes": 373633024,
-        "endRssBytes": 380698624,
-        "sampledPeakRssBytes": 380698624,
+        "wallMilliseconds": 225.10226399999988,
+        "cpuUserMicroseconds": 268151,
+        "cpuSystemMicroseconds": 8135,
+        "startRssBytes": 376512512,
+        "endRssBytes": 381485056,
+        "sampledPeakRssBytes": 381485056,
         "rssSamples": 9
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark clutrr --memory-mb 256 --no-external-language-agent",
@@ -579,18 +580,44 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "cbdb9191c82a91ae6b6a967e5c0fd789a59a31ef5733d35778b07734c431718c",
-        "files": 134,
+        "digest": "1613d72fc0e23b1dd9579da8a4a0d4bc08fc19b52ef8a59266fb347fa65f8d5a",
+        "files": 168,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
           "architecture": "x64"
         }
       },
+      "strategyConfiguration": {
+        "format": "eslm-benchmark-strategy-configuration-v1",
+        "mode": "runtime-work-policy",
+        "catalog": {
+          "format": "eslm-builtin-strategy-catalog-v1",
+          "digest": "sha256:99c9184e185abd1eb3f1fd07f8b9edf5bf340ce3c9a83970d9695e902d4f232e"
+        },
+        "selection": {
+          "source": "eslm-work-policy-v1",
+          "requestedProfile": "balanced",
+          "effectiveProfile": "balanced",
+          "preset": "all",
+          "exactByStage": {},
+          "digest": "sha256:e2b93842afac0f16a9e84812b5bb20a74eb0288e450816cd943a1f87f832f1e2"
+        },
+        "arbiters": [
+          {
+            "stage": "runtime.language.interpret",
+            "identity": "arbiter:language:ds022-proposal-lattice@1",
+            "policyDigest": "sha256:73573fb7498a29b6aa24dab04fb5f44d4640af82eef907f3485c87b12936bdbd"
+          }
+        ],
+        "stageReceipts": [],
+        "adapterLocal": null,
+        "configurationDigest": "sha256:adc04d821299edcdcacf1f932282d568f144cdb697b55fd825834a4aaed0294c"
+      },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T13:13:16.963Z"
+        "executedAt": "2026-08-12T16:53:25.861Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "development-probe-executed",
@@ -826,7 +853,8 @@
             "selectedMethods is not recorded as a method-identifier array",
             "selectedKbVersions is not recorded as a KB-version array",
             "usedKbVersions is not recorded as a KB-version array",
-            "languagePolicy.externalLanguageAgent is not recorded"
+            "languagePolicy.externalLanguageAgent is not recorded",
+            "strategyConfiguration is not recorded as a bounded strategy snapshot"
           ]
         },
         "dependencyAudit": {
@@ -839,7 +867,7 @@
             {
               "path": "src/runtime/runtime.mjs",
               "expectedSha256": "f3c4d3fbde2a81954a45ee4509f7cd2cef2e6fd360b9321946346702709bb3b8",
-              "actualSha256": "6c0b1573afc717a9c21238eefd01764d60f597d118189216784559a6ee5841d9",
+              "actualSha256": "f59a33941c56ea554d5bbdacdb2732f714345ed30de7afe1d8a4b80a4fc61f69",
               "state": "changed"
             },
             {
@@ -965,13 +993,13 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 38995.406831,
-        "cpuUserMicroseconds": 61805112,
-        "cpuSystemMicroseconds": 2873363,
-        "startRssBytes": 947511296,
-        "endRssBytes": 1097064448,
-        "sampledPeakRssBytes": 1131765760,
-        "rssSamples": 687
+        "wallMilliseconds": 38192.43282399999,
+        "cpuUserMicroseconds": 59553302,
+        "cpuSystemMicroseconds": 2944320,
+        "startRssBytes": 978006016,
+        "endRssBytes": 1017393152,
+        "sampledPeakRssBytes": 1140346880,
+        "rssSamples": 673
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark simpleqa --memory-mb 256 --no-external-language-agent",
       "behaviorDependency": {
@@ -986,18 +1014,110 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "cbdb9191c82a91ae6b6a967e5c0fd789a59a31ef5733d35778b07734c431718c",
-        "files": 134,
+        "digest": "1613d72fc0e23b1dd9579da8a4a0d4bc08fc19b52ef8a59266fb347fa65f8d5a",
+        "files": 168,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
           "architecture": "x64"
         }
       },
+      "strategyConfiguration": {
+        "format": "eslm-benchmark-strategy-configuration-v1",
+        "mode": "runtime-work-policy",
+        "catalog": {
+          "format": "eslm-builtin-strategy-catalog-v1",
+          "digest": "sha256:99c9184e185abd1eb3f1fd07f8b9edf5bf340ce3c9a83970d9695e902d4f232e"
+        },
+        "selection": {
+          "source": "eslm-work-policy-v1",
+          "requestedProfile": "balanced",
+          "effectiveProfile": "balanced",
+          "preset": "all",
+          "exactByStage": {},
+          "digest": "sha256:e2b93842afac0f16a9e84812b5bb20a74eb0288e450816cd943a1f87f832f1e2"
+        },
+        "arbiters": [
+          {
+            "stage": "runtime.language.interpret",
+            "identity": "arbiter:language:ds022-proposal-lattice@1",
+            "policyDigest": "sha256:73573fb7498a29b6aa24dab04fb5f44d4640af82eef907f3485c87b12936bdbd"
+          }
+        ],
+        "stageReceipts": [
+          {
+            "stage": "runtime.language.interpret",
+            "format": "eslm-benchmark-strategy-stage-receipt-summary-v1",
+            "executions": 36,
+            "completeExecutions": 36,
+            "incompleteExecutions": 0,
+            "uniqueReceipts": [
+              {
+                "digest": "sha256:0fecdfb860553d8766f07c17d1926613b2bd37d694e0a15df5eb1aaaf466e85a",
+                "occurrences": 1,
+                "complete": true
+              },
+              {
+                "digest": "sha256:52e778f958d2d84ef45e7c7453e5097295b1b43e2593de3b03472b639d71c53b",
+                "occurrences": 1,
+                "complete": true
+              },
+              {
+                "digest": "sha256:6d5bbf2ca87f67baadd774fb7d976e89b47e4d95fee432ab557b7692ceb18258",
+                "occurrences": 12,
+                "complete": true
+              },
+              {
+                "digest": "sha256:8b7e8d8138cda44d2e29f2981562be1d621db9c51017409f6f3dc4f2d75de83d",
+                "occurrences": 8,
+                "complete": true
+              },
+              {
+                "digest": "sha256:aec165cdde66afbb1d8e052dc466a13a94f664f84a0147678aea4266a6265482",
+                "occurrences": 1,
+                "complete": true
+              },
+              {
+                "digest": "sha256:b80049076cee9779a6e13c0a57e27b3b7531216cab7080de95ff425a641c6cbc",
+                "occurrences": 5,
+                "complete": true
+              },
+              {
+                "digest": "sha256:b83f0c2158fffdd8b82269981393cb12bf25f1dc4dbafcce1a5b28dc56a514e4",
+                "occurrences": 1,
+                "complete": true
+              },
+              {
+                "digest": "sha256:bd1e5714e83e8d2b9b1fc69457e33548cf059c4cee915e61cdccef688b3769d1",
+                "occurrences": 1,
+                "complete": true
+              },
+              {
+                "digest": "sha256:c5d27995228dc2d7e4292f40face73873e7212edb8d790bb93286a5f531b9d34",
+                "occurrences": 1,
+                "complete": true
+              },
+              {
+                "digest": "sha256:d110c29e779724c16233c7f317fc18bce98ceb5f46c6a5940ed2b91820ad97d8",
+                "occurrences": 3,
+                "complete": true
+              },
+              {
+                "digest": "sha256:ff4211f3a64b94ccfccd3f896a33bb8553e9687cb8e633d2e4aa9a099f8a946f",
+                "occurrences": 2,
+                "complete": true
+              }
+            ],
+            "digest": "sha256:2174c9109d9ee08394eb8137cf8d7c0acaa5698e26be82e46f49ddaeba756861"
+          }
+        ],
+        "adapterLocal": null,
+        "configurationDigest": "sha256:dc26a5d590b1aefdaea98d5f9aee921fb3a3ecde51d0cbe810dae4874975afce"
+      },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T13:17:10.919Z"
+        "executedAt": "2026-08-12T16:57:15.115Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "diagnostic-probe-executed",
@@ -1073,12 +1193,12 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 1815.454593,
-        "cpuUserMicroseconds": 1979258,
-        "cpuSystemMicroseconds": 49864,
-        "startRssBytes": 380698624,
-        "endRssBytes": 507097088,
-        "sampledPeakRssBytes": 507219968,
+        "wallMilliseconds": 1739.837798,
+        "cpuUserMicroseconds": 1879333,
+        "cpuSystemMicroseconds": 63680,
+        "startRssBytes": 381747200,
+        "endRssBytes": 507731968,
+        "sampledPeakRssBytes": 508514304,
         "rssSamples": 3
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark entity-tracking --memory-mb 256 --no-external-language-agent",
@@ -1094,18 +1214,44 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "cbdb9191c82a91ae6b6a967e5c0fd789a59a31ef5733d35778b07734c431718c",
-        "files": 134,
+        "digest": "1613d72fc0e23b1dd9579da8a4a0d4bc08fc19b52ef8a59266fb347fa65f8d5a",
+        "files": 168,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
           "architecture": "x64"
         }
       },
+      "strategyConfiguration": {
+        "format": "eslm-benchmark-strategy-configuration-v1",
+        "mode": "runtime-work-policy",
+        "catalog": {
+          "format": "eslm-builtin-strategy-catalog-v1",
+          "digest": "sha256:99c9184e185abd1eb3f1fd07f8b9edf5bf340ce3c9a83970d9695e902d4f232e"
+        },
+        "selection": {
+          "source": "eslm-work-policy-v1",
+          "requestedProfile": "balanced",
+          "effectiveProfile": "balanced",
+          "preset": "all",
+          "exactByStage": {},
+          "digest": "sha256:e2b93842afac0f16a9e84812b5bb20a74eb0288e450816cd943a1f87f832f1e2"
+        },
+        "arbiters": [
+          {
+            "stage": "runtime.language.interpret",
+            "identity": "arbiter:language:ds022-proposal-lattice@1",
+            "policyDigest": "sha256:73573fb7498a29b6aa24dab04fb5f44d4640af82eef907f3485c87b12936bdbd"
+          }
+        ],
+        "stageReceipts": [],
+        "adapterLocal": null,
+        "configurationDigest": "sha256:adc04d821299edcdcacf1f932282d568f144cdb697b55fd825834a4aaed0294c"
+      },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T13:13:18.779Z"
+        "executedAt": "2026-08-12T16:53:27.601Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "development-probe-executed",
@@ -1205,13 +1351,13 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 193144.173917,
-        "cpuUserMicroseconds": 322143288,
-        "cpuSystemMicroseconds": 15195705,
-        "startRssBytes": 507097088,
-        "endRssBytes": 947511296,
-        "sampledPeakRssBytes": 1018015744,
-        "rssSamples": 5818
+        "wallMilliseconds": 189332.00746000002,
+        "cpuUserMicroseconds": 310981228,
+        "cpuSystemMicroseconds": 15140924,
+        "startRssBytes": 507731968,
+        "endRssBytes": 978006016,
+        "sampledPeakRssBytes": 1050722304,
+        "rssSamples": 5781
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark story-cloze --memory-mb 256 --no-external-language-agent",
       "behaviorDependency": {
@@ -1226,18 +1372,44 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "cbdb9191c82a91ae6b6a967e5c0fd789a59a31ef5733d35778b07734c431718c",
-        "files": 134,
+        "digest": "1613d72fc0e23b1dd9579da8a4a0d4bc08fc19b52ef8a59266fb347fa65f8d5a",
+        "files": 168,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
           "architecture": "x64"
         }
       },
+      "strategyConfiguration": {
+        "format": "eslm-benchmark-strategy-configuration-v1",
+        "mode": "runtime-work-policy",
+        "catalog": {
+          "format": "eslm-builtin-strategy-catalog-v1",
+          "digest": "sha256:99c9184e185abd1eb3f1fd07f8b9edf5bf340ce3c9a83970d9695e902d4f232e"
+        },
+        "selection": {
+          "source": "eslm-work-policy-v1",
+          "requestedProfile": "balanced",
+          "effectiveProfile": "balanced",
+          "preset": "all",
+          "exactByStage": {},
+          "digest": "sha256:e2b93842afac0f16a9e84812b5bb20a74eb0288e450816cd943a1f87f832f1e2"
+        },
+        "arbiters": [
+          {
+            "stage": "runtime.language.interpret",
+            "identity": "arbiter:language:ds022-proposal-lattice@1",
+            "policyDigest": "sha256:73573fb7498a29b6aa24dab04fb5f44d4640af82eef907f3485c87b12936bdbd"
+          }
+        ],
+        "stageReceipts": [],
+        "adapterLocal": null,
+        "configurationDigest": "sha256:adc04d821299edcdcacf1f932282d568f144cdb697b55fd825834a4aaed0294c"
+      },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T13:16:31.923Z"
+        "executedAt": "2026-08-12T16:56:36.921Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "development-probe-executed",
@@ -1306,7 +1478,8 @@
             "selectedMethods is not recorded as a method-identifier array",
             "selectedKbVersions is not recorded as a KB-version array",
             "usedKbVersions is not recorded as a KB-version array",
-            "languagePolicy.externalLanguageAgent is not recorded"
+            "languagePolicy.externalLanguageAgent is not recorded",
+            "strategyConfiguration is not recorded as a bounded strategy snapshot"
           ]
         },
         "dependencyAudit": {
@@ -1479,7 +1652,8 @@
             "selectedMethods is not recorded as a method-identifier array",
             "selectedKbVersions is not recorded as a KB-version array",
             "usedKbVersions is not recorded as a KB-version array",
-            "languagePolicy.externalLanguageAgent is not recorded"
+            "languagePolicy.externalLanguageAgent is not recorded",
+            "strategyConfiguration is not recorded as a bounded strategy snapshot"
           ]
         },
         "dependencyAudit": {
@@ -1498,7 +1672,7 @@
             {
               "path": "src/runtime/engine.mjs",
               "expectedSha256": "4081dfeb82530b9dd59cbeca06949df984b08f26e16b9c6e394c8bff2fe88dda",
-              "actualSha256": "e2719910b7ac3e9b990e396253f2ceeb8513c43b4582d9355263b626715af1b3",
+              "actualSha256": "fc41d381b3d2e70edc4897c3d3b2519c391e168bf394fa037d53f143f0c47787",
               "state": "changed"
             },
             {
@@ -1510,7 +1684,7 @@
             {
               "path": "docs/specs/DS015-reasoning-method-semantics.md",
               "expectedSha256": "25940bfb78dfe79e987610d504ac00c9bb925b879d7a622657f10813628ed7a4",
-              "actualSha256": "c462f45072aa7f6c0995de5eeee1c983bc71de729b1cb3a30cbe9d5194b65b58",
+              "actualSha256": "7be50619c41605954f645f97fa7108836258e25fba4541346914fbe17a8a2562",
               "state": "changed"
             }
           ]
@@ -1754,7 +1928,8 @@
             "selectedMethods is not recorded as a method-identifier array",
             "selectedKbVersions is not recorded as a KB-version array",
             "usedKbVersions is not recorded as a KB-version array",
-            "languagePolicy.externalLanguageAgent is not recorded"
+            "languagePolicy.externalLanguageAgent is not recorded",
+            "strategyConfiguration is not recorded as a bounded strategy snapshot"
           ]
         },
         "dependencyAudit": {
@@ -1773,7 +1948,7 @@
             {
               "path": "src/runtime/engine.mjs",
               "expectedSha256": "436bed8af06d314a40ae3f39777451d5beed868465d16c69c6e83e0101116eb1",
-              "actualSha256": "e2719910b7ac3e9b990e396253f2ceeb8513c43b4582d9355263b626715af1b3",
+              "actualSha256": "fc41d381b3d2e70edc4897c3d3b2519c391e168bf394fa037d53f143f0c47787",
               "state": "changed"
             }
           ]
@@ -2165,7 +2340,8 @@
                 "selectedMethods is not recorded as a method-identifier array",
                 "selectedKbVersions is not recorded as a KB-version array",
                 "usedKbVersions is not recorded as a KB-version array",
-                "languagePolicy.externalLanguageAgent is not recorded"
+                "languagePolicy.externalLanguageAgent is not recorded",
+                "strategyConfiguration is not recorded as a bounded strategy snapshot"
               ]
             },
             "checkpointVerification": {
@@ -2189,7 +2365,7 @@
                 {
                   "path": "src/runtime/engine.mjs",
                   "expectedSha256": "e813a570adf186d093651ff41b600f4f59ebeca7fdad0d692e7108b6a5a47d01",
-                  "actualSha256": "e2719910b7ac3e9b990e396253f2ceeb8513c43b4582d9355263b626715af1b3",
+                  "actualSha256": "fc41d381b3d2e70edc4897c3d3b2519c391e168bf394fa037d53f143f0c47787",
                   "state": "changed"
                 },
                 {
@@ -2386,7 +2562,8 @@
             "selectedMethods is not recorded as a method-identifier array",
             "selectedKbVersions is not recorded as a KB-version array",
             "usedKbVersions is not recorded as a KB-version array",
-            "languagePolicy.externalLanguageAgent is not recorded"
+            "languagePolicy.externalLanguageAgent is not recorded",
+            "strategyConfiguration is not recorded as a bounded strategy snapshot"
           ]
         },
         "dependencyAudit": {
@@ -2801,7 +2978,8 @@
             "selectedMethods is not recorded as a method-identifier array",
             "selectedKbVersions is not recorded as a KB-version array",
             "usedKbVersions is not recorded as a KB-version array",
-            "languagePolicy.externalLanguageAgent is not recorded"
+            "languagePolicy.externalLanguageAgent is not recorded",
+            "strategyConfiguration is not recorded as a bounded strategy snapshot"
           ]
         },
         "dependencyAudit": {
@@ -2961,7 +3139,8 @@
             "selectedMethods is not recorded as a method-identifier array",
             "selectedKbVersions is not recorded as a KB-version array",
             "usedKbVersions is not recorded as a KB-version array",
-            "languagePolicy.externalLanguageAgent is not recorded"
+            "languagePolicy.externalLanguageAgent is not recorded",
+            "strategyConfiguration is not recorded as a bounded strategy snapshot"
           ]
         },
         "dependencyAudit": {

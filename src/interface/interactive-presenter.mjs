@@ -4,6 +4,7 @@ import { PUBLIC_KB_CATALOG, publicKbStatuses } from '../public-kbs.mjs';
 import {
   REGRESSION_SMOKE_CATALOG_SIZE, SMOKE_EXAMPLES_PER_PAGE, regressionSmokeCases, smokeCatalogSummary,
 } from '../conversation-smoke.mjs';
+import { strategyInventory } from '../strategy/strategy-inventory.mjs';
 
 export function interactiveHelp(style) {
   const command = (value) => style.blue(value.padEnd(28));
@@ -20,6 +21,10 @@ export function interactiveHelp(style) {
   ${command('/memory auto|eager|lazy')}Select adaptive, full, or shard-based loading.
   ${command('/work')}Show the exact heuristic, reasoning, provider, and grounding limits.
   ${command('/work PROFILE')}Use quick, balanced, deep, or exhaustive-bounded work.
+  ${command('/strategies')}Show the selected trusted strategy preset.
+  ${command('/strategies PRESET')}Use all, language, retrieval, reasoning, or construction.
+  ${command('/strategy STAGE=IDS')}Select exact built-in strategies; use semicolons between stages.
+  ${command('/strategy clear')}Clear exact execution allowlists.
   ${command('/normalize')}Show the external Language Agent normalization policy and state.
   ${command('/normalize on|off')}Enable or disable direct-first Language Agent assistance.
   ${command('/examples [PAGE] [SEED]')}Show a page of 24 diverse cases from the smoke corpus.
@@ -243,11 +248,29 @@ export function workText(engine, style) {
   const overrides = Object.keys(policy.requested.overrides);
   return `${style.bold('Work profile')}: ${style.green(policy.effective.profile)}${overrides.length
     ? `; exact overrides: ${overrides.join(', ')}` : ''}.
+  Strategy preset: ${policy.effective.strategies?.preset ?? 'all'}; explicit stage selections: ${Object.keys(policy.effective.strategies?.selected ?? {}).length}.
   Heuristics: ${limits.maximumHeuristicCandidates} candidates, ${limits.maximumHeuristicReparses} reparses, ${limits.maximumHeuristicSegments} segments, ${limits.maximumHeuristicTokens} tokens, confidence ≥ ${limits.minimumHeuristicConfidence}.
   Horn reasoning: ${limits.maximumHornRounds} rounds, ${limits.maximumHornFacts} facts, ${limits.maximumHornJoinAttempts} join attempts.
   Provider routing: ${limits.maximumProviderSources} sources, ${limits.maximumProviderParaphrases} paraphrases per source.
   Grounding: ${limits.maximumGroundingTerms} terms, ${limits.maximumGroundingLookups} lookups, ${limits.maximumGroundingValuesPerLookup} values per lookup, ${limits.maximumGroundingCandidateEntries} candidates, ${limits.maximumGroundingEntries} returned entries, ${limits.maximumGroundingSources} sources, ${formatBytes(limits.maximumGroundingOutputBytes)} entry payload.
 ${style.dim('All profiles are deterministic and bounded. They do not claim a hard wall-clock deadline.')}`;
+}
+
+export function strategiesText(engine, style) {
+  const policy = engine.workPolicy ?? engine.runtime?.workPolicy;
+  if (!policy) return style.yellow('The active runtime does not expose a strategy policy.');
+  const inventory = strategyInventory(policy);
+  const visibleRows = inventory.strategies.filter((strategy) => strategy.visible);
+  const stages = inventory.stages.filter((stage) => stage.visible > 0).map((stage) => {
+    const identities = visibleRows.filter((strategy) => strategy.stage === stage.stage)
+      .map((strategy) => `    ${strategy.executionEnabled ? style.green('enabled') : style.yellow(strategy.state)} ${strategy.identity} — ${strategy.implementationState}`);
+    return `  ${style.bold(stage.stage)}: ${stage.executionEnabled}/${stage.catalogued} execution-enabled\n${identities.join('\n')}`;
+  });
+  return `${style.bold('Trusted strategy catalog')}: ${inventory.catalogued} catalogued; ${inventory.executionEnabled} execution-enabled; ${inventory.coordinated} coordinated; ${inventory.instrumentedLocal} instrumented local; ${inventory.planned} planned.
+Inventory view: ${style.green(inventory.inventoryView)} (${inventory.visible} visible). Named views do not change execution; exact /strategy allowlists do.
+Selection: ${inventory.selectionDigest}
+${stages.join('\n')}
+${style.dim('Descriptors are static trusted inventory. KBs and corpora cannot supply executable strategy paths.')}`;
 }
 
 export function modelText(engine, selected, context, style) {

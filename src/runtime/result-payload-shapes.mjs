@@ -75,10 +75,14 @@ export function jsonBytes(value, path, maximumBytes) {
 export function boundedJson(value, path, maximumBytes) {
   jsonBytes(value, path, maximumBytes);
   let nodes = 0;
-  const visit = (item, depth) => {
+  const visit = (item, depth, allowOmittedObjectValue = false) => {
     nodes += 1;
     if (nodes > MAX_RESULT_ITEM_NODES || depth > MAX_RESULT_ITEM_DEPTH) {
       throw new TypeError(`${path} exceeds its structural limit.`);
+    }
+    if (item === undefined) {
+      if (allowOmittedObjectValue) return;
+      throw new TypeError(`${path} contains a non-JSON value.`);
     }
     if (typeof item === 'number' && !Number.isFinite(item)) {
       throw new TypeError(`${path} contains a non-finite number.`);
@@ -91,13 +95,26 @@ export function boundedJson(value, path, maximumBytes) {
     }
     if (Array.isArray(item)) {
       if (item.length > MAX_RESULT_ARRAY_ITEMS) throw new TypeError(`${path} contains an oversized array.`);
-      item.forEach((child) => visit(child, depth + 1));
+      for (let index = 0; index < item.length; index += 1) {
+        if (!Object.hasOwn(item, index)) throw new TypeError(`${path} contains a sparse array.`);
+        visit(item[index], depth + 1);
+      }
+      const ignoredKeys = Reflect.ownKeys(item).filter((key) => typeof key === 'symbol'
+        || (key !== 'length' && !/^(?:0|[1-9]\d*)$/u.test(key)));
+      if (ignoredKeys.length > 0) throw new TypeError(`${path} contains non-JSON array fields.`);
     } else if (item && typeof item === 'object') {
+      const prototype = Object.getPrototypeOf(item);
+      if (prototype !== Object.prototype && prototype !== null) {
+        throw new TypeError(`${path} contains a non-JSON object.`);
+      }
+      if (Reflect.ownKeys(item).some((key) => typeof key === 'symbol')) {
+        throw new TypeError(`${path} contains a non-JSON object field.`);
+      }
       const entries = Object.entries(item);
       if (entries.length > MAX_RESULT_ARRAY_ITEMS) throw new TypeError(`${path} contains too many fields.`);
       entries.forEach(([key, child]) => {
         string(key, `${path} field name`);
-        visit(child, depth + 1);
+        visit(child, depth + 1, true);
       });
     }
   };
@@ -116,13 +133,16 @@ export function objectArray(value, path, maximumItems, maximumBytes) {
   });
 }
 
-export function kbIdentity(identity, path) {
+export function kbIdentity(identity, path, requireVersion = false) {
   const value = record(identity, path);
   const keys = Object.keys(value).toSorted();
   if (keys.some((key) => !['kbId', 'version'].includes(key))) {
     throw new TypeError(`${path} contains unsupported identity fields.`);
   }
   string(value.kbId, `${path}.kbId`);
+  if (requireVersion && value.version === undefined) {
+    throw new TypeError(`${path}.version must identify an exact KB version.`);
+  }
   if (value.version !== undefined) string(value.version, `${path}.version`);
   if (/[\u0000-\u001f\u007f]/u.test(value.kbId)
     || (value.version !== undefined && /[\u0000-\u001f\u007f]/u.test(value.version))) {
@@ -131,10 +151,10 @@ export function kbIdentity(identity, path) {
   return `${value.kbId}\u0000${value.version ?? ''}`;
 }
 
-export function kbIdentityArray(value, path, maximumItems = 256) {
+export function kbIdentityArray(value, path, maximumItems = 256, requireVersion = false) {
   const seen = new Set();
   array(value, path, maximumItems).forEach((identity, index) => {
-    const key = kbIdentity(identity, `${path}[${index}]`);
+    const key = kbIdentity(identity, `${path}[${index}]`, requireVersion);
     if (seen.has(key)) throw new TypeError(`${path} contains duplicate identity ${identity.kbId}.`);
     seen.add(key);
   });

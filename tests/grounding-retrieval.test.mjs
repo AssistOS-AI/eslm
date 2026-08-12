@@ -8,6 +8,7 @@ import {
 import {
   createSessionGroundingProjection, retrieveSessionGrounding,
 } from '../src/reasoning/grounding-model-retrieval.mjs';
+import { selectGroundingTerms } from '../src/reasoning/grounding-query-focus.mjs';
 import { EslmEngine } from '../src/runtime/engine.mjs';
 import { createCoreModel } from '../src/runtime/core-model.mjs';
 import { EslmRuntime } from '../src/runtime/runtime.mjs';
@@ -297,6 +298,15 @@ test('request-looking words remain searchable when they are the topic rather tha
   assert.ok(groundingTerms('What does explain mean?').includes('explain'));
   assert.deepEqual(groundingTerms('What is a report?'), ['report']);
   assert.equal(groundingTerms('Explain the theory of relativity')[0], 'theory of relativity');
+});
+
+test('negated request scaffolding cannot displace the actual topic', () => {
+  const focus = selectGroundingTerms('Do not write or draft a report about zorals.', {
+    maximumTerms: 4,
+  });
+  assert.deepEqual(focus.terms, ['zorals', 'zoral']);
+  assert.equal(focus.candidates.find((candidate) => candidate.term === 'not')?.included, false);
+  assert.equal(focus.candidates.find((candidate) => candidate.term === 'report')?.included, false);
 });
 
 test('grounding ranking is provider-order independent, diverse, and explicitly bounded', () => {

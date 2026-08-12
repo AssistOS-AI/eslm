@@ -120,6 +120,15 @@ function assertRuntimeRoutePayloadInvariants(result) {
   if (result.languageRoute === 'heuristic-request-planned' && result.status !== 'MISSING_KNOWLEDGE') {
     throw new TypeError('heuristic-request-planned requires MISSING_KNOWLEDGE status.');
   }
+  if (result.languageRoute === 'heuristic-cnl-ambiguous' && result.status !== 'AMBIGUOUS') {
+    throw new TypeError('heuristic-cnl-ambiguous requires AMBIGUOUS status.');
+  }
+  if (result.languageRoute === 'heuristic-cnl-approximated'
+    && !['DEFEASIBLE', 'PARTIAL', 'UNKNOWN', 'MISSING_KNOWLEDGE', 'NO_APPLICABLE_METHOD',
+      'UNDERDETERMINED', 'INCONSISTENT_CONTEXT', 'RESOURCE_LIMIT', 'UNSUPPORTED_OUTPUT']
+      .includes(result.status)) {
+    throw new TypeError('heuristic-cnl-approximated requires a supported non-strict interpreted status.');
+  }
   if (result.languageRoute === 'heuristic-request-synthesis' && !result.synthesis) {
     throw new TypeError('heuristic-request-synthesis requires a synthesis extension.');
   }
@@ -134,13 +143,17 @@ function assertRuntimeRoutePayloadInvariants(result) {
     throw new TypeError('language-agent-normalized requires accepted normalization evidence.');
   }
   if (result.languageRoute === 'language-agent-normalization-failed'
-    && normalizationStatus !== 'failed') {
+    && (normalizationStatus !== 'failed' || result.status !== 'UNPARSED')) {
     throw new TypeError('language-agent-normalization-failed requires failed normalization evidence.');
   }
   if (result.languageRoute === 'language-agent-normalization-rejected'
     && (!['rejected', 'reparse-rejected', 'proposal-limit-exhausted'].includes(normalizationStatus)
       || result.status !== 'UNVERIFIED_NORMALIZATION')) {
     throw new TypeError('language-agent-normalization-rejected requires matching rejected evidence and status.');
+  }
+  if (result.normalization?.attempted
+    && !result.languageRoute.startsWith('language-agent-')) {
+    throw new TypeError('Attempted normalization requires a Language Agent language route.');
   }
   if (result.languageRoute === 'heuristic-request-synthesis') {
     if ((result.values?.length ?? 0) !== 0) {
@@ -153,6 +166,15 @@ function assertRuntimeRoutePayloadInvariants(result) {
     if ((result.provenance?.length ?? 0) !== result.synthesis.evidence.selected.length) {
       throw new TypeError('heuristic-request-synthesis provenance must match selected KB records.');
     }
+    result.provenance.forEach((provenance, index) => {
+      const entry = result.synthesis.evidence.selected[index].entry;
+      if (provenance.fact !== entry.recordId || provenance.kbId !== entry.kbId
+        || provenance.kbVersion !== entry.kbVersion
+        || JSON.stringify(provenance.source) !== JSON.stringify(entry.provenance)
+        || provenance.method !== 'extractive-request-synthesis' || provenance.sourceClaim !== true) {
+        throw new TypeError('heuristic-request-synthesis provenance must identify its ordered source claims.');
+      }
+    });
   }
 }
 

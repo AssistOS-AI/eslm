@@ -8,6 +8,9 @@ import {
 } from '../src/evaluation/benchmark-receipt-audit.mjs';
 import { RESEARCH_BENCHMARK_CATALOG } from '../src/evaluation/benchmark-research-catalog.mjs';
 import { sha256 } from '../src/util.mjs';
+import {
+  createAdapterBenchmarkStrategyConfiguration,
+} from '../src/evaluation/benchmark-strategy-configuration.mjs';
 
 function sampleDefinition() {
   return {
@@ -32,6 +35,10 @@ function completeExecutionMetadata() {
     selectedMethods: ['method:core:sample'],
     selectedKbVersions: [], usedKbVersions: [],
     languagePolicy: { externalLanguageAgent: false },
+    strategyConfiguration: createAdapterBenchmarkStrategyConfiguration({
+      adapterId: 'adapter:sample', adapterVersion: '1',
+      stateFormat: 'sample-adapter-state-v1', state: { policy: 'sample' },
+    }),
   };
 }
 
@@ -89,7 +96,8 @@ test('a dependency-matching receipt without release execution evidence is invali
   assert.equal(report.rows[0].state, 'invalid');
   assert.equal(report.rows[0].receiptValidity.integrity, 'valid');
   assert.equal(report.rows[0].receiptValidity.reportingCompleteness, 'incomplete');
-  assert.match(report.rows[0].receiptValidity.issues.join(' '), /resourcePolicy|replayCommand/u);
+  assert.match(report.rows[0].receiptValidity.issues.join(' '),
+    /resourcePolicy|replayCommand|strategyConfiguration/u);
 });
 
 test('receipt audit distinguishes unavailable, invalid, and unrecoverable evidence', async (context) => {

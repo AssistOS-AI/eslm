@@ -3,6 +3,7 @@ import {
   selectGroundingTerms,
 } from './grounding-query-focus.mjs';
 import { estimateGroundingRelevance } from './grounding-relevance-estimator.mjs';
+import { makeGroundingSearchReceipt } from './grounding-search-receipt.mjs';
 
 const DEFAULT_MAX_ENTRIES = 8;
 const MAX_INPUT_CHARACTERS = 4096;
@@ -14,15 +15,6 @@ const MAX_CANDIDATE_ENTRIES = 512;
 const MAX_SEMANTIC_BYTES = 4096;
 const MAX_SEARCH_RECEIPTS = 64;
 const DEFAULT_MAX_OUTPUT_BYTES = 65_536;
-const SEARCH_RECEIPT_STATUSES = new Set([
-  'invalid-grounding-result',
-  'matches-found',
-  'no-match',
-  'provider-error',
-  'runtime-boundary-truncated',
-  'unsupported-grounding-interface',
-]);
-
 const GROUNDING_TRIGGER_STATUSES = new Set([
   'AMBIGUOUS',
   'INCONSISTENT_CONTEXT',
@@ -156,6 +148,18 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
   if (!shouldRetrieveGrounding(triggerStatus)) {
     throw new Error(`Grounding is not permitted after status ${triggerStatus}.`);
   }
+  const relevanceStrategySelection = options.relevanceStrategySelection;
+  if (relevanceStrategySelection !== undefined && (!Array.isArray(relevanceStrategySelection)
+    || relevanceStrategySelection.length > 32 || relevanceStrategySelection.some((identity) =>
+      typeof identity !== 'string' || !/^strategy:retrieval:[a-z0-9-]+@\d+$/u.test(identity)))) {
+    throw new Error('Grounding relevance strategies must be a bounded exact allowlist.');
+  }
+  const focusStrategySelection = options.focusStrategySelection;
+  if (focusStrategySelection !== undefined && (!Array.isArray(focusStrategySelection)
+    || focusStrategySelection.length > 32 || focusStrategySelection.some((identity) =>
+      typeof identity !== 'string' || !/^strategy:focus:[a-z0-9-]+@\d+$/u.test(identity)))) {
+    throw new Error('Grounding focus strategies must be a bounded exact allowlist.');
+  }
   const rawText = String(text ?? '');
   const boundedInput = rawText.slice(0, MAX_INPUT_CHARACTERS);
   const explicitFocus = Array.isArray(options.focus) ? options.focus.slice(0, 32).map((focus, index) => {
@@ -183,6 +187,7 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
     maximumTerms,
     maximumCandidates: Math.min(256, Math.max(maximumTerms, maximumTerms * 8)),
     semanticFocus,
+    selectedStrategyIdentities: focusStrategySelection,
   });
   const terms = [...focusSelection.terms];
   const boundedQueryValue = (value, semanticFocus = false) => {
@@ -205,6 +210,8 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
       selected: terms.length,
       complete: rawText.length <= MAX_INPUT_CHARACTERS && focusSelection.complete,
       strategy: focusSelection.strategy,
+      strategyMode: focusSelection.strategyMode,
+      strategySelection: focusSelection.strategySelection,
       focusSource: explicitFocus.length > 0 ? 'typed-request-plan' : 'visible-request',
       obligations: Object.freeze(explicitFocus.map((focus) => Object.freeze({
         ...focus, selected: terms.includes(focus.term),
@@ -224,6 +231,8 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
         direction: boundedQueryValue(query.factoidFrame.direction),
       }) : undefined,
     }) : undefined,
+    relevanceStrategySelection: relevanceStrategySelection === undefined
+      ? undefined : Object.freeze([...new Set(relevanceStrategySelection)].toSorted()),
     limits: Object.freeze({
       maximumEntries,
       maximumTerms,
@@ -363,7 +372,7 @@ function orderedEntries(entries) {
       || left.recordId.localeCompare(right.recordId));
 }
 
-function relevanceRankedEntries(entries, request) {
+export function relevanceRankedEntries(entries, request) {
   return orderedEntries(estimateGroundingRelevance(entries, request));
 }
 
@@ -457,6 +466,8 @@ export function createGroundingBundle({
       + 'They are not a proof of the requested answer.',
     focus: Object.freeze({
       strategy: request?.termSelection?.strategy ?? 'semantic-role-phrase-morphology-v3',
+      strategyMode: request?.termSelection?.strategyMode ?? 'all-registered',
+      strategySelection: Object.freeze([...(request?.termSelection?.strategySelection ?? [])]),
       source: request?.termSelection?.focusSource ?? 'visible-request',
       terms: Object.freeze([...(request?.terms ?? [])]),
       candidates: Object.freeze([...(request?.termSelection?.candidates ?? [])]),
@@ -465,6 +476,9 @@ export function createGroundingBundle({
     search: Object.freeze({
       complete,
       termSelectionComplete,
+      relevanceStrategySelection: Object.freeze([...(request?.relevanceStrategySelection ?? [])]),
+      relevanceStrategyMode: request?.relevanceStrategySelection === undefined
+        ? 'all-registered' : 'exact-allowlist',
       receipts: Object.freeze(receipts.toSorted((left, right) =>
         left.kbId.localeCompare(right.kbId) || String(left.kbVersion).localeCompare(String(right.kbVersion)))),
     }),
@@ -484,53 +498,11 @@ export function createGroundingBundle({
   });
 }
 
-export function makeGroundingSearchReceipt(receipt) {
-  if (!receipt || typeof receipt !== 'object' || Array.isArray(receipt)) {
-    throw new Error('Grounding search receipt must be an object.');
-  }
-  const kbId = boundedIdentifier(receipt.kbId, 'Grounding search receipt kbId');
-  const kbVersion = receipt.kbVersion === undefined
-    ? undefined : boundedIdentifier(String(receipt.kbVersion), 'Grounding search receipt kbVersion');
-  const status = boundedIdentifier(receipt.status, 'Grounding search receipt status');
-  if (!SEARCH_RECEIPT_STATUSES.has(status)) {
-    throw new Error(`Grounding search receipt ${kbId} has unsupported status ${status}.`);
-  }
-  const coverage = boundedIdentifier(receipt.coverage, 'Grounding search receipt coverage');
-  if (!Number.isSafeInteger(receipt.candidatesConsidered)
-      || receipt.candidatesConsidered < 0 || receipt.candidatesConsidered > 1_000_000_000) {
-    throw new Error(`Grounding search receipt ${kbId} requires a bounded candidate count.`);
-  }
-  const truncationReasons = boundedStringArray(receipt.truncationReasons ?? [], {
-    maximumItems: 8,
-    maximumCharacters: 120,
-    label: `Grounding search receipt ${kbId} truncation reasons`,
-  });
-  const complete = receipt.complete === true;
-  if (complete && status !== 'matches-found' && status !== 'no-match') {
-    throw new Error(`Grounding search receipt ${kbId} cannot mark ${status} complete.`);
-  }
-  if (complete && truncationReasons.length > 0) {
-    throw new Error(`Grounding search receipt ${kbId} cannot be complete after truncation.`);
-  }
-  if (!complete && status === 'no-match' && truncationReasons.length === 0) {
-    throw new Error(`Grounding search receipt ${kbId} requires an incomplete-search reason.`);
-  }
-  return Object.freeze({
-    kbId,
-    kbVersion,
-    status,
-    coverage,
-    complete,
-    candidatesConsidered: receipt.candidatesConsidered,
-    truncationReasons: Object.freeze(truncationReasons),
-    ...(receipt.diagnostic ? { diagnostic: boundedText(receipt.diagnostic, 240) } : {}),
-  });
-}
-
 export {
   DEFAULT_MAX_ENTRIES as DEFAULT_GROUNDING_MAX_ENTRIES,
   groundingTerms,
   groundingTokens,
+  makeGroundingSearchReceipt,
   normalizedGroundingSurface,
   orderedEntries as orderGroundingEntries,
 };

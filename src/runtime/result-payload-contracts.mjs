@@ -1,20 +1,23 @@
-import { HEURISTIC_CNL_PROTOCOL } from '../language/heuristic-cnl-contract.mjs';
 import {
-  HEURISTIC_REQUEST_PATTERN_CATALOG, HEURISTIC_REQUEST_PLAN_PROTOCOL,
-} from '../language/heuristic-request-planning.mjs';
+  HEURISTIC_CNL_LIMIT_CEILINGS, HEURISTIC_CNL_PROTOCOL,
+} from '../language/heuristic-cnl-contract.mjs';
+import { builtinStrategyDescriptors } from '../strategy/builtin-strategy-catalog.mjs';
+import { strategyIdentity } from '../strategy/strategy-contract.mjs';
 import {
-  array, boolean, boundedJson, confidence, exactKeys, finite, integer, jsonBytes, kbIdentity, kbIdentityArray,
+  array, boolean, boundedJson, confidence, exactKeys, finite, integer, kbIdentity, kbIdentityArray,
   MAX_RESULT_ARRAY_BYTES, MAX_RESULT_ARRAY_ITEMS, objectArray, record, string, stringArray, text,
 } from './result-payload-shapes.mjs';
+import { assertGroundingExtension } from './result-grounding-contract.mjs';
+import { assertRequestPlanningExtension } from './result-request-planning-contract.mjs';
+import { assertSynthesisExtension } from './result-synthesis-contract.mjs';
+import {
+  assertResultStrategySelection, assertStrategyExecutionReceipt,
+} from './result-strategy-contract.mjs';
 
 const APPROXIMATION_PROTOCOL = HEURISTIC_CNL_PROTOCOL;
-const REQUEST_PLAN_PROTOCOL = HEURISTIC_REQUEST_PLAN_PROTOCOL;
-const REQUEST_PATTERN_CATALOG = HEURISTIC_REQUEST_PATTERN_CATALOG.version;
-const SYNTHESIS_PROTOCOL = 'eslm-heuristic-request-synthesis-v1';
 const NORMALIZATION_RESULT_PROTOCOL = 'eslm-language-agent-normalization-result-v1';
 const NORMALIZATION_CANDIDATE_PROTOCOL = 'eslm-language-agent-normalization-v2';
-const NORMALIZATION_RECEIPT_FORMAT = 'eslm-codex-normalization-receipt-v1';
-const GROUNDING_FORMAT = 'eslm-grounding-bundle-v1';
+const NORMALIZATION_RECEIPT_FORMAT = /^eslm-[a-z0-9][a-z0-9-]{0,63}-normalization-receipt-v[1-9]\d*$/u;
 const NORMALIZATION_ANCHOR_KINDS = new Set([
   'named-entity', 'number', 'answer-option', 'quoted-material', 'interrogative', 'lexical-content',
   'negation', 'quantifier', 'modality', 'conditional', 'temporal', 'conjunction', 'disjunction',
@@ -25,24 +28,12 @@ const APPROXIMATION_STATUSES = new Set([
   'CANDIDATES', 'NO_CHANGE', 'NO_SAFE_CANDIDATE', 'RESOURCE_LIMIT',
   'accepted-reparse', 'ambiguous-reparse', 'no-accepted-reparse', 'resource-limit',
 ]);
-const REQUEST_PLAN_STATUSES = new Set([
-  'PLANNED', 'AMBIGUOUS', 'LOW_CONFIDENCE', 'NO_SUPPORTED_INTENT', 'RESOURCE_LIMIT',
-]);
 const NORMALIZATION_STATUSES = new Set([
   'accepted', 'failed', 'proposal-limit-exhausted', 'rejected', 'reparse-rejected',
 ]);
-const GROUNDING_STATUSES = new Set([
-  'RELATED_EVIDENCE_FOUND', 'NO_RELATED_EVIDENCE', 'SEARCH_INCOMPLETE',
-]);
-const GROUNDING_TRIGGER_STATUSES = new Set([
-  'AMBIGUOUS', 'INCONSISTENT_CONTEXT', 'MISSING_KNOWLEDGE', 'NO_APPLICABLE_METHOD',
-  'PARTIAL', 'UNDERDETERMINED', 'UNKNOWN', 'UNPARSED', 'UNVERIFIED_NORMALIZATION',
-  'UNSUPPORTED_OUTPUT',
-]);
-const GROUNDING_RECEIPT_STATUSES = new Set([
-  'invalid-grounding-result', 'matches-found', 'no-match', 'provider-error',
-  'runtime-boundary-truncated', 'unsupported-grounding-interface',
-]);
+const LANGUAGE_STRATEGY_IDENTITIES = Object.freeze(builtinStrategyDescriptors('runtime.language.interpret')
+  .filter((descriptor) => descriptor.implementationState === 'coordinated')
+  .map(strategyIdentity).toSorted());
 
 export { NORMALIZATION_RESULT_PROTOCOL };
 
@@ -56,7 +47,23 @@ function approximationCandidate(candidate, path) {
   return value;
 }
 
-function approximationExtension(value, route) {
+function approximationCandidateCoreMatches(left, right) {
+  return left.candidateId === right.candidateId
+    && left.rank === right.rank
+    && left.text === right.text
+    && left.confidence === right.confidence
+    && left.rankScore === right.rankScore;
+}
+
+function declaredApproximationCandidate(candidate, candidates, path) {
+  const declared = candidates.find((item) => item.candidateId === candidate.candidateId);
+  if (!declared || !approximationCandidateCoreMatches(candidate, declared)) {
+    throw new TypeError(`${path} must match one declared approximation candidate.`);
+  }
+  return declared;
+}
+
+function approximationExtension(value, result) {
   const approximation = record(value, 'Runtime result approximation');
   if (approximation.protocol !== APPROXIMATION_PROTOCOL
     || approximation.receipt?.protocol !== APPROXIMATION_PROTOCOL) {
@@ -66,129 +73,160 @@ function approximationExtension(value, route) {
     throw new TypeError(`Runtime result approximation has unsupported status ${String(approximation.status)}.`);
   }
   text(approximation.originalText, 'Runtime result approximation.originalText', 65_536);
-  array(approximation.candidates, 'Runtime result approximation.candidates', 256)
-    .forEach((candidate, index) => approximationCandidate(candidate,
-      `Runtime result approximation.candidates[${index}]`));
+  const candidates = array(approximation.candidates, 'Runtime result approximation.candidates', 256);
+  const candidateIds = new Set();
+  candidates.forEach((candidate, index) => {
+    approximationCandidate(candidate, `Runtime result approximation.candidates[${index}]`);
+    if (candidateIds.has(candidate.candidateId)) {
+      throw new TypeError('Runtime result approximation candidate IDs must be unique.');
+    }
+    if (candidate.rank !== index + 1) {
+      throw new TypeError('Runtime result approximation candidate ranks must follow result order.');
+    }
+    candidateIds.add(candidate.candidateId);
+  });
   record(approximation.receipt, 'Runtime result approximation.receipt');
+  const strategySelection = record(approximation.receipt.strategySelection,
+    'Runtime result approximation.receipt.strategySelection');
+  if (strategySelection.stage !== 'runtime.language.interpret') {
+    throw new TypeError('Runtime result approximation strategySelection has the wrong stage.');
+  }
+  assertResultStrategySelection({
+    mode: strategySelection.mode,
+    identities: strategySelection.identities,
+    stage: strategySelection.stage,
+    result,
+    path: 'Runtime result approximation.receipt.strategySelection',
+  });
+  if (approximation.receipt.strategyExecution === undefined) {
+    if (!['RESOURCE_LIMIT', 'resource-limit'].includes(approximation.status)) {
+      throw new TypeError('Runtime result approximation requires its strategy execution receipt.');
+    }
+  } else {
+    const execution = assertStrategyExecutionReceipt(approximation.receipt.strategyExecution, result);
+    const executed = strategySelection.identities.filter((identity) =>
+      identity !== 'strategy:language:direct-controlled-parser@1');
+    const expectedExecuted = strategySelection.mode === 'all-registered'
+      ? LANGUAGE_STRATEGY_IDENTITIES : executed;
+    if (JSON.stringify(execution.selectedStrategies) !== JSON.stringify(expectedExecuted)) {
+      throw new TypeError('Runtime result approximation strategy selection contradicts execution receipt.');
+    }
+  }
   boolean(approximation.receipt.complete, 'Runtime result approximation.receipt.complete');
   if (approximation.receipt.answerProduced !== false || approximation.receipt.kbConsulted !== false
     || approximation.receipt.sessionMutated !== false) {
     throw new TypeError('Runtime result approximation receipt must deny answer, KB, and session authority.');
   }
+  const limits = record(approximation.receipt.limits, 'Runtime result approximation.receipt.limits');
+  const observed = record(approximation.receipt.observed, 'Runtime result approximation.receipt.observed');
+  for (const [field, maximum] of Object.entries(HEURISTIC_CNL_LIMIT_CEILINGS)) {
+    integer(limits[field], `Runtime result approximation.receipt.limits.${field}`, maximum, 1);
+  }
+  const observedLimits = {
+    inputBytes: 1_048_576,
+    tokens: HEURISTIC_CNL_LIMIT_CEILINGS.maximumTokens + 1,
+    sentences: HEURISTIC_CNL_LIMIT_CEILINGS.maximumSentences + 1,
+    proposals: HEURISTIC_CNL_LIMIT_CEILINGS.maximumProposals,
+    candidates: HEURISTIC_CNL_LIMIT_CEILINGS.maximumCandidates,
+    editDistanceEvaluations: HEURISTIC_CNL_LIMIT_CEILINGS.maximumEditDistanceEvaluations,
+    receiptBytes: 16_777_216,
+  };
+  for (const [field, maximum] of Object.entries(observedLimits)) {
+    integer(observed[field], `Runtime result approximation.receipt.observed.${field}`, maximum);
+  }
+  const resourceLimited = ['RESOURCE_LIMIT', 'resource-limit'].includes(approximation.status);
+  const receiptOverflow = resourceLimited
+    && approximation.receipt.exhaustedResource === 'maximumReceiptBytes';
+  if ((!receiptOverflow && approximation.candidates.length !== observed.candidates)
+    || approximation.candidates.length > limits.maximumCandidates
+    || observed.proposals > limits.maximumProposals
+    || observed.editDistanceEvaluations > limits.maximumEditDistanceEvaluations) {
+    throw new TypeError('Runtime result approximation observed work contradicts its limits or candidates.');
+  }
+  objectArray(approximation.receipt.familyReceipts,
+    'Runtime result approximation.receipt.familyReceipts', 64, 16_384);
+  if (approximation.receipt.proposalReceipts !== undefined) objectArray(
+    approximation.receipt.proposalReceipts,
+    'Runtime result approximation.receipt.proposalReceipts', 1_024, 65_536,
+  );
+  stringArray(approximation.receipt.truncationReasons,
+    'Runtime result approximation.receipt.truncationReasons', 8, 120);
+  if (resourceLimited
+    && (approximation.receipt.complete !== false || approximation.candidates.length !== 0)) {
+    throw new TypeError('RESOURCE_LIMIT approximation requires an empty, incomplete receipt.');
+  }
+  if (resourceLimited) {
+    if (!Object.hasOwn(HEURISTIC_CNL_LIMIT_CEILINGS, approximation.receipt.exhaustedResource)) {
+      throw new TypeError('RESOURCE_LIMIT approximation must name its exhausted resource.');
+    }
+    if (!approximation.receipt.truncationReasons.includes(approximation.receipt.exhaustedResource)) {
+      throw new TypeError('RESOURCE_LIMIT approximation must receipt its exhausted resource.');
+    }
+  }
   if (approximation.selectedCandidate !== null && approximation.selectedCandidate !== undefined) {
     approximationCandidate(approximation.selectedCandidate,
       'Runtime result approximation.selectedCandidate');
+    declaredApproximationCandidate(
+      approximation.selectedCandidate, candidates, 'Runtime result approximation.selectedCandidate',
+    );
   }
   if (approximation.recommendedCandidate !== null && approximation.recommendedCandidate !== undefined) {
     approximationCandidate(approximation.recommendedCandidate,
       'Runtime result approximation.recommendedCandidate');
+    const declared = declaredApproximationCandidate(
+      approximation.recommendedCandidate, candidates,
+      'Runtime result approximation.recommendedCandidate',
+    );
+    if (declared !== candidates[0]) {
+      throw new TypeError('Runtime result approximation recommendedCandidate must be the first candidate.');
+    }
+  }
+  const recommendationMissing = approximation.recommendedCandidate === null
+    || approximation.recommendedCandidate === undefined;
+  if ((candidates.length === 0 && approximation.recommendedCandidate !== null)
+    || (candidates.length > 0 && recommendationMissing)) {
+    throw new TypeError('Runtime result approximation recommendation must match candidate availability.');
   }
   if (approximation.reparses !== undefined) {
-    array(approximation.reparses, 'Runtime result approximation.reparses', 128)
-      .forEach((item, index) => {
-        const reparse = record(item, `Runtime result approximation.reparses[${index}]`);
-        string(reparse.candidateId, `Runtime result approximation.reparses[${index}].candidateId`);
-        if (!['PARSED', 'UNPARSED'].includes(reparse.status)
-          || reparse.acceptedSemanticIr !== (reparse.status === 'PARSED')) {
-          throw new TypeError(`Runtime result approximation.reparses[${index}] has inconsistent parse status.`);
-        }
-      });
+    const reparses = array(approximation.reparses, 'Runtime result approximation.reparses', 128);
+    const reparsedIds = new Set();
+    reparses.forEach((item, index) => {
+      const reparse = record(item, `Runtime result approximation.reparses[${index}]`);
+      string(reparse.candidateId, `Runtime result approximation.reparses[${index}].candidateId`);
+      integer(reparse.rank, `Runtime result approximation.reparses[${index}].rank`, 256, 1);
+      string(reparse.text, `Runtime result approximation.reparses[${index}].text`, 65_536);
+      confidence(reparse.confidence, `Runtime result approximation.reparses[${index}].confidence`);
+      finite(reparse.rankScore, `Runtime result approximation.reparses[${index}].rankScore`, 0, 2);
+      string(reparse.semanticSignature,
+        `Runtime result approximation.reparses[${index}].semanticSignature`, 262_144);
+      if (!['PARSED', 'UNPARSED'].includes(reparse.status)
+        || reparse.acceptedSemanticIr !== (reparse.status === 'PARSED')) {
+        throw new TypeError(`Runtime result approximation.reparses[${index}] has inconsistent parse status.`);
+      }
+      if (reparsedIds.has(reparse.candidateId)) {
+        throw new TypeError('Runtime result approximation reparses must reference unique candidates.');
+      }
+      const declared = candidates[index];
+      if (!declared || !approximationCandidateCoreMatches(reparse, declared)) {
+        throw new TypeError('Runtime result approximation reparses must follow declared candidate order.');
+      }
+      reparsedIds.add(reparse.candidateId);
+    });
+    if (approximation.selectedCandidate
+      && !reparses.some((reparse) => reparse.candidateId === approximation.selectedCandidate.candidateId
+        && reparse.status === 'PARSED')) {
+      throw new TypeError('Runtime result approximation selectedCandidate requires a successful reparse.');
+    }
   }
-  if (route === 'heuristic-cnl-approximated'
+  if (result.languageRoute === 'heuristic-cnl-approximated'
     && (approximation.status !== 'accepted-reparse' || !approximation.selectedCandidate)) {
     throw new TypeError('heuristic-cnl-approximated requires one accepted selected approximation.');
   }
-  if (route === 'heuristic-cnl-ambiguous'
+  if (result.languageRoute === 'heuristic-cnl-ambiguous'
     && (approximation.status !== 'ambiguous-reparse' || approximation.selectedCandidate !== null)) {
     throw new TypeError('heuristic-cnl-ambiguous requires an unresolved approximation tie.');
   }
   boundedJson(approximation, 'Runtime result approximation', 1_048_576);
-}
-
-function requestPlanningExtension(value) {
-  const planning = record(value, 'Runtime result requestPlanning');
-  if (planning.protocol !== REQUEST_PLAN_PROTOCOL || planning.receipt?.protocol !== REQUEST_PLAN_PROTOCOL) {
-    throw new TypeError(`Runtime result requestPlanning protocol must be ${REQUEST_PLAN_PROTOCOL}.`);
-  }
-  if (planning.receipt.patternCatalog !== REQUEST_PATTERN_CATALOG) {
-    throw new TypeError(`Runtime result requestPlanning pattern catalog must be ${REQUEST_PATTERN_CATALOG}.`);
-  }
-  if (!REQUEST_PLAN_STATUSES.has(planning.status)) {
-    throw new TypeError(`Runtime result requestPlanning has unsupported status ${String(planning.status)}.`);
-  }
-  array(planning.candidates, 'Runtime result requestPlanning.candidates', 64);
-  record(planning.receipt, 'Runtime result requestPlanning.receipt');
-  boolean(planning.receipt.complete, 'Runtime result requestPlanning.receipt.complete');
-  if (planning.receipt.kbConsulted !== false || planning.receipt.reasonerInvoked !== false
-    || planning.receipt.sessionMutated !== false) {
-    throw new TypeError('Runtime result requestPlanning receipt must deny KB, reasoner, and session authority.');
-  }
-  const requiresPlan = ['PLANNED', 'AMBIGUOUS', 'LOW_CONFIDENCE'].includes(planning.status);
-  if (requiresPlan !== Boolean(planning.selectedPlan)) {
-    throw new TypeError(`Runtime result requestPlanning status ${planning.status} has inconsistent selectedPlan.`);
-  }
-  if (planning.selectedPlan) {
-    const plan = record(planning.selectedPlan, 'Runtime result requestPlanning.selectedPlan');
-    string(plan.primaryIntent, 'Runtime result requestPlanning.selectedPlan.primaryIntent');
-    stringArray(plan.operations, 'Runtime result requestPlanning.selectedPlan.operations', 8, 64);
-    objectArray(plan.instructionSegments,
-      'Runtime result requestPlanning.selectedPlan.instructionSegments', 128, 16_384);
-    objectArray(plan.topics, 'Runtime result requestPlanning.selectedPlan.topics', 64, 16_384);
-    record(plan.outputContract, 'Runtime result requestPlanning.selectedPlan.outputContract');
-    confidence(plan.confidence, 'Runtime result requestPlanning.selectedPlan.confidence');
-    objectArray(plan.subrequests, 'Runtime result requestPlanning.selectedPlan.subrequests', 192, 65_536);
-  }
-  boundedJson(planning, 'Runtime result requestPlanning', 1_048_576);
-}
-
-function synthesisExtension(value, result) {
-  const synthesis = record(value, 'Runtime result synthesis');
-  if (synthesis.protocol !== SYNTHESIS_PROTOCOL || synthesis.status !== 'PARTIAL') {
-    throw new TypeError(`Runtime result synthesis must use ${SYNTHESIS_PROTOCOL} with PARTIAL status.`);
-  }
-  string(synthesis.answer, 'Runtime result synthesis.answer', 262_144);
-  record(synthesis.plan, 'Runtime result synthesis.plan');
-  record(synthesis.evidence, 'Runtime result synthesis.evidence');
-  objectArray(synthesis.evidence.selected, 'Runtime result synthesis.evidence.selected', 32, 65_536);
-  const selectedIdentities = new Map();
-  synthesis.evidence.selected.forEach((selection, index) => {
-    const selectionPath = `Runtime result synthesis.evidence.selected[${index}]`;
-    groundingEntry(selection.entry, `${selectionPath}.entry`);
-    stringArray(selection.topicIds, `${selectionPath}.topicIds`, 64);
-    finite(selection.topicScore, `${selectionPath}.topicScore`, 0, 1_000_000);
-    finite(selection.selectionScore, `${selectionPath}.selectionScore`, 0, 1_000_000);
-    stringArray(selection.reasons, `${selectionPath}.reasons`, 64, 512);
-    for (const identity of selection.entry.contributingKbVersions) {
-      selectedIdentities.set(`${identity.kbId}\u0000${identity.version ?? ''}`, identity);
-    }
-  });
-  for (const field of ['candidatesConsidered', 'unrelatedEntriesOmitted', 'budgetOmitted']) {
-    integer(synthesis.evidence[field], `Runtime result synthesis.evidence.${field}`, 512);
-  }
-  stringArray(synthesis.gaps, 'Runtime result synthesis.gaps', 64, 2_048);
-  if (synthesis.gaps.length === 0) {
-    throw new TypeError('Runtime result synthesis must retain at least one structural coverage gap.');
-  }
-  kbIdentityArray(synthesis.contributingKbVersions,
-    'Runtime result synthesis.contributingKbVersions', 32);
-  const declaredIdentities = new Set(synthesis.contributingKbVersions.map((identity) =>
-    `${identity.kbId}\u0000${identity.version ?? ''}`));
-  if (declaredIdentities.size !== selectedIdentities.size
-    || [...selectedIdentities.keys()].some((identity) => !declaredIdentities.has(identity))) {
-    throw new TypeError('Runtime result synthesis contributing KBs must match selected evidence.');
-  }
-  if (result.answer !== synthesis.answer || result.status !== 'PARTIAL') {
-    throw new TypeError('heuristic request synthesis must own the matching PARTIAL answer.');
-  }
-  if (!result.requestPlanning?.selectedPlan) {
-    throw new TypeError('Runtime result synthesis requires requestPlanning.selectedPlan.');
-  }
-  if (jsonBytes(synthesis.plan, 'Runtime result synthesis.plan', 262_144)
-    !== jsonBytes(result.requestPlanning.selectedPlan,
-      'Runtime result requestPlanning.selectedPlan', 262_144)) {
-    throw new TypeError('Runtime result synthesis plan must match requestPlanning.selectedPlan.');
-  }
-  boundedJson(synthesis, 'Runtime result synthesis', 1_048_576);
 }
 
 function normalizationCandidate(candidate, path) {
@@ -212,6 +250,16 @@ function normalizationCandidate(candidate, path) {
     string(alignment.source, `${alignmentPath}.source`);
     string(alignment.target, `${alignmentPath}.target`);
   });
+}
+
+function normalizationReceipt(value, path) {
+  const receipt = record(value, path);
+  string(receipt.format, `${path}.format`, 128);
+  if (!NORMALIZATION_RECEIPT_FORMAT.test(receipt.format)) {
+    throw new TypeError(`${path} must expose a versioned Language Agent receipt format.`);
+  }
+  boundedJson(receipt, path, 262_144);
+  return receipt;
 }
 
 function normalizationExtension(value, result) {
@@ -245,19 +293,25 @@ function normalizationExtension(value, result) {
     throw new TypeError('Runtime result normalization.requestedOperation is unsupported.');
   }
   const receipts = array(normalization.receipts ?? [], 'Runtime result normalization.receipts', 3);
-  receipts.forEach((receipt, index) => {
-    const item = record(receipt, `Runtime result normalization.receipts[${index}]`);
-    if (item.format !== NORMALIZATION_RECEIPT_FORMAT) {
-      throw new TypeError(`Runtime result normalization.receipts[${index}] has unsupported format.`);
-    }
-  });
+  receipts.forEach((receipt, index) => normalizationReceipt(
+    receipt, `Runtime result normalization.receipts[${index}]`,
+  ));
+  if (normalization.receipt !== undefined) normalizationReceipt(
+    normalization.receipt, 'Runtime result normalization.receipt',
+  );
   if (normalization.receipt !== undefined
-    && normalization.receipt.format !== NORMALIZATION_RECEIPT_FORMAT) {
-    throw new TypeError('Runtime result normalization.receipt has unsupported format.');
+    && (receipts.length === 0
+      || JSON.stringify(normalization.receipt) !== JSON.stringify(receipts.at(-1)))) {
+    throw new TypeError('Runtime result normalization receipt must match the last bounded receipt.');
   }
   if (normalization.candidate) normalizationCandidate(
     normalization.candidate, 'Runtime result normalization.candidate',
   );
+  if (normalization.validation !== undefined) {
+    const validation = record(normalization.validation, 'Runtime result normalization.validation');
+    boolean(validation.accepted, 'Runtime result normalization.validation.accepted');
+    boundedJson(validation, 'Runtime result normalization.validation', 262_144);
+  }
   if (normalization.candidate && normalization.requestedOperation
     && normalization.candidate.operation !== normalization.requestedOperation) {
     throw new TypeError('Runtime result normalization candidate operation differs from the requested operation.');
@@ -269,6 +323,9 @@ function normalizationExtension(value, result) {
     }
     if (normalization.reparseStatus !== result.status) {
       throw new TypeError('Accepted normalization reparseStatus must match the public result status.');
+    }
+    if (['UNPARSED', 'AMBIGUOUS', 'UNVERIFIED_NORMALIZATION'].includes(normalization.reparseStatus)) {
+      throw new TypeError('Accepted normalization requires a supported symbolic reparse status.');
     }
   }
   if (['rejected', 'reparse-rejected'].includes(normalization.status) && !normalization.candidate) {
@@ -285,160 +342,39 @@ function normalizationExtension(value, result) {
     throw new TypeError('Reparse-rejected normalization requires an UNPARSED or AMBIGUOUS reparse status.');
   }
   if (normalization.externalInvocations > normalization.proposalCount
-    || (normalization.cacheHit && normalization.externalInvocations !== 0)) {
+    || normalization.proposalCount > normalization.externalInvocations + (normalization.cacheHit ? 1 : 0)) {
     throw new TypeError('Runtime result normalization invocation accounting is inconsistent.');
   }
   if (normalization.status === 'failed' || normalization.status === 'proposal-limit-exhausted') {
     string(normalization.diagnostic, 'Runtime result normalization.diagnostic', 2_048);
   }
+  if (normalization.status === 'proposal-limit-exhausted'
+    && (normalization.proposalCount !== normalization.proposalLimit || normalization.candidate)) {
+    throw new TypeError('Proposal-limit exhaustion requires all bounded slots and no accepted candidate.');
+  }
   boundedJson(normalization, 'Runtime result normalization', 1_048_576);
 }
 
-function groundingReceipt(value, path) {
-  const receipt = record(value, path);
-  kbIdentity({ kbId: receipt.kbId, ...(receipt.kbVersion === undefined
-    ? {} : { version: receipt.kbVersion }) }, path);
-  if (!GROUNDING_RECEIPT_STATUSES.has(receipt.status)) {
-    throw new TypeError(`${path}.status is unsupported.`);
+function provenanceItem(value, path) {
+  const item = record(value, path);
+  if (!Object.values(item).some((field) => field !== undefined)) {
+    throw new TypeError(`${path} must expose at least one provenance field.`);
   }
-  string(receipt.coverage, `${path}.coverage`);
-  boolean(receipt.complete, `${path}.complete`);
-  integer(receipt.candidatesConsidered, `${path}.candidatesConsidered`, 1_000_000_000);
-  stringArray(receipt.truncationReasons, `${path}.truncationReasons`, 8, 120);
-  if (receipt.complete && !['matches-found', 'no-match'].includes(receipt.status)) {
-    throw new TypeError(`${path} cannot mark ${receipt.status} complete.`);
+  for (const field of ['fact', 'rule', 'method']) {
+    if (item[field] !== undefined) string(item[field], `${path}.${field}`);
   }
-  if (receipt.complete && receipt.truncationReasons.length > 0) {
-    throw new TypeError(`${path} cannot be complete after truncation.`);
+  if (item.source !== undefined) stringArray(item.source, `${path}.source`, 64, 2_048);
+  if (item.provenanceIds !== undefined) {
+    stringArray(item.provenanceIds, `${path}.provenanceIds`, 64, 2_048);
   }
-  if (!receipt.complete && receipt.status === 'no-match' && receipt.truncationReasons.length === 0) {
-    throw new TypeError(`${path} requires an incomplete-search reason.`);
+  if (item.kbId !== undefined || item.kbVersion !== undefined) {
+    kbIdentity({ kbId: item.kbId, version: item.kbVersion }, path, true);
   }
-  if (receipt.diagnostic !== undefined) string(receipt.diagnostic, `${path}.diagnostic`, 240);
-}
-
-function groundingEntry(value, path) {
-  const entry = record(value, path);
-  kbIdentity({ kbId: entry.kbId, ...(entry.kbVersion === undefined
-    ? {} : { version: entry.kbVersion }) }, path);
-  string(entry.recordId, `${path}.recordId`);
-  string(entry.statement, `${path}.statement`, 480);
-  record(entry.semantic, `${path}.semantic`);
-  string(entry.epistemicStatus, `${path}.epistemicStatus`);
-  stringArray(entry.provenance, `${path}.provenance`, 16);
-  if (entry.provenance.length === 0) throw new TypeError(`${path}.provenance must not be empty.`);
-  kbIdentityArray(entry.contributingKbVersions, `${path}.contributingKbVersions`, 16);
-  if (entry.contributingKbVersions.length === 0) {
-    throw new TypeError(`${path}.contributingKbVersions must not be empty.`);
+  if (item.kbSources !== undefined) {
+    kbIdentityArray(item.kbSources, `${path}.kbSources`, 64, true);
   }
-  const relevance = record(entry.relevance, `${path}.relevance`);
-  finite(relevance.score, `${path}.relevance.score`, 0, 1_000_000);
-  stringArray(relevance.reasons, `${path}.relevance.reasons`, 8, 96);
-  if (relevance.reasons.length === 0) throw new TypeError(`${path}.relevance.reasons must not be empty.`);
-  boundedJson(entry.semantic, `${path}.semantic`, 4_096);
-}
-
-function groundingExtension(value, result) {
-  const grounding = record(value, 'Runtime result grounding');
-  if (grounding.format !== GROUNDING_FORMAT || !GROUNDING_STATUSES.has(grounding.status)) {
-    throw new TypeError(`Runtime result grounding must use ${GROUNDING_FORMAT} and a supported status.`);
-  }
-  if (grounding.answerSupported !== false || !GROUNDING_TRIGGER_STATUSES.has(grounding.triggerStatus)) {
-    throw new TypeError('Runtime result grounding must remain non-answer evidence after an eligible status.');
-  }
-  text(grounding.queryText, 'Runtime result grounding.queryText', 4_096);
-  string(grounding.interpretation, 'Runtime result grounding.interpretation', 1_024);
-  const focus = record(grounding.focus, 'Runtime result grounding.focus');
-  string(focus.strategy, 'Runtime result grounding.focus.strategy');
-  if (!['typed-request-plan', 'visible-request'].includes(focus.source)) {
-    throw new TypeError('Runtime result grounding.focus.source is unsupported.');
-  }
-  stringArray(focus.terms, 'Runtime result grounding.focus.terms', 32, 480);
-  objectArray(focus.candidates, 'Runtime result grounding.focus.candidates', 256, 4_096);
-  objectArray(focus.obligations, 'Runtime result grounding.focus.obligations', 32, 4_096);
-  const candidateIds = new Set();
-  focus.candidates.forEach((candidate, index) => {
-    const candidatePath = `Runtime result grounding.focus.candidates[${index}]`;
-    string(candidate.candidateId, `${candidatePath}.candidateId`);
-    if (candidateIds.has(candidate.candidateId)) {
-      throw new TypeError('Runtime result grounding.focus.candidates requires unique candidate IDs.');
-    }
-    candidateIds.add(candidate.candidateId);
-    string(candidate.term, `${candidatePath}.term`, 480);
-    string(candidate.role, `${candidatePath}.role`);
-    string(candidate.kind, `${candidatePath}.kind`);
-    finite(candidate.score, `${candidatePath}.score`, 0, 1_000_000);
-    boolean(candidate.included, `${candidatePath}.included`);
-    boolean(candidate.selected, `${candidatePath}.selected`);
-    if (candidate.selected && !focus.terms.includes(candidate.term)) {
-      throw new TypeError(`${candidatePath} selects a term absent from grounding.focus.terms.`);
-    }
-  });
-  focus.obligations.forEach((obligation, index) => {
-    string(obligation.focusId, `Runtime result grounding.focus.obligations[${index}].focusId`);
-    string(obligation.term, `Runtime result grounding.focus.obligations[${index}].term`);
-    string(obligation.role, `Runtime result grounding.focus.obligations[${index}].role`);
-    boolean(obligation.selected, `Runtime result grounding.focus.obligations[${index}].selected`);
-    if (obligation.selected && !focus.terms.includes(obligation.term)) {
-      throw new TypeError(`Runtime result grounding.focus.obligations[${index}] has an absent selected term.`);
-    }
-  });
-  if ((focus.source === 'typed-request-plan') !== (focus.obligations.length > 0)) {
-    throw new TypeError('Runtime result grounding focus source contradicts its typed obligations.');
-  }
-  const search = record(grounding.search, 'Runtime result grounding.search');
-  boolean(search.complete, 'Runtime result grounding.search.complete');
-  boolean(search.termSelectionComplete, 'Runtime result grounding.search.termSelectionComplete');
-  const receipts = array(search.receipts, 'Runtime result grounding.search.receipts', 64);
-  receipts.forEach((receipt, index) => groundingReceipt(
-    receipt, `Runtime result grounding.search.receipts[${index}]`,
-  ));
-  const entries = array(grounding.entries, 'Runtime result grounding.entries', 32);
-  entries.forEach((entry, index) => groundingEntry(entry, `Runtime result grounding.entries[${index}]`));
-  record(grounding.limits, 'Runtime result grounding.limits');
-  const limitRanges = {
-    maximumEntries: [32, 1],
-    maximumTerms: [32, 1],
-    maximumLookups: [512, 1],
-    maximumValuesPerLookup: [32, 1],
-    maximumSources: [64, 1],
-    maximumCandidateEntries: [512, 1],
-    maximumOutputBytes: [1_048_576, 4_096],
-    returnedEntryBytes: [1_048_576, 0],
-    candidatesConsidered: [512, 0],
-  };
-  for (const [field, [maximum, minimum]] of Object.entries(limitRanges)) {
-    integer(grounding.limits[field], `Runtime result grounding.limits.${field}`, maximum, minimum);
-  }
-  boolean(grounding.limits.outputTruncated, 'Runtime result grounding.limits.outputTruncated');
-  if (entries.length > grounding.limits.maximumEntries
-    || focus.terms.length > grounding.limits.maximumTerms
-    || receipts.length > grounding.limits.maximumSources
-    || grounding.limits.candidatesConsidered > grounding.limits.maximumCandidateEntries
-    || grounding.limits.returnedEntryBytes > grounding.limits.maximumOutputBytes
-    || grounding.limits.maximumCandidateEntries < grounding.limits.maximumEntries
-    || grounding.limits.outputTruncated !== (grounding.limits.candidatesConsidered > entries.length)) {
-    throw new TypeError('Runtime result grounding observed work contradicts its declared limits.');
-  }
-  const computedComplete = receipts.length > 0 && search.termSelectionComplete
-    && receipts.every((receipt) => receipt.complete);
-  if (search.complete !== computedComplete) {
-    throw new TypeError('Runtime result grounding search completeness contradicts its receipts.');
-  }
-  const hasEvidence = entries.length > 0;
-  if ((grounding.status === 'RELATED_EVIDENCE_FOUND') !== hasEvidence
-    || (grounding.status === 'NO_RELATED_EVIDENCE' && !search.complete)
-    || (grounding.status === 'SEARCH_INCOMPLETE' && search.complete)) {
-    throw new TypeError('Runtime result grounding status contradicts evidence or search completeness.');
-  }
-  const plannedRoute = ['heuristic-request-planned', 'heuristic-request-synthesis'].includes(
-    result.languageRoute,
-  );
-  if (grounding.triggerStatus !== result.status
-    && !(plannedRoute && grounding.triggerStatus === 'UNPARSED')) {
-    throw new TypeError('Runtime result grounding triggerStatus does not match its primary route.');
-  }
-  boundedJson(grounding, 'Runtime result grounding', 1_572_864);
+  boundedJson(item, path, 262_144);
+  return item;
 }
 
 export function assertRuntimePayloadContracts(result) {
@@ -446,19 +382,26 @@ export function assertRuntimePayloadContracts(result) {
     if (result[field] === undefined) continue;
     array(result[field], `Runtime result ${field}`, MAX_RESULT_ARRAY_ITEMS);
     if (field === 'provenance') result[field].forEach((item, index) =>
-      record(item, `Runtime result provenance[${index}]`));
+      provenanceItem(item, `Runtime result provenance[${index}]`));
     boundedJson(result[field], `Runtime result ${field}`, MAX_RESULT_ARRAY_BYTES);
   }
   for (const field of ['usedKbVersions', 'selectedKbVersions', 'consultedKbVersions']) {
-    kbIdentityArray(result[field], `Runtime result ${field}`);
+    kbIdentityArray(result[field], `Runtime result ${field}`, 256, true);
   }
   objectArray(result.unresolvedSubgoals, 'Runtime result unresolvedSubgoals', 256, 262_144);
+  result.unresolvedSubgoals.forEach((subgoal, index) => {
+    if (!Object.values(subgoal).some((field) => field !== undefined)) {
+      throw new TypeError(
+        `Runtime result unresolvedSubgoals[${index}] must expose a structured gap field.`,
+      );
+    }
+  });
   boundedJson(result.unresolvedSubgoals, 'Runtime result unresolvedSubgoals', MAX_RESULT_ARRAY_BYTES);
 
-  if (result.approximation !== undefined) approximationExtension(result.approximation, result.languageRoute);
-  if (result.requestPlanning !== undefined) requestPlanningExtension(result.requestPlanning);
-  if (result.synthesis !== undefined) synthesisExtension(result.synthesis, result);
+  if (result.approximation !== undefined) approximationExtension(result.approximation, result);
+  if (result.requestPlanning !== undefined) assertRequestPlanningExtension(result.requestPlanning);
+  if (result.synthesis !== undefined) assertSynthesisExtension(result.synthesis, result);
   if (result.normalization !== undefined) normalizationExtension(result.normalization, result);
-  if (result.grounding !== undefined) groundingExtension(result.grounding, result);
+  if (result.grounding !== undefined) assertGroundingExtension(result.grounding, result);
   return result;
 }

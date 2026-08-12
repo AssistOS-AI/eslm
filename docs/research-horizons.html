@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Research horizons — ESLM Documentation</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="partials-loader.js" defer></script>
+  <script type="module" src="assets/mermaid-loader.mjs"></script>
+</head>
+<body>
+<div data-include="partials/header.html"></div>
+<main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Foundations / Research horizons</p>
+<h1>Research horizons grounded in executable architecture</h1>
+<p class="lead">ESLM has a strong deterministic runway for language recovery, retrieval, reasoning, provenance, and honest inability. The next research programs extend that runway through explicit representations, competing techniques, protected experiments, and promotion gates. Difficult problems are named here so they can be studied over successive releases instead of disappearing inside a generic promise of greater intelligence.</p>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  B[Executable baseline] --> H[Research hypotheses]
+  H --> E[Protected experiments]
+  E --> G[Promotion gates]
+  G --> R[Reviewed runtime]
+  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
+  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
+  classDef result fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
+  class B source
+  class H,E,G process
+  class R result</pre><figcaption>Research becomes product behavior through evidence.</figcaption></figure>
+<p class="diagram-explanation">The executable baseline supplies measurements and failure receipts. Each research track compares explicit alternatives, then tests them on grouped development and protected pools. Only a deterministic, bounded, generic, and falsifiably safer mechanism crosses the promotion gate. Rejected hypotheses remain useful evidence rather than hidden implementation history.</p>
+
+<h2>Implemented runway and forward programs</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Area</th><th>Executable runway</th><th>Research horizon</th><th>Authoritative program</th></tr></thead>
+<tbody>
+<tr><td>Language interpretation</td><td>Direct CNL plus a bounded local ensemble for spelling, morphology, question repair, safe decomposition, confidence voting, ambiguity, and query-local execution.</td><td>Typed clause and scope graphs, construction interactions, reference alternatives, graph equivalence, and finite-model falsification.</td><td><a href="specsLoader.html?spec=DS024-scope-safe-complex-language-decomposition-research.md">DS024</a></td></tr>
+<tr><td>KB relevance</td><td>Role-aware terms, shared noun and verb morphology, exact postings, bounded occurrence evidence, co-occurrence, answer-bridge estimates, provenance, and non-answer receipts.</td><td>Package-normalized statistics, calibrated rankers, graph expansion, contradiction retrieval, iterative proof frontiers, and conflict-aware aggregation.</td><td><a href="specsLoader.html?spec=DS023-statistical-symbolic-relevance-and-answer-bridge-research.md">DS023</a></td></tr>
+<tr><td>Requests and documents</td><td>Intent and artifact voting, instruction-data separation, negative constraints, topic obligations, cited extractive drafts, output shaping, and explicit gaps.</td><td>Ordered multi-obligation DAGs, fair evidence allocation, claim ledgers, verified composition, audience-aware realization, and reviewed pattern induction.</td><td><a href="specsLoader.html?spec=DS025-multi-obligation-planning-and-verified-synthesis-research.md">DS025</a></td></tr>
+<tr><td>Knowledge acquisition</td><td>Frozen source identities, source-family adapters, canonical validators, provenance, deterministic package compilation, and explicit promotion gates.</td><td>A separate compiler strategy registry for manuals, technical documentation, ontologies, lexical resources, event graphs, tables, identity resolution, standardization, and coverage-aware validation.</td><td><a href="specsLoader.html?spec=DS027-trusted-strategy-extensions-and-meta-rational-coordination.md">DS027</a>, <a href="specsLoader.html?spec=DS014-symbolic-document-knowledge-bases-and-reasoning-retrieval.md">DS014</a></td></tr>
+<tr><td>Multi-method reasoning and verification</td><td>Registered finite DS015 methods, exact allowlists for runtime-policy-aware methods, method-specific witnesses, explicit conflicts and gaps, and generic typed-task dispatch.</td><td>Common method-plan coordination, fair multi-method execution, independent witness verifiers, strict-versus-defeasible aggregation, conflict preservation, and completeness-aware absence decisions.</td><td><a href="specsLoader.html?spec=DS015-reasoning-method-semantics.md">DS015</a>, <a href="specsLoader.html?spec=DS027-trusted-strategy-extensions-and-meta-rational-coordination.md">DS027</a></td></tr>
+<tr><td>Product evidence</td><td>Fixed-denominator benchmark reporting, route labels, receipt currentness, protected splits, proof checks, and grounding diagnostics.</td><td>Independently authored end-to-end interaction pools, layered interpretation/retrieval/reasoning/synthesis metrics, downstream formulation studies, and reproducible external comparison.</td><td><a href="specsLoader.html?spec=DS026-grounded-interaction-and-product-evaluation-research.md">DS026</a></td></tr>
+</tbody>
+</table></div>
+
+<h2>A shared experimental control plane</h2>
+<p>DS027 turns these programs into independently replaceable trusted strategies rather than additions to one opaque procedure. A language proposal, retrieval score, method candidate, proof verifier, or document extractor declares its typed stage, preconditions, confidence kind, witness, finite resource dimensions, and failure classes. Exact allowlists select statically registered identities; the work policy and configured arbiter identity are frozen separately. Per-strategy ablations can then ask which technique was applicable, how much work it consumed, what it supported or opposed, and whether its incremental benefit survives grouped and protected evidence.</p>
+<p>The control plane also prevents category errors. Several correlated spelling rules cannot manufacture independent confidence; a high retrieval score cannot authorize an answer; an extraction vote cannot promote a source claim; and a failing verifier cannot be outvoted by fluent construction. The registry, inventory, and stage runner already coordinate the language-family slice. The remaining runtime owners and the compiler pipeline migrate through explicit acceptance gates. See <a href="strategy-architecture.html">Trusted strategy architecture</a> for the current-versus-target ledger.</p>
+<p>The first real coordinated slice is already present: all 24 local language families execute through the sealed registry and stage runner. Exact allowlists also gate request, focus, relevance, reasoning, and construction inside their <code>instrumented-local</code> owners. Named presets remain inventory views only. Retrieval, method planning, failure grounding, independent verification, and compiler acquisition stay non-selectable or planned until their execution receipts meet the same standard.</p>
+
+<h2>Statistical symbolic relevance</h2>
+<p>Fast counting can materially improve symbolic retrieval when the count has a declared population and remains subordinate to meaning. The current estimator combines five inspectable sources of evidence: exact phrase or term coverage, co-occurrence of several focus terms, coverage of distinct entity/predicate/object roles, a typed answer-bridge match, and a capped logarithmic vote from occurrence information available in the active KB posting. That occurrence vote has useful priority in close cases, but it is deliberately non-absolute: a ubiquitous term cannot outrank an exact semantic frame by volume alone.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  Q[Typed query focus] --> F[Bounded KB frontier]
+  F --> V[Inspectable relevance votes]
+  V --> P[Registered reasoning probe]
+  P --> C[Evidence clusters]
+  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
+  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
+  classDef result fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
+  class Q source
+  class F,V,P process
+  class C result</pre><figcaption>Relevance narrows evidence before proof authority is considered.</figcaption></figure>
+<p class="diagram-explanation">Typed nouns, predicates, entities, objects, and exact phrases form the query focus; grammatical scaffolding does not consume that budget. Exact indexes produce a bounded candidate frontier. Frequency, multi-token co-occurrence, role coverage, and typed answer-bridge signals vote on candidates inside that frontier. The current release stops at the inspectable estimate. The research program adds isolated reasoning probes for top candidates and conflict-aware aggregation into corroborating, contradictory, sense-specific, and subgoal-specific clusters. A ranking score never becomes proof.</p>
+<p>The research program compares transparent alternatives such as BM25-style symbolic records, relation-conditioned co-occurrence, deterministic graph spreading, diversity-aware selection, and frozen calibrated linear ensembles. Each alternative must expose feature contributions and retain package, context, trust, conflict, and epistemic status. A bounded reasoning probe may test whether a candidate closes an unresolved atom, but only a registered proof can support the primary answer. Aggregation preserves disagreement instead of manufacturing consensus from several lexically similar records.</p>
+
+<h2>Complex language as typed competing analyses</h2>
+<p>Complex sentences are modeled as competing clause graphs rather than one attractive rewrite. Coordination, ellipsis, relative clauses, apposition, conditionals, temporal and causal relations, passive alternations, references, and embedded questions each need their own scope contract and interaction tests. Negation, quantifiers, conjunction, disjunction, direction, time, and modality must exist as structure; they cannot be hidden inside an opaque class or entity identifier.</p>
+<p>The most promising checks combine anchor conservation, typed graph comparison, and bounded countermodel search. Countermodels can disprove equivalence quickly. When no countermodel is found, the transformation still retains its calibrated uncertainty. Ambiguity is a useful terminal interpretation result that asks a precise clarification question; it is not a reason to ask an external agent to choose invisibly.</p>
+
+<h2>Multi-obligation planning and verified synthesis</h2>
+<p>Large requests become ordered obligations with source spans, topics, evidence requirements, negative constraints, dependencies, intermediate outputs, and completion states. “Summarize, compare, then outline” therefore creates three operation-specific selection and construction paths followed by one aggregation step. Confidence ranks alternatives inside an obligation; it does not reorder the user's discourse or erase a secondary task.</p>
+<p>Richer generation requires a claim ledger. Every factual sentence records its semantic proposition, supporting records or proof, epistemic strength, output span, realization steps, and verification status. Unsupported sentences are removed, weakened into explicit hypotheses, or listed as gaps. This design opens a path from today's cited extractive drafts to fluent reports and essays while preserving the ability to inspect every factual claim.</p>
+
+<h2>Compiler strategies for heterogeneous knowledge</h2>
+<p>A manual, an API reference, an ontology, a dictionary, an event graph, and a table expose different evidence structures. Treating them as one text-extraction problem loses hierarchy, qualifiers, identity, or cell semantics. The compiler research pipeline therefore separates decode, segmentation, extraction, identity resolution, record standardization, validation, and package compilation. A source-family strategy competes only at its typed stage and preserves exact frozen-source spans, media assumptions, losses, uncertainty, and coverage gaps.</p>
+<p>Alternative extractors may agree on a canonical candidate, disagree, or preserve different contexts. Their votes prioritize review; they cannot certify source truth or promote a record. Every route still converges on DS005 schema validation, reference closure, safe rules, provenance, contradiction review, and deterministic DS019 package bytes. Research compares source-span fidelity, qualifier preservation, accepted/rejected/gap coverage, human review work, compiler resources, and canonical-to-compiled equivalence. The separate compiler registry is a planned DS027 surface, so current source scripts and training skills remain the executable baseline.</p>
+
+<h2>Multiple reasoning methods and independent verification</h2>
+<p>The runtime already exposes finite methods for retrieval, Horn deduction, induction, abduction, state transitions, relation composition, spatial constraints, Boolean entailment, countermodels, categorical logic, episodic state, and continuation ranking. Exact allowlists can select the runtime-policy-aware reasoning identities. The adapter-local finite-entailment and preferred-entailment paths remain cataloged as <code>planned</code> until those adapters honor the same gate. The research problem is to coordinate several applicable methods fairly, preserve their distinct soundness and completeness contracts, and verify witnesses independently before construction.</p>
+<p>One verified strict proof can authorize a strict claim; several agreeing strict proofs merge provenance and witnesses rather than confidence. A defeasible result remains defeasible even when popular. Strict disagreement is a conflict, and an exhausted or incomplete search cannot vote for falsehood. Research therefore measures applicability, method-specific work, proof validity, verifier independence, agreement and conflict, completeness-sensitive absence, and leave-one-method-out behavior. The independent <code>runtime.result.verify</code> strategy stays planned until method witnesses share a tested typed verification boundary.</p>
+
+<h2>Realistic end-to-end evidence</h2>
+<p>The product research suite will contain answerable, partial, unanswerable, ambiguous, conflicting, misspelled, paraphrased, multilingual, multi-KB, wrong-KB-distractor, resource-limited, and multi-request cases. It scores interpretation, retrieval, reasoning, primary answer, abstention, grounded inability, planning, synthesis, citations, and resources separately. This prevents a solver score, lexical match, or helpful downstream formulation from being presented as full end-to-end accuracy.</p>
+<p>Splits are grouped by source document, topic, paraphrase family, typo process, predicate vocabulary, proof graph, request pattern, and output schema. A protected pool is opened only after code, packages, policy, scorer, and dependencies are frozen. Opened pools remain historical checkpoints; future progress uses a genuinely new pool.</p>
+
+<h2>How the research program learns</h2>
+<p>Runtime execution never rewrites its own heuristics. Failures are clustered offline by semantic construction, retrieval feature, planning obligation, or proof gap. A proposed improvement includes generic typed behavior, renamed examples, nonce values, changed ordering, meaning-changing controls, a resource bound, and an ablation. It advances only when it improves the intended layer on grouped evidence without weakening inability, provenance, or unsupported-claim gates.</p>
+<p>This process supports years of cumulative research because each experiment leaves behind reusable artifacts: frozen judgments, typed failure clusters, feature receipts, rejected alternatives, protected pools, and promotion evidence. The architecture grows through reviewed capabilities instead of a sequence of example-specific patches.</p>
+
+<h2>Named decisions that remain open</h2>
+<p>The research authority keeps four consequential choices deliberately unresolved. They are visible design decisions with evidence gates, not anonymous implementation gaps.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Open decision</th><th>Evidence required before selection</th><th>Authority</th></tr></thead>
+<tbody>
+<tr><td>Which transparent statistical ranker becomes the default?</td><td>A common frozen judgment set, grouped-source generalization, feature ablations, negative controls, and bounded resource profiles must distinguish the candidate families.</td><td><a href="specsLoader.html?spec=DS023-statistical-symbolic-relevance-and-answer-bridge-research.md">DS023 Question #3</a></td></tr>
+<tr><td>May KB evidence rank a genuine syntactic ambiguity?</td><td>A trust-aware calibration must show that world knowledge ranks only language-enumerated alternatives without deleting the ambiguity witness or following answer success.</td><td><a href="specsLoader.html?spec=DS024-scope-safe-complex-language-decomposition-research.md">DS024 Question #2</a></td></tr>
+<tr><td>Should verified prose realization remain deterministic or admit an operator-side LLM?</td><td>Every factual output span needs a claim-ledger entry, host verification, privacy and authority boundaries, and adversarial unsupported-claim tests.</td><td><a href="specsLoader.html?spec=DS025-multi-obligation-planning-and-verified-synthesis-research.md">DS025 Question #3</a></td></tr>
+<tr><td>How should a release combine safety, coverage, evidence quality, and resources?</td><td>The chosen rule must keep unsafe interpretation, unsupported claims, and invalid provenance as non-compensatory gates.</td><td><a href="specsLoader.html?spec=DS026-grounded-interaction-and-product-evaluation-research.md">DS026 Question #3</a></td></tr>
+</tbody>
+</table></div>
+
+<h2>Reading path</h2>
+<p>Read <a href="heuristic-language.html">Heuristic language approximation</a> for the executable baseline, <a href="strategy-architecture.html">Trusted strategy architecture</a> for the common extension and experiment control plane, <a href="grounded-failure.html">Grounded failure</a> for non-answer evidence, <a href="evaluation.html">Evaluation</a> for current measurement discipline, and <a href="research-program.html">Research program</a> for the broader system boundary. DS023 through DS026 are the normative research contracts; DS022 remains the authority for behavior currently executed by the local heuristic route, and DS027 owns its staged migration into selectable strategies.</p>
+</main>
+<div data-include="partials/footer.html"></div>
+</body>
+</html>

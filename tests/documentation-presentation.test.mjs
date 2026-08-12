@@ -214,6 +214,26 @@ test('heuristic-language chapter explains the local-first recovery contract', as
   assert.ok((page.match(/<tr><td>/gu) ?? []).length >= 14);
 });
 
+test('research horizons separates executable relevance from protected research decisions', async () => {
+  const [page, header, home] = await Promise.all([
+    readProjectFile('docs/research-horizons.html'),
+    readProjectFile('docs/partials/header.html'),
+    readProjectFile('docs/index.html'),
+  ]);
+  assert.match(header, /href="research-horizons\.html"/u);
+  assert.match(home, /href="research-horizons\.html"/u);
+  assert.match(page, /capped logarithmic vote/u);
+  assert.match(page, /deliberately non-absolute/u);
+  assert.match(page, /multi-token co-occurrence/u);
+  assert.match(page, /registered reasoning probe/iu);
+  assert.match(page, /conflict-aware aggregation/u);
+  assert.match(page, /The current release stops at the inspectable estimate/u);
+  assert.match(page, /Named decisions that remain open/u);
+  for (const id of ['DS023', 'DS024', 'DS025', 'DS026']) {
+    assert.match(page, new RegExp(`${id}[^"<]*\\.md`, 'u'));
+  }
+});
+
 test('grounded-failure documentation preserves answer authority and current trigger boundaries', async () => {
   const [grounded, architecture, cli, issues, header] = await Promise.all([
     readProjectFile('docs/grounded-failure.html'),

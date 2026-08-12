@@ -7,8 +7,9 @@ const FUNCTION_WORDS = new Set([
   'being', 'both', 'but', 'by', 'can', 'could', 'did', 'do', 'does', 'each', 'either', 'enough', 'every',
   'everything', 'few', 'for', 'from', 'had', 'has', 'have', 'how', 'i', 'if', 'in', 'into', 'is', 'it',
   'its', 'less', 'least', 'many', 'may', 'me', 'might', 'more', 'most', 'much', 'must', 'neither', 'no',
-  'none', 'of', 'on', 'or', 'other', 'ought', 'own', 'please', 'several', 'shall', 'should', 'some', 'such',
-  'than', 'that', 'the', 'their', 'there', 'these', 'they', 'this', 'those', 'to', 'us', 'was', 'were',
+  'never', 'none', 'not', 'of', 'on', 'or', 'other', 'ought', 'own', 'please', 'several', 'shall',
+  'should', 'some', 'such',
+  'than', 'that', 'the', 'their', 'there', 'these', 'they', 'this', 'those', 'to', 'us', 'was', 'were', 'without',
   'what', 'when', 'where', 'which', 'who', 'why', 'will', 'with', 'would', 'you', 'your',
 ]);
 
@@ -21,7 +22,7 @@ const REQUEST_DIRECTIVES = new Set([
   'outline', 'produce', 'provide', 'report', 'review', 'show', 'summarise', 'summarize', 'tell', 'write',
 ]);
 const REQUEST_PREFIX_WORDS = new Set([
-  'can', 'could', 'do', 'may', 'please', 'should', 'will', 'would', 'you',
+  'can', 'could', 'do', 'may', 'never', 'not', 'please', 'should', 'will', 'would', 'you',
 ]);
 const REQUEST_HEAD_WORDS = new Set([
   ...REQUEST_DIRECTIVES,
@@ -137,11 +138,16 @@ function makeCandidate({ term, surface = term, role, kind, score, span, variantO
   });
 }
 
-function rankedFocusCandidates(value, { maximumWords, semanticFocus = [] }) {
+function focusStrategyEnabled(selected, name) {
+  return selected === undefined || selected.includes(`strategy:focus:${name}@1`);
+}
+
+function rankedFocusCandidates(value, { maximumWords, semanticFocus = [], selectedStrategyIdentities }) {
   const candidates = [];
   const metaTokens = metalinguisticTopicTokens(value);
-  const metalinguistic = metaTokens.length > 0;
-  for (const focus of semanticFocus) {
+  const metalinguistic = metaTokens.length > 0
+    && focusStrategyEnabled(selectedStrategyIdentities, 'metalinguistic-topic');
+  if (focusStrategyEnabled(selectedStrategyIdentities, 'semantic-ir-roles')) for (const focus of semanticFocus) {
     const term = normalizedSurface(focus?.term);
     if (!term || (isGroundingStructuralTerm(term) && !metalinguistic)) continue;
     candidates.push(makeCandidate({
@@ -171,7 +177,8 @@ function rankedFocusCandidates(value, { maximumWords, semanticFocus = [] }) {
   const focused = new Set(focusedSurfaceTokens(value));
   const finalRecords = finalQuestionRecords(value);
   const phraseRecords = finalRecords.filter((record) => !FUNCTION_WORDS.has(record.surface));
-  if (phraseRecords.length >= 2 && phraseRecords.length <= maximumWords) {
+  if (focusStrategyEnabled(selectedStrategyIdentities, 'exact-content-phrase')
+    && phraseRecords.length >= 2 && phraseRecords.length <= maximumWords) {
     candidates.push(makeCandidate({
       term: phraseRecords.map((record) => record.surface).join(' '),
       surface: phraseRecords.map((record) => record.surface).join(' '),
@@ -180,7 +187,8 @@ function rankedFocusCandidates(value, { maximumWords, semanticFocus = [] }) {
     }));
   }
   const focusedPhrase = trimmedPhraseTokens(focusedSurfaceTokens(value));
-  if (focusedPhrase.length >= 2 && focusedPhrase.length <= maximumWords
+  if (focusStrategyEnabled(selectedStrategyIdentities, 'exact-content-phrase')
+    && focusedPhrase.length >= 2 && focusedPhrase.length <= maximumWords
     && !focusedPhrase.some((token, index) => FUNCTION_WORDS.has(token)
       && index > 0 && index < focusedPhrase.length - 1 && !PHRASE_CONNECTORS.has(token))) {
     candidates.push(makeCandidate({
@@ -204,7 +212,9 @@ function rankedFocusCandidates(value, { maximumWords, semanticFocus = [] }) {
       }));
       continue;
     }
-    const variants = morphologyVariants(record.surface, role);
+    if (!focusStrategyEnabled(selectedStrategyIdentities, 'surface-content-token')) continue;
+    const variants = focusStrategyEnabled(selectedStrategyIdentities, 'bounded-morphology')
+      ? morphologyVariants(record.surface, role) : [record.surface];
     for (const [variantIndex, term] of variants.entries()) {
       const isVariant = term !== record.surface;
       const roleBoost = role === 'predicate' ? 14 : ['entity', 'object'].includes(role) ? 10 : 0;
@@ -235,8 +245,14 @@ export function selectGroundingTerms(value, options = {}) {
     || maximumCandidates > 20_000) {
     throw new Error('Grounding maximumCandidates must contain selected terms and be at most 20000.');
   }
+  const selectedStrategyIdentities = options.selectedStrategyIdentities;
+  if (selectedStrategyIdentities !== undefined && (!Array.isArray(selectedStrategyIdentities)
+    || selectedStrategyIdentities.length > 32 || selectedStrategyIdentities.some((identity) =>
+      typeof identity !== 'string' || !/^strategy:focus:[a-z0-9-]+@\d+$/u.test(identity)))) {
+    throw new Error('Grounding focus strategies must be a bounded exact allowlist.');
+  }
   const observed = rankedFocusCandidates(value, {
-    maximumWords, semanticFocus: options.semanticFocus,
+    maximumWords, semanticFocus: options.semanticFocus, selectedStrategyIdentities,
   });
   const retained = observed.slice(0, maximumCandidates);
   const eligible = retained.filter((candidate) => candidate.included)
@@ -262,6 +278,8 @@ export function selectGroundingTerms(value, options = {}) {
   const uniqueEligibleTerms = new Set(eligible.map((candidate) => candidate.term)).size;
   return Object.freeze({
     strategy: 'semantic-role-phrase-morphology-v3',
+    strategyMode: selectedStrategyIdentities === undefined ? 'all-registered' : 'exact-allowlist',
+    strategySelection: Object.freeze([...(selectedStrategyIdentities ?? [])]),
     terms: Object.freeze(selected.map((candidate) => candidate.term)),
     candidates: Object.freeze(audited),
     observedCandidates: observed.length,

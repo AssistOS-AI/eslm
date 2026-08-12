@@ -144,9 +144,14 @@ misrepresented as a fully composed essay and gives claim verification a concrete
 
 ### Question #3: Can an external LLM realize a verified plan?
 
-Options: an operator-side LLM may eventually propose prose if every factual claim returns through the claim ledger and
-host verifier, or the system may keep realization deterministic. Neither option changes the offline core until its
-authority, privacy, and verification contract is specified and tested.
+Options:
+
+- permit an operator-side LLM to propose prose only when every factual claim returns through the claim ledger and host
+  verifier; or
+- keep realization deterministic inside the reviewed runtime.
+
+Neither option changes the offline core until its authority, privacy, and verification contract is specified and
+tested.
 
 ## Conclusion
 

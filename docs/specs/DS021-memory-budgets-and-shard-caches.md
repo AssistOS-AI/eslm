@@ -26,6 +26,11 @@ provider search, and grounding retrieval. Every result exposes both applicable s
 change latency, I/O, or whether a finite frontier completes; neither may change logic, trust, tie-breaking, or the
 semantic result once the same frontier completes.
 
+The DS027 target additionally separates **strategy selection** from work and memory. An
+`eslm-strategy-profile-v1` selects exact reviewed implementations and arbiters, while work policy supplies finite
+execution authority and memory policy controls residence. The combined receipt records all three identities; a KB or
+strategy cannot use one policy to override another.
+
 ### Cache identity
 
 A runtime cache key includes KB ID, KB version, shard ID, block ID, content checksum, decoder version, and relevant projection options. Mutable aliases resolve to immutable versions before lookup. No block from one version may be reused under another version merely because its path or local identifier matches.
@@ -110,6 +115,11 @@ claims, and costly benchmark families should execute in isolated processes under
 hard cap is required. The broader per-query block accounting and reserved grounding budget described above remain only
 partially implemented.
 
+The present work profiles allocate limits by subsystem, not by one shared DS027 stage-and-strategy ledger. Deterministic
+minimum reservations, descriptor ceilings, per-strategy allocations, canonical carry-forward, and complete strategy
+resource receipts remain target behavior until the common coordinator is implemented and existing local paths are
+migrated.
+
 ## Decisions & Questions
 
 ### Question #1: May a cache miss justify `UNKNOWN`?
@@ -136,6 +146,12 @@ fictional provider entry. The profiler, not this policy snapshot, is responsible
 Response: Residence policy answers how validated KB bytes are retained; work policy answers how many bounded
 interpretation, inference, provider, and grounding operations may be attempted. Conflating them would make an advisory
 cache target appear to authorize more reasoning or make a larger reasoning profile look like a hard RSS guarantee.
+
+### Question #6: Why is strategy selection not another work-profile field?
+
+Response: Choosing an implementation or arbiter can change the semantic path and is therefore a versioned product
+configuration. A work profile changes how much finite work the selected path may perform and must agree whenever the
+same semantic frontier completes. Keeping the identities separate makes both changes reviewable and reproducible.
 
 ## Conclusion
 

@@ -39,6 +39,8 @@ Global options:
   --memory-mb 512               soft process-memory target; enables adaptive shard loading
   --memory-policy auto          auto, eager, or lazy public-KB loading
   --work-profile balanced       quick, balanced, deep, or exhaustive-bounded work
+  --strategy-preset all         all, language, retrieval, reasoning, or construction inventory view
+  --strategy-select STAGE=IDS   exact built-in executor allowlist; separate stage assignments with ;
   --heuristic-max-candidates N  exact symbolic approximation candidate override
   --heuristic-max-reparses N    exact candidate reparse override
   --heuristic-max-segments N    exact approximation segment override

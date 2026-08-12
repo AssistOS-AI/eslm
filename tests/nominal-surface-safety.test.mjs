@@ -66,7 +66,9 @@ test('assertion and query class positions reject opaque protected surfaces trans
 
 test('assertion subjects reject protected material without leaving provisional entities', async () => {
   const engine = new EslmEngine(await createCoreModel());
-  assert.equal(engine.ask('Vela Quorin can glide.').status, 'SOLVED');
+  const learned = engine.ask('Vela Quorin can glide.');
+  assert.equal(learned.status, 'SOLVED');
+  assert.equal(engine.ask('Can Vela Quorin glide?', learned.context).status, 'SOLVED');
   for (const subjectSurface of [
     'Vela and Quorin', 'Vela or Quorin', 'Vela before dawn', 'not Vela', 'every Vela',
     'Vela because Quorin waits', 'Vela is ready',

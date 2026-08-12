@@ -137,6 +137,7 @@ function selectEntries(plan, grounding, maximumEntries) {
   }
   return Object.freeze({
     selected: Object.freeze(selected),
+    candidateEntryIds: Object.freeze(ordered.map((item) => entryIdentity(item.entry))),
     candidatesConsidered: candidates.length,
     unrelatedEntriesOmitted: entries.length - candidates.length,
     budgetOmitted: Math.max(0, candidates.length - selected.length),
@@ -166,9 +167,26 @@ function renderTable(plan, selected) {
   for (const item of selected) {
     const names = plan.topics.filter((topic) => item.topicIds.includes(topic.topicId))
       .map((topic) => topic.surface).join(', ') || 'general';
-    lines.push(`| ${names.replaceAll('|', '\\|')} | ${boundedText(item.entry.statement).replaceAll('|', '\\|')} | ${citation(item.entry)} |`);
+    const statement = boundedText(item.entry.statement).replaceAll('|', '\\|');
+    lines.push(`| ${names.replaceAll('|', '\\|')} | ${statement} | ${citation(item.entry)} |`);
   }
   return lines;
+}
+
+function renderSource(summary, outputContract, intent) {
+  if (!summary?.selected.length) return [];
+  if (outputContract.format === 'table') {
+    return [
+      '| Supplied excerpt | Origin |',
+      '|---|---|',
+      ...summary.selected.map((item) =>
+        `| ${item.surface.replaceAll('|', '\\|')} | supplied material |`),
+    ];
+  }
+  if (intent === 'expand' || ['outline', 'bullets'].includes(outputContract.format)) {
+    return summary.selected.map((item) => `- ${item.surface}`);
+  }
+  return [summary.selected.map((item) => item.surface).join(' ')];
 }
 
 function renderOutline(plan, selected) {
@@ -220,16 +238,184 @@ function correlationSummary(plan, selected) {
   });
 }
 
+function publicEvidence(evidence) {
+  return Object.freeze({
+    selected: evidence.selected,
+    candidatesConsidered: evidence.candidatesConsidered,
+    unrelatedEntriesOmitted: evidence.unrelatedEntriesOmitted,
+    budgetOmitted: evidence.budgetOmitted,
+  });
+}
+
+function operationView(plan, operation) {
+  const topicIds = new Set(operation.topicIds);
+  return Object.freeze({
+    ...plan,
+    primaryIntent: operation.intent,
+    topics: Object.freeze(plan.topics.filter((topic) => topicIds.has(topic.topicId))),
+    outputContract: operation.outputContract,
+  });
+}
+
+function hasCausalEvidence(evidence) {
+  return evidence.selected.some((item) => /(?:cause|reason|intent|because)/iu.test(
+    JSON.stringify(item.entry.semantic),
+  ));
+}
+
+function operationGaps(operation, sourceSummary, evidence, correlation, grounding) {
+  const gaps = [
+    `Operation ${operation.order} produced a bounded extractive ${operation.intent} artifact; `
+      + 'complete generative composition was not performed.',
+  ];
+  if (sourceSummary && !sourceSummary.complete) {
+    gaps.push(`${sourceSummary.truncatedSentences} supplied sentence(s) exceeded the per-sentence excerpt cap, `
+      + `or ${sourceSummary.omitted} sentence(s) exceeded this operation's output budget.`);
+  }
+  if (!grounding?.search?.complete) gaps.push('The related-evidence search was incomplete.');
+  if (evidence.budgetOmitted > 0) {
+    gaps.push(`${evidence.budgetOmitted} relevant record(s) exceeded this operation's output budget.`);
+  }
+  if (!sourceSummary?.selected.length && evidence.selected.length === 0) {
+    gaps.push('No supplied sentence or matching KB record was available for this operation.');
+  }
+  if (operation.intent === 'explain' && !hasCausalEvidence(evidence)) {
+    gaps.push('No explicit causal or reason relation was retrieved, so this operation invents no explanation.');
+  }
+  if (operation.intent === 'compare' && correlation?.sharedRelations.length === 0) {
+    gaps.push('No explicit relation label was shared across the comparison topics.');
+  }
+  return Object.freeze(gaps);
+}
+
+function buildOperationArtifacts(plan, grounding) {
+  const results = [];
+  let remainingEntries = 32;
+  for (const operation of plan.operationPlans) {
+    const view = operationView(plan, operation);
+    const remainingOperations = plan.operationPlans.length - results.length;
+    const requestedEntries = contentLimits(operation.outputContract).maximumEntries;
+    const maximumEntries = Math.min(requestedEntries,
+      Math.max(1, remainingEntries - (remainingOperations - 1)));
+    const sourceSummary = plan.sourceMaterial
+      ? extractiveSummary(plan.sourceMaterial.text,
+        contentLimits(operation.outputContract).maximumSourceSentences) : null;
+    const privateEvidence = selectEntries(view, grounding, maximumEntries);
+    remainingEntries -= privateEvidence.selected.length;
+    const evidence = publicEvidence(privateEvidence);
+    const correlation = operation.intent === 'compare'
+      ? correlationSummary(view, evidence.selected) : null;
+    const gaps = operationGaps(operation, sourceSummary, evidence, correlation, grounding);
+    results.push(Object.freeze({
+      artifact: Object.freeze({
+        operationId: operation.operationId,
+        order: operation.order,
+        intent: operation.intent,
+        topicIds: operation.topicIds,
+        outputContract: operation.outputContract,
+        sourceSummary,
+        evidence,
+        correlation,
+        gaps,
+        complete: false,
+      }),
+      candidateEntryIds: privateEvidence.candidateEntryIds,
+      view,
+    }));
+  }
+  return Object.freeze(results);
+}
+
+function mergeSelections(operationResults) {
+  const selected = new Map();
+  for (const { artifact } of operationResults) {
+    for (const item of artifact.evidence.selected) {
+      const identity = entryIdentity(item.entry);
+      const previous = selected.get(identity);
+      if (!previous) {
+        selected.set(identity, item);
+        continue;
+      }
+      selected.set(identity, Object.freeze({
+        ...previous,
+        topicIds: Object.freeze([...new Set([...previous.topicIds, ...item.topicIds])]),
+        topicScore: Math.max(previous.topicScore, item.topicScore),
+        selectionScore: Math.max(previous.selectionScore, item.selectionScore),
+        reasons: Object.freeze([...new Set([...previous.reasons, ...item.reasons])]),
+      }));
+    }
+  }
+  return Object.freeze([...selected.values()]);
+}
+
+function aggregateEvidence(operationResults, grounding) {
+  const selected = mergeSelections(operationResults);
+  const candidateIds = new Set(operationResults.flatMap((item) => item.candidateEntryIds));
+  return Object.freeze({
+    selected,
+    candidatesConsidered: candidateIds.size,
+    unrelatedEntriesOmitted: Math.max(0, (grounding?.entries?.length ?? 0) - candidateIds.size),
+    budgetOmitted: Math.max(0, candidateIds.size - selected.length),
+  });
+}
+
+function renderOperation(lines, result, multiple) {
+  const { artifact, view } = result;
+  const topics = view.topics.map((topic) => topic.surface).join(' and ');
+  if (multiple) {
+    const label = `${artifact.intent[0].toLocaleUpperCase('en-US')}${artifact.intent.slice(1)}`;
+    lines.push('', `## Obligation ${artifact.order}: ${label}${topics ? ` — ${topics}` : ''}`);
+  }
+  if (artifact.sourceSummary?.selected.length) {
+    lines.push('', multiple ? '### Supplied material' : '## Supplied material');
+    lines.push(...renderSource(artifact.sourceSummary, artifact.outputContract, artifact.intent));
+  }
+  if (artifact.evidence.selected.length) {
+    const evidenceTitle = artifact.outputContract.format === 'table' ? 'Evidence table' : 'KB evidence';
+    lines.push('', `${multiple ? '###' : '##'} ${evidenceTitle}`);
+    if (artifact.outputContract.format === 'table') {
+      lines.push(...renderTable(view, artifact.evidence.selected));
+    } else if (['outline', 'bullets'].includes(artifact.outputContract.format)) {
+      lines.push(...renderOutline(view, artifact.evidence.selected));
+    } else if (artifact.outputContract.format === 'sections') {
+      lines.push(...renderSections(view, artifact.evidence.selected).map((line) =>
+        multiple && line.startsWith('## ') ? `###${line.slice(2)}` : line));
+    } else {
+      lines.push(...artifact.evidence.selected.map((item) => statementLine(item)));
+    }
+  }
+  if (artifact.correlation) {
+    lines.push('', `${multiple ? '###' : '##'} Correlation check`, artifact.correlation.statement);
+  }
+  if (multiple) {
+    lines.push('', '### Obligation coverage gaps', ...artifact.gaps.map((gap) => `- ${gap}`));
+  }
+}
+
+function boundedGaps(gaps) {
+  const unique = [...new Set(gaps)];
+  if (unique.length <= 64) return Object.freeze(unique);
+  return Object.freeze([
+    ...unique.slice(0, 63),
+    `${unique.length - 63} additional gap(s) remain recorded in operationArtifacts.`,
+  ]);
+}
+
 export function synthesizeHeuristicRequest(planResult, grounding) {
   if (planResult?.status !== 'PLANNED' || !planResult.selectedPlan) return null;
   const plan = planResult.selectedPlan;
-  const limits = contentLimits(plan.outputContract);
-  const sourceSummary = plan.sourceMaterial
-    ? extractiveSummary(plan.sourceMaterial.text, limits.maximumSourceSentences) : null;
-  const evidence = selectEntries(plan, grounding, limits.maximumEntries);
+  const operationResults = buildOperationArtifacts(plan, grounding);
+  const operationArtifacts = Object.freeze(operationResults.map((item) => item.artifact));
+  const evidence = aggregateEvidence(operationResults, grounding);
+  const sourceSummary = operationArtifacts.length === 1
+    ? operationArtifacts[0].sourceSummary
+    : plan.sourceMaterial
+      ? extractiveSummary(plan.sourceMaterial.text,
+        contentLimits(plan.outputContract).maximumSourceSentences) : null;
   if (!sourceSummary?.selected.length && evidence.selected.length === 0) return null;
-  const correlation = correlationSummary(plan, evidence.selected);
+  const correlation = operationArtifacts.find((item) => item.correlation)?.correlation ?? null;
   const fullyPreserved = (plan.sourceMaterial?.complete ?? true) && (sourceSummary?.complete ?? true);
+  const multiple = operationArtifacts.length > 1;
   const lines = [
     `# ${titleFor(plan)}`,
     '',
@@ -237,48 +423,46 @@ export function synthesizeHeuristicRequest(planResult, grounding) {
       + 'supplied sentences and retrieved KB statements; '
       + 'it does not treat lexical relevance as proof or claim that the search was exhaustive.',
   ];
-  if (sourceSummary?.selected.length) {
-    lines.push('', '## Supplied material');
-    if (plan.primaryIntent === 'expand') {
-      lines.push(...sourceSummary.selected.map((item) => `- ${item.surface}`));
-    } else {
-      lines.push(sourceSummary.selected.map((item) => item.surface).join(' '));
-    }
-  }
-  if (evidence.selected.length) {
-    lines.push('', plan.outputContract.format === 'table' ? '## Evidence table' : '## KB evidence');
-    if (plan.outputContract.format === 'table') lines.push(...renderTable(plan, evidence.selected));
-    else if (['outline', 'bullets'].includes(plan.outputContract.format)) {
-      lines.push(...renderOutline(plan, evidence.selected));
-    } else if (plan.outputContract.format === 'sections') {
-      lines.push(...renderSections(plan, evidence.selected));
-    } else {
-      lines.push(...evidence.selected.map((item) => statementLine(item)));
-    }
-  }
-  if (correlation) lines.push('', '## Correlation check', correlation.statement);
-  const gaps = [
-    'This route produced a bounded extractive draft; complete generative composition was not performed.',
+  operationResults.forEach((result) => renderOperation(lines, result, multiple));
+
+  const aggregateGaps = [
+    'This route produced a bounded extractive draft with explicit operation artifacts; '
+      + 'complete generative composition was not performed.',
   ];
   if (plan.sourceMaterial && !plan.sourceMaterial.complete) {
-    gaps.push(`Supplied material exceeded the ${plan.sourceMaterial.retainedCharacters}-character planning cap.`);
+    aggregateGaps.push(
+      `Supplied material exceeded the ${plan.sourceMaterial.retainedCharacters}-character planning cap.`,
+    );
   }
   if (sourceSummary && !sourceSummary.complete) {
-    gaps.push(`${sourceSummary.truncatedSentences} supplied sentence(s) exceeded the per-sentence excerpt cap, `
-      + `or ${sourceSummary.omitted} sentence(s) exceeded the requested output budget.`);
+    aggregateGaps.push(
+      `${sourceSummary.truncatedSentences} supplied sentence(s) exceeded the per-sentence excerpt cap, `
+        + `or ${sourceSummary.omitted} sentence(s) exceeded the requested output budget.`,
+    );
   }
-  if (plan.receipt?.complete === false) gaps.push(...(plan.receipt.truncationReasons ?? []).map((reason) =>
-    `Request planning was incomplete: ${reason}.`));
-  if (!grounding?.search?.complete) gaps.push('The related-evidence search was incomplete.');
+  if (planResult.receipt?.complete === false) {
+    aggregateGaps.push(...(planResult.receipt.truncationReasons ?? []).map((reason) =>
+      `Request planning was incomplete: ${reason}.`));
+  }
+  if (!grounding?.search?.complete) aggregateGaps.push('The related-evidence search was incomplete.');
   if (evidence.unrelatedEntriesOmitted > 0) {
-    gaps.push(`${evidence.unrelatedEntriesOmitted} retrieved record(s) lacked direct topic overlap and were omitted.`);
+    aggregateGaps.push(
+      `${evidence.unrelatedEntriesOmitted} retrieved record(s) lacked direct topic overlap and were omitted.`,
+    );
   }
-  if (evidence.budgetOmitted > 0) gaps.push(`${evidence.budgetOmitted} relevant record(s) exceeded the output budget.`);
-  if (plan.primaryIntent === 'explain'
-    && !evidence.selected.some((item) => /(?:cause|reason|intent|because)/iu.test(
-      JSON.stringify(item.entry.semantic),
-    ))) gaps.push('No explicit causal or reason relation was retrieved, so the draft does not invent an explanation.');
-  if (gaps.length > 0) lines.push('', '## Coverage gaps', ...gaps.map((gap) => `- ${gap}`));
+  if (evidence.budgetOmitted > 0) {
+    aggregateGaps.push(`${evidence.budgetOmitted} relevant record(s) exceeded the aggregate output budget.`);
+  }
+  const operationGaps = operationArtifacts.flatMap((item) =>
+    item.gaps.slice(1).map((gap) => multiple ? `Operation ${item.order}: ${gap}` : gap));
+  const gaps = boundedGaps([...aggregateGaps, ...operationGaps]);
+  if (multiple) {
+    lines.push('', '## Aggregate artifact',
+      'The obligation sections above are the aggregate artifact, preserved in request order; '
+        + 'no additional factual bridge was generated.');
+  }
+  lines.push('', multiple ? '## Aggregate coverage gaps' : '## Coverage gaps',
+    ...gaps.map((gap) => `- ${gap}`));
   return Object.freeze({
     protocol: HEURISTIC_SYNTHESIS_PROTOCOL,
     status: 'PARTIAL',
@@ -286,6 +470,7 @@ export function synthesizeHeuristicRequest(planResult, grounding) {
     plan,
     claimMode: 'extractive-source-and-related-kb-draft',
     answerAuthority: 'related-evidence-is-not-entailment',
+    operationArtifacts,
     sourceSummary,
     evidence,
     correlation,

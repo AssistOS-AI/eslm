@@ -183,6 +183,12 @@ The runtime may require a minimum quality level for high-stakes contexts.
 
 Source documents, benchmark files, downloaded KBs, LLM output and generated canonical records are untrusted inputs. The architecture must prevent them from executing code, changing agent instructions, corrupting trusted indexes or causing unbounded resource consumption.
 
+DS027 strategy profiles and descriptors do not weaken this boundary. Only repository code statically registered by
+the host is executable. A KB, corpus, manifest, command input, configuration file, agent proposal, or strategy output
+cannot supply a module path, callback, code string, arbiter, validator, import, subprocess, or new strategy identity.
+Host services are stage-scoped and do not grant a strategy ambient filesystem, network, process, secret, or registry
+authority.
+
 ### 16. No executable KB payloads
 
 KB schemas reject JavaScript, Java, shell code, dynamic imports, executable expressions and callbacks. Declarative rules are parsed into a restricted AST and interpreted only by trusted operators in `src`.
@@ -218,6 +224,12 @@ DS022 additionally supplies one immutable named work-policy snapshot per result.
 and grounding bounds control how much finite work is attempted without changing status meanings, trust, logical
 semantics, tie-breaking, or the authority of a premise.
 
+The DS027 target coordinator preallocates shared and per-strategy work, reserves mandatory safety and verification,
+and records every selected strategy even when it is ineligible, abstains, fails, returns invalid output, or exhausts
+its quota. A plurality of surviving strategies is never presented as complete consensus after a hidden failure. An
+optional failure may be contained; failure of a mandatory parser, validator, verifier, or compiler gate fails the
+stage closed and maps visibly into this specification's status vocabulary.
+
 ### 20. Coding-agent changes
 
 Changes to `src` occur in an isolated candidate checkpoint. The agent runs static checks, focused tests, security tests and global regressions before promotion. Generated KB content cannot directly authorize a source-code change.
@@ -235,6 +247,11 @@ Optional provider operations are transaction-like at the runtime boundary. `begi
 contribution is discarded and a bounded diagnostic names the provider, operation, and failing stage. The remaining
 providers and core method continue deterministically. A failed `beginQuery` still receives a best-effort `endQuery`,
 but a cleanup failure can never make partially scoped evidence authoritative.
+
+The common strategy receipt defined by DS027 extends this audit rule across stages. It records registry, profile,
+work-policy and input digests, canonical scheduling, eligibility, allocations, votes, arbiter selection, failures,
+truncation, and final status mapping. Receipt presence is not itself evidence that a candidate or answer was valid;
+stage output validation and proof verification remain independent gates.
 
 ### 23. Specialized trust boundaries
 
@@ -283,6 +300,12 @@ Response: The routes promise different products. Ordinary grounding follows an i
 result. Request synthesis begins with an explicit artifact intent, selects records as quoted source claims, and returns
 a visibly incomplete `PARTIAL` construction whose citations say exactly what was copied. It does not claim that those
 records entail the requested document's broader explanation, comparison, or conclusion.
+
+### Question #7: Can a majority of trusted strategies override a failed verifier?
+
+Response: No. Trusted means the code is admitted to execute, not that every output is true. Safety validation and
+method-specific witness verification are authority gates. Invalid or unverified outputs have no answer vote, and
+verified conflict remains visible regardless of confidence magnitude or the number of agreeing strategies.
 
 ## Conclusion
 

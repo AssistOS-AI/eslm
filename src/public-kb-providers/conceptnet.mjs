@@ -37,6 +37,7 @@ function answer(provider, relation, subject, edges, direction) {
       method: 'source-retrieval', weight: edge[1], provenanceIds: edge[2],
     }))),
     reasoning: {
+      methodId: 'method:core:indexed-lookup',
       method: status === 'DEFEASIBLE'
         ? 'typed-defeasible-relation-retrieval' : 'typed-declared-relation-retrieval',
       relation,

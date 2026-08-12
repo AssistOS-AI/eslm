@@ -3,8 +3,8 @@ import {
 } from './heuristic-request-patterns.mjs';
 import { classifyHeuristicRequestForce } from './heuristic-request-force.mjs';
 import {
-  extractRequestSourceMaterial, normalizedRequestText, requestInstructionText,
-  segmentRequestInstructions, selectRequestTopics,
+  createRequestTruncationReceipt, extractRequestSourceMaterial, normalizedRequestText,
+  requestInstructionText, segmentRequestInstructions, selectRequestTopics,
 } from './heuristic-request-structure.mjs';
 
 export const HEURISTIC_REQUEST_PLAN_PROTOCOL = 'eslm-heuristic-request-plan-v1';
@@ -82,11 +82,15 @@ function votesByIntent(matches) {
   }
   for (const item of matches.artifacts.filter((match) => match.polarity === 'requested')) {
     add(item.impliedIntent, Object.freeze({
-    patternId: `${item.patternId}:implied-intent`, family: 'artifact-intent',
-    weight: Number((item.weight * 0.82).toFixed(6)), artifact: item.artifact,
-    span: item.span, surface: item.surface, polarity: item.polarity,
-    ...(item.instructionSegmentId ? { instructionSegmentId: item.instructionSegmentId } : {}),
-  }));
+      patternId: `${item.patternId}:implied-intent`,
+      family: 'artifact-intent',
+      weight: Number((item.weight * 0.82).toFixed(6)),
+      artifact: item.artifact,
+      span: item.span,
+      surface: item.surface,
+      polarity: item.polarity,
+      ...(item.instructionSegmentId ? { instructionSegmentId: item.instructionSegmentId } : {}),
+    }));
   }
   return grouped;
 }
@@ -227,21 +231,6 @@ function outputSelection(matches, intent) {
     }),
     confidence: Math.max(artifact.confidence, format.confidence),
     votes: Object.freeze({ artifact: artifact.votes, length: length.votes, format: format.votes }),
-  });
-}
-
-function truncationReceipt(segmented, topicSelection, operationSelection, material) {
-  const reasons = Object.freeze([
-    ...(!segmented.complete ? ['instruction-segment-budget'] : []),
-    ...(material && !material.complete ? ['source-material-character-budget'] : []),
-    ...(topicSelection.omittedByCount > 0 ? ['topic-count-budget'] : []),
-    ...(topicSelection.characterTruncations > 0 ? ['topic-character-budget'] : []),
-    ...(topicSelection.normalizationCollisions > 0 ? ['topic-normalization-collision'] : []),
-    ...(operationSelection.omitted > 0 ? ['operation-count-budget'] : []),
-  ]);
-  return Object.freeze({
-    complete: reasons.length === 0,
-    reasons,
   });
 }
 
@@ -404,7 +393,9 @@ export function planHeuristicRequest(text, options = {}) {
   const topics = topicSelection.items;
   const operationSelection = operationPlansFrom(activeAnalyses, topics, limits.maximumOperations);
   const operationPlans = operationSelection.items;
-  const truncation = truncationReceipt(segmented, topicSelection, operationSelection, material);
+  const truncation = createRequestTruncationReceipt(
+    segmented, topicSelection, operationSelection, material,
+  );
   const requestForce = Object.freeze({
     observedSegments: segmentAnalyses.length,
     acceptedSegments: activeAnalyses.length,

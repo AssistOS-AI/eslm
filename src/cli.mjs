@@ -37,12 +37,12 @@ import { editDistance, parseArgs } from './util.mjs';
 import { createTerminalStyle } from './terminal-style.mjs';
 import {
   interactiveCountAndSeed, interactiveExamplePage, interactiveExamples, interactiveHelp, interactiveKbText,
-  interactiveResultText, interactiveSmoke, memoryText, modelText, profileText, traceText, workText,
+  interactiveResultText, interactiveSmoke, memoryText, modelText, profileText, strategiesText, traceText, workText,
 } from './interface/interactive-presenter.mjs';
 import { benchmarkCommand } from './interface/benchmark-command.mjs';
 import {
   languageAgentNormalizationEnabled, withLanguageAgentNormalization, withWorkProfile,
-  workPolicyFromCliOptions,
+  withStrategySelection, workPolicyFromCliOptions,
 } from './interface/cli-runtime-policy.mjs';
 import { interactiveCompletions } from './interface/interactive-completion.mjs';
 import { cliHelpText, cliStartupText } from './interface/cli-help.mjs';
@@ -174,6 +174,32 @@ async function chat(options) {
       runtimeOptions = withWorkProfile(runtimeOptions, value);
       engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
       stdout.write(`${workText(engine, style)}\n`);
+      continue;
+    }
+    if (line === '/strategies') { stdout.write(`${strategiesText(engine, style)}\n`); continue; }
+    if (line.startsWith('/strategies ')) {
+      const value = line.slice('/strategies '.length).trim().toLocaleLowerCase('en-US');
+      if (!['all', 'language', 'retrieval', 'reasoning', 'construction'].includes(value)) {
+        stdout.write(`${style.red('Expected all, language, retrieval, reasoning, or construction.')}\n`);
+        continue;
+      }
+      runtimeOptions = withWorkProfile(runtimeOptions, undefined, value);
+      engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+      stdout.write(`${strategiesText(engine, style)}\n`);
+      continue;
+    }
+    if (line.startsWith('/strategy ')) {
+      const value = line.slice('/strategy '.length).trim();
+      const candidateOptions = withStrategySelection(runtimeOptions, value === 'clear' ? undefined : value);
+      try {
+        const candidateEngine = await engineFor({ ...candidateOptions, kb: selected.join(',') });
+        runtimeOptions = candidateOptions;
+        engine = candidateEngine;
+      } catch (error) {
+        stdout.write(`${style.red(error instanceof Error ? error.message : String(error))}\n`);
+        continue;
+      }
+      stdout.write(`${strategiesText(engine, style)}\n`);
       continue;
     }
     if (line === '/normalize') {

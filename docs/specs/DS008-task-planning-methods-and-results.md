@@ -48,6 +48,11 @@ Every reusable generic method that participates in capability selection must pub
 descriptor declares input and output semantic types, preconditions, effects, soundness, completeness, supported
 uncertainty semantics, proof support and estimated cost.
 
+DS027 defines the common strategy descriptor and coordinator around this planner-facing capability. A reasoning method
+keeps its stable `methodId` and complete semantic descriptor; when exposed through the strategy control plane, a
+separate exact `strategyId` declares its stage, scheduling, configuration, resources, and receipt. The strategy layer
+cannot weaken a method precondition or turn method applicability confidence into answer confidence.
+
 Examples include taxonomic closure, Datalog evaluation, temporal interval reasoning, graph path search, CSP solving, SAT solving, arithmetic evaluation, coreference resolution, abductive search and ranking under defaults.
 
 The current `CapabilityRegistry` validates required descriptor fields, stores a descriptor with a callback, and filters
@@ -74,6 +79,11 @@ to AND/OR nodes elsewhere in this specification therefore describe the target ar
 In the target planner, candidate plans are ranked by soundness, expected coverage, cost, available evidence and proof
 requirements. Deterministic exact methods are preferred when applicable. Heuristic or defeasible methods remain
 explicitly labeled.
+
+When several methods or plan decompositions are eligible, DS027 owns the canonical schedule, finite preallocation,
+typed proposal ledger, and meta-rational arbitration. Voting may rank an applicable plan or preserve alternatives; it
+cannot establish a premise, override a safety precondition, select a gold answer, or turn agreement among non-strict
+methods into a strict proof.
 
 Execution monitors derived facts, unresolved references, resource use and contradictions. A failed method may trigger another branch. New terms or subgoals may request additional KB shards through the loader.
 
@@ -123,6 +133,11 @@ The trace must remain stable enough for failure clustering. A coding agent shoul
 DS015 is the normative catalog for executable method semantics and provider-coordination surfaces. This specification
 does not duplicate those algorithms. The target planner consumes capability descriptors, checks typed preconditions and
 budgets, invokes a bound executor, and preserves its witness and uncertainty status in the task trace.
+
+DS027 owns the target coordination plane for this composition. It requires all selected method strategies to be
+visible as ineligible, executed, abstained, failed, invalid, or resource-limited and requires an independent
+verification stage before result construction. The existing three paths below remain the honest implementation
+boundary until they are migrated; attaching descriptors to them alone does not establish unified strategy execution.
 
 The current implementation has three distinct bounded coordination paths:
 
@@ -387,6 +402,13 @@ allowlisted operation table. The heuristic artifact route uses a third fixed con
 these paths as a completed general planner would hide missing precondition checks, placeholder registry callbacks,
 absent AND/OR decomposition, and adapter-local solvers. They may be unified later only when one tested planner owns
 selection, invocation, budgets, witnesses, and gaps without weakening existing method contracts.
+
+### Question #5: What does a reasoning-method vote mean?
+
+Response: It can express applicability, expected cost, declared coverage, or a method-specific defeasible preference.
+It cannot express truth by popularity. A strict result requires the method's declared derivation and independent
+witness validation; verified disagreement remains a conflict, and an incomplete or resource-limited method has no
+negative answer vote.
 
 ## Conclusion
 

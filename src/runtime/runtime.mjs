@@ -6,6 +6,7 @@ import {
 import {
   routeDirectProviderQuestion, routeFactoidQuestion,
 } from '../reasoning/factoid-provider-router.mjs';
+import { CORE_METHOD_DESCRIPTORS } from '../reasoning/capability-registry.mjs';
 import {
   createGroundingBundle, createGroundingRequest, limitGroundingRequestLookups,
   selectGroundingRequestSources, shouldRetrieveGrounding,
@@ -23,11 +24,31 @@ import {
   assertRuntimeResultContract, assertRuntimeTextResultContract, normalizeRuntimeStatus,
 } from './result-contract.mjs';
 import {
-  groundingLimitsFromWorkPolicy, resolveWorkPolicy,
+  groundingLimitsFromWorkPolicy, reasoningMethodSelected, resolveWorkPolicy,
+  selectedStrategyIdentities,
 } from './work-policy.mjs';
 
 function contextSnapshot(context) {
   return sessionContextSnapshot(context);
+}
+
+const CORE_METHODS_BY_ID = new Map(Object.values(CORE_METHOD_DESCRIPTORS).map((descriptor) => [
+  descriptor.methodId, descriptor,
+]));
+
+function providerMethodPlan(methodIds = []) {
+  const canonical = [...new Set(methodIds)].toSorted();
+  return {
+    ...(canonical.length === 1 ? { methodId: canonical[0] } : {}),
+    methodIds: canonical,
+  };
+}
+
+function strategyIdentityForMethod(methodId) {
+  const descriptor = CORE_METHODS_BY_ID.get(methodId);
+  return descriptor
+    ? `${descriptor.methodId.replace(/^method:/u, 'strategy:')}@${descriptor.implementationVersion}`
+    : undefined;
 }
 
 export class EslmRuntime {
@@ -79,17 +100,17 @@ export class EslmRuntime {
     const providerLimits = {
       maximumSources: this.workPolicy.effective.limits.maximumProviderSources,
       maximumParaphrases: this.workPolicy.effective.limits.maximumProviderParaphrases,
+      methodAllowed: (methodId) => {
+        const descriptor = CORE_METHODS_BY_ID.get(methodId);
+        return descriptor ? reasoningMethodSelected(this.workPolicy, descriptor) : false;
+      },
     };
-    const routed = await routeFactoidQuestion(this.providers, text, providerLimits);
-    let knowledgeResult = routed.result;
-    const consultedProviders = [...(routed.consultedProviders ?? [])];
-    const providerErrors = [...(routed.providerErrors ?? [])];
-    if (!routed.frame) {
-      const direct = await routeDirectProviderQuestion(this.providers, text, providerLimits);
-      knowledgeResult = direct.result;
-      consultedProviders.push(...direct.consultedProviders);
-      providerErrors.push(...direct.providerErrors);
-    }
+    const factoidRoute = await routeFactoidQuestion(this.providers, text, providerLimits);
+    const providerRoute = factoidRoute.frame ? factoidRoute
+      : await routeDirectProviderQuestion(this.providers, text, providerLimits);
+    const knowledgeResult = providerRoute.result;
+    const consultedProviders = [...(providerRoute.consultedProviders ?? [])];
+    const providerErrors = [...(providerRoute.providerErrors ?? [])];
     if (knowledgeResult) {
       const result = knowledgeResult;
       const publicStatus = normalizeRuntimeStatus(result.status);
@@ -106,10 +127,9 @@ export class EslmRuntime {
           taskId: 'task:runtime:public-kb', goals: [result.query], assertions: [], constraints: [],
           contextStack: ['context:runtime:baseline'], outputContract: { kind: 'semantic-values' },
         },
-        plan: {
-          methodId: result.reasoning?.method === 'bounded-deduction'
-            ? 'method:core:safe-horn-deduction' : 'method:core:indexed-lookup',
-        },
+        plan: providerMethodPlan(
+          result.reasoning?.routedMethodIds ?? providerRoute.eligibleMethodIds,
+        ),
         usedKbVersions: uniqueKbVersions(this.providers
           .filter((provider) => contributorIds.has(provider.manifest.id))
           .map(kbIdentity)),
@@ -143,27 +163,67 @@ export class EslmRuntime {
     const result = this.core.ask(text, context);
     const metaIntent = String(result.query?.intent ?? '').startsWith('system-')
       || result.query?.intent === 'user-identity';
-    const factoidWithoutEvidence = routed.frame && !metaIntent
+    const unresolvedProviderQuestion = !metaIntent && this.providers.length > 0
       && ['UNPARSED', 'UNKNOWN'].includes(result.status);
+    const providerWithoutSelectedMethod = unresolvedProviderQuestion && providerRoute.policyExcluded;
+    const factoidWithoutEvidence = factoidRoute.frame && unresolvedProviderQuestion
+      && !providerWithoutSelectedMethod;
+    const blockedStrategies = (providerRoute.blockedMethodIds ?? [])
+      .map(strategyIdentityForMethod).filter(Boolean);
     const primary = {
       ...result,
       languageRoute: result.languageRoute ?? 'direct-symbolic',
       usedKbVersions: result.usedKbVersions ?? [],
+      ...(providerWithoutSelectedMethod ? {
+        status: 'NO_APPLICABLE_METHOD',
+        answer: 'The request reached a provider question route, but the active strategy policy does not select '
+          + 'its declared reasoning method.',
+        values: [], provenance: [],
+        query: {
+          ...(result.query ?? {}),
+          ...(factoidRoute.frame ? { factoidFrame: factoidRoute.frame } : {
+            providerOperation: 'direct-provider-question',
+          }),
+          routedProviders: [],
+        },
+        taskFrame: {
+          taskId: 'task:runtime:provider-method-gap', goals: [factoidRoute.frame
+            ? { factoidFrame: factoidRoute.frame } : { operation: 'direct-provider-question' }],
+          assertions: [], constraints: [], contextStack: ['context:runtime:baseline'],
+          outputContract: { kind: 'semantic-values' },
+        },
+        plan: {
+          status: 'NO_APPLICABLE_METHOD', requiredCapability: 'retrieval',
+          consideredMethods: [],
+          excludedMethods: providerRoute.blockedMethodIds ?? [],
+          failedPreconditions: ['The provider-declared method is excluded by the exact strategy allowlist.'],
+          steps: [],
+        },
+        reasoning: { method: 'epistemic-abstention', gap: 'method-not-selected-by-strategy-policy' },
+        unresolvedSubgoals: [
+          ...(result.unresolvedSubgoals ?? []),
+          {
+            operation: 'retrieve-semantic-values',
+            gap: 'method-not-selected-by-strategy-policy',
+            requiredStrategies: blockedStrategies,
+          },
+        ],
+      } : {}),
       ...(factoidWithoutEvidence ? {
         status: 'UNKNOWN',
         answer: 'I understand this as a factoid question, but the loaded knowledge bases provide no answer.',
         values: [], provenance: [],
-        query: { ...result.query, factoidFrame: routed.frame, routedProviders: [] },
+        query: { ...result.query, factoidFrame: factoidRoute.frame, routedProviders: [] },
         taskFrame: {
-          taskId: 'task:runtime:factoid-gap', goals: [{ factoidFrame: routed.frame }],
+          taskId: 'task:runtime:factoid-gap', goals: [{ factoidFrame: factoidRoute.frame }],
           assertions: [], constraints: [], contextStack: ['context:runtime:baseline'],
           outputContract: { kind: 'semantic-values' },
         },
-        plan: { methodId: 'method:core:indexed-lookup', steps: [] },
+        plan: { ...providerMethodPlan(providerRoute.eligibleMethodIds), steps: [] },
         reasoning: { method: 'epistemic-abstention', gap: 'no-provider-evidence' },
         unresolvedSubgoals: [
           ...(result.unresolvedSubgoals ?? []),
-          { operation: 'retrieve-semantic-values', frame: routed.frame },
+          { operation: 'retrieve-semantic-values', frame: factoidRoute.frame },
         ],
       } : {}),
       selectedKbVersions: this.#selectedKbVersions(),
@@ -221,6 +281,12 @@ export class EslmRuntime {
       })) : [];
     const request = createGroundingRequest(text, primary.status, primary.query, {
       ...groundingLimits,
+      relevanceStrategySelection: selectedStrategyIdentities(
+        this.workPolicy, 'runtime.evidence.assess',
+      ),
+      focusStrategySelection: selectedStrategyIdentities(
+        this.workPolicy, 'runtime.knowledge.focus',
+      ),
       ...(plannedFocus.length > 0 ? { focus: plannedFocus } : {}),
     });
     const groundingResults = createGroundingAccumulator(request);

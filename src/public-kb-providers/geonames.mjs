@@ -39,7 +39,10 @@ function result(provider, answer, values, facts, ambiguity = false) {
       source: [`GeoNames:${id}`],
       method: 'source-retrieval',
     })),
-    reasoning: { method: ambiguity ? 'typed-ambiguity-preservation' : 'indexed-lookup' },
+    reasoning: {
+      method: ambiguity ? 'typed-ambiguity-preservation' : 'indexed-lookup',
+      methodId: 'method:core:indexed-lookup',
+    },
     query: { provider: provider.manifest.id }, learned: [], learnedRules: [], context: {},
   };
 }

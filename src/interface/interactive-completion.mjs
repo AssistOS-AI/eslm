@@ -1,5 +1,6 @@
 const COMMANDS = Object.freeze([
-  '/help', '/kbs', '/load ', '/unload ', '/model', '/memory', '/work', '/normalize', '/examples ', '/smoke ',
+  '/help', '/kbs', '/load ', '/unload ', '/model', '/memory', '/work', '/strategies', '/strategy ', '/normalize',
+  '/examples ', '/smoke ',
   '/trace', '/profile', '/clear', '/quit', '/exit',
 ]);
 
@@ -7,6 +8,13 @@ const ARGUMENTS = Object.freeze({
   '/normalize ': Object.freeze(['on', 'off']),
   '/memory ': Object.freeze(['auto', 'eager', 'lazy']),
   '/work ': Object.freeze(['quick', 'balanced', 'deep', 'exhaustive-bounded']),
+  '/strategies ': Object.freeze(['all', 'language', 'retrieval', 'reasoning', 'construction']),
+  '/strategy ': Object.freeze([
+    'clear',
+    ...builtinStrategyDescriptors().filter((descriptor) => descriptor.implementationState !== 'planned'
+      && STRATEGY_EXACT_SELECTION_STAGES.includes(descriptor.stage))
+      .map((descriptor) => `${descriptor.stage}=${strategyIdentity(descriptor)}`),
+  ].toSorted()),
 });
 
 function matches(values, prefix) {
@@ -41,3 +49,7 @@ export function interactiveCompletions(line, kbIds = []) {
 export function interactiveCommandCatalog() {
   return [...COMMANDS];
 }
+import { builtinStrategyDescriptors } from '../strategy/builtin-strategy-catalog.mjs';
+import {
+  STRATEGY_EXACT_SELECTION_STAGES, strategyIdentity,
+} from '../strategy/strategy-contract.mjs';

@@ -9,6 +9,9 @@ import {
 import { benchmarkCatalogFields } from '../src/evaluation/benchmark-report-catalog.mjs';
 import { researchBenchmarkReportRows } from '../src/evaluation/research-benchmark-report-rows.mjs';
 import {
+  createAdapterBenchmarkStrategyConfiguration,
+} from '../src/evaluation/benchmark-strategy-configuration.mjs';
+import {
   benchmarkCommand, executeLegacyRowsSequentially, selectedBenchmarkIds,
 } from '../src/interface/benchmark-command.mjs';
 
@@ -141,6 +144,12 @@ test('live public rows construct and execute one runtime at a time with measured
       return [{
         id: options.selected[0], resultOrigin: 'current-execution',
         engineKey: Object.keys(engines)[0],
+        strategyConfiguration: createAdapterBenchmarkStrategyConfiguration({
+          adapterId: `adapter:${options.selected[0]}`,
+          adapterVersion: '1',
+          stateFormat: 'test-adapter-state-v1',
+          state: { selection: 'test-only' },
+        }),
       }];
     },
     async () => ({

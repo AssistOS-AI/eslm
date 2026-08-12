@@ -139,9 +139,12 @@ the confidence margin, operator interactions, and declined paths visible before 
 
 ### Question #2: May KB evidence disambiguate a sentence?
 
-Options: a future policy may use typed world knowledge to rank an already enumerated ambiguity, or may require user
-confirmation whenever syntax is non-unique. Until a calibrated trust-aware policy is selected, interpretation remains
-independent of KB answer success.
+Options:
+
+- use typed world knowledge to rank only alternatives that the language analysis already enumerated; or
+- require user confirmation whenever the supported syntactic analysis remains non-unique.
+
+Until a calibrated trust-aware policy is selected, interpretation remains independent of KB answer success.
 
 ### Question #3: Why are opaque multiword symbols rejected when they contain operators?
 

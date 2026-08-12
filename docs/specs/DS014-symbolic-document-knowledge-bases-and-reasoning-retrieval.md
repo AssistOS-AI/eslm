@@ -137,6 +137,18 @@ The DS013 operator Language Agent has no authority in this build process.
 
 The compiler records coverage: decoded spans, semantically attempted spans, accepted records, unresolved spans, rejected candidates by reason, and provenance coverage. It never equates extraction count with factual correctness. Promotion requires nonce tests for generic mechanisms, source-grounded spot checks, contradiction checks, eager/lazy equivalence, proof-to-span validation, and held-out questions that were not exposed in the extraction packet.
 
+DS027 decomposes this target pipeline into a separate compiler-side strategy registry for decoding, structural
+segmentation, extraction, identity resolution, canonical standardization, validation, and physical compilation.
+Manuals, technical documentation, ontologies, lexical resources, event graphs, tables, structured APIs, and already
+canonical records may use different statically trusted adapters at the source-facing stages, but every route must
+converge on DS005 canonical candidates and the same validation and promotion gates. Extraction votes prioritize
+candidate review; they do not establish source truth or authorize promotion.
+
+The present document toolchain and repository skills already preserve frozen source identity, span provenance,
+canonical validation, and package compilation for their supported inputs. They are not yet coordinated by the common
+DS027 compiler-strategy registry, so the appearance of several source adapters must not be reported as completion of
+that target extension system.
+
 ### 11. Answer and citation contract
 
 Every document-backed result identifies the package versions and source editions consulted. A strict answer includes the proof graph and the exact source spans supporting leaf records. A defeasible or abductive result identifies its reasoning regime, ranked alternatives, assumptions, counterevidence, and why the selected hypothesis outranks others. A quoted answer distinguishes exact quotation from deterministic realization of a symbolic conclusion.
@@ -196,6 +208,13 @@ Response: For an inferred answer, only when a registered method uses the corresp
 returned solely by failure-time grounding is cited as a related record inside the bundle and is explicitly not answer
 provenance. On the separate DS022 request-synthesis route, a selected span may instead be attribution for the exact
 source claim copied into a `PARTIAL` artifact, but it still is not proof of a broader explanation or conclusion.
+
+### Question #5: Why do source-specific adapters converge on one canonical record boundary?
+
+Response: Manuals, ontologies, tables, and event resources expose different structure, but downstream reasoning needs
+one validated vocabulary for identity, scope, epistemic status, provenance, rules, and gaps. Convergence permits
+source-specific extraction without giving each source a private runtime or silently discarding meanings that need a
+typed canonical extension.
 
 ## Conclusion
 

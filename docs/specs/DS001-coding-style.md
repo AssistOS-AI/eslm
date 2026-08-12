@@ -26,6 +26,12 @@ The principal product directories are `src/`, `tests/`, `training/`, `docs/`, an
 
 Trusted reusable mechanisms belong in cohesive subdirectories under `src/`: language compilation, semantic contracts, KB schemas and loading, reasoning methods and planning, runtime orchestration, benchmark adapters, evaluation, training control, operator-only language services, and CLI adapters. `src/runtime/engine.mjs` and `src/runtime/runtime.mjs` define the deployable inference closure. `src/runtime/language-agent-assisted-runtime.mjs` defines the product-neutral operator wrapper and `src/language/codex-normalizer.mjs` defines its currently supported Codex adapter; neither may become a transitive dependency of the deployable closure. Tests mirror those boundaries. Canonical KB records, manifests, compiler outputs, source registrations, and reports live within independently versioned directories under `training/KBs/`. Dataset caches and prepared benchmark pools remain separate from KB knowledge.
 
+DS027 strategy contracts, registry, scheduling, arbitration, and receipts must be split into cohesive modules rather
+than collected in one central switch or hidden behind ambient runtime callbacks. One strategy implementation owns one
+typed concern and does not call another strategy directly. Cross-strategy and cross-stage coordination belongs in the
+shared coordinator. Descriptor constants, profile schemas, execution, arbitration, and presentation should remain
+separate modules so each can be tested without constructing the complete runtime.
+
 Do not create root-level `data`, `benchmarks`, `results`, `artifacts`, or `configs` directories. Generated and temporary training artifacts belong under ignored paths selected by the training contract. Published documentation evidence belongs under `docs/results/`.
 
 ### JavaScript conventions
@@ -42,13 +48,20 @@ DS009 owns process isolation, untrusted-input handling, and security controls. D
 normalization subprocess protocol. DS004 and DS007 own training authority and its command surface. This coding contract
 requires runtime core modules to remain outside both subprocess dependency closures.
 
-DS002 owns the executable-versus-declarative placement test, DS015 owns generic-method generality, and DS017 owns
+DS002 owns the executable-versus-declarative placement test, DS015 owns generic-method generality, DS027 owns static
+trusted strategy registration and extension boundaries, and DS017 owns
 adapter and oracle isolation. Source review must enforce those contracts: runtime control flow may consume declared
 semantic types and validated policy metadata, but not external record identity or expected output.
 
 ### Tests and fixtures
 
 Use `node:test` with strict assertions. Name tests after observable contracts. Organize unit tests by the source boundary they protect and add integration tests for CLI, canonical-to-compiled equivalence, lazy-versus-exhaustive loading, planner traces, honest failure, skill portability, agent invocation construction, normalization invocation and host rejection, dataset isolation, benchmark oracle isolation, renamed and nonce generalization, deterministic multi-thousand regression smoke, and documentation synchronization.
+
+Strategy tests additionally cover descriptor and profile validation, registration-order independence, typed boundary
+rejection, canonical schedules, correlated-vote deduplication, ambiguity, mandatory safety vetoes, deterministic
+resource allocation, explicit exhaustion, bounded exception diagnostics, receipt validation, and per-strategy
+ablations. A mock strategy must use nonce semantic identifiers; it must not encode a motivating example in its ID or
+conditions.
 
 Fixtures must be small, legible, deterministic, and licensed for repository inclusion. Public datasets remain local ignored inputs. A fixture demonstrates software behavior and is never reported as a scientific benchmark. Tests may write only to operating-system temporary directories or an explicit ignored work directory; they must not mutate published KB versions or promoted reports.
 

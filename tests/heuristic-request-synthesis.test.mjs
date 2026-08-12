@@ -75,6 +75,11 @@ test('source summary is deterministic and expansion remains extractive', () => {
   assert.match(expansion.answer, /- A zoral moves\./u);
   assert.match(expansion.answer, /- It rests\./u);
   assert.doesNotMatch(expansion.answer, /because/u);
+
+  const tablePlan = planHeuristicRequest('Summarize "A borin glows." as a table.');
+  const table = synthesizeHeuristicRequest(tablePlan, grounding([]));
+  assert.match(table.answer, /\| Supplied excerpt \| Origin \|/u);
+  assert.match(table.answer, /\| A borin glows\. \| supplied material \|/u);
 });
 
 test('source-only summaries can use content-related KB evidence without marker-word topics', () => {
@@ -113,4 +118,47 @@ test('source truncation is visible and never described as full sentence preserva
   assert.match(result.answer, /quotes bounded excerpts/u);
   assert.match(result.answer, /Coverage gaps/u);
   assert.match(result.answer, /per-sentence excerpt cap/u);
+});
+
+test('request-plan truncation is repeated in artifact coverage gaps', () => {
+  const plan = planHeuristicRequest(
+    'Summarize zorals; explain velins; outline tarins.',
+    { limits: { maximumOperations: 2 } },
+  );
+  assert.equal(plan.receipt.complete, false);
+  assert.ok(plan.receipt.truncationReasons.includes('operation-count-budget'));
+  const result = synthesizeHeuristicRequest(plan, grounding([
+    entry('nonce', 'z1', 'A zoral moves.', 'zoral', 'can', 'move'),
+    entry('nonce', 'v1', 'A velin rests.', 'velin', 'can', 'rest'),
+  ]));
+  assert.ok(result.gaps.some((gap) => /operation-count-budget/u.test(gap)));
+  assert.match(result.answer, /Request planning was incomplete: operation-count-budget/u);
+});
+
+test('multi-obligation synthesis executes and accounts for every operation in discourse order', () => {
+  const plan = planHeuristicRequest(
+    'Summarize zorals; compare velins with tarins in a table; then outline quorims.',
+  );
+  const result = synthesizeHeuristicRequest(plan, grounding([
+    entry('nonce', 'z1', 'A zoral has an amber shell.', 'zoral', 'has_color', 'amber'),
+    entry('nonce', 'v1', 'A velin has a cobalt shell.', 'velin', 'has_color', 'cobalt'),
+    entry('nonce', 't1', 'A tarin has a silver shell.', 'tarin', 'has_color', 'silver'),
+    entry('nonce', 'q1', 'A quorim rests at dawn.', 'quorim', 'rests_at', 'dawn'),
+  ]));
+
+  assert.deepEqual(result.operationArtifacts.map((artifact) => artifact.intent),
+    ['summarize', 'compare', 'outline']);
+  assert.deepEqual(result.operationArtifacts.map((artifact) => artifact.order), [1, 2, 3]);
+  assert.deepEqual(result.operationArtifacts.map((artifact) => artifact.topicIds),
+    [['topic:1'], ['topic:2', 'topic:3'], ['topic:4']]);
+  assert.ok(result.operationArtifacts.every((artifact) =>
+    artifact.evidence.selected.length > 0 && artifact.gaps.length > 0 && artifact.complete === false));
+  const first = result.answer.indexOf('## Obligation 1: Summarize — zorals');
+  const second = result.answer.indexOf('## Obligation 2: Compare — velins and tarins');
+  const third = result.answer.indexOf('## Obligation 3: Outline — quorims');
+  assert.ok(first >= 0 && first < second && second < third);
+  assert.match(result.answer, /## Aggregate artifact/u);
+  assert.match(result.answer, /\| Topic \| Retrieved KB statement \| Source \|/u);
+  assert.deepEqual(result.evidence.selected.map((item) => item.entry.recordId),
+    ['z1', 'v1', 't1', 'q1']);
 });

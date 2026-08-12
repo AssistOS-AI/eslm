@@ -37,6 +37,8 @@ The stable responsibility map is:
 | DS016–DS017 | source authority and benchmark adapter/oracle lifecycle |
 | DS018–DS021 | corpus gate, streaming compilation, exact routing, and cache/memory behavior |
 | DS022 | deterministic language approximation, request-intent planning and construction, grounding focus, and named work policy |
+| DS023–DS026 | statistical symbolic relevance, complex-language decomposition research, multi-obligation verified synthesis, and grounded product evaluation |
+| DS027 | trusted strategy descriptors, static registration, stage coordination, exact selection, arbitration, resources, receipts, and compiler extension boundaries |
 
 A change updates only the DS files whose primary responsibility changes. A new benchmark normally changes the typed catalog, source receipt, adapter, tests, benchmark HTML page, and generated report, not the generic language, storage, CLI, roadmap, or documentation DS. A new reasoning method changes DS015 and the planner contract only if planner behavior also changes.
 
@@ -60,6 +62,15 @@ next acceptance gate and the condition that would satisfy it. It must not hide a
 the project through vague self-negation such as “not a general assistant” when an exact supported boundary and forward
 gate can say more. Target language is clearly labeled and never presented as current execution.
 
+Strategy documentation uses the catalog's three implementation states exactly. `coordinated` means the real executor
+runs through the sealed common registry and stage coordinator. `instrumented-local` means an exact descriptor and
+observable owner execution exist while the semantic owner still performs the work; only the subset whose owner checks
+the exact allowlist is policy-selectable. `planned` is a reviewed extension point with no selectable executor. Named
+strategy presets are always described as inventory views; only exact stage-to-identity allowlists are described as
+execution controls. Catalog visibility, selection, and execution are never used as synonyms. Inventory
+`executionEnabled` means policy admission, not observed invocation; a non-policy-gated local owner may still execute
+through the ordinary path, and only its receipts establish that fact.
+
 ### Navigation and page layout
 
 The site uses one shared header navigation and breadcrumbs. The home page is a short “start here” view: project
@@ -68,11 +79,11 @@ identity and actual boundary, a compact evidence warning and link to the current
 and roadmap state, links to the evidence report, and does not embed a second dashboard. Other material receives a
 dedicated page linked from the sitemap and menu.
 
-The shared desktop layout may use a main canvas up to approximately 96 rem, while ordinary prose may grow to roughly
-112 characters per line when the viewport permits. Headings use the available prose width and are not forced into an
-arbitrarily narrow inner column. Prose remains left-aligned; it wraps only at words or explicit break opportunities,
-not at decorative midpoint boundaries. Wide tables and code blocks scroll inside their own containers instead of
-widening paragraphs; benchmark rows stack into labeled blocks on narrow screens. The desktop
+The shared desktop layout may use a main canvas up to approximately 96 rem. Ordinary prose and headings use the
+available content width rather than an arbitrary inner-column or character-count limit. Prose remains left-aligned;
+it wraps only when the viewport, a word boundary, or an explicit break opportunity requires it, not at decorative
+midpoint boundaries. Wide tables and code blocks scroll inside their own containers instead of widening paragraphs;
+benchmark rows stack into labeled blocks on narrow screens. The desktop
 benchmark table uses approximately 30% for benchmark identity, execution mark, concise score, tested/possible scope,
 and route coverage, and 70% for human-readable outcomes, protocol, diagnosis, and action. Technical identifiers wrap;
 source hashes remain in raw or secondary audit views.
@@ -95,6 +106,12 @@ source receipts. Hand-authored HTML explains stable task semantics, metric meani
 does not copy temporary numbers. Per-benchmark pages may render a generated row selected from the same JSON; they do
 not hand-maintain counts. Dashboard diagnoses and coverage text come from report rows, never hardcoded
 benchmark-specific JavaScript branches.
+
+A row described as current must expose the DS010 strategy-configuration snapshot: content-addressed catalog and
+configuration identity, requested/effective work policy or explicit adapter-local state, exact allowlists, configured
+arbiter identities, and aggregate stage-receipt summaries. Hand-authored HTML may explain those fields but must not
+invent execution receipts for an `instrumented-local` or `planned` entry. Stored rows lacking the snapshot remain
+visibly historical or reporting-incomplete.
 
 Roadmap coverage uses `docs/results/current-status.json` with named capability bands, evidence, and boundaries. It remains separate from benchmark accuracy. A check beside a benchmark means the declared probe executed; it does not mean the complete official benchmark is solved.
 
@@ -132,6 +149,12 @@ Response: It is useful when it answers a different reviewer question, such as al
 Response: A single generated view prevents three pages from competing as the empirical authority and reduces visual
 noise. Home and status still link to the same raw report, while evaluation explains its fields and limitations in the
 appropriate context.
+
+### Question #4: Why must strategy implementation states remain visible in prose?
+
+Response: A descriptor inventory, a local execution gate, and shared-coordinator execution are materially different
+evidence. Keeping `planned`, `instrumented-local`, and `coordinated` explicit lets a beginner understand the migration
+and prevents architectural aspiration from being reported as runtime behavior.
 
 ## Conclusion
 

@@ -5,6 +5,36 @@ const PROFILE_NAMES = Object.freeze([
   'exhaustive-bounded',
 ]);
 
+const STRATEGY_SELECTION_PRESETS = Object.freeze({
+  all: Object.freeze({}),
+  language: Object.freeze({
+    includeStages: Object.freeze(['runtime.language.interpret', 'runtime.request.plan']),
+  }),
+  retrieval: Object.freeze({
+    includeStages: Object.freeze([
+      'runtime.knowledge.focus', 'runtime.knowledge.retrieve', 'runtime.evidence.assess',
+      'runtime.failure.ground',
+    ]),
+  }),
+  reasoning: Object.freeze({
+    includeStages: Object.freeze([
+      'runtime.method.plan', 'runtime.reason.execute', 'runtime.result.verify',
+    ]),
+  }),
+  construction: Object.freeze({
+    includeStages: Object.freeze(['runtime.result.construct']),
+  }),
+});
+
+const MANDATORY_STRATEGY_IDENTITIES = Object.freeze({
+  'runtime.language.interpret': 'strategy:language:direct-controlled-parser@1',
+  'runtime.knowledge.focus': 'strategy:focus:function-word-exclusion@1',
+});
+
+const BUILTIN_STRATEGIES_BY_IDENTITY = new Map(builtinStrategyDescriptors().map((descriptor) => [
+  strategyIdentity(descriptor), descriptor,
+]));
+
 const LIMIT_RULES = Object.freeze({
   maximumHeuristicCandidates: { minimum: 1, maximum: 256, integer: true },
   maximumHeuristicReparses: { minimum: 1, maximum: 128, integer: true },
@@ -139,6 +169,86 @@ function canonicalOverrides(overrides = {}) {
   return result;
 }
 
+function canonicalStrategySelection(selection = {}) {
+  if (!selection || typeof selection !== 'object' || Array.isArray(selection)) {
+    throw new Error('Work-policy strategy selection must be an object.');
+  }
+  const preset = String(selection.preset ?? 'all').toLocaleLowerCase('en-US');
+  if (!Object.hasOwn(STRATEGY_SELECTION_PRESETS, preset)) {
+    throw new Error(`Strategy preset must be one of: ${Object.keys(STRATEGY_SELECTION_PRESETS).join(', ')}.`);
+  }
+  const selected = selection.selected ?? {};
+  if (!selected || typeof selected !== 'object' || Array.isArray(selected)
+    || Object.keys(selected).length > 16) {
+    throw new Error('Selected strategies must be a bounded stage-to-identities object.');
+  }
+  const canonical = {};
+  for (const stage of Object.keys(selected).toSorted()) {
+    if (!STRATEGY_STAGES.includes(stage) || !Array.isArray(selected[stage])
+      || selected[stage].length === 0 || selected[stage].length > 256) {
+      throw new Error(`Strategy selection for ${stage} must be a non-empty bounded identity array.`);
+    }
+    if (!STRATEGY_EXACT_SELECTION_STAGES.includes(stage)) {
+      throw new Error(`Strategy stage ${stage} is catalogued but not exact-selection-enabled in v1.`);
+    }
+    const values = [...new Set(selected[stage])].toSorted();
+    if (values.some((value) => typeof value !== 'string'
+      || !/^strategy:[a-z0-9][a-z0-9:-]*@\d+$/u.test(value))) {
+      throw new Error(`Strategy selection for ${stage} contains an invalid identity.`);
+    }
+    for (const identity of values) {
+      const descriptor = BUILTIN_STRATEGIES_BY_IDENTITY.get(identity);
+      if (!descriptor || descriptor.stage !== stage) {
+        throw new Error(`Strategy selection for ${stage} contains an unknown or wrong-stage identity: ${identity}.`);
+      }
+      if (descriptor.implementationState === 'planned') {
+        throw new Error(`Strategy selection for ${stage} cannot execute planned identity ${identity}.`);
+      }
+    }
+    const mandatory = MANDATORY_STRATEGY_IDENTITIES[stage];
+    if (mandatory && !values.includes(mandatory)) {
+      throw new Error(`Strategy selection for ${stage} must retain mandatory ${mandatory}.`);
+    }
+    canonical[stage] = Object.freeze(values);
+  }
+  return Object.freeze({
+    preset,
+    selected: Object.freeze(canonical),
+  });
+}
+
+export function strategyStageSelected(policy, stage) {
+  assertWorkPolicy(policy);
+  if (!STRATEGY_STAGES.includes(stage)) throw new Error(`Unknown strategy stage: ${stage}.`);
+  // The named preset is an inventory/ablation view in v1. Exact stage allowlists are the execution control.
+  return true;
+}
+
+export function strategySelected(policy, descriptor) {
+  const selection = assertWorkPolicy(policy).effective.strategies;
+  if (!strategyStageSelected(policy, descriptor.stage)) return false;
+  const exact = selection.selected[descriptor.stage];
+  return !exact || exact.includes(strategyIdentity(descriptor));
+}
+
+export function strategyIdentitySelected(policy, stage, identity) {
+  const selection = assertWorkPolicy(policy).effective.strategies;
+  if (!strategyStageSelected(policy, stage)) return false;
+  const exact = selection.selected[stage];
+  return !exact || exact.includes(identity);
+}
+
+export function reasoningMethodSelected(policy, methodDescriptor) {
+  const identity = `${methodDescriptor.methodId.replace(/^method:/u, 'strategy:')}@${
+    methodDescriptor.implementationVersion}`;
+  return strategyIdentitySelected(policy, 'runtime.reason.execute', identity);
+}
+
+export function selectedStrategyIdentities(policy, stage) {
+  if (!strategyStageSelected(policy, stage)) return Object.freeze([]);
+  return assertWorkPolicy(policy).effective.strategies.selected[stage];
+}
+
 function validateCrossLimits(limits) {
   if (limits.maximumHeuristicReparses > limits.maximumHeuristicCandidates) {
     throw new Error('maximumHeuristicReparses cannot exceed maximumHeuristicCandidates.');
@@ -158,10 +268,12 @@ export function resolveWorkPolicy(input = {}) {
     return resolveWorkPolicy({
       profile: input.requested.profile,
       overrides: input.requested.overrides,
+      strategies: input.requested.strategies,
     });
   }
   const profile = assertProfileName(String(input.profile ?? 'balanced').toLocaleLowerCase('en-US'));
   const overrides = canonicalOverrides(input.overrides);
+  const strategies = canonicalStrategySelection(input.strategies);
   const limits = { ...PROFILE_LIMITS[profile], ...overrides };
   validateCrossLimits(limits);
   return Object.freeze({
@@ -169,10 +281,12 @@ export function resolveWorkPolicy(input = {}) {
     requested: Object.freeze({
       profile,
       overrides: Object.freeze(overrides),
+      strategies,
     }),
     effective: Object.freeze({
       profile,
       limits: Object.freeze(limits),
+      strategies,
     }),
     bounded: true,
     hardTimeLimit: false,
@@ -189,6 +303,11 @@ export function assertWorkPolicy(policy) {
     throw new Error('Requested and effective work-profile names must agree.');
   }
   const overrides = canonicalOverrides(policy.requested?.overrides);
+  const requestedStrategies = canonicalStrategySelection(policy.requested?.strategies);
+  const effectiveStrategies = canonicalStrategySelection(policy.effective?.strategies);
+  if (JSON.stringify(requestedStrategies) !== JSON.stringify(effectiveStrategies)) {
+    throw new Error('Requested and effective strategy selections must agree.');
+  }
   const limits = policy.effective?.limits;
   if (!limits || typeof limits !== 'object' || Array.isArray(limits)) {
     throw new Error('Effective work-policy limits must be an object.');
@@ -236,6 +355,11 @@ export function groundingLimitsFromWorkPolicy(policy) {
 }
 
 export {
+  STRATEGY_SELECTION_PRESETS as WORK_STRATEGY_PRESETS,
   PROFILE_LIMITS as WORK_PROFILE_LIMITS,
   PROFILE_NAMES as WORK_PROFILE_NAMES,
 };
+import { builtinStrategyDescriptors } from '../strategy/builtin-strategy-catalog.mjs';
+import {
+  STRATEGY_EXACT_SELECTION_STAGES, STRATEGY_STAGES, strategyIdentity,
+} from '../strategy/strategy-contract.mjs';

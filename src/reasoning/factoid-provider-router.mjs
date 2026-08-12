@@ -1,6 +1,73 @@
 import { parseFactoidQuestion } from '../language/factoid-question.mjs';
 import { runOptionalProviderQuery } from '../runtime/provider-query-lifecycle.mjs';
 
+const INDEXED_LOOKUP_METHOD = 'method:core:indexed-lookup';
+
+function boundedDiagnostic(error) {
+  try { return String(error?.message ?? error).slice(0, 240); } catch { return 'unprintable provider method declaration'; }
+}
+
+function providerMethodDiagnostic(provider, error) {
+  return Object.freeze({
+    provider: provider?.manifest?.id,
+    kbId: provider?.manifest?.kbId ?? provider?.manifest?.id,
+    kbVersion: provider?.manifest?.kbVersion,
+    operation: 'provider-method-selection',
+    stage: 'methodSelection',
+    diagnostic: `Provider method selection failed: ${boundedDiagnostic(error)}`,
+  });
+}
+
+function declaredQuestionMethod(provider, text) {
+  const declared = typeof provider.reasoningMethodForQuestion === 'function'
+    ? provider.reasoningMethodForQuestion(text) : INDEXED_LOOKUP_METHOD;
+  if (declared && typeof declared.then === 'function') {
+    throw new TypeError('Provider reasoningMethodForQuestion must be synchronous.');
+  }
+  if (declared === undefined || declared === null) return undefined;
+  if (typeof declared !== 'string' || !/^method:[a-z0-9][a-z0-9:-]*$/u.test(declared)) {
+    throw new TypeError('Provider reasoningMethodForQuestion returned an invalid method identity.');
+  }
+  return declared;
+}
+
+function methodAllowed(options, methodId) {
+  return typeof options.methodAllowed !== 'function' || options.methodAllowed(methodId) === true;
+}
+
+function preparedProviders(providers, candidates, options) {
+  const ordered = [...providers].toSorted((left, right) =>
+    left.manifest.id.localeCompare(right.manifest.id));
+  const prepared = [];
+  const blockedMethods = new Set();
+  const providerErrors = [];
+  for (const provider of ordered) {
+    const eligible = [];
+    try {
+      for (const candidate of candidates) {
+        const methodId = declaredQuestionMethod(provider, candidate.text);
+        if (!methodId) continue;
+        if (!methodAllowed(options, methodId)) {
+          blockedMethods.add(methodId);
+          continue;
+        }
+        eligible.push(Object.freeze({ candidate, methodId }));
+      }
+    } catch (error) {
+      providerErrors.push(providerMethodDiagnostic(provider, error));
+      continue;
+    }
+    if (eligible.length > 0) prepared.push(Object.freeze({ provider, candidates: Object.freeze(eligible) }));
+  }
+  return Object.freeze({
+    prepared: Object.freeze(prepared),
+    eligibleMethodIds: Object.freeze([...new Set(prepared.flatMap((item) =>
+      item.candidates.map((candidate) => candidate.methodId)))].toSorted()),
+    blockedMethodIds: Object.freeze([...blockedMethods].toSorted()),
+    providerErrors: Object.freeze(providerErrors),
+  });
+}
+
 function valueKey(value) {
   if (typeof value === 'string') {
     return `string:${value.normalize('NFKC').toLocaleLowerCase('en-US').replace(/\s+/gu, ' ').trim()}`;
@@ -34,21 +101,39 @@ function distinctProvenance(results) {
   return [...byKey.values()];
 }
 
-async function askProvider(provider, frame) {
+async function askProvider(provider, candidates) {
   let firstFailure;
-  for (const candidate of frame.candidates) {
+  for (const planned of candidates) {
+    const { candidate, methodId } = planned;
     const result = await provider.ask(candidate.text);
     if (!result) continue;
-    const match = Object.freeze({ provider, candidate, result });
+    if (result.reasoning?.methodId !== methodId) {
+      throw new TypeError(`Provider result method ${String(result.reasoning?.methodId)} does not match declared ${methodId}.`);
+    }
+    const match = Object.freeze({ provider, candidate, methodId, result });
     if ((result.values?.length ?? 0) > 0 || result.status === 'AMBIGUOUS' || result.ambiguity) return match;
     firstFailure ??= match;
   }
   return firstFailure;
 }
 
-async function askProviderDirectly(provider, text) {
-  const result = await provider.ask(text);
-  return result ? Object.freeze({ provider, candidate: { text }, result }) : undefined;
+async function askProviderDirectly(provider, planned) {
+  const result = await provider.ask(planned.candidate.text);
+  if (result && result.reasoning?.methodId !== planned.methodId) {
+    throw new TypeError(`Provider result method ${String(result.reasoning?.methodId)} does not match declared ${planned.methodId}.`);
+  }
+  return result ? Object.freeze({ provider, ...planned, result }) : undefined;
+}
+
+function routedMethodAccounting(matches) {
+  return {
+    routedMethodIds: [...new Set(matches.map((match) => match.methodId))].toSorted(),
+    providerMethods: matches.map((match) => ({
+      provider: match.provider.manifest.id,
+      methodId: match.methodId,
+    })).toSorted((left, right) => left.provider.localeCompare(right.provider)
+      || left.methodId.localeCompare(right.methodId)),
+  };
 }
 
 function normalizedStatus(status) {
@@ -82,6 +167,7 @@ function mergedAgreement(matches, frame) {
     reasoning: {
       ...first.reasoning,
       routing: 'provider-order-independent-semantic-agreement',
+      ...routedMethodAccounting(matches),
       providerStatuses: matches.map((match) => ({
         provider: match.provider.manifest.id,
         status: normalizedStatus(match.result.status),
@@ -104,7 +190,10 @@ function mergedAmbiguity(matches, frame) {
       values: result.values ?? [],
     })),
     provenance: distinctProvenance(results),
-    reasoning: { method: 'typed-provider-ambiguity', routing: 'exhaustive-provider-consultation' },
+    reasoning: {
+      method: 'typed-provider-ambiguity', routing: 'exhaustive-provider-consultation',
+      ...routedMethodAccounting(matches),
+    },
     query: {
       factoidFrame: frame,
       routedProviders: matches.map((match) => match.provider.manifest.id).sort(),
@@ -128,7 +217,10 @@ function mergedFailureOutcomes(matches, frame) {
       values: [],
     })),
     provenance: [],
-    reasoning: { method: 'typed-provider-outcome-ambiguity', routing: 'exhaustive-provider-consultation' },
+    reasoning: {
+      method: 'typed-provider-outcome-ambiguity', routing: 'exhaustive-provider-consultation',
+      ...routedMethodAccounting(matches),
+    },
     query: {
       factoidFrame: frame,
       routedProviders: matches.map((match) => match.provider.manifest.id).sort(),
@@ -176,16 +268,14 @@ function providerLimits(options = {}) {
   return { maximumSources, maximumParaphrases };
 }
 
-async function collectProviderOutcomes(providers, operation, ask) {
-  const ordered = [...providers].toSorted((left, right) =>
-    left.manifest.id.localeCompare(right.manifest.id));
-  const outcomes = await Promise.all(ordered.map(async (provider) => ({
-    provider,
-    queried: await runOptionalProviderQuery(provider, operation, () => ask(provider)),
+async function collectProviderOutcomes(prepared, operation, ask) {
+  const outcomes = await Promise.all(prepared.map(async (item) => ({
+    item,
+    queried: await runOptionalProviderQuery(item.provider, operation, () => ask(item)),
   })));
   return {
     matches: outcomes.map((outcome) => outcome.queried.value).filter(Boolean),
-    consultedProviders: ordered.map((provider) => ({
+    consultedProviders: prepared.map(({ provider }) => ({
       kbId: provider.manifest.kbId ?? provider.manifest.id,
       version: provider.manifest.kbVersion,
     })),
@@ -200,17 +290,33 @@ async function collectProviderOutcomes(providers, operation, ask) {
 export async function routeFactoidQuestion(providers, text, options = {}) {
   const frame = parseFactoidQuestion(text);
   if (!frame || !Array.isArray(providers) || providers.length === 0) {
-    return { frame, result: undefined, consultedProviders: [], providerErrors: [] };
+    return {
+      frame, result: undefined, consultedProviders: [], providerErrors: [],
+      eligibleMethodIds: [], blockedMethodIds: [], policyExcluded: false,
+    };
   }
   const limits = providerLimits(options);
-  if (providers.length > limits.maximumSources) {
+  const planning = preparedProviders(providers, frame.candidates, options);
+  if (planning.prepared.length === 0) {
+    return {
+      frame, result: undefined, consultedProviders: [],
+      providerErrors: planning.providerErrors,
+      eligibleMethodIds: planning.eligibleMethodIds,
+      blockedMethodIds: planning.blockedMethodIds,
+      policyExcluded: planning.blockedMethodIds.length > 0,
+    };
+  }
+  if (planning.prepared.length > limits.maximumSources) {
     return {
       frame,
       result: providerBudgetResult(
-        frame, `${providers.length} sources exceed the ${limits.maximumSources}-source limit.`,
+        frame, `${planning.prepared.length} sources exceed the ${limits.maximumSources}-source limit.`,
       ),
       consultedProviders: [],
-      providerErrors: [],
+      providerErrors: planning.providerErrors,
+      eligibleMethodIds: planning.eligibleMethodIds,
+      blockedMethodIds: planning.blockedMethodIds,
+      policyExcluded: false,
     };
   }
   if (frame.candidates.length > limits.maximumParaphrases) {
@@ -220,17 +326,23 @@ export async function routeFactoidQuestion(providers, text, options = {}) {
         frame, `${frame.candidates.length} paraphrases exceed the ${limits.maximumParaphrases}-paraphrase limit.`,
       ),
       consultedProviders: [],
-      providerErrors: [],
+      providerErrors: planning.providerErrors,
+      eligibleMethodIds: planning.eligibleMethodIds,
+      blockedMethodIds: planning.blockedMethodIds,
+      policyExcluded: false,
     };
   }
   const collected = await collectProviderOutcomes(
-    providers, 'factoid-question', (provider) => askProvider(provider, frame),
+    planning.prepared, 'factoid-question', (item) => askProvider(item.provider, item.candidates),
   );
   return {
     frame,
     result: providerOutcome(collected.matches, frame),
     consultedProviders: collected.consultedProviders,
-    providerErrors: collected.providerErrors,
+    providerErrors: [...planning.providerErrors, ...collected.providerErrors],
+    eligibleMethodIds: planning.eligibleMethodIds,
+    blockedMethodIds: planning.blockedMethodIds,
+    policyExcluded: false,
   };
 }
 
@@ -241,26 +353,44 @@ export async function routeFactoidQuestion(providers, text, options = {}) {
  */
 export async function routeDirectProviderQuestion(providers, text, options = {}) {
   if (!Array.isArray(providers) || providers.length === 0) {
-    return { result: undefined, consultedProviders: [], providerErrors: [] };
+    return {
+      result: undefined, consultedProviders: [], providerErrors: [],
+      eligibleMethodIds: [], blockedMethodIds: [], policyExcluded: false,
+    };
   }
   const limits = providerLimits(options);
-  if (providers.length > limits.maximumSources) {
+  const planning = preparedProviders(providers, [{ text }], options);
+  if (planning.prepared.length === 0) {
+    return {
+      result: undefined, consultedProviders: [], providerErrors: planning.providerErrors,
+      eligibleMethodIds: planning.eligibleMethodIds,
+      blockedMethodIds: planning.blockedMethodIds,
+      policyExcluded: planning.blockedMethodIds.length > 0,
+    };
+  }
+  if (planning.prepared.length > limits.maximumSources) {
     return {
       result: providerBudgetResult(
-        undefined, `${providers.length} sources exceed the ${limits.maximumSources}-source limit.`,
+        undefined, `${planning.prepared.length} sources exceed the ${limits.maximumSources}-source limit.`,
       ),
       consultedProviders: [],
-      providerErrors: [],
+      providerErrors: planning.providerErrors,
+      eligibleMethodIds: planning.eligibleMethodIds,
+      blockedMethodIds: planning.blockedMethodIds,
+      policyExcluded: false,
     };
   }
   const collected = await collectProviderOutcomes(
-    providers,
+    planning.prepared,
     'direct-provider-question',
-    (provider) => askProviderDirectly(provider, text),
+    (item) => askProviderDirectly(item.provider, item.candidates[0]),
   );
   return {
     result: providerOutcome(collected.matches, undefined),
     consultedProviders: collected.consultedProviders,
-    providerErrors: collected.providerErrors,
+    providerErrors: [...planning.providerErrors, ...collected.providerErrors],
+    eligibleMethodIds: planning.eligibleMethodIds,
+    blockedMethodIds: planning.blockedMethodIds,
+    policyExcluded: false,
   };
 }

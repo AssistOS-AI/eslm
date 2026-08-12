@@ -31,7 +31,7 @@ import {
 } from './result-contract.mjs';
 import { executeTypedTask } from './typed-task-execution.mjs';
 import {
-  hornLimitsFromWorkPolicy, resolveWorkPolicy,
+  hornLimitsFromWorkPolicy, reasoningMethodSelected, resolveWorkPolicy,
 } from './work-policy.mjs';
 
 function uniqueKbVersions(values) {
@@ -59,22 +59,29 @@ export class EslmEngine {
           ? {} : { maximumHornJoinAttempts: declaredDeduction.maximumJoinAttempts }),
       },
     });
-    this.capabilities = new CapabilityRegistry()
-      .register(CORE_METHOD_DESCRIPTORS.datalog, () => undefined)
-      .register(CORE_METHOD_DESCRIPTORS.induction, () => undefined)
-      .register(CORE_METHOD_DESCRIPTORS.finiteConjunctiveRuleInduction, induceFiniteConjunctiveRule)
-      .register(CORE_METHOD_DESCRIPTORS.finiteEpisodicWorld, executeEpisodicWorldTask)
-      .register(CORE_METHOD_DESCRIPTORS.abduction, () => undefined)
-      .register(CORE_METHOD_DESCRIPTORS.temporalPredecessor, () => undefined)
-      .register(CORE_METHOD_DESCRIPTORS.containerState, executeContainerStateTask)
-      .register(CORE_METHOD_DESCRIPTORS.narrativeContinuation, selectNarrativeContinuation)
-      .register(CORE_METHOD_DESCRIPTORS.typedRelationAlgebra, executeTypedRelationTask)
-      .register(CORE_METHOD_DESCRIPTORS.spatialVectorConstraints, executeSpatialVectorTask)
-      .register(CORE_METHOD_DESCRIPTORS.spatialExtentInequalities, executeSpatialExtentTask)
-      .register(CORE_METHOD_DESCRIPTORS.qualitativeRelationClosure, executeQualitativeRelationTask)
-      .register(CORE_METHOD_DESCRIPTORS.scalableBooleanEntailment, decideBooleanEntailment)
-      .register(CORE_METHOD_DESCRIPTORS.finiteFirstOrderCountermodel, constructFiniteFirstOrderCountermodel)
-      .register(CORE_METHOD_DESCRIPTORS.categoricalLogic, executeCategoricalTask);
+    this.capabilities = new CapabilityRegistry();
+    const methodBindings = [
+      [CORE_METHOD_DESCRIPTORS.datalog, () => undefined],
+      [CORE_METHOD_DESCRIPTORS.induction, () => undefined],
+      [CORE_METHOD_DESCRIPTORS.finiteConjunctiveRuleInduction, induceFiniteConjunctiveRule],
+      [CORE_METHOD_DESCRIPTORS.finiteEpisodicWorld, executeEpisodicWorldTask],
+      [CORE_METHOD_DESCRIPTORS.abduction, () => undefined],
+      [CORE_METHOD_DESCRIPTORS.temporalPredecessor, () => undefined],
+      [CORE_METHOD_DESCRIPTORS.containerState, executeContainerStateTask],
+      [CORE_METHOD_DESCRIPTORS.narrativeContinuation, selectNarrativeContinuation],
+      [CORE_METHOD_DESCRIPTORS.typedRelationAlgebra, executeTypedRelationTask],
+      [CORE_METHOD_DESCRIPTORS.spatialVectorConstraints, executeSpatialVectorTask],
+      [CORE_METHOD_DESCRIPTORS.spatialExtentInequalities, executeSpatialExtentTask],
+      [CORE_METHOD_DESCRIPTORS.qualitativeRelationClosure, executeQualitativeRelationTask],
+      [CORE_METHOD_DESCRIPTORS.scalableBooleanEntailment, decideBooleanEntailment],
+      [CORE_METHOD_DESCRIPTORS.finiteFirstOrderCountermodel, constructFiniteFirstOrderCountermodel],
+      [CORE_METHOD_DESCRIPTORS.categoricalLogic, executeCategoricalTask],
+    ];
+    for (const [descriptor, execute] of methodBindings) {
+      if (reasoningMethodSelected(this.workPolicy, descriptor)) {
+        this.capabilities.register(descriptor, execute);
+      }
+    }
     const profiler = new ExecutionProfiler('engine-initialization', this.profileEnabled, {
       modelId: model.manifest.modelId,
     });
@@ -506,7 +513,9 @@ export class EslmEngine {
 
   executeTask(task) {
     return assertRuntimeResultContract({
-      ...executeTypedTask(this.model, task),
+      ...executeTypedTask(this.model, task, {
+        methodAllowed: (descriptor) => reasoningMethodSelected(this.workPolicy, descriptor),
+      }),
       workPolicy: this.workPolicy,
     });
   }

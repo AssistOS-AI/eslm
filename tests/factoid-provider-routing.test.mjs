@@ -5,6 +5,7 @@ import {
   routeDirectProviderQuestion, routeFactoidQuestion,
 } from '../src/reasoning/factoid-provider-router.mjs';
 import { EslmRuntime } from '../src/runtime/runtime.mjs';
+import { resolveWorkPolicy } from '../src/runtime/work-policy.mjs';
 
 function provider(id, answers) {
   return {
@@ -15,7 +16,9 @@ function provider(id, answers) {
       return {
         status: value.length > 0 ? 'ANSWERED' : 'UNKNOWN', values: value,
         answer: value.join(', '), provenance: [{ fact: `${id}:nonce`, source: [id] }],
-        query: { provider: id }, reasoning: { method: 'nonce-retrieval' },
+        query: { provider: id }, reasoning: {
+          method: 'nonce-retrieval', methodId: 'method:core:indexed-lookup',
+        },
       };
     },
   };
@@ -66,13 +69,18 @@ test('a provider failure on the original surface does not hide an answer to an e
   source.ask = async (text) => {
     calls.push(text);
     if (text === "What is Teskal's anchor mark?") {
-      return { status: 'UNKNOWN', answer: 'unknown', values: [], provenance: [] };
+      return {
+        status: 'UNKNOWN', answer: 'unknown', values: [], provenance: [],
+        reasoning: { method: 'nonce-retrieval', methodId: 'method:core:indexed-lookup' },
+      };
     }
     if (text === 'What is the anchor mark of Teskal?') {
       return {
         status: 'ANSWERED', answer: 'blue-sigil', values: ['blue-sigil'],
         provenance: [{ fact: 'source-a:mark', source: ['source-a'] }],
-        query: { provider: 'source-a' }, reasoning: { method: 'nonce-retrieval' },
+        query: { provider: 'source-a' }, reasoning: {
+          method: 'nonce-retrieval', methodId: 'method:core:indexed-lookup',
+        },
       };
     }
     return undefined;
@@ -135,7 +143,9 @@ test('agreement cannot upgrade a defeasible provider answer to strict SOLVED', a
   defeasible.ask = async () => ({
     status: 'DEFEASIBLE', answer: 'fork', values: ['fork'],
     provenance: [{ fact: 'defeasible-source:fork', source: ['defeasible-source'] }],
-    query: { provider: 'defeasible-source' }, reasoning: { method: 'nonce-default' },
+    query: { provider: 'defeasible-source' }, reasoning: {
+      method: 'nonce-default', methodId: 'method:core:indexed-lookup',
+    },
   });
   for (const order of [[strict, defeasible], [defeasible, strict]]) {
     const routed = await routeFactoidQuestion(order, question);
@@ -152,8 +162,14 @@ test('incompatible no-value provider outcomes become explicit ambiguity', async 
   const question = 'Explain the qorin state';
   const first = provider('a-source', new Map([[question, []]]));
   const second = provider('z-source', new Map([[question, []]]));
-  first.ask = async () => ({ status: 'UNKNOWN', answer: 'unknown', values: [], provenance: [] });
-  second.ask = async () => ({ status: 'RESOURCE_LIMIT', answer: 'limited', values: [], provenance: [] });
+  first.ask = async () => ({
+    status: 'UNKNOWN', answer: 'unknown', values: [], provenance: [],
+    reasoning: { method: 'nonce-retrieval', methodId: 'method:core:indexed-lookup' },
+  });
+  second.ask = async () => ({
+    status: 'RESOURCE_LIMIT', answer: 'limited', values: [], provenance: [],
+    reasoning: { method: 'nonce-retrieval', methodId: 'method:core:indexed-lookup' },
+  });
   const routed = await routeDirectProviderQuestion([second, first], question);
   assert.equal(routed.result.status, 'AMBIGUOUS');
   assert.deepEqual(routed.result.alternatives.map((item) => [item.provider, item.status]), [
@@ -206,6 +222,25 @@ test('provider lifecycle failures are diagnosed and cannot leak a partial factoi
   assert.deepEqual(routed.providerErrors.map((item) => item.stage), ['beginQuery', 'endQuery']);
 });
 
+test('a provider result whose method differs from its predeclared method is discarded', async () => {
+  const question = 'Who forged the plorin?';
+  const mismatched = provider('mismatched', new Map());
+  mismatched.reasoningMethodForQuestion = () => 'method:core:indexed-lookup';
+  mismatched.ask = async () => ({
+    status: 'SOLVED', answer: 'Nera', values: ['Nera'],
+    provenance: [{ fact: 'mismatched:record', source: ['mismatched:source'] }],
+    reasoning: {
+      method: 'bounded-deduction', methodId: 'method:core:safe-horn-deduction',
+    },
+  });
+  const routed = await routeFactoidQuestion([mismatched], question);
+  assert.equal(routed.result, undefined);
+  assert.deepEqual(routed.consultedProviders, [{ kbId: 'mismatched', version: undefined }]);
+  assert.equal(routed.providerErrors.length, 1);
+  assert.equal(routed.providerErrors[0].stage, 'operation');
+  assert.match(routed.providerErrors[0].diagnostic, /does not match declared/u);
+});
+
 function unparsedCore() {
   return {
     profileEnabled: false,
@@ -240,4 +275,104 @@ test('runtime retains non-factoid provider operations outside the new frontend',
   const result = await runtime.ask('Is a zindle a tool?');
   assert.equal(result.status, 'SOLVED');
   assert.deepEqual(result.values, [true]);
+});
+
+test('exact reasoning selection excludes provider lookup before any provider operation', async () => {
+  let calls = 0;
+  const source = provider('renamed-source', new Map([
+    ['Who forged the plorin?', ['Nera']],
+    ['Is a zindle a tool?', [true]],
+  ]));
+  source.manifest = { id: 'renamed-source', kbId: 'renamed-kb', kbVersion: '7' };
+  source.ask = async (text) => {
+    calls += 1;
+    const values = text === 'Who forged the plorin?' ? ['Nera']
+      : text === 'Is a zindle a tool?' ? [true] : [];
+    return values.length > 0 ? {
+      status: 'SOLVED', answer: values.join(', '), values,
+      provenance: [{ fact: 'renamed-kb:record', source: ['renamed-kb:source'] }],
+      query: { provider: 'renamed-source' }, reasoning: {
+        method: 'nonce-retrieval', methodId: 'method:core:indexed-lookup',
+      },
+    } : undefined;
+  };
+  const policy = resolveWorkPolicy({
+    strategies: { selected: {
+      'runtime.reason.execute': ['strategy:core:categorical-logic@1'],
+    } },
+  });
+  const runtime = new EslmRuntime(unparsedCore(), [source], ['renamed-kb'], undefined, policy);
+
+  const factoid = await runtime.ask('Who forged the plorin?', {}, { grounding: false });
+  assert.equal(factoid.status, 'NO_APPLICABLE_METHOD');
+  assert.equal(factoid.reasoning.gap, 'method-not-selected-by-strategy-policy');
+  assert.equal(factoid.plan.methodId, undefined);
+  assert.deepEqual(factoid.consultedKbVersions, []);
+  assert.equal(calls, 0);
+
+  const providerSpecific = await runtime.ask('Is a zindle a tool?', {}, { grounding: false });
+  assert.equal(providerSpecific.status, 'NO_APPLICABLE_METHOD');
+  assert.deepEqual(providerSpecific.consultedKbVersions, []);
+  assert.equal(calls, 0);
+});
+
+test('exact indexed-lookup selection admits the same renamed provider route', async () => {
+  let calls = 0;
+  const source = provider('renamed-source', new Map([['Who forged the plorin?', ['Nera']]]));
+  source.manifest = { id: 'renamed-source', kbId: 'renamed-kb', kbVersion: '7' };
+  const originalAsk = source.ask;
+  source.ask = async (text) => {
+    calls += 1;
+    return originalAsk(text);
+  };
+  const policy = resolveWorkPolicy({
+    strategies: { selected: {
+      'runtime.reason.execute': ['strategy:core:indexed-lookup@1'],
+    } },
+  });
+  const runtime = new EslmRuntime(unparsedCore(), [source], ['renamed-kb'], undefined, policy);
+
+  const result = await runtime.ask('Who forged the plorin?', {}, { grounding: false });
+  assert.equal(result.status, 'SOLVED');
+  assert.equal(result.plan.methodId, 'method:core:indexed-lookup');
+  assert.deepEqual(result.values, ['Nera']);
+  assert.ok(calls > 0);
+});
+
+test('a provider-declared deduction route requires safe Horn selection before execution', async () => {
+  let calls = 0;
+  const source = provider('renamed-taxonomy', new Map([['Is a zindle a tool?', [true]]]));
+  source.manifest = { id: 'renamed-taxonomy', kbId: 'renamed-taxonomy-kb', kbVersion: '3' };
+  source.reasoningMethodForQuestion = () => 'method:core:safe-horn-deduction';
+  const originalAsk = source.ask;
+  source.ask = async (text) => {
+    calls += 1;
+    const result = await originalAsk(text);
+    return result ? {
+      ...result,
+      reasoning: { ...result.reasoning, methodId: 'method:core:safe-horn-deduction' },
+    } : result;
+  };
+  const indexedOnly = resolveWorkPolicy({ strategies: { selected: {
+    'runtime.reason.execute': ['strategy:core:indexed-lookup@1'],
+  } } });
+  const blocked = new EslmRuntime(
+    unparsedCore(), [source], ['renamed-taxonomy-kb'], undefined, indexedOnly,
+  );
+  const gap = await blocked.ask('Is a zindle a tool?', {}, { grounding: false });
+  assert.equal(gap.status, 'NO_APPLICABLE_METHOD');
+  assert.deepEqual(gap.plan.excludedMethods, ['method:core:safe-horn-deduction']);
+  assert.equal(calls, 0);
+
+  const deductionOnly = resolveWorkPolicy({ strategies: { selected: {
+    'runtime.reason.execute': ['strategy:core:safe-horn-deduction@1'],
+  } } });
+  const admitted = new EslmRuntime(
+    unparsedCore(), [source], ['renamed-taxonomy-kb'], undefined, deductionOnly,
+  );
+  const answer = await admitted.ask('Is a zindle a tool?', {}, { grounding: false });
+  assert.equal(answer.status, 'SOLVED');
+  assert.equal(answer.plan.methodId, 'method:core:safe-horn-deduction');
+  assert.deepEqual(answer.reasoning.routedMethodIds, ['method:core:safe-horn-deduction']);
+  assert.equal(calls, 1);
 });

@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  languageAgentNormalizationEnabled, withLanguageAgentNormalization, workPolicyFromCliOptions,
+  languageAgentNormalizationEnabled, parseStrategySelection,
+  withLanguageAgentNormalization, workPolicyFromCliOptions,
 } from '../src/interface/cli-runtime-policy.mjs';
 
 test('CLI assistance is opt-in and retains an explicit offline override', () => {
@@ -34,6 +35,31 @@ test('CLI work-profile options resolve exact bounded overrides', () => {
   assert.equal(policy.effective.limits.maximumHeuristicReceiptBytes, 700000);
   assert.equal(policy.bounded, true);
   assert.equal(policy.hardTimeLimit, false);
+});
+
+test('CLI strategy selection accepts only exact trusted executable identities', () => {
+  const selected = parseStrategySelection(
+    'runtime.evidence.assess=strategy:retrieval:active-kb-frequency@1,'
+      + 'strategy:retrieval:typed-answer-bridge@1',
+  );
+  assert.deepEqual(selected, {
+    'runtime.evidence.assess': [
+      'strategy:retrieval:active-kb-frequency@1',
+      'strategy:retrieval:typed-answer-bridge@1',
+    ],
+  });
+  assert.throws(() => parseStrategySelection(
+    'compiler.knowledge.extract=strategy:knowledge:manual-document@1',
+  ), /not exact-selection-enabled|planned and cannot be selected/u);
+  assert.throws(() => parseStrategySelection(
+    'runtime.method.plan=strategy:method:capability-planner@1',
+  ), /not exact-selection-enabled/u);
+  assert.throws(() => parseStrategySelection(
+    'runtime.reason.execute=strategy:core:finite-entailment@1',
+  ), /planned and cannot be selected/u);
+  assert.throws(() => parseStrategySelection(
+    'runtime.evidence.assess=../research-plugin.mjs',
+  ), /Unknown .* strategy identity/u);
 });
 
 test('interactive normalization toggles replace the preceding policy', () => {

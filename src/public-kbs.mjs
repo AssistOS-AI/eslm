@@ -68,6 +68,8 @@ function conversationalQuestion(text) {
     .replace(/[.!]+$/u, '?');
 }
 
+const WORDNET_TAXONOMY_QUESTION = /^(?:is (?:a |an )?(.+?) (?:a kind of|a type of|an|a) (.+?)|does (.+?) belong to the (.+?) category|can (.+?) be classified as (?:a|an) (.+?))\??$/iu;
+
 function provenance(provider, source, detail) {
   return [{
     fact: `${provider.manifest.id}:${source}`,
@@ -79,10 +81,12 @@ function provenance(provider, source, detail) {
 }
 
 function response(provider, answer, values, source, detail, reasoning = 'retrieval') {
+  const methodId = reasoning === 'bounded-deduction'
+    ? 'method:core:safe-horn-deduction' : 'method:core:indexed-lookup';
   return {
     status: values.length > 0 ? 'SOLVED' : 'UNKNOWN', answer, values,
     provenance: provenance(provider, source, detail),
-    reasoning: { method: reasoning }, query: { provider: provider.manifest.id, source },
+    reasoning: { method: reasoning, methodId }, query: { provider: provider.manifest.id, source },
     learned: [], learnedRules: [], context: {},
   };
 }
@@ -232,6 +236,11 @@ class WordNetProvider {
     };
   }
 
+  reasoningMethodForQuestion(text) {
+    return WORDNET_TAXONOMY_QUESTION.test(conversationalQuestion(text))
+      ? 'method:core:safe-horn-deduction' : 'method:core:indexed-lookup';
+  }
+
   async ask(text) {
     const clean = conversationalQuestion(text);
     let match = clean.match(/^(?:what does (.+?) mean|define (.+?)|what is the definition of (.+?)|give me a definition of (.+?)|what is meant by (.+?)|describe the word (.+?))\??$/iu);
@@ -255,7 +264,7 @@ class WordNetProvider {
       const senses = await this.senses(lemma);
       return response(this, `${normalizedLemma(lemma)} has ${senses.length} compiled sense${senses.length === 1 ? '' : 's'} in Open English WordNet 2025.`, senses.length > 0 ? [senses.length] : [], normalizedLemma(lemma), 'oewn-2025');
     }
-    match = clean.match(/^(?:is (?:a |an )?(.+?) (?:a kind of|a type of|an|a) (.+?)|does (.+?) belong to the (.+?) category|can (.+?) be classified as (?:a|an) (.+?))\??$/iu);
+    match = clean.match(WORDNET_TAXONOMY_QUESTION);
     if (match) {
       const left = match[1] ?? match[3] ?? match[5];
       const right = match[2] ?? match[4] ?? match[6];

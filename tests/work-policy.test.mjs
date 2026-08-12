@@ -14,6 +14,8 @@ test('work profiles expose complete exact limits and remain explicitly bounded',
     assert.equal(policy.requested.profile, policy.effective.profile);
     assert.equal(policy.bounded, true);
     assert.equal(policy.hardTimeLimit, false);
+    assert.equal(policy.effective.strategies.preset, 'all');
+    assert.deepEqual(policy.effective.strategies.selected, {});
     assert.ok(policy.effective.limits.maximumHeuristicReceiptBytes >= 4_096);
     assert.ok(policy.effective.limits.maximumGroundingOutputBytes >= 4_096);
     assert.ok(policy.effective.limits.maximumHeuristicReparses
@@ -56,6 +58,57 @@ test('work-policy overrides are exact, validated, and internally coherent', () =
   assert.throws(() => resolveWorkPolicy({
     profile: 'unbounded',
   }), /Work profile must be one of/u);
+});
+
+test('work policy carries a canonical strategy preset and exact static allowlists', () => {
+  const policy = resolveWorkPolicy({
+    profile: 'balanced',
+    strategies: {
+      preset: 'retrieval',
+      selected: {
+        'runtime.evidence.assess': [
+          'strategy:retrieval:typed-answer-bridge@1',
+          'strategy:retrieval:active-kb-frequency@1',
+        ],
+      },
+    },
+  });
+  assert.equal(policy.effective.strategies.preset, 'retrieval');
+  assert.deepEqual(policy.effective.strategies.selected['runtime.evidence.assess'], [
+    'strategy:retrieval:active-kb-frequency@1',
+    'strategy:retrieval:typed-answer-bridge@1',
+  ]);
+  assert.throws(() => resolveWorkPolicy({
+    strategies: { selected: { 'runtime.reason.execute': ['../custom.mjs'] } },
+  }), /invalid identity/u);
+  assert.throws(() => resolveWorkPolicy({
+    strategies: { selected: { 'runtime.evidence.assess': ['strategy:attacker:made-up@1'] } },
+  }), /unknown or wrong-stage identity/u);
+  assert.throws(() => resolveWorkPolicy({
+    strategies: { selected: {
+      'runtime.reason.execute': ['strategy:language:determiner-agreement@1'],
+    } },
+  }), /unknown or wrong-stage identity/u);
+  assert.throws(() => resolveWorkPolicy({
+    strategies: { selected: {
+      'runtime.result.verify': ['strategy:verification:declared-witness-contract@1'],
+    } },
+  }), /not exact-selection-enabled|cannot execute planned identity/u);
+  for (const [stage, identity] of [
+    ['runtime.knowledge.retrieve', 'strategy:retrieval:bounded-provider-frontier@1'],
+    ['runtime.method.plan', 'strategy:method:capability-planner@1'],
+    ['runtime.failure.ground', 'strategy:grounding:bounded-related-evidence@1'],
+  ]) assert.throws(() => resolveWorkPolicy({
+    strategies: { selected: { [stage]: [identity] } },
+  }), /not exact-selection-enabled/u);
+  assert.throws(() => resolveWorkPolicy({
+    strategies: { selected: { 'runtime.failure.ground': [] } },
+  }), /non-empty bounded identity array/u);
+  assert.throws(() => resolveWorkPolicy({
+    strategies: { selected: {
+      'runtime.reason.execute': ['strategy:core:finite-entailment@1'],
+    } },
+  }), /cannot execute planned identity/u);
 });
 
 test('engine construction applies the selected Horn work bound and records it in results', async () => {

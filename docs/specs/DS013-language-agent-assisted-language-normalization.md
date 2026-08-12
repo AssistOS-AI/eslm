@@ -70,6 +70,12 @@ validation.
 
 ### 5. Normalization response contract
 
+The wrapper attaches a host-owned result envelope with protocol
+`eslm-language-agent-normalization-result-v1` to every attempted assisted route. The envelope records whether an
+attempt occurred, non-negative proposal and external-invocation counts, cache state, bounded proposal and process
+receipts, accepted or failed status, and diagnostic text. It is distinct from the untrusted proposal object described
+below and is validated as part of `eslm-runtime-result-v1` before publication.
+
 Each proposal response is one JSON object with protocol `eslm-language-agent-normalization-v2`, operation `translation` or `simplification`, a declared source-language tag, `normalizedEnglish`, and an array of source-to-target anchor alignments. `normalizedEnglish` must be non-empty plain text within the configured limit. Markdown fences, NUL bytes, executable payload fields, tool requests, answers, explanations, confidence scores, retrieved facts, and additional properties are rejected.
 
 An alignment names an allowlisted anchor kind and identifies exact source and normalized substrings. Anchor kinds include

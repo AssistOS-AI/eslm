@@ -1,4 +1,5 @@
 import { normalizedGroundingSurface } from './grounding-query-focus.mjs';
+import { createStrategyVote } from '../strategy/strategy-vote.mjs';
 
 const MAX_ENTRIES = 512;
 const MAX_TERMS = 32;
@@ -37,6 +38,12 @@ function selectedTermRoles(request) {
   return roles;
 }
 
+function semanticRoleFamily(role) {
+  if (role === 'content') return 'content';
+  if (role === 'request-topic') return 'request-topic';
+  return role;
+}
+
 function queryBridge(entry, request) {
   const query = request?.query;
   if (!query || typeof query !== 'object') return Object.freeze({ score: 0, reasons: [] });
@@ -69,6 +76,11 @@ function boundedOccurrences(value) {
   return Math.min(value, MAX_ACTIVE_OCCURRENCES);
 }
 
+function strategyEnabled(request, name) {
+  const selected = request?.relevanceStrategySelection;
+  return selected === undefined || selected.includes(`strategy:retrieval:${name}@1`);
+}
+
 /**
  * Estimate related-evidence relevance on a bounded candidate frontier. This is
  * ranking evidence only: it never changes answer support or executes a proof.
@@ -92,9 +104,14 @@ export function estimateGroundingRelevance(entries, request) {
   ]));
 
   return Object.freeze(prepared.map(({ entry, matchedTerms }) => {
-    const distinctRoles = new Set(matchedTerms.map((term) => termRoles.get(term)));
+    const distinctRoles = new Set(matchedTerms.map((term) => semanticRoleFamily(termRoles.get(term))));
+    const distinctConcepts = new Set(matchedTerms.map((term) => {
+      const candidate = request?.termSelection?.candidates?.find((item) =>
+        item?.selected === true && normalizedGroundingSurface(item.term) === term);
+      return normalizedGroundingSurface(candidate?.variantOf ?? term);
+    }));
     const phraseMatches = matchedTerms.filter((term) => term.includes(' ')).length;
-    const cooccurrence = Math.max(0, matchedTerms.length - 1);
+    const cooccurrence = Math.max(0, distinctConcepts.size - 1);
     const frequencyEvidence = matchedTerms.reduce((sum, term) =>
       sum + Math.log2(1 + (frontierFrequency.get(term) ?? 0)), 0);
     const activeKbOccurrences = boundedOccurrences(entry.relevance?.activeKbOccurrences
@@ -102,29 +119,64 @@ export function estimateGroundingRelevance(entries, request) {
         ? entry.relevance.activePostingSize : 0));
     const activeFrequencyVote = Math.min(3, Math.log10(1 + activeKbOccurrences));
     const bridge = queryBridge(entry, request);
+    const enabled = Object.freeze({
+      term: strategyEnabled(request, 'focus-term-coverage'),
+      role: strategyEnabled(request, 'focus-role-coverage'),
+      cooccurrence: strategyEnabled(request, 'focus-term-cooccurrence'),
+      phrase: strategyEnabled(request, 'exact-focus-phrase'),
+      frequency: strategyEnabled(request, 'active-kb-frequency'),
+      bridge: strategyEnabled(request, 'typed-answer-bridge'),
+    });
     const estimatorScore = Number((
-      matchedTerms.length * 1.5
-      + distinctRoles.size * 1.25
-      + phraseMatches * 2
-      + cooccurrence * cooccurrence * 1.5
-      + Math.min(2.5, frequencyEvidence * 0.35)
-      + activeFrequencyVote
-      + bridge.score
+      (enabled.term ? distinctConcepts.size * 1.5 : 0)
+      + (enabled.role ? distinctRoles.size * 1.25 : 0)
+      + (enabled.phrase ? phraseMatches * 2 : 0)
+      + (enabled.cooccurrence ? cooccurrence * cooccurrence * 1.5 : 0)
+      + (enabled.term ? Math.min(2.5, frequencyEvidence * 0.35) : 0)
+      + (enabled.frequency ? activeFrequencyVote : 0)
+      + (enabled.bridge ? bridge.score : 0)
     ).toFixed(6));
     const reasons = [
-      ...(matchedTerms.length > 0 ? [`focus-term-coverage:${matchedTerms.length}`] : []),
-      ...(distinctRoles.size > 1 ? [`focus-role-coverage:${distinctRoles.size}`] : []),
-      ...(cooccurrence > 0 ? [`focus-term-cooccurrence:${matchedTerms.length}`] : []),
-      ...(phraseMatches > 0 ? [`exact-focus-phrases:${phraseMatches}`] : []),
-      ...(activeKbOccurrences > 0 ? ['bounded-active-kb-frequency-vote'] : []),
-      ...(bridge.score > 0 ? [`answer-bridge:${bridge.score}`] : []),
+      ...(enabled.term && matchedTerms.length > 0 ? [`focus-term-coverage:${distinctConcepts.size}`] : []),
+      ...(enabled.role && distinctRoles.size > 1 ? [`focus-role-coverage:${distinctRoles.size}`] : []),
+      ...(enabled.cooccurrence && cooccurrence > 0
+        ? [`focus-term-cooccurrence:${distinctConcepts.size}`] : []),
+      ...(enabled.phrase && phraseMatches > 0 ? [`exact-focus-phrases:${phraseMatches}`] : []),
+      ...(enabled.frequency && activeKbOccurrences > 0 ? ['bounded-active-kb-frequency-vote'] : []),
+      ...(enabled.bridge && bridge.score > 0 ? [`answer-bridge:${bridge.score}`] : []),
     ].slice(0, 6);
+    const strategyVotes = Object.freeze([
+      ...(enabled.term && distinctConcepts.size > 0 ? [createStrategyVote({
+        strategyId: 'strategy:retrieval:focus-term-coverage', candidate: entry.recordId,
+        confidence: Math.min(1, distinctConcepts.size / Math.max(1, terms.length)), evidence: matchedTerms,
+      })] : []),
+      ...(enabled.role && distinctRoles.size > 1 ? [createStrategyVote({
+        strategyId: 'strategy:retrieval:focus-role-coverage', candidate: entry.recordId,
+        confidence: Math.min(1, distinctRoles.size / 4), evidence: [...distinctRoles],
+      })] : []),
+      ...(enabled.cooccurrence && cooccurrence > 0 ? [createStrategyVote({
+        strategyId: 'strategy:retrieval:focus-term-cooccurrence', candidate: entry.recordId,
+        confidence: Math.min(1, distinctConcepts.size / 4), evidence: [...distinctConcepts],
+      })] : []),
+      ...(enabled.phrase && phraseMatches > 0 ? [createStrategyVote({
+        strategyId: 'strategy:retrieval:exact-focus-phrase', candidate: entry.recordId,
+        confidence: Math.min(1, phraseMatches / 2), evidence: matchedTerms.filter((term) => term.includes(' ')),
+      })] : []),
+      ...(enabled.frequency && activeKbOccurrences > 0 ? [createStrategyVote({
+        strategyId: 'strategy:retrieval:active-kb-frequency', candidate: entry.recordId,
+        confidence: Math.min(0.6, activeFrequencyVote / 5), evidence: [`count:${activeKbOccurrences}`],
+      })] : []),
+      ...(enabled.bridge && bridge.score > 0 ? [createStrategyVote({
+        strategyId: 'strategy:retrieval:typed-answer-bridge', candidate: entry.recordId,
+        confidence: Math.min(1, bridge.score / 18), evidence: bridge.reasons,
+      })] : []),
+    ]);
     return Object.freeze({
       ...entry,
       relevance: Object.freeze({
         ...entry.relevance,
         score: Number(((entry.relevance?.score ?? 0) + estimatorScore).toFixed(6)),
-        reasons: Object.freeze([...(entry.relevance?.reasons ?? []), ...reasons]),
+        reasons: Object.freeze([...(entry.relevance?.reasons ?? []), ...reasons].slice(0, 8)),
         estimator: Object.freeze({
           protocol: 'eslm-grounding-relevance-estimate-v1',
           matchedTerms: Object.freeze(matchedTerms),
@@ -133,8 +185,9 @@ export function estimateGroundingRelevance(entries, request) {
             term, frontierFrequency.get(term),
           ]))),
           activeKbOccurrences,
-          answerBridgeScore: bridge.score,
+          answerBridgeScore: enabled.bridge ? bridge.score : 0,
           additiveScore: estimatorScore,
+          strategyVotes,
           answerSupported: false,
         }),
       }),

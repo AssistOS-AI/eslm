@@ -39,9 +39,15 @@ function atArtifactHead(text, start, match) {
 }
 
 function nominalPleaseRequest(text, artifacts) {
-  if (!/\bplease[.!?]?$/iu.test(text.trim())) return null;
+  const suffix = /(?:,\s*)?\bplease[.!?]?$/iu.exec(text.trim());
+  if (!suffix) return null;
   const artifact = artifacts.find((match) => atArtifactHead(text, 0, match));
-  return artifact ? Object.freeze({ start: artifact.span[0], kind: 'nominal-please-request' }) : null;
+  if (!artifact) return null;
+  const complement = text.slice(artifact.span[1], suffix.index);
+  if (/\b(?:am|are|can|did|does|has|have|is|means|refers|was|were|will)\b/iu.test(complement)) {
+    return null;
+  }
+  return Object.freeze({ start: artifact.span[0], kind: 'nominal-please-request' });
 }
 
 export function classifyHeuristicRequestForce(text, matches) {

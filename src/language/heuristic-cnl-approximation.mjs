@@ -5,7 +5,7 @@ import {
   resolveHeuristicCnlOptions,
   resourceLimitResult,
 } from './heuristic-cnl-contract.mjs';
-import { generateHeuristicCnlProposals } from './heuristic-cnl-families.mjs';
+import { generateHeuristicCnlProposals } from './heuristic-cnl-strategy-stage.mjs';
 import { compareHeuristicCnlProtection } from './heuristic-cnl-protection.mjs';
 import {
   analyzeHeuristicSurface,
@@ -13,6 +13,7 @@ import {
   editKey,
   rangesConflict,
 } from './heuristic-cnl-surface.mjs';
+import { createStrategyVote } from '../strategy/strategy-vote.mjs';
 
 export {
   HEURISTIC_CNL_LIMIT_CEILINGS,
@@ -82,6 +83,12 @@ function aggregateEdits(receipts) {
         confidence,
         penalty: receipt.penalty,
         proposalReceiptId: receipt.receiptId,
+        strategyVote: createStrategyVote({
+          strategyId: `strategy:language:${receipt.family}`,
+          candidate: key,
+          confidence,
+          evidence: [receipt.receiptId],
+        }),
       }));
       current.weightedSupport += receipt.familyWeight * confidence;
       current.weightedConfidence += receipt.familyWeight * confidence;
@@ -274,7 +281,9 @@ export function approximateControlledEnglish(text, suppliedOptions = {}) {
     distanceEvaluations: 0,
     distanceLimitReached: false,
   };
-  const generated = generateHeuristicCnlProposals(analysis, budget);
+  const generated = generateHeuristicCnlProposals(
+    analysis, budget, options.selectedStrategyIdentities,
+  );
   const receipts = generated.proposals.map((item, index) => proposalReceipt(text, item, index));
   const ranked = rankedCandidates(
     text,
@@ -302,8 +311,14 @@ export function approximateControlledEnglish(text, suppliedOptions = {}) {
       kbConsulted: false,
       sessionMutated: false,
       limits: options.limits,
+      strategySelection: Object.freeze({
+        stage: 'runtime.language.interpret',
+        mode: options.selectedStrategyIdentities === undefined ? 'all-registered' : 'exact-allowlist',
+        identities: options.selectedStrategyIdentities ?? [],
+      }),
       observed,
       familyReceipts: generated.familyReceipts,
+      strategyExecution: generated.strategyExecution,
       proposalReceipts: receipts,
       acceptedProposalCount,
       rejectionCounts: rejectionCounts(receipts),

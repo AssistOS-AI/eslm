@@ -40,7 +40,7 @@ export function resolveHeuristicCnlOptions(options = {}) {
   if (!options || typeof options !== 'object' || Array.isArray(options)) {
     throw new TypeError('Heuristic CNL options must be an object.');
   }
-  const allowed = new Set(['limits', 'minimumCandidateConfidence']);
+  const allowed = new Set(['limits', 'minimumCandidateConfidence', 'selectedStrategyIdentities']);
   for (const key of Object.keys(options)) {
     if (!allowed.has(key)) throw new TypeError(`Unsupported heuristic CNL option: ${key}.`);
   }
@@ -61,9 +61,18 @@ export function resolveHeuristicCnlOptions(options = {}) {
     options.minimumCandidateConfidence ?? 0.42,
     'minimumCandidateConfidence',
   );
+  const selectedStrategyIdentities = options.selectedStrategyIdentities;
+  if (selectedStrategyIdentities !== undefined && (!Array.isArray(selectedStrategyIdentities)
+    || selectedStrategyIdentities.length > 64 || selectedStrategyIdentities.some((identity) =>
+      typeof identity !== 'string' || !/^strategy:language:[a-z0-9-]+@\d+$/u.test(identity)))) {
+    throw new TypeError('selectedStrategyIdentities must be a bounded exact language-strategy allowlist.');
+  }
   return Object.freeze({
     limits: Object.freeze(limits),
     minimumCandidateConfidence,
+    ...(selectedStrategyIdentities === undefined ? {} : {
+      selectedStrategyIdentities: Object.freeze([...new Set(selectedStrategyIdentities)].toSorted()),
+    }),
   });
 }
 
@@ -93,6 +102,11 @@ export function resourceLimitResult(originalText, options, observed, resource) {
       kbConsulted: false,
       sessionMutated: false,
       limits: options.limits,
+      strategySelection: Object.freeze({
+        stage: 'runtime.language.interpret',
+        mode: options.selectedStrategyIdentities === undefined ? 'all-registered' : 'exact-allowlist',
+        identities: options.selectedStrategyIdentities ?? [],
+      }),
       observed,
       exhaustedResource: resource,
       familyReceipts: [],

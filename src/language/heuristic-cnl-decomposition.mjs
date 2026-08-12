@@ -20,6 +20,25 @@ const WEIGHTS = Object.freeze({
   'unique-local-reference-substitution': 0.68,
 });
 
+export const COMPLEX_DECOMPOSITION_FAMILIES = Object.freeze([
+  'independent-clause-coordination',
+  'local-parallel-ellipsis',
+  'request-envelope-stripping',
+  'embedded-polar-question',
+  'nominalized-request-simplification',
+  'relative-clause-extraction',
+  'apposition-expansion',
+  'temporal-clause-normalization',
+  'causal-clause-normalization',
+  'conditional-punctuation-normalization',
+  'explicit-passive-to-active',
+  'nonsemantic-parenthetical-removal',
+  'discourse-filler-removal',
+  'wh-nominalization-reduction',
+  'unique-local-reference-substitution',
+  'question-last-reordering',
+]);
+
 function capitalize(text) {
   return `${text[0]?.toLocaleUpperCase('en-US') ?? ''}${text.slice(1)}`;
 }
@@ -330,7 +349,7 @@ function questionLast(analysis) {
     ], ['Reordering assumes the statements provide context rather than chronological narration.']);
 }
 
-export function generateComplexDecompositionProposals(analysis) {
+export function generateComplexDecompositionProposals(analysis, selectedFamilies) {
   const source = analysis.text;
   const techniques = [
     ['independent-clause-coordination', () => independentCoordination(source),
@@ -369,10 +388,18 @@ export function generateComplexDecompositionProposals(analysis) {
   const proposals = [];
   const familyReceipts = [];
   for (const [family, runner, declineReason] of techniques) {
+    if (selectedFamilies && !selectedFamilies.has(family)) {
+      familyReceipts.push(Object.freeze({
+        family, proposalsGenerated: 0, declined: true, selected: false,
+        declineReason: 'The exact strategy allowlist did not select this family.',
+      }));
+      continue;
+    }
     const candidate = runner();
     if (candidate) proposals.push(candidate);
     familyReceipts.push(Object.freeze({
       family,
+      selected: true,
       proposalsGenerated: candidate ? 1 : 0,
       declined: !candidate,
       ...(candidate ? {} : { declineReason }),

@@ -24,6 +24,11 @@ an interpreter already registered in trusted `src`; otherwise it remains validat
 by the active execution profile. It cannot provide method code. Schema acceptance alone never proves that an
 interpreter exists; DS005 lists the current projection boundary.
 
+DS027 strategy metadata follows the same rule. A later package schema may declare exact strategy compatibility or a
+host recommendation, but a manifest cannot declare an executor, module path, callback, arbiter implementation,
+confidence function, or resource override. Registration validates such references against the host's static trusted
+registry; it never discovers or installs code from the package root.
+
 ### Manifest contract
 
 A manifest is small enough to validate without opening fact shards. At minimum it records:
@@ -190,6 +195,12 @@ Response: Path confinement prevents a declared reference from escaping its packa
 undeclared executable, stale shard, or symbolic link beside valid files. A closed root and segment inventory makes the
 audited bytes equal the usable package bytes. New physical artifacts require a versioned manifest and validator rather
 than acquiring authority by co-location.
+
+### Question #6: May package metadata activate a strategy that the host profile disabled?
+
+Response: No. Package metadata may state an exact compatibility requirement or recommendation only under a versioned
+schema. The host's validated DS027 profile decides the selected static strategy set and its budgets. An incompatible
+package or profile fails visibly; neither side silently widens the other's authority.
 
 ## Conclusion
 

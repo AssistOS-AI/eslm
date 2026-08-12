@@ -4,11 +4,12 @@ const REQUEST_WORDS = new Set([
   'condense', 'content', 'contrast', 'create', 'creating', 'detailed', 'develop', 'differentiate',
   'document', 'do', "don't", 'draft', 'drafting', 'elaborate', 'essay', 'evidence', 'expand',
   'explain', 'explanation', 'find', 'following', 'for', 'generate', 'generating', 'give', 'heading',
-  'headings', 'however', 'in', 'instead', 'list', 'long', 'me', 'no', 'not', 'of', 'on', 'only',
+  'headings', 'however', 'in', 'instead', 'finally', 'list', 'long', 'me', 'next', 'no', 'not',
+  'now', 'of', 'on', 'only',
   'or', 'outline', 'paragraph', 'paragraphs', 'passage', 'please', 'point', 'points', 'prepare',
   'preparing', 'produce', 'producing', 'provide', 'rather', 'recap', 'report', 'review', 'section',
   'sections', 'short', 'show', 'summarise', 'summarize', 'summary', 'synopsis', 'table', 'tabular',
-  'tell', 'text', 'that', 'the', 'this', 'thorough', 'to', 'versus', 'vs', 'without', 'write',
+  'tell', 'text', 'that', 'the', 'then', 'this', 'thorough', 'to', 'versus', 'vs', 'without', 'write',
   'writing', 'yet', 'you',
 ]);
 
@@ -38,17 +39,6 @@ function boundedMaterial(text, start, end, extraction, limit, containerSpan = [s
 }
 
 export function extractRequestSourceMaterial(text, limit) {
-  const quotedCandidates = [
-    /"([^"\r\n]{20,})"/u,
-    /“([^“”\r\n]{20,})”/u,
-  ].map((expression) => expression.exec(text)).filter(Boolean)
-    .toSorted((left, right) => left.index - right.index || right[0].length - left[0].length);
-  const quoted = quotedCandidates[0];
-  if (quoted) {
-    const contentStart = quoted.index + quoted[0].indexOf(quoted[1]);
-    return boundedMaterial(text, contentStart, contentStart + quoted[1].length,
-      'quoted-source-material', limit, [quoted.index, quoted.index + quoted[0].length]);
-  }
   const markers = [
     /\b(?:following|this) (?:text|passage|content)\s*:\s*/iu,
     /\b(?:summari[sz]e|expand|elaborate|review)\s*:\s*/iu,
@@ -59,6 +49,20 @@ export function extractRequestSourceMaterial(text, limit) {
       return boundedMaterial(text, match.index + match[0].length, text.length,
         'explicit-content-marker', limit);
     }
+  }
+  const quotedCandidates = [
+    /"([^"\r\n]+)"/u,
+    /“([^“”\r\n]+)”/u,
+  ].map((expression) => expression.exec(text)).filter((match) => match
+    && (/\b(?:summari[sz]e|condense|recap|expand|elaborate|review)\b/iu.test(
+      text.slice(0, match.index),
+    ) || match[1].length >= 20))
+    .toSorted((left, right) => left.index - right.index || right[0].length - left[0].length);
+  const quoted = quotedCandidates[0];
+  if (quoted) {
+    const contentStart = quoted.index + quoted[0].indexOf(quoted[1]);
+    return boundedMaterial(text, contentStart, contentStart + quoted[1].length,
+      'quoted-source-material', limit, [quoted.index, quoted.index + quoted[0].length]);
   }
   return null;
 }
@@ -183,4 +187,16 @@ export function selectRequestTopics(instruction, limits, segments = []) {
     normalizationCollisions,
     complete: characterTruncations === 0 && omittedByCount === 0 && normalizationCollisions === 0,
   });
+}
+
+export function createRequestTruncationReceipt(segmented, topicSelection, operationSelection, material) {
+  const reasons = Object.freeze([
+    ...(!segmented.complete ? ['instruction-segment-budget'] : []),
+    ...(material && !material.complete ? ['source-material-character-budget'] : []),
+    ...(topicSelection.omittedByCount > 0 ? ['topic-count-budget'] : []),
+    ...(topicSelection.characterTruncations > 0 ? ['topic-character-budget'] : []),
+    ...(topicSelection.normalizationCollisions > 0 ? ['topic-normalization-collision'] : []),
+    ...(operationSelection.omitted > 0 ? ['operation-count-budget'] : []),
+  ]);
+  return Object.freeze({ complete: reasons.length === 0, reasons });
 }

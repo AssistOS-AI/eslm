@@ -247,8 +247,17 @@ export async function runSimpleQaDiagnosticProbe(engine, pool, options = {}) {
   const seed = options.seed ?? 'eslm-simpleqa-probe-v1';
   const sample = sampleSimpleQa(pool, options.count ?? 100, seed);
   const outcomes = [];
+  const strategyResults = [];
   for (const item of sample) {
     const result = await engine.ask(item.text);
+    strategyResults.push(Object.freeze({
+      workPolicy: result.workPolicy,
+      ...(result.approximation?.receipt?.strategyExecution ? {
+        approximation: Object.freeze({
+          receipt: Object.freeze({ strategyExecution: result.approximation.receipt.strategyExecution }),
+        }),
+      } : {}),
+    }));
     const expected = pool.oracle.get(item.id);
     outcomes.push(Object.freeze({
       id: item.id,
@@ -295,6 +304,7 @@ export async function runSimpleQaDiagnosticProbe(engine, pool, options = {}) {
     selectedMethods: Object.freeze(selectedMethods),
     usedKbVersions: Object.freeze([...usedKbVersionsByIdentity.values()].toSorted((left, right) =>
       left.kbId.localeCompare(right.kbId) || String(left.version).localeCompare(String(right.version)))),
+    strategyResults: Object.freeze(strategyResults),
     outcomes: Object.freeze(outcomes),
   });
 }

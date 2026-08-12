@@ -29,7 +29,9 @@ For a new programmer, the system can be read in this order:
    operator-only Language Agent loop.
 2. **Knowledge:** DS005 defines inert canonical records; DS006, DS019, DS020, and DS021 define packages, physical
    compilation, retrieval, and memory.
-3. **Execution:** DS008 and DS015 define task frames, method selection, and the methods themselves.
+3. **Execution:** DS008 and DS015 define task frames, method selection, and the methods themselves. DS027 defines the
+   common trusted-strategy control plane through which alternative implementations are selected, bounded, scheduled,
+   audited, and eventually unified.
 4. **Output and failure:** DS009 defines statuses, provenance, and the strict separation between an answer and merely
    related evidence.
 5. **Evidence:** DS010 and DS017 define what benchmark and comparison claims mean.
@@ -75,6 +77,7 @@ This separation is the primary architectural invariant. It prevents each dataset
 | Generated runtime artifacts are rebuildable | Indexes and binary shards can be regenerated from canonical KB records and manifests. |
 | Correct answers do not excuse invalid traces | Where the task is deterministic, proof or execution validity is independently evaluated. |
 | Related evidence is not proof | Ordinary failure grounding remains outside answer values, answer provenance, and `usedKbVersions`. The separately named DS022 request-synthesis route may cite selected source claims in a `PARTIAL` artifact and account for their KB versions, but it cannot present relevance as entailment or return `SOLVED`. |
+| Strategy selection is statically trusted and inspectable | Runtime profiles may select only host-registered strategy identities. KBs, corpora, configuration, and agent output cannot provide executors. Votes rank typed candidates; they never replace proof or witness verification. |
 
 ### 4. System lifecycle
 
@@ -88,6 +91,11 @@ conflict, and resource failures. DS022 defines deterministic local language reco
 role-focused grounding terms, and exact work profiles. DS013 defines the later opt-in Language Agent profile. Those
 specifications carry the operational algorithms, receipts, and exceptional paths; this specification requires that
 their composition preserve the system identity and invariants above.
+
+DS027 defines the target high-level stage graph for that composition. Its registry is a control plane over trusted
+generic mechanisms, not a second knowledge or package system. Until every named extension point has migrated through
+that registry, the present local coordinators remain honestly identified as partial implementation foundations rather
+than being described as a completed plugin architecture.
 
 ### 5. Research data produced by the architecture
 
@@ -136,6 +144,13 @@ inference, access runtime proof state, or bypass host parsing and validation.
 ### Question #3: Which authority wins when an older experiment conflicts with this vision?
 
 Response: This specification and the consolidated DS set take priority. Earlier measurements may remain as historical evidence only when their protocol is still interpretable; their executable-KB architecture does not constrain the new declarative-KB implementation.
+
+### Question #4: Why is a strategy architecture compatible with a compact trusted core?
+
+Response: Strategies divide trusted generic mechanisms by typed responsibility and make their selection, resources,
+votes, and failures visible. They do not widen executable authority: every deployable executor is still statically
+registered repository code, while external facts and configuration remain inert. The architecture therefore improves
+research locality and inspection without turning KBs or downloaded plugins into programs.
 
 ## Conclusion
 

@@ -23,6 +23,14 @@ spelling, morphology, auxiliary, clause-decomposition, and request-intent heuris
 Recognized summary, explanation, comparison, outline, essay, report, article, document, table, list, and paragraph
 requests can produce a cited extractive `PARTIAL` artifact from supplied text and selected KB source claims.
 
+These working subsystems now share the first production slice of the trusted-strategy architecture. All 24 local
+language-approximation families execute through one sealed typed registry and deterministic stage coordinator. Exact
+strategy allowlists also gate request planning, query focus, relevance features, reasoning methods, and result
+construction inside their current owner modules. The catalog labels every entry `coordinated`, `instrumented-local`,
+or `planned`, so registration, local instrumentation, and future design cannot be confused. DS027 defines the
+remaining cross-stage scheduler, independent verification, compiler-side knowledge-standardization registry, and
+pipeline-receipt gates. KBs and configuration select only reviewed identities and never supply executable plugin code.
+
 **Current specialization and next acceptance gates:** ESLM's strongest path is explicit language, bounded planning,
 reviewable knowledge, and finite symbolic methods. The staged expansion program covers broader English composition,
 general AND/OR planning, document ingestion, encyclopedic coverage, richer first-order methods, mature trust and
@@ -45,6 +53,9 @@ node src/cli.mjs ask "Write a short report about Penguin" --kb quick
 node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick --external-language-agent
 node src/cli.mjs ask "Can Penguin swim?" --kb quick --no-external-language-agent
 node src/cli.mjs ask "QUESTION" --kb all --work-profile deep
+node src/cli.mjs ask "QUESTION" --strategy-preset language
+node src/cli.mjs ask "QUESTION" --strategy-select \
+  'runtime.evidence.assess=strategy:retrieval:focus-term-cooccurrence@1,strategy:retrieval:typed-answer-bridge@1'
 node src/cli.mjs run --input tests/fixtures/questions.txt --output /tmp/eslm-answers.jsonl
 node src/cli.mjs kb list
 node src/cli.mjs benchmark status
@@ -68,6 +79,14 @@ candidate text, confidence, supporting votes, transformations, and reparses. A c
 a strict top-level `SOLVED`, and its tentative episode facts and rules are never committed to the next turn. The
 default work profile is `balanced`; use `quick`, `deep`, or `exhaustive-bounded` with `--work-profile`, or inspect and
 change the profile interactively with `/work` and `/work PROFILE`.
+
+`--strategy-preset all|language|retrieval|reasoning|construction` and interactive `/strategies PRESET` change only
+which catalog rows are displayed. They are inventory and ablation views, not execution profiles. Use
+`--strategy-select 'STAGE=ID[,ID];STAGE=ID'` or interactive `/strategy STAGE=IDS` for exact execution allowlists;
+`/strategy clear` restores the default built-in set. The current selectable stages are language interpretation,
+request planning, knowledge focus, evidence assessment, reasoning execution, and result construction. Retrieval,
+failure grounding, method planning, and verification remain visible in the catalog but cannot be selected until their
+executors genuinely cross the shared coordinator boundary.
 
 When assistance is explicitly enabled, interactive mode prints `Thinking: interpreting with the configured Language
 Agent…` immediately before a real external invocation. A cache hit remains attributed to the assisted route but does
@@ -133,6 +152,7 @@ src/                       trusted runtime and operator entry points
   evaluation/              access gates and public development probes
   language/                symbolic frontend, deterministic heuristic planners, optional operator normalizer
   runtime/                 orchestration, heuristic request synthesis, and bounded work policy
+  strategy/                sealed descriptors, registry, coordinator, inventory, and confidence votes
   training/                isolated Coding Agent subprocess runner
 tests/                     Node tests and immutable fixtures
 training/
@@ -179,4 +199,4 @@ Interactive `/smoke` executes the deterministic nonce/metamorphic regression cat
 assistance. `/examples` pages show bounded samples from that same executable corpus. This is software regression
 evidence, not public benchmark evidence.
 
-Read the [documentation](docs/index.html), the [implementation status](docs/status.html), the [specification architecture](docs/specification-architecture.html), and the [specification matrix](docs/specs/matrix.md). The HTML pages explain the design from implementation and review viewpoints; the complete DS files remain authoritative.
+Read the [documentation](docs/index.html), the [implementation status](docs/status.html), the [research horizons](docs/research-horizons.html), the [trusted strategy contract](docs/specs/DS027-trusted-strategy-extensions-and-meta-rational-coordination.md), the [specification architecture](docs/specification-architecture.html), and the [specification matrix](docs/specs/matrix.md). The HTML pages explain the design from implementation and review viewpoints; the complete DS files remain authoritative. DS023 through DS026 turn the difficult next layers into explicit relevance, language, planning/synthesis, and grounded-evaluation research programs without presenting their hypotheses as current runtime capability.

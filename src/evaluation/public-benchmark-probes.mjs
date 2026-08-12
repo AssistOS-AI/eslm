@@ -10,6 +10,9 @@ import { BENCHMARK_ACCESS_MANIFESTS } from './benchmark-access-manifests.mjs';
 import { benchmarkCatalogFields } from './benchmark-report-catalog.mjs';
 import { benchmarkReportFields } from './benchmark-report-contract.mjs';
 import {
+  createRuntimeBenchmarkStrategyConfiguration,
+} from './benchmark-strategy-configuration.mjs';
+import {
   openSimpleQaCache, runSimpleQaDiagnosticProbe,
 } from './simpleqa-adapter.mjs';
 import { scoreStoryClozeSelections } from './story-cloze-2018-adapter.mjs';
@@ -78,13 +81,14 @@ function aggregateMethodIds(results) {
 }
 
 function measuredRow(id, data) {
+  const { strategyResults, ...publicData } = data;
   const reportFields = benchmarkReportFields(id, data);
   const resultOrigin = data.resultOrigin ?? 'current-execution';
   const executedAt = data.executedAt ?? (resultOrigin === 'current-execution'
     ? new Date().toISOString() : null);
   return Object.freeze({
     id, evidenceState: 'development-probe-executed',
-    ...data,
+    ...publicData,
     ...reportFields,
     normalizationCandidates: reportFields.inputRoute === 'raw-language' ? data.normalizationCandidates : null,
     normalizationCandidateRate: reportFields.inputRoute === 'raw-language'
@@ -106,6 +110,9 @@ function measuredRow(id, data) {
     resourceEvidence: data.resourceEvidence ? Object.freeze(data.resourceEvidence) : null,
     replayCommand: data.replayCommand ?? null,
     behaviorDependency: data.behaviorDependency ?? null,
+    ...(resultOrigin === 'current-execution' ? {
+      strategyConfiguration: createRuntimeBenchmarkStrategyConfiguration(strategyResults),
+    } : {}),
     resultOrigin,
     ...(resultOrigin === 'stored-receipt'
       ? { checkpointState: 'historical-unverified' } : {}),
@@ -214,6 +221,7 @@ async function runClutrr(engine, perDepth) {
     selectedMethods: aggregateMethodIds(runtimeResults),
     usedKbVersions: aggregateKbVersions(runtimeResults),
     selectedKbVersions: engineKnowledgeBaseVersions(engine),
+    strategyResults: runtimeResults,
     sourceEvidence: fileEvidence,
     sampleCoverage: {
       tested: outcomes.length,
@@ -260,6 +268,7 @@ async function runEntityTracking(engine, count) {
     selectedMethods: aggregateMethodIds(runtimeResults),
     usedKbVersions: aggregateKbVersions(runtimeResults),
     selectedKbVersions: engineKnowledgeBaseVersions(engine),
+    strategyResults: runtimeResults,
     sourceEvidence: [{ path: ENTITY_TRACKING_DEV, sha256: await hashFile(path), sourceRows: adapted.sourceRows }],
     sampleCoverage: {
       tested: outcomes.length,
@@ -293,6 +302,7 @@ async function runSimpleQa(engine, count) {
     selectedMethods: report.selectedMethods,
     usedKbVersions: report.usedKbVersions,
     selectedKbVersions: engineKnowledgeBaseVersions(engine),
+    strategyResults: report.strategyResults,
     sourceEvidence: [manifest.artifact],
     sampleCoverage: {
       tested: report.total,
@@ -340,6 +350,7 @@ async function runStoryCloze(engine) {
     selectedMethods: aggregateMethodIds(runtimeResults),
     usedKbVersions: aggregateKbVersions(runtimeResults),
     selectedKbVersions: engineKnowledgeBaseVersions(engine),
+    strategyResults: runtimeResults,
     sourceEvidence: [{
       path: STORY_CLOZE_PARTITION,
       sha256: await hashFile(join(PROJECT_ROOT, STORY_CLOZE_PARTITION)),

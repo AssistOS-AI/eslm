@@ -143,11 +143,11 @@ function taskFrame(task) {
   };
 }
 
-export function executeTypedTask(model, task) {
+export function executeTypedTask(model, task, options = {}) {
   const selectedKbVersions = model.manifest.knowledgeBaseVersions
     ?? (model.manifest.knowledgeBases ?? []).map((kbId) => ({ kbId }));
   const method = taskMethods(model)[task?.operation];
-  if (!method) {
+  if (!method || options.methodAllowed?.(method.descriptor) === false) {
     return assertRuntimeResultContract({
       status: 'NO_APPLICABLE_METHOD',
       protocol: 'eslm-runtime-result-v1',
@@ -156,7 +156,11 @@ export function executeTypedTask(model, task) {
       usedKbVersions: [],
       selectedKbVersions,
       consultedKbVersions: [],
-      unresolvedSubgoals: [{ operation: task?.operation, gap: 'no-registered-method' }],
+      unresolvedSubgoals: [{
+        operation: task?.operation,
+        gap: method ? 'method-not-selected-by-strategy-policy' : 'no-registered-method',
+        ...(method ? { methodId: method.descriptor.methodId } : {}),
+      }],
       model: coreModelMetadata(model),
     });
   }

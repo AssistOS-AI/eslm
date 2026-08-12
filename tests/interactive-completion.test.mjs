@@ -13,6 +13,19 @@ test('interactive Tab completion expands slash commands and declared command val
     ['/work exhaustive-bounded'],
     '/work e',
   ]);
+  assert.deepEqual(interactiveCompletions('/strategies r'), [
+    ['/strategies retrieval', '/strategies reasoning'],
+    '/strategies r',
+  ]);
+  const [strategies] = interactiveCompletions('/strategy runtime.evidence.assess=');
+  assert.ok(strategies.includes(
+    '/strategy runtime.evidence.assess=strategy:retrieval:active-kb-frequency@1',
+  ));
+  assert.ok(strategies.includes(
+    '/strategy runtime.evidence.assess=strategy:retrieval:typed-answer-bridge@1',
+  ));
+  const [ungated] = interactiveCompletions('/strategy runtime.method.plan=');
+  assert.deepEqual(ungated, ['/strategy runtime.method.plan=']);
 });
 
 test('interactive Tab completion uses KB catalog metadata and comma-separated selections', () => {

@@ -3,7 +3,7 @@ id: DS007
 title: CLI, Session, and Training Operations
 status: in-progress
 owner: interface
-summary: Defines local-first one-shot and interactive execution, work profiles, declarative KB operations, supervised training, benchmark commands, reproducibility, and structured output.
+summary: Defines local-first execution, exact work and strategy controls, declarative KB operations, supervised training, benchmark commands, reproducibility, and structured output.
 ---
 
 # DS007 CLI, Session, and Training Operations
@@ -104,7 +104,8 @@ trace, unresolved subgoals, language route, optional failure-time grounding bund
 
 The current `eslm-runtime-result-v1` is an implemented, stage-dependent subset. Every text result exposes the protocol,
 status, answer, session and episode state, language route, the three KB-version sets, unresolved subgoals, and
-model/memory metadata plus the immutable DS022 `workPolicy` snapshot. Normalized `input`, accepted `query`, `taskFrame`, `plan`, semantic `values`, answer
+model/memory metadata plus the immutable DS022 `workPolicy` snapshot, including its strategy inventory view and exact
+stage allowlists. Normalized `input`, accepted `query`, `taskFrame`, `plan`, semantic `values`, answer
 `provenance`, and a `reasoning` summary appear only when execution reached the stage that can truthfully construct
 them; an early `UNPARSED` result can omit all of those fields. The result may additionally expose grounding, a
 typed-task witness, heuristic approximation and request-plan receipts, extractive synthesis details, Language Agent
@@ -144,7 +145,9 @@ resources. Deterministic modes must reproduce the same parse, plan, and answer f
 
 That full envelope is not yet attached to every ordinary `ask` result. Current public live benchmark rows record a
 content-addressed source-tree digest, runtime identity, replay command, requested memory policy, sampled peak RSS, and
-wall time. The current ordinary runtime result records selected KB versions and model/memory policy; `--profile` adds
+wall time. A row claimed as current additionally carries the DS010 bounded strategy-configuration snapshot and
+per-stage aggregate execution-receipt summaries. The current ordinary runtime result records selected KB versions and
+model/memory policy; `--profile` adds
 the implemented profiler fields. It does not promise a Git identity, seed, complete CLI configuration, or measured
 resources without profiling. Frozen benchmark and external-process receipts carry their own execution identities under
 DS010 and DS013. Documentation must not project those receipt-only fields onto every inference call.
@@ -168,19 +171,21 @@ of asking a question, and no dataset credential is inferred from the normalizati
 ### Interactive commands and session state
 
 The current interactive command set exposes help, installed and loaded KBs, model and selected versions, memory policy,
-DS022 work policy, normalization policy, last trace, last available execution profile, whole-session clearing, bounded
-examples, and the smoke regression. `/work` displays every effective heuristic, Horn, provider, and grounding bound;
+DS022 work policy, strategy inventory and exact execution selection, normalization policy, last trace, last available
+execution profile, whole-session clearing, bounded examples, and the smoke regression. `/work` displays every
+effective heuristic, Horn, provider, and grounding bound;
 `/work PROFILE` rebuilds the runtime with `quick`, `balanced`, `deep`, or `exhaustive-bounded` while retaining selected
 KB identities and accepted session state. `/model` reports the retained fact count; structured results expose the full
 overlay and provenance.
 Fine-grained fact inspection and retraction plus interactive clarification remain acceptance criteria for a later
 command revision. Session assertions retain provenance, and an uncertain conclusion is never inserted as a fact.
 
-Readline Tab completion covers slash-command names, the declared values of `/normalize`, `/memory`, and `/work`, and
+Readline Tab completion covers slash-command names, the declared values of `/normalize`, `/memory`, `/work`, and
+`/strategies`, exact built-in identities after `/strategy STAGE=`, and
 cataloged or registered KB identifiers for `/load` and `/unload`, including the active comma-separated identifier
 fragment. Completion proposes syntax and identifiers only. It never executes a command, loads a KB, changes a work or
-normalization profile, or mutates session state. Ordinary language input is returned unchanged so pressing Tab while
-composing a question cannot rewrite its meaning.
+normalization profile, selects a strategy, or mutates session state. Ordinary language input is returned unchanged so
+pressing Tab while composing a question cannot rewrite its meaning.
 
 The session context is an explicit overlay and can be serialized in structured output. It does not mutate a published
 KB. A follow-up may refer to prior entities only through bounded discourse state that remains inspectable. When several
@@ -231,6 +236,34 @@ may complete work that a smaller one could not, but it cannot alter logic, trust
 benchmark denominators. `exhaustive-bounded` means the largest finite policy supplied by this release, not an unbounded
 scan.
 
+### Strategy inventory and exact execution selection
+
+`--strategy-preset all|language|retrieval|reasoning|construction` selects only an inventory view. Interactive
+`/strategies` prints the selected view, catalog totals, `coordinated`, `instrumented-local`, and `planned` counts,
+stage summaries, and the selection digest; `/strategies PRESET` changes that view. A preset does not enable, disable,
+or reorder an executor and therefore cannot create a capability gap.
+
+The inventory's `executionEnabled` field means that a policy-selectable identity is admitted by the current exact
+allowlist. It does not assert that the last request invoked that strategy. A `catalogued-not-policy-gated` local owner
+may still execute in the ordinary pipeline; it cannot yet be controlled by this interface. Runtime and stage receipts
+remain the authority for actual execution.
+
+`--strategy-select 'STAGE=ID[,ID];STAGE=ID'` is the execution control. The shell form must be quoted because a
+semicolon separates stage assignments. Interactive `/strategy STAGE=IDS` applies the same closed syntax and
+`/strategy clear` removes every exact override. The CLI validates exact built-in identity and version, stage
+membership, non-empty bounded arrays, duplicate stage assignments, implementation state, and mandatory safety
+identities before committing the rebuilt runtime. An invalid interactive change leaves the previous engine and
+selection in place.
+
+The current exact gates are `runtime.language.interpret`, `runtime.request.plan`, `runtime.knowledge.focus`,
+`runtime.evidence.assess`, `runtime.reason.execute`, and `runtime.result.construct`. Language selection must retain
+`strategy:language:direct-controlled-parser@1`; focus selection must retain
+`strategy:focus:function-word-exclusion@1`. Retrieval-frontier execution, failure grounding, method planning, and
+verification remain catalog-visible but non-selectable until those owners execute through the common coordinator.
+The 24 local language families are the first fully coordinated built-ins. Request, focus, relevance, reasoning, and
+construction allowlists are real gates around their existing owner modules and remain labeled `instrumented-local`.
+No flag may select a `planned` strategy or inject an executor, path, command, or callback.
+
 ## Decisions & Questions
 
 ### Question #1: Why are benchmark status and probe separate operations?
@@ -250,6 +283,12 @@ Response: An aggregate alone cannot show whether the runtime was really invoked 
 Response: Machine consumers and scorers must be able to distinguish what the reasoner established from what retrieval
 merely found relevant. A structural field preserves that boundary, while the interactive renderer can still provide a
 useful, clearly labeled human view.
+
+### Question #5: Why is a named strategy preset not an execution profile?
+
+Response: A short named view is useful for inspecting one architectural area, but treating that view as an implicit
+allowlist would silently disable unrelated mandatory work. Exact stage-to-identity selection is explicit, validated,
+serialized in the work policy, and suitable for replay. The separate preset therefore changes presentation only.
 
 ## Conclusion
 

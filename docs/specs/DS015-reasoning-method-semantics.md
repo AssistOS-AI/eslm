@@ -23,6 +23,12 @@ documentation together.
 
 Every executable method has a stable `methodId`, typed inputs and outputs, explicit preconditions, a soundness statement, a completeness statement, uncertainty semantics, a witness kind, a cost model, and an implementation version. The descriptor is not executable authority and does not prove that the implementation satisfies its claim. Registration must bind the descriptor to a trusted executor, and tests must independently validate its positive, negative, boundary, and renaming behavior.
 
+When a method participates in the DS027 common coordinator, it additionally has one exact strategy identity whose
+descriptor supplies stage scheduling, profile selection, resource allocation, correlation, and receipt metadata. That
+wrapper cannot change the method's inputs, semantics, preconditions, soundness, completeness, uncertainty, or witness.
+Several method strategies may be eligible for one task, but confidence voting selects work or preserves alternatives;
+only an independently validated method result has answer authority.
+
 A method receives semantic structures, not a benchmark name, source path, record identifier, answer position, expected value, or dataset-specific surface token. A source adapter may compile a documented external representation into a method's typed input. A KB may supply facts, relation algebras, default priorities, lexical frames, or other validated policy data. Neither may insert a hidden alternate solver.
 
 DS009 is the sole top-level status authority. Method sections here define when one of those statuses applies and may add
@@ -247,6 +253,13 @@ claims only the grounded finite-domain and propositional methods already specifi
 Response: Equal values do not make non-strict evidence strict. Preserving `DEFEASIBLE` prevents a strict source from
 laundering an agreeing default, commonsense edge, or preference into a proof, while still merging provenance and making
 the agreement visible. Disagreement remains `AMBIGUOUS` rather than becoming a provider-priority decision.
+
+### Question #5: Does strategy arbitration create a new reasoning semantics?
+
+Response: No. It schedules and compares methods under typed applicability, cost, resource, and uncertainty metadata.
+Each method still computes exactly the semantics specified here. Strict conclusions merge only after witness
+validation, defeasible conclusions retain their regime, and disagreement is handled by DS009 rather than averaged into
+a new truth value.
 
 ## Conclusion
 

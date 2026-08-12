@@ -35,6 +35,12 @@ query frame carry more weight. Every contribution is returned in a receipt with 
 estimator does not scan an entire package at question time, learn weights online, or claim that a bridge candidate
 completes a proof.
 
+The research pipeline keeps five decisions separate. DS022 first extracts typed query focus. Exact indexes then form a
+bounded candidate frontier. Inspectable frequency, combination, role, and answer-bridge features rank that frontier.
+A registered reasoning probe may test a small top-ranked subgraph under an independent budget. Finally, the aggregator
+groups corroborating, conflicting, sense-specific, and subgoal-specific evidence without changing its proof status.
+No ranking score may jump directly from lexical relevance to a primary answer.
+
 ### 2. Research representation
 
 Every future relevance experiment uses one versioned `relevance-research-record` with these fields:
@@ -169,9 +175,14 @@ unbounded reasoner.
 
 ### Question #3: Which statistical ranking family should become the long-term default?
 
-Options: a hand-calibrated transparent ensemble, a BM25-style symbolic index, a graph-spreading model, or a frozen
-learned linear ranker remain viable. The project will select one only after the common frozen benchmark and ablation
-suite can distinguish them.
+Options:
+
+- a hand-calibrated transparent ensemble;
+- a BM25-style symbolic index;
+- a graph-spreading model; or
+- a frozen learned linear ranker.
+
+The project will select one only after the common frozen benchmark and ablation suite can distinguish them.
 
 ## Conclusion
 

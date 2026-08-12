@@ -3,7 +3,7 @@ id: DS010
 title: Evaluation, Measurement, and External Comparison
 status: in-progress
 owner: evaluation
-summary: Defines evidence layers, fixed-denominator and language-route metrics, grounding and request-construction validation, receipt currentness, structural splits, and external comparison.
+summary: Defines evidence layers, fixed-denominator and route metrics, strategy-configuration identity, receipt currentness, structural splits, grounded construction, and external comparison.
 ---
 
 # DS010 Evaluation, Measurement, and External Comparison
@@ -77,6 +77,11 @@ an independent raw-language diagnostic; they must not replace the latter with th
 
 Reliability measurements separate correct abstention from accidental failure: `UNKNOWN`, `AMBIGUOUS`, `UNDERDETERMINED`, `INCONSISTENT_CONTEXT`, `NO_APPLICABLE_METHOD`, `RESOURCE_LIMIT`, and `UNPARSED` retain their meanings. A heuristic proof exposed as `DEFEASIBLE` is scored under that public status, and an extractive artifact is scored as `PARTIAL`, never as a strict answer. Efficiency measurements include elapsed time, peak application memory where measurable, loaded bytes, shard and cache activity, search nodes, package size, exact work-policy profile and overrides, heuristic work counts, and deterministic replay. Updateability measurements cover changed records, changed compiled bytes, affected answers, unaffected-answer stability, and provenance.
 
+Strategy measurements distinguish catalog presence, selection, eligibility, execution, abstention, invalid output,
+resource exhaustion, and contribution. Reports group those states by canonical stage and exact strategy identity and
+include per-strategy ablations when a result supports an architectural promotion claim. A catalog entry or configured
+arbiter is not counted as executed merely because the row selected its stage.
+
 ### Generalization and robustness
 
 Random row splits are insufficient when templates, worlds, stories, vocabulary, relations, or proof structures repeat. Evaluation groups by relevant causal structure: source document, generated world, construction family, entity vocabulary, domain, relation composition, rule depth, spatial hop count, or another task-specific unit.
@@ -104,6 +109,21 @@ language policy, requested resource policy, measured elapsed time and peak memor
 command. The report records assembly time separately. A row built from a committed receipt retains that receipt's
 execution time and checkpoint; it must not inherit the new assembly time as if it were re-executed.
 
+Every row presented as a current execution must also contain one bounded
+`eslm-benchmark-strategy-configuration-v1` snapshot. The snapshot binds the row to the canonical built-in strategy
+catalog format and content digest, its content-addressed configuration digest, requested and effective work-policy
+profiles, the inventory preset, and exact stage-to-identity allowlists. If an adapter uses a separate local strategy
+state instead of the ordinary runtime work policy, the snapshot identifies that mode and contains the adapter ID,
+version, bounded closed state, and state digest. It must not synthesize a runtime selection for an adapter-local path.
+
+The snapshot also lists configured arbiter identities and policy digests. That list records configuration, not proof
+that an arbiter executed. Actual coordinated activity is summarized by stage. Each entry has the closed shape
+`{ stage, format: "eslm-benchmark-strategy-stage-receipt-summary-v1", executions, completeExecutions,
+incompleteExecutions, uniqueReceipts, digest }`; its digest binds the canonical underlying stage receipts for every
+case in the row. `uniqueReceipts` is a bounded canonical list of receipt digest, occurrence count, and completeness;
+its occurrence counts sum to `executions`. An empty stage-summary list is honest when no coordinated stage ran. A
+batch row may never attach one case's runtime receipt and imply that it represents the entire denominator.
+
 Before a row is called current, a static audit recomputes the frozen result and behavior-dependency digests. An audited
 row is classified as current, historical-stale, historical-unrecoverable, invalid, or unavailable. A stored execution
 outside the audit definitions is `historical-unverified`: it may retain its historical metric and timestamp, but it
@@ -114,13 +134,14 @@ claim the current checkpoint; routine source checks may remain non-strict to avo
 
 The current report implementation separates report assembly from row execution, records track and input route, applies
 fixed-denominator metrics, and audits the frozen receipt families for which dependency maps exist. Some older receipts
-still lack measured peak memory, full scorer identity, or a replay command. Such rows remain historical or incomplete
-evidence until a clean isolated rerun produces the full execution contract; the report generator must not synthesize
-missing metadata. Dependency currentness and reporting completeness are separate audit facts. Matching source hashes do
-not make an older receipt `current` when it lacks the execution timestamp, content-addressed behavior identity, resource
-policy and measurements, replay command, scorer/oracle/partition identities, selected methods and KB versions, or
-language policy. The audit labels that receipt's reporting completeness `incomplete` and prevents a current-checkpoint
-claim until a new execution records those fields.
+still lack measured peak memory, full scorer identity, a replay command, or the bounded strategy-configuration
+snapshot. Such rows remain historical or incomplete evidence until a clean isolated rerun produces the full execution
+contract; the report generator must not synthesize missing metadata. Dependency currentness and reporting completeness
+are separate audit facts. Matching source hashes do not make an older receipt `current` when it lacks the execution
+timestamp, content-addressed behavior identity, resource policy and measurements, replay command,
+scorer/oracle/partition identities, selected methods and KB versions, language policy, or strategy configuration and
+stage-summary digests. The audit labels that receipt's reporting completeness `incomplete` and prevents a
+current-checkpoint claim until a new execution records those fields.
 
 An executed row displays the tested count beside the possible source scope. A non-executed row has no denominator and no zero percentage. Preference rows report correct preferences, reversed preferences, and ties separately; a strict preference requires the designated candidate to score higher, and a tie fails when the task contract says so. Internal stable identifiers and source hashes remain in raw or secondary audit views rather than breaking the primary two-column table.
 
@@ -173,9 +194,11 @@ complete absence from incomplete search.
 ### Freeze before external comparison
 
 Before a final comparison, freeze the symbolic commit, accepted KB versions, adapters, CNL and heuristic-catalog
-versions, named work profile and overrides, Language Agent opt-in policy, prompts and model when an assisted track is
-included, seeds, scorers, memory policy, and prediction schema. A label-free export manifest lets another system
-produce predictions. The local deterministic oracle joins by stable identifier, validates shape, and counts omissions.
+versions, built-in strategy-catalog digest, exact strategy allowlists, configured arbiter identities and policies,
+named work profile and overrides, coordinated stage-receipt digests, Language Agent opt-in policy, prompts and model
+when an assisted track is included, seeds, scorers, memory policy, and prediction schema. A label-free export manifest
+lets another system produce predictions. The local deterministic oracle joins by stable identifier, validates shape,
+and counts omissions.
 
 Results from final comparison do not feed patches into that frozen candidate. A later patch starts a new comparison version. Reports retain raw predictions and name model identity, quantization, prompt, context window, decoding, tools or retrieval, hardware, cost, and evidence regime.
 
@@ -204,6 +227,13 @@ Response: The report must identify the accepted input representation, prove that
 Response: Yes, for the explicitly named solver, annotation, or adapter track. It is evidence that the projected task
 and generic method execute correctly. It is not evidence that raw benchmark language was parsed end to end, so both
 the input track and any independent language coverage must remain visible.
+
+### Question #5: Why does a benchmark row summarize stage receipts instead of embedding one receipt?
+
+Response: One benchmark row aggregates many case executions. One case receipt cannot describe that denominator.
+Per-stage counts and a digest over the distinct canonical receipts preserve batch identity and completeness without
+making the row unbounded; the underlying receipts remain the audit evidence. Configured arbiter identities are kept
+separate because configuration alone is not execution.
 
 ## Conclusion
 

@@ -33,6 +33,9 @@ test('bounded heuristic ensemble repairs a near-CNL episode without answering or
   assert.equal(result.recommendedCandidate.confidenceBand, 'medium');
   assert.ok(result.recommendedCandidate.uncertainties.some((item) => item.includes('predicate lemma')));
   assert.ok(result.recommendedCandidate.edits.every((edit) => edit.votes.length >= 1));
+  assert.ok(result.recommendedCandidate.edits.flatMap((edit) => edit.votes)
+    .every((vote) => vote.strategyVote?.format === 'eslm-strategy-vote-v1'
+      && vote.strategyVote.truthAuthorized === false));
   assert.ok(result.receipt.consensusRejectedEdits.some((item) =>
     item.edit.replacement === 'eat' && item.winningEdit.replacement === 'eats'));
   assert.deepEqual({
@@ -235,6 +238,46 @@ test('work is deterministic, deeply frozen, and stopped by explicit byte, token,
   assert.throws(() => approximateControlledEnglish(source, { unexpected: true }), TypeError);
 });
 
+test('partial family proposals survive an exhausted edit frontier without claiming complete execution', () => {
+  const result = approximateControlledEnglish(
+    'Tavra is a qerin. All qerin bli navox. Nera is a zoral. All zoral fli korax. '
+      + 'Does Tavra blim navox? Does Nera flib korax?',
+    {
+      limits: { maximumEditDistanceEvaluations: 1 },
+      selectedStrategyIdentities: ['strategy:language:contextual-predicate-spelling@1'],
+    },
+  );
+  const family = familyReceipt(result, 'contextual-predicate-spelling');
+  assert.equal(family.strategyResultStatus, 'resource-limit');
+  assert.equal(family.proposalsGenerated, 1);
+  assert.equal(family.proposalsRetained, 1);
+  assert.equal(result.receipt.complete, false);
+  assert.equal(result.receipt.strategyExecution.complete, false);
+  assert.equal(result.receipt.strategyExecution.workUnit, 'coordinator-invocation-slot');
+  assert.equal(result.receipt.strategyExecution.decisionAuthority, 'accounting-only');
+  assert.equal(result.receipt.strategyExecution.arbitration.stageOutputSelected, false);
+  assert.ok(result.receipt.truncationReasons.includes('edit-distance-evaluation-budget'));
+  assert.ok(result.receipt.proposalReceipts.length > 0);
+});
+
+test('language coordination separates invocation slots from edit-distance work', () => {
+  const result = approximateControlledEnglish('Nira is a zoral. All zoral flib korax. Does Nira flib korax?');
+  const execution = result.receipt.strategyExecution;
+  assert.equal(execution.maximumWork, execution.selectedStrategies.length);
+  assert.equal(execution.consumedWork, execution.selectedStrategies.length);
+  assert.ok(execution.results.every((run) => run.work.reserved === 1 && run.work.consumed === 1));
+  const editFamilies = result.receipt.familyReceipts.filter((receipt) =>
+    receipt.distanceEvaluationsReserved > 0);
+  assert.deepEqual(editFamilies.map((receipt) => receipt.family).toSorted(), [
+    'contextual-predicate-spelling', 'grammatical-spelling', 'predicate-agreement',
+  ]);
+  assert.equal(editFamilies.reduce((sum, receipt) => sum + receipt.distanceEvaluationsReserved, 0),
+    result.receipt.limits.maximumEditDistanceEvaluations);
+  assert.equal(result.receipt.observed.editDistanceEvaluations,
+    result.receipt.familyReceipts.reduce(
+      (sum, receipt) => sum + (receipt.distanceEvaluationsConsumed ?? 0), 0));
+});
+
 test('large decomposition receipts remain byte-bounded without quadratic vote evidence', () => {
   const source = `${Array.from({ length: 128 }, (_, index) => `N${index} a zoral`).join('; ')}.`;
   const maximumReceiptBytes = 1024 * 1024;
@@ -267,6 +310,7 @@ test('heuristic core passes forbidden-dispatch and deployed-boundary audit', asy
     'heuristic-cnl-families.mjs',
     'heuristic-cnl-morphology.mjs',
     'heuristic-cnl-protection.mjs',
+    'heuristic-cnl-strategy-stage.mjs',
     'heuristic-cnl-surface.mjs',
   ];
   const text = (await Promise.all(files.map((file) =>

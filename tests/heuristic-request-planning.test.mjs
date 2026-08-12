@@ -74,6 +74,14 @@ test('large requests become an explicit dependency-ordered subrequest plan', () 
   assert.deepEqual(aggregate.dependsOn,
     ['subrequest:shape:1', 'subrequest:shape:2', 'subrequest:shape:3']);
   assert.equal(result.selectedPlan.outputContract.artifact, 'composite-response');
+
+  const reordered = planHeuristicRequest(
+    'Outline quorims; summarize fenors; compare narufs with velins.',
+  );
+  assert.deepEqual(reordered.selectedPlan.operations, ['outline', 'summarize', 'compare']);
+  assert.deepEqual(reordered.selectedPlan.operationPlans.map((operation) => operation.order), [1, 2, 3]);
+  assert.deepEqual(reordered.selectedPlan.topics.map((topic) => topic.surface),
+    ['quorims', 'fenors', 'narufs', 'velins']);
 });
 
 test('provided source material is isolated from instructions and never treated as an answer', () => {
@@ -100,6 +108,14 @@ test('quoted material remains inert while a trailing output instruction is prese
     'Draft a detailed report. Velins rest at dusk.');
   assert.deepEqual(result.selectedPlan.topics, []);
   assert.equal(result.selectedPlan.instructionSegments[0].surface, 'Summarize as a table.');
+
+  const renamedShortSource = planHeuristicRequest(
+    'Summarize "Draft a report." as bullet points.',
+  );
+  assert.equal(renamedShortSource.status, 'PLANNED');
+  assert.deepEqual(renamedShortSource.selectedPlan.operations, ['summarize']);
+  assert.equal(renamedShortSource.selectedPlan.sourceMaterial.text, 'Draft a report.');
+  assert.equal(renamedShortSource.selectedPlan.outputContract.format, 'bullets');
 });
 
 test('instructions embedded inside supplied material remain inert data', () => {
@@ -114,6 +130,14 @@ test('instructions embedded inside supplied material remain inert data', () => {
   assert.equal(result.selectedPlan.outputContract.length, 'standard');
   assert.equal(result.selectedPlan.sourceMaterial.text,
     'Write a detailed report about zorals in a table.');
+
+  const quoted = planHeuristicRequest(
+    'Summarize this text: A naruf says "draft a report about velins".',
+  );
+  assert.equal(quoted.selectedPlan.sourceMaterial.extraction, 'explicit-content-marker');
+  assert.equal(quoted.selectedPlan.sourceMaterial.text,
+    'A naruf says "draft a report about velins".');
+  assert.deepEqual(quoted.selectedPlan.operations, ['summarize']);
 });
 
 test('request planning reports material and instruction truncation honestly', () => {
@@ -173,6 +197,7 @@ test('artifact nouns and operation words require explicit request force', () => 
     'The essay compares velins with tarins.',
     'A summary explains why quorims move.',
     'We write a document about fenors.',
+    'A report about salins is useful, please.',
   ]) {
     const statement = planHeuristicRequest(input);
     assert.equal(statement.status, 'NO_SUPPORTED_INTENT', input);
@@ -187,6 +212,7 @@ test('artifact nouns and operation words require explicit request force', () => 
     ['Explain why quorims move.', 'explain'],
     ['Could you summarize fenors?', 'summarize'],
     ['I need a document about salins.', 'compose'],
+    ['A summary of borins, please.', 'summarize'],
   ];
   for (const [input, intent] of controls) {
     const request = planHeuristicRequest(input);
