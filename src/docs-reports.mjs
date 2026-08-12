@@ -3,6 +3,8 @@ import { dirname, join, resolve } from 'node:path';
 import { benchmarkBehaviorIdentity } from './evaluation/benchmark-execution-identity.mjs';
 import { auditFreshBenchmarkReceipts } from './evaluation/benchmark-receipt-audit.mjs';
 import { validatePublicBenchmarkRows } from './evaluation/benchmark-report-contract.mjs';
+import { assertGeneratedHeuristicBenchmarkReport } from './evaluation/generated-heuristic-benchmark-contract.mjs';
+import { renderGeneratedHeuristicBenchmarkHtml } from './evaluation/generated-heuristic-benchmark-html.mjs';
 import { PROJECT_ROOT } from './paths.mjs';
 
 function escapeHtml(value) {
@@ -82,6 +84,15 @@ export async function publishReport(kind) {
   return htmlPath;
 }
 
+export async function publishGeneratedHeuristicBenchmark() {
+  const jsonPath = join(PROJECT_ROOT, 'docs/results/latest-generated-heuristic-benchmark.json');
+  const report = JSON.parse(await readFile(jsonPath, 'utf8'));
+  assertGeneratedHeuristicBenchmarkReport(report);
+  const htmlPath = join(PROJECT_ROOT, 'docs/results/latest-generated-heuristic-benchmark.html');
+  await writeFile(htmlPath, renderGeneratedHeuristicBenchmarkHtml(report), 'utf8');
+  return htmlPath;
+}
+
 export async function checkDocumentation() {
   const required = [
     'index.html', 'architecture.html', 'language.html', 'knowledge-bases.html', 'training.html',
@@ -98,6 +109,8 @@ export async function checkDocumentation() {
     'partials/header.html', 'partials/footer.html', 'partials-loader.js',
     'results/latest-evaluation.json', 'results/latest-evaluation.html',
     'results/latest-benchmark.json', 'results/latest-benchmark.html',
+    'results/latest-generated-heuristic-benchmark.json',
+    'results/latest-generated-heuristic-benchmark.html',
     'results/latest-public-benchmark-probes.json', 'results/current-status.json', 'specs/matrix.md',
   ];
   const missing = [];
@@ -166,6 +179,18 @@ export async function checkDocumentation() {
     if (!reportPage.includes(`${report.total} authored cases`) || !reportPage.includes('Benchmark comparable:</strong> no')) {
       throw new Error(`Latest ${kind} HTML must display its authored case count and non-comparable status.`);
     }
+  }
+  const generatedReport = JSON.parse(await readFile(
+    join(PROJECT_ROOT, 'docs/results/latest-generated-heuristic-benchmark.json'), 'utf8',
+  ));
+  assertGeneratedHeuristicBenchmarkReport(generatedReport);
+  const generatedPage = await readFile(
+    join(PROJECT_ROOT, 'docs/results/latest-generated-heuristic-benchmark.html'), 'utf8',
+  );
+  if (!generatedPage.includes(`${generatedReport.passed}/${generatedReport.total}`)
+      || !generatedPage.includes('Benchmark comparable:</strong> no')
+      || !generatedPage.includes(`${generatedReport.generator.domains} structural domains`)) {
+    throw new Error('Generated heuristic benchmark HTML must expose its denominator, scope, and coverage.');
   }
   const htmlFiles = (await readdir(join(PROJECT_ROOT, 'docs'))).filter((file) => file.endsWith('.html'));
   for (const file of htmlFiles) {

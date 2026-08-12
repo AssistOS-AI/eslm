@@ -222,6 +222,15 @@ test('a selected diagnostic cannot overwrite the published complete portfolio', 
   }), /requires --benchmark all/u);
 });
 
+test('a custom generated diagnostic cannot overwrite the fixed development checkpoint', async () => {
+  await assert.rejects(benchmarkCommand(['generated'], {
+    publish: true, kb: 'quick', cases: 64, seed: 'custom-diagnostic',
+  }, {
+    engineFor: () => { throw new Error('engine must not be constructed'); },
+    printJson: () => {},
+  }), /requires the default 1,200 cases/u);
+});
+
 test('assembly distinguishes rows executed now from stored receipts', () => {
   const report = assemblePublicBenchmarkReport([
     { id: 'live', resultOrigin: 'current-execution' },

@@ -1,6 +1,6 @@
 # Scope
 
-This repository develops an Executable Symbolic Language Model (ESLM): a deterministic symbolic runtime, a declarative knowledge-package format, and an offline toolchain that compiles evidence into reviewable data. Training-time coding agents may analyze prepared training evidence and propose declarative records. The deployed runtime never calls an LLM or agent and never executes knowledge-base content as source code. The general CLI is entirely local by default: it attempts direct symbolic execution, then deterministic DS022 language approximation or request planning, and finally related-KB grounding when the result permits it. An operator may explicitly enable the separate DS013 Language Agent wrapper with `--external-language-agent` or interactive `/normalize on`; it may translate or conservatively simplify only after the local language routes remain `UNPARSED`. A Language Agent may be a general coding agent or a translation-focused model; the currently supported adapter invokes Codex. The wrapper is not part of deployed symbolic inference, and every accepted proposal returns through the unchanged direct parser and reasoner.
+This repository develops an Executable Symbolic Language Model (ESLM): a deterministic symbolic runtime, a declarative knowledge-package format, and an offline toolchain that compiles evidence into reviewable data. Training-time coding agents may analyze prepared training evidence and propose declarative records. The deployed runtime never calls an LLM or agent and never executes knowledge-base content as source code. The general CLI is entirely local by default: it attempts direct symbolic execution, evaluates bounded explicit request force, compares any structurally licensed DS022 interpretation through parse-only Semantic IR, and finally attaches related-KB grounding when the result permits it. An operator may explicitly enable the separate DS013 Language Agent wrapper with `--external-language-agent` or interactive `/normalize on`; it may translate or conservatively simplify only after the local language routes remain `UNPARSED`. A Language Agent may be a general coding agent or a translation-focused model; the currently supported adapter invokes Codex. The wrapper is not part of deployed symbolic inference, and every accepted proposal returns through the unchanged direct parser and reasoner.
 
 `docs/specs/` is the sole current design authority. `original_specs/` is preserved research input and must not be consulted again after a specification-consolidation task has completed. `.agents/skills/` contains imported project-maintenance skills and must not be edited during ESLM product work. `training/.agents/skills/` contains repository-owned, self-contained training and audit skills.
 
@@ -63,7 +63,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 # Runtime Defaults
 
 - Stage A provides deterministic English controlled-language parsing, explicit task frames, capability-aware plans, direct retrieval, safe Horn deduction, provenance, structured gaps, and declarative KB packages.
-- The general CLI is offline by default. It runs the direct route first, then the bounded DS022 heuristic CNL ensemble or explicit request planner, and attaches role-focused related-KB grounding only after the final local status is known. A strict answer reached through a changed interpretation is reported as `DEFEASIBLE`; an approximated learning-only episode is `PARTIAL`, and all candidate-derived facts and rules remain query-local.
+- The general CLI is offline by default. It runs the direct route first. A bounded explicit request plan may preempt an accidental direct assertion parse while restoring the incoming session snapshot. Otherwise `UNPARSED` and `UNKNOWN` results enter the DS022 heuristic CNL ensemble; `SOLVED` and `PARTIAL` may also admit a structurally licensed candidate when its parse-only Semantic IR differs from the direct interpretation. Identical Semantic IR preserves the direct route, and every changed candidate interpretation remains query-local. A strict answer reached through a changed interpretation is reported as `DEFEASIBLE`; extractive request construction is `PARTIAL`. Role-focused related-KB grounding is attached only after the final local status is known.
 - Language Agent normalization is disabled by default. `--external-language-agent` or interactive `/normalize on` enables it only after direct and local heuristic language recovery remain `UNPARSED`; `--no-external-language-agent` explicitly restates the local profile. One assisted episode permits at most three language proposals and may return only parser-form feedback, never answers, KB evidence, grounding, or proof state. Every accepted proposal is reparsed by the direct symbolic runtime.
 - `balanced` is the default `eslm-work-policy-v1` profile. `quick`, `deep`, and `exhaustive-bounded` select other finite limits for heuristic candidates and reparses, Horn work, provider fan-out, and grounding retrieval. CLI startup flags and interactive `/work PROFILE` may change these budgets without changing logic, trust, selected KB identities, or session facts.
 - All 24 deterministic language-approximation families execute through the sealed DS027 registry and stage coordinator. Exact strategy allowlists can gate language approximation, request planning, query focus, relevance features, reasoning methods, and result construction. `--strategy-preset` and `/strategies PRESET` are inventory views only; they never change execution. Retrieval execution, failure grounding, method planning, and verification remain non-selectable until their catalog entries are integrated with the common coordinator.
@@ -103,7 +103,11 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Runtime profiling: `node src/cli.mjs ask "QUESTION" --profile`
 - Tests: `npm test`
 - Evaluation: `npm run evaluate`
-- Benchmark: `npm run benchmark`
+- Default internal benchmark: `npm run benchmark` runs the five-case authored fixture and then the separate
+  deterministic 1,200-case generated heuristic development suite; their reports and metrics remain separate.
+- Authored fixture only: `npm run benchmark:authored`
+- Generated heuristic development only: `npm run benchmark:generated`; direct CLI replay uses
+  `node src/cli.mjs benchmark generated --publish`, with optional `--cases` and `--seed` overrides.
 - Public benchmark cache status: `node src/cli.mjs benchmark status`
 - External-agent-free public portfolio assembly and live development rows: `npm run benchmark:public-probe`. The generated
   report distinguishes rows executed during assembly from stored receipts; it is not a rerun of every catalog row.
@@ -120,6 +124,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Deterministic CNL approximation, decomposition, voting, and request planning: `src/language/heuristic-*.mjs`
 - Heuristic language coordination, extractive request synthesis, and work policy: `src/runtime/heuristic-*.mjs` and `src/runtime/work-policy.mjs`
 - Trusted strategy descriptors, sealed registration, deterministic coordination, voting, and inventory: `src/strategy/`
+- Deterministic generated heuristic benchmark and aggregate failure analysis: `src/evaluation/generated-heuristic-benchmark.mjs`
 - Declarative KB schema, compiler, loader, catalog, and projection: `src/kb/`
 - Capability registry, planning, and inference: `src/reasoning/`
 - Isolated coding-agent training runner: `src/training/`

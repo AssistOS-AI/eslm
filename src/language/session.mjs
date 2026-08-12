@@ -1,7 +1,7 @@
 import { tokenize } from './normalization.mjs';
 import { baseThirdPersonSingular } from './heuristic-cnl-morphology.mjs';
 import { genericRelationObjectSurface } from './generic-relation-surface.mjs';
-import { boundedNominalSurface } from './nominal-surface.mjs';
+import { boundedNominalSurface, canonicalClassSurface } from './nominal-surface.mjs';
 import {
   SESSION_LIMITS,
   SessionInputValidationError,
@@ -60,12 +60,8 @@ function ensureSubject(phrase, kind, model, entities) {
   return surface ? ensureEntity(surface, kind, model, entities) : undefined;
 }
 
-function singularClass(value, model) {
-  const normalized = boundedNominalSurface(normalizedPhrase(value));
-  if (!normalized) return undefined;
-  return model.reasoning?.classes?.singular?.[normalized]
-    ?? (normalized.endsWith('ies') ? `${normalized.slice(0, -3)}y`
-      : normalized.endsWith('s') ? normalized.slice(0, -1) : normalized);
+function singularClass(value, model, options) {
+  return canonicalClassSurface(normalizedPhrase(value), model, options);
 }
 
 function propertyPredicate(surface, value, model) {
@@ -94,11 +90,13 @@ function assertionFrom(text, model, entities, ruleNumber) {
   let match;
   if ((match = normalized.match(/^(?:every (.+?) fears|all (.+?) fear|(.+?) are afraid of) (.+)$/u))) {
     const sourceClass = match[1] ?? match[2] ?? match[3];
-    const fearedClass = singularClass(match[4], model);
+    const fearedClass = singularClass(match[4], model, { grammaticalNumber: 'plural' });
     return {
       kind: 'rule',
       id: `session:r${ruleNumber}`,
-      when: [['?entity', 'is_a', singularClass(sourceClass, model)]],
+      when: [['?entity', 'is_a', singularClass(sourceClass, model, {
+        grammaticalNumber: match[1] ? 'singular' : 'plural',
+      })]],
       then: ['?entity', 'afraid_of', fearedClass],
       source: `session:rule:${ruleNumber + 1}`,
       sourceText: text,

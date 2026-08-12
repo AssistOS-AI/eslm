@@ -58,6 +58,36 @@ remain explicit work rather than simulated plugins.
 
 ## P1 — research and evaluation
 
+- [ ] Republish the expanded default deterministic 1,200-case heuristic-language development suite under its own
+  `internal-generated-development` report. Keep its structural oracle, seed, generator/suite digests, work and strategy
+  identity, fixed denominator, aggregate dimensions, bounded representative failures, and
+  `benchmarkComparable: false` claim boundary machine-reviewable.
+- [ ] Review the expanded suite's largest earliest-failure clusters and record collective conclusions by structural
+  domain, technique, target family, complexity, route, status, confidence, and resource outcome. Promote only generic
+  strategy hypotheses that survive renamed, meaning-changing, and independently seeded controls.
+- [x] Split generated-suite reporting by oracle level: answer execution, Semantic IR, query-local decomposition,
+  request execution, safe abstention, and proposal/operator preservation. Never count a proposal-only pass whose final
+  status is `UNPARSED` as executable interpretation coverage.
+- [ ] Report actual target-family applicability, execution, selection, and contribution separately from the current
+  target-family contract totals; a generated target label is not proof that its strategy ran or caused the result.
+- [ ] Add template-disjoint, vocabulary-disjoint, and independently authored language suites. Report the number of
+  distinct structural shapes, base predicates, morphology classes, and technique-by-domain cells beside the row
+  denominator so repeated instantiations cannot be mistaken for structural novelty.
+- [ ] Decouple domain themes from base predicates through a deterministic domain-by-morphology-class design. The
+  current generator binds each of its 18 domain records to one predicate, so a domain concentration can be a lexical
+  morphology concentration rather than evidence of domain semantics.
+- [x] Exercise deletion, insertion, substitution, and transposition spelling processes plus explicit silent-`e`,
+  doubled-consonant, sibilant, final-`y`, `ie`-ending, and terminal-`z` morphology strata in the default generator.
+- [x] Resolve the recurring spelling-plus-progressive cluster through one generic evidence hierarchy: role-aligned
+  class-rule/query context, exact finite/lemma round trip, bounded edit distance, and a strict source-character-coverage
+  tie-break that leaves equal remaining candidates unresolved.
+- [x] Protect that hierarchy with renamed entity/class/object controls spanning `water`, `fix`, `pass`, `buzz`, `map`,
+  and `move`, plus finite/progressive controls for `tie`, `vie`, and `cries` and a valid-different-predicate contrast.
+- [ ] Add multi-edit spelling, irregular paradigms, and deliberately ambiguous nonce forms. Preserve genuine ambiguity
+  as competing candidates or `AMBIGUOUS`; do not make a suite green by removing a difficult mutation family.
+- [x] Include the failure diagnostic code in generated cluster identity.
+- [ ] Compare fixed-seed, independent-seed, template-disjoint, and vocabulary-disjoint cluster persistence before
+  promoting a generic heuristic.
 - [ ] Freeze independent suites for each stage: language recovery, scope-safe decomposition, retrieval focus,
   relevance ranking, answer-bridge recall, reasoning selection, aggregation, synthesis grounding, and abstention.
 - [ ] Compare individual strategies, ablations, voting rules, budget allocations, and selected ensembles on identical
@@ -69,6 +99,68 @@ remain explicit work rather than simulated plugins.
 - [x] Document unresolved research programs explicitly: scope graphs, structural generalization, proof-guided
   retrieval, calibrated arbitration, conflict-aware evidence fusion, verified long-form synthesis, and new-source KB
   induction.
+
+### Expanded generated-development checkpoint — pending republication
+
+The generator now defines 43 reviewed shapes across 18 domains and 28 target families. It explicitly labels six oracle
+levels—answer execution, Semantic IR, query-local decomposition, request execution, proposal-only preservation, and
+safety abstention—and aggregates them separately. It also restores deletion, insertion, substitution, and
+transposition spelling processes and adds six named morphology strata. The prior 31-shape artifact is superseded; its
+pass count, digest, route totals, and cluster state are not a result for this expanded definition. Do not check the two
+publication tasks above until the fixed 1,200-case seed has executed, the new report validates, and its collective
+clusters have been reviewed.
+
+Pre-expansion failure-guided work remains useful history. It found recurring, domain-independent problems: permissive
+direct parses could hide intended progressive or multi-family repairs; suffix-like nonce classes could be
+singularized; and progressive derivation could create competing bases. The generic runtime changes compare parse-only
+Semantic IR, keep changed interpretations query-local, and use visible context for covered cases. Earlier experiments
+also showed that replacing a difficult insertion mutation with an easier deletion could hide a genuine ambiguity.
+The expanded generator now retains both processes, but its unpublished result cannot yet establish their behavior.
+Targeted renamed ambiguity probes remain research input for calibrated alternatives, `AMBIGUOUS`, or a reviewed
+lexical resource—never a reason for verb-specific core branches.
+
+A non-publishing fixed-seed run of the expanded definition produced 1,170/1,200 mixed contract passes and 30 failures.
+This is diagnostic evidence, not the published checkpoint. Twenty-eight failures are at `answer-execution` and two at
+`semantic-ir`; the other four oracle levels pass their current contracts. The repeated clusters are not random:
+
+- 14 cases fail first at candidate generation in `multi-family-consensus`;
+- 13 fail first on the resulting status in the same target family;
+- two `embedded-polar-question` cases fail on route; and
+- one contextual predicate spelling case fails on route.
+
+Representative multi-family errors select `watere`, `mapp`, `fixe`, `pas`, or `buz` instead of the structural oracle's
+`water`, `map`, `fix`, `pass`, or `buzz`. These failures span insertion, substitution, transposition, progressive
+reduction, and several domains. They make the next research decision concrete: preserve and compare competing lemma
+analyses, use reviewed lexical evidence when available, calibrate confidence against ambiguity, and verify the chosen
+Semantic IR before treating an affirmative answer as supported. Do not restore a green suite by deleting these
+mutation/domain combinations or by adding predicate-specific branches. The embedded-question cluster should be
+audited separately for the interaction between `ties`, the declared `tie` lemma, and sentence-form recognition.
+
+Five independent non-publishing 1,200-case seeds reproduce the diagnosis: 5,898/6,000 mixed contracts pass and 102
+fail. Only `answer-execution` and `semantic-ir` contain failures; query-local decomposition, request execution,
+proposal-only preservation, and safety abstention pass their current contracts. The two multi-family candidate/status
+clusters recur in all five seeds and contain 84/102 failures. Contextual spelling failures recur around `pass`, while
+embedded or polite question-envelope failures recur around `tie/ties`. All failed rows retain distinct nonce names,
+but the failures concentrate in seven of the 15 base predicate lemmas exercised by these families; `buzz` and `pass`
+account for 59/102. Because the current generator binds a domain to its predicate, apparent acoustics, communication,
+or rigging concentration is primarily lexical morphology evidence, not a domain-semantic conclusion. This persistence
+justifies two generic investigations—competing lemma analysis across spelling plus progressive evidence, and
+inflection-aware envelope reduction—rather than treating the 30 fixed-seed rows as unrelated examples.
+
+The implemented repair follows that evidence rather than the benchmark vocabulary. For an aligned entity membership,
+class rule, question, and object, it prefers an exact finite/lemma round trip; otherwise it uses bounded Damerau
+distance, with strictly greater source-character coverage as the only permitted final tie-break. Equal remaining
+coverage produces no contextual winner. Renamed controls cover the recurring spelling processes and the independent
+`tie`/`vie`/`cries` morphology distinctions.
+
+A post-fix, non-publishing run of the unchanged default seed now passes all 1,200 declared contracts and has no failure
+cluster. This is a diagnostic checkpoint until the generated artifact is explicitly republished and validated. Its
+interpretation remains narrow: the distribution still has 43 reviewed shapes, 18 domain records coupled to their
+predicates, and six different oracle levels. Generator/runtime inspection identifies 112 passing proposal-only rows
+whose final status is `UNPARSED`; those are operator-preserving proposals, not executable interpretations. Another 112
+passing `UNPARSED` rows are safety-abstention controls. The green fixed distribution therefore demonstrates that the
+specific repeated baseline clusters are closed under these project-owned contracts; it does not establish general
+English morphology, independent structural generalization, KB grounding, or public benchmark performance.
 
 ## P1 — documentation and architecture visibility
 

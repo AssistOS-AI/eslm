@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="../"><title>Generated heuristic development benchmark — ESLM Documentation</title>
+<link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script></head>
+<body><div data-include="partials/header.html"></div><main><p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / <a href="evaluation.html">Evaluation</a> / Generated development</p>
+<h1>Generated heuristic development benchmark</h1>
+<p class="lead">A deterministic, structurally generated regression suite exercises local language strategies across renamed domains. Its claim is deliberately scoped to repeatable development evidence; official datasets and independently authored language evaluations remain separate tracks.</p>
+<div class="callout"><p><strong>Evidence regime:</strong> <code>internal-generated-development</code>. <strong>Benchmark comparable:</strong> no.</p>
+<p><strong>Fixed seed:</strong> <code>eslm-generated-heuristic-development-v1</code>. <strong>Suite digest:</strong> <code>sha256:c1f969787f328b8bd6dc74a7bf4235cfa33e5a3d82dfd1edca2a4f5dc2c7d319</code>.</p></div>
+<div class="metric"><strong>1200/1200</strong><span>development contracts passed · 100% mixed contract rate</span></div>
+<p>The run covers 18 structural domains and 43 techniques. Every case stays in the denominator. The runner disables grounding and the external Language Agent so that it measures the direct parser and bounded local heuristic strategies.</p>
+<p>Generated 2026-08-12T18:31:51.278Z. Replay with <code>node src/cli.mjs benchmark generated --cases 1200 --seed 'eslm-generated-heuristic-development-v1' --kb 'quick' --no-external-language-agent</code>. Inspect the <a href="results/latest-generated-heuristic-benchmark.json">machine report</a> for exact work policy, strategy selection, receipts, resource observations, aggregates, and failure clusters.</p>
+<h2>How to read this result</h2>
+<p>The fixed suite is intentionally development-visible. Its machine <code>accuracy</code> field is the exact passed/total rate across several different contract levels: semantic answers, Semantic IR, query-local decomposition, request execution, proposal-only preservation, and safe abstention. A proposal-only row can pass while the final runtime status remains <code>UNPARSED</code>; the status and route tables below keep that limitation visible. Proposed strategy changes still require renamed controls, an independent seed, negative and metamorphic cases, and public or independently authored evaluation before a broader claim.</p>
+<h2>Failure clusters</h2>
+<div class="table-wrap"><table><thead><tr><th>Cluster</th><th>Cases</th><th>Earliest stage</th><th>Representatives</th></tr></thead><tbody><tr><td colspan="4">No failures occurred in this fixed generated development run.</td></tr></tbody></table></div>
+<h2>Oracle levels</h2>
+<div class="table-wrap"><table><thead><tr><th>Contract level</th><th>Passed / total</th><th>Rate</th></tr></thead><tbody><tr><td><code>answer-execution</code></td><td>670/670</td><td>100%</td></tr>
+<tr><td><code>proposal-only</code></td><td>112/112</td><td>100%</td></tr>
+<tr><td><code>query-local-decomposition</code></td><td>140/140</td><td>100%</td></tr>
+<tr><td><code>request-execution</code></td><td>112/112</td><td>100%</td></tr>
+<tr><td><code>safety-abstention</code></td><td>112/112</td><td>100%</td></tr>
+<tr><td><code>semantic-ir</code></td><td>54/54</td><td>100%</td></tr></tbody></table></div>
+<h2>Observed final routes and statuses</h2>
+<div class="table-wrap"><table><thead><tr><th>Route</th><th>Passed / total</th><th>Contract rate</th></tr></thead><tbody><tr><td><code>direct-symbolic</code></td><td>336/336</td><td>100%</td></tr>
+<tr><td><code>heuristic-cnl-approximated</code></td><td>752/752</td><td>100%</td></tr>
+<tr><td><code>heuristic-request-planned</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>heuristic-request-synthesis</code></td><td>84/84</td><td>100%</td></tr></tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Status</th><th>Passed / total</th><th>Contract rate</th></tr></thead><tbody><tr><td><code>DEFEASIBLE</code></td><td>530/530</td><td>100%</td></tr>
+<tr><td><code>MISSING_KNOWLEDGE</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>PARTIAL</code></td><td>224/224</td><td>100%</td></tr>
+<tr><td><code>SOLVED</code></td><td>112/112</td><td>100%</td></tr>
+<tr><td><code>UNKNOWN</code></td><td>82/82</td><td>100%</td></tr>
+<tr><td><code>UNPARSED</code></td><td>224/224</td><td>100%</td></tr></tbody></table></div>
+<h2>Target-family contract results</h2>
+<div class="table-wrap"><table><thead><tr><th>Target family</th><th>Passed / total</th><th>Rate</th></tr></thead><tbody><tr><td><code>apposition-expansion</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>causal-clause-normalization</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>conditional-punctuation-normalization</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>contextual-predicate-spelling</code></td><td>112/112</td><td>100%</td></tr>
+<tr><td><code>copula-and-auxiliary-insertion</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>determiner-agreement</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>direct-controlled-parser</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>discourse-filler-removal</code></td><td>27/27</td><td>100%</td></tr>
+<tr><td><code>embedded-polar-question</code></td><td>27/27</td><td>100%</td></tr>
+<tr><td><code>explicit-passive-to-active</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>independent-clause-coordination</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>local-parallel-ellipsis</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>multi-family-consensus</code></td><td>112/112</td><td>100%</td></tr>
+<tr><td><code>nominal-safety</code></td><td>84/84</td><td>100%</td></tr>
+<tr><td><code>nonsemantic-parenthetical-removal</code></td><td>27/27</td><td>100%</td></tr>
+<tr><td><code>predicate-agreement</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>progressive-question-reduction</code></td><td>196/196</td><td>100%</td></tr>
+<tr><td><code>quantifier-canonicalization</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>question-last-reordering</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>relative-clause-extraction</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>request-decomposition</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>request-envelope-stripping</code></td><td>27/27</td><td>100%</td></tr>
+<tr><td><code>request-planning</code></td><td>56/56</td><td>100%</td></tr>
+<tr><td><code>request-scope-safety</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>result-construction</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>sentence-segmentation</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>temporal-clause-normalization</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>unique-local-reference-substitution</code></td><td>28/28</td><td>100%</td></tr></tbody></table></div>
+<h2>Technique coverage</h2>
+<div class="table-wrap"><table><thead><tr><th>Technique</th><th>Passed / total</th><th>Rate</th></tr></thead><tbody><tr><td><code>composed-local-repairs</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>composed-repairs-with-insertion</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>composed-repairs-with-substitution</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>composed-repairs-with-transposition</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>contextual-predicate-edit</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>contextual-predicate-insertion</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>contextual-predicate-substitution</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>contextual-predicate-transposition</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>coordinated-independent-clauses</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>direct-controlled-language</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>discourse-filler-prefix</code></td><td>27/27</td><td>100%</td></tr>
+<tr><td><code>embedded-polar-question</code></td><td>27/27</td><td>100%</td></tr>
+<tr><td><code>explicit-if-then</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>explicit-passive-agent</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>extractive-summary-request</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>fronted-because-clause</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>fronted-before-clause</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>grounded-report-request</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>incorrect-indefinite-article</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>missing-copula-and-auxiliary</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>negated-artifact-request</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>negation-in-entity-surface</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>nominal-apposition</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>nonrestrictive-relative-clause</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>nonsemantic-parenthetical</code></td><td>27/27</td><td>100%</td></tr>
+<tr><td><code>operator-in-nominal-object</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>ordered-multi-operation-request</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>polite-polar-envelope</code></td><td>27/27</td><td>100%</td></tr>
+<tr><td><code>progressive-consonant-y-lemma</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>progressive-doubled-consonant-lemma</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>progressive-ie-ending-lemma</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>progressive-sibilant-lemma</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>progressive-silent-e-lemma</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>progressive-terminal-z-lemma</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>progressive-to-simple-question</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>quantifier-in-class-surface</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>question-before-premises</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>quoted-summary-table-request</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>semicolon-clause-boundary</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>shared-subject-coordination</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>uninflected-universal-predicate</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>unique-local-pronoun</code></td><td>28/28</td><td>100%</td></tr>
+<tr><td><code>universal-quantifier-alias</code></td><td>28/28</td><td>100%</td></tr></tbody></table></div>
+
+</main></body></html>

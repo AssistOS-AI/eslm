@@ -20,7 +20,15 @@ This profile changes the execution regime and must be named honestly. The deploy
 
 ### 1. Local default and explicitly enabled assisted profile
 
-The deployable runtime and direct library profile are `direct-symbolic`. They normalize Unicode and declared lexical variants, parse supported language, construct the task frame, select capabilities, load declarative KB data, reason, and realize a result without a network or agent process. The general CLI composes that runtime with the deterministic DS022 heuristic language and request-planning wrapper. This complete local profile is the CLI default: original text runs first, an `UNPARSED` language result may receive bounded local planning or approximation, and eligible inability results may then receive role-focused grounding. Neither local stage calls a model or starts a child process.
+The deployable runtime and direct library profile are `direct-symbolic`. They normalize Unicode and declared lexical
+variants, parse supported language, construct the task frame, select capabilities, load declarative KB data, reason,
+and realize a result without a network or agent process. The general CLI composes that runtime with the deterministic
+DS022 heuristic language and request-planning wrapper. This complete local profile is the CLI default: original text
+runs first; bounded explicit request force may preempt an accidental assertion parse; otherwise direct `UNPARSED` and
+`UNKNOWN` enter parse-only-selected local approximation. A structurally licensed candidate may also challenge direct
+`SOLVED` or `PARTIAL` when its Semantic IR differs from the direct interpretation; equal IR preserves the direct route.
+Eligible inability results may then receive role-focused grounding. A normal knowledge gap remains unchanged without
+an accepted structural alternative. None of these local stages calls a model or starts a child process.
 
 The optional operator profile is `language-agent-assisted-normalization`. It adds the external wrapper only after explicit opt-in. The complete direct and deterministic local attempts still run first. Only a terminal `UNPARSED` language result may trigger one bounded normalization episode; a locally synthesized `PARTIAL` document request, an accepted heuristic interpretation, and every parsed semantic inability bypass the Language Agent. An episode permits at most three external proposals in total. A proposal that fails host surface validation may be retried with those validation-error categories. A proposal that passes surface validation but remains `UNPARSED` after the direct symbolic reparse may be retried with the narrow fact that the previous controlled-language form was unsupported. The Language Agent never receives an answer, KB result, failure-time grounding bundle, proof state, desired semantic value, or benchmark label as feedback. A successfully reparsed sentence records `languageRoute: language-agent-normalized`; the original local failure, all proposals and receipts, requested and declared operation, normalized text, validation evidence, adapter and model identity, prompt-policy version, input digest, cache state, and invocation count remain attached.
 

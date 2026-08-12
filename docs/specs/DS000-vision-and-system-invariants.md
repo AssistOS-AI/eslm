@@ -69,7 +69,8 @@ This separation is the primary architectural invariant. It prevents each dataset
 | Every accepted assertion has provenance | Facts, lexical mappings and learned rules identify their source, extraction path and version. |
 | Every LLM output is untrusted | Translation or simplification must be reparsed and validated before use. |
 | Direct symbolic parsing is attempted first | English input is not sent to the LLM merely because it appears complex. |
-| Local approximation precedes external assistance | After direct `UNPARSED`, deterministic DS022 candidates are voted, safety-checked, and reparsed before an explicitly enabled Language Agent may run. |
+| Local approximation precedes external assistance | Deterministic DS022 candidates are voted, safety-checked, and selected through parse-only Semantic IR after direct `UNPARSED` or `UNKNOWN`. A structurally licensed candidate may also challenge direct `SOLVED` or `PARTIAL` only when its Semantic IR differs from the direct interpretation; equal IR preserves the direct route. Only a final local `UNPARSED` may reach an explicitly enabled Language Agent. |
+| Explicit requests outrank accidental assertion parses | A bounded request-force plan may preempt an ordinary direct parse, but it restores the incoming session snapshot and cannot retain tentative assertions parsed from the instruction text. |
 | Guessed episode premises do not persist | Facts and rules accepted only through a changed heuristic interpretation are query-local and cannot enter the returned session. |
 | No routing decision may create silent false negatives | Approximate relevance signals may rank shards, but safe exclusion requires exact or conservative evidence. |
 | Core changes require global regression | A local benchmark gain cannot justify an untested change to reusable code. |

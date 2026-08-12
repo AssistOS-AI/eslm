@@ -5,7 +5,12 @@ import {
   BENCHMARK_CATALOG, PUBLIC_RESULT_CATALOG, exportBenchmark, importComparison, runBenchmark,
   scoreExternalPredictions,
 } from '../benchmarks.mjs';
-import { publishReport } from '../docs-reports.mjs';
+import { publishGeneratedHeuristicBenchmark, publishReport } from '../docs-reports.mjs';
+import {
+  DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE,
+  GENERATED_HEURISTIC_BENCHMARK_SEED,
+  runGeneratedHeuristicBenchmark,
+} from '../evaluation/generated-heuristic-benchmark.mjs';
 import {
   executePublicBenchmarkRows,
 } from '../evaluation/public-benchmark-probes.mjs';
@@ -178,6 +183,74 @@ async function probe(options, engineFor) {
   return report;
 }
 
+const GENERATED_RUNTIME_OPTION = /^(?:work|work-profile|strategy-preset|strategy-select|profile|memory-mb|memory-policy|heuristic-|horn-|provider-|grounding-)/u;
+
+function enabled(value) {
+  return value === true || ['1', 'true', 'yes'].includes(String(value).toLocaleLowerCase('en-US'));
+}
+
+function shellArgument(value) {
+  return `'${String(value).replaceAll("'", "'\\''")}'`;
+}
+
+function generatedReplayCommand(options, size, seed) {
+  const tokens = [
+    'node', 'src/cli.mjs', 'benchmark', 'generated', '--cases', String(size),
+    '--seed', shellArgument(seed),
+  ];
+  if (options.kb) tokens.push('--kb', shellArgument(options.kb));
+  for (const [key, value] of Object.entries(options).toSorted(([left], [right]) => left.localeCompare(right))) {
+    if (!GENERATED_RUNTIME_OPTION.test(key) || ['profile'].includes(key) && !enabled(value)) continue;
+    if (['kb', 'cases', 'seed'].includes(key) || value === undefined || value === false) continue;
+    tokens.push(`--${key}`);
+    if (value !== true) tokens.push(shellArgument(value));
+  }
+  tokens.push('--no-external-language-agent');
+  return tokens.join(' ');
+}
+
+function assertCanonicalGeneratedPublish(options, size, seed) {
+  if (size !== DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE
+      || seed !== GENERATED_HEURISTIC_BENCHMARK_SEED
+      || options.kb !== 'quick') {
+    throw new Error(
+      'Publishing the generated development checkpoint requires the default 1,200 cases, fixed seed, and --kb quick.',
+    );
+  }
+  const nonCanonical = Object.keys(options).filter((key) =>
+    GENERATED_RUNTIME_OPTION.test(key)
+      && !(['work-profile', 'work'].includes(key) && options[key] === 'balanced')
+      && !(key === 'strategy-preset' && options[key] === 'all'));
+  if (nonCanonical.length > 0) {
+    throw new Error(
+      `Publishing the generated checkpoint rejects runtime overrides: ${nonCanonical.toSorted().join(', ')}. `
+        + 'Run the configuration without --publish for diagnostic evidence.',
+    );
+  }
+}
+
+async function generated(options, engineFor) {
+  if (enabled(options['external-language-agent'])) {
+    throw new Error('The generated heuristic benchmark is an offline local-strategy track.');
+  }
+  const size = options.cases === undefined
+    ? DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE : Number(options.cases);
+  const seed = options.seed === undefined ? GENERATED_HEURISTIC_BENCHMARK_SEED : String(options.seed);
+  if (options.publish) assertCanonicalGeneratedPublish(options, size, seed);
+  const runtimeOptions = {
+    ...options, 'external-language-agent': false, 'no-external-language-agent': true,
+  };
+  const report = await runGeneratedHeuristicBenchmark(await engineFor(runtimeOptions), {
+    size, seed, replayCommand: generatedReplayCommand(runtimeOptions, size, seed),
+  });
+  if (options.publish) {
+    const path = resolve(PROJECT_ROOT, 'docs/results/latest-generated-heuristic-benchmark.json');
+    await writeFile(path, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+    await publishGeneratedHeuristicBenchmark();
+  }
+  return report;
+}
+
 export async function benchmarkCommand(args, options, services) {
   const { engineFor, printJson } = services;
   const action = args[0];
@@ -191,6 +264,7 @@ export async function benchmarkCommand(args, options, services) {
     return;
   }
   if (action === 'probe') { printJson(await probe(options, engineFor)); return; }
+  if (action === 'generated') { printJson(await generated(options, engineFor)); return; }
   if (action === 'run') {
     if (!options.suite) throw new Error('benchmark run requires --suite.');
     const suite = await resolveProjectPath(options.suite);

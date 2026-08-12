@@ -1,6 +1,6 @@
 import {
-  groundingTerms, groundingTokens, isGroundingStructuralTerm, normalizedGroundingSurface,
-  selectGroundingTerms,
+  groundingTerms, groundingTokens, isGroundingStructuralTerm, normalizedGroundingPlanTopic,
+  normalizedGroundingSurface, selectGroundingTerms,
 } from './grounding-query-focus.mjs';
 import { estimateGroundingRelevance } from './grounding-relevance-estimator.mjs';
 import { makeGroundingSearchReceipt } from './grounding-search-receipt.mjs';
@@ -166,10 +166,14 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
     if (!focus || typeof focus !== 'object' || Array.isArray(focus)) {
       throw new Error('Grounding typed focus entries must be objects.');
     }
+    const role = boundedIdentifier(focus.role ?? 'topic', 'Grounding focus role');
+    const normalizedTerm = role === 'request-topic'
+      ? normalizedGroundingPlanTopic(focus.term, boundedInput)
+      : normalizedGroundingSurface(focus.term);
     return Object.freeze({
       focusId: boundedIdentifier(focus.focusId ?? `focus:${index + 1}`, 'Grounding focus ID'),
-      term: boundedIdentifier(normalizedGroundingSurface(focus.term), 'Grounding focus term'),
-      role: boundedIdentifier(focus.role ?? 'topic', 'Grounding focus role'),
+      term: boundedIdentifier(normalizedTerm, 'Grounding focus term'),
+      role,
     });
   }) : [];
   const semanticFocus = query && typeof query === 'object' ? [

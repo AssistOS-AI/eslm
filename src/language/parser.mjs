@@ -1,5 +1,7 @@
 import { genericRelationObjectSurface } from './generic-relation-surface.mjs';
-import { analyzeNominalSurface, boundedNominalSurface } from './nominal-surface.mjs';
+import {
+  analyzeNominalSurface, boundedNominalSurface, canonicalClassSurface,
+} from './nominal-surface.mjs';
 
 function resolveEntityPhrase(words, model, context) {
   const original = words.join(' ').trim();
@@ -40,11 +42,7 @@ function resolvedEntityQuery(resolved, build) {
 }
 
 function singularClass(value, model) {
-  const normalized = boundedNominalSurface(value);
-  if (!normalized) return undefined;
-  return model.reasoning?.classes?.singular?.[normalized]
-    ?? (normalized.endsWith('ies') ? `${normalized.slice(0, -3)}y`
-      : normalized.endsWith('s') ? normalized.slice(0, -1) : normalized);
+  return canonicalClassSurface(value, model);
 }
 
 function classMembershipQuery(subjectSurface, classSurface, model, context) {

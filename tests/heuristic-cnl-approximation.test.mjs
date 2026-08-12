@@ -8,7 +8,7 @@ import {
   HEURISTIC_CNL_PROTOCOL,
 } from '../src/language/heuristic-cnl-approximation.mjs';
 import {
-  baseThirdPersonSingular, thirdPersonSingular,
+  baseThirdPersonSingular, primaryProgressiveLemma, thirdPersonSingular,
 } from '../src/language/heuristic-cnl-morphology.mjs';
 import { PROJECT_ROOT } from '../src/paths.mjs';
 
@@ -62,9 +62,41 @@ test('predicate repair survives complete nonce renaming and independent statemen
 });
 
 test('third-person morphology round-trips sibilants, y endings, and nonce predicates', () => {
-  for (const lemma of ['fix', 'watch', 'pass', 'buzz', 'carry', 'glim', 'go', 'do', 'have']) {
+  for (const lemma of ['fix', 'watch', 'pass', 'buzz', 'carry', 'tie', 'vie', 'glim', 'go', 'do', 'have']) {
     assert.equal(baseThirdPersonSingular(thirdPersonSingular(lemma)), lemma, lemma);
   }
+  assert.equal(baseThirdPersonSingular('cries'), 'cry');
+});
+
+test('progressive morphology distinguishes short ie stems from consonant-y stems', () => {
+  assert.equal(primaryProgressiveLemma('tying'), 'tie');
+  assert.equal(primaryProgressiveLemma('dying'), 'die');
+  assert.equal(primaryProgressiveLemma('carrying'), 'carry');
+  assert.equal(primaryProgressiveLemma('spying'), 'spy');
+  assert.equal(primaryProgressiveLemma('watering'), 'water');
+  assert.equal(primaryProgressiveLemma('fixing'), 'fix');
+  assert.equal(primaryProgressiveLemma('passing'), 'pass');
+  assert.equal(primaryProgressiveLemma('buzzing'), 'buzz');
+});
+
+test('contextual predicate repair handles four generic edit processes without changing a valid relation', () => {
+  for (const [ruleSurface, progressive, expectedRule, expectedBase] of [
+    ['waterr', 'watering', 'waters', 'water'],
+    ['fixx', 'fixing', 'fixes', 'fix'],
+    ['psas', 'passing', 'passes', 'pass'],
+    ['buz', 'buzzing', 'buzzes', 'buzz'],
+    ['mapp', 'mapping', 'maps', 'map'],
+    ['moe', 'moving', 'moves', 'move'],
+  ]) {
+    const source = `Tavra is a qerin. All qerin ${ruleSurface} navox. Is Tavra ${progressive} navox?`;
+    const result = approximateControlledEnglish(source);
+    assert.equal(result.recommendedCandidate.text,
+      `Tavra is a qerin. Every qerin ${expectedRule} navox. Does Tavra ${expectedBase} navox?`, source);
+  }
+  const direct = approximateControlledEnglish(
+    'Tavra is a qerin. Every qerin glims navox. Does Tavra glim navox?',
+  );
+  assert.ok(direct.candidates.every((candidate) => !candidate.text.includes('Every qerin glim navox.')));
 });
 
 test('a well-formed but different predicate is not overwritten by an edit-near question predicate', () => {
@@ -270,6 +302,7 @@ test('language coordination separates invocation slots from edit-distance work',
     receipt.distanceEvaluationsReserved > 0);
   assert.deepEqual(editFamilies.map((receipt) => receipt.family).toSorted(), [
     'contextual-predicate-spelling', 'grammatical-spelling', 'predicate-agreement',
+    'progressive-question-reduction',
   ]);
   assert.equal(editFamilies.reduce((sum, receipt) => sum + receipt.distanceEvaluationsReserved, 0),
     result.receipt.limits.maximumEditDistanceEvaluations);

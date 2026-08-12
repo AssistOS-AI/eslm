@@ -1,8 +1,8 @@
 import {
   closestUniqueWord,
+  baseThirdPersonSingular,
   grammaticalSpellingCorrection,
   isGrammaticalWord,
-  looksLikeThirdPersonVerb,
   primaryProgressiveLemma,
   thirdPersonSingular,
   verbLemmaCandidates,
@@ -132,28 +132,63 @@ function quantifierCanonicalizationFamily(analysis) {
       'The source and replacement share the protected universal-quantifier identity.')));
 }
 
-function progressiveQuestionRecords(analysis) {
+function progressiveQuestionRecords(analysis, budget) {
+  const memberships = entityMemberships(analysis);
+  const relations = universalRelationRecords(analysis);
   const records = [];
   for (const sentence of analysis.sentences) {
     const words = sentenceWords(sentence);
     if (sentence.terminal !== '?' || words.length < 3) continue;
     const auxiliary = words[0].normalized;
     if (!['is', 'are', 'was', 'were'].includes(auxiliary) || !words[2].normalized.endsWith('ing')) continue;
+    const objectWords = Object.freeze(words.slice(3));
+    const candidateLemmas = [...new Set([
+      primaryProgressiveLemma(words[2].normalized),
+      ...verbLemmaCandidates(words[2].normalized),
+    ])];
+    const contextualLemmas = relations.flatMap((relation) => {
+      if (normalizedObject(relation.objectWords) !== normalizedObject(objectWords)) return [];
+      const supportsSubject = memberships.some((membership) =>
+        membership.entity === words[1].normalized
+          && membership.className === relation.classToken.normalized);
+      if (!supportsSubject) return [];
+      const declaredBase = baseThirdPersonSingular(relation.predicate.normalized);
+      if (declaredBase !== relation.predicate.normalized
+          && candidateLemmas.includes(declaredBase)
+          && thirdPersonSingular(declaredBase) === relation.predicate.normalized) {
+        return [declaredBase];
+      }
+      const finiteForms = candidateLemmas.map(thirdPersonSingular);
+      const finiteMatch = closestUniqueWord(relation.predicate.normalized, finiteForms, 1, budget);
+      if (finiteMatch) {
+        const matchingLemmas = candidateLemmas.filter((lemma) =>
+          thirdPersonSingular(lemma) === finiteMatch.word);
+        if (matchingLemmas.length === 1) return matchingLemmas;
+      }
+      const surfaceMatch = closestUniqueWord(
+        relation.predicate.normalized, candidateLemmas, 1, budget,
+        { preferCharacterCoverage: true },
+      );
+      return surfaceMatch?.distance > 0 ? [surfaceMatch.word] : [];
+    });
+    const uniqueContextualLemmas = [...new Set(contextualLemmas)];
     records.push(Object.freeze({
       sentence,
       auxiliary: words[0],
       subject: words[1],
       progressive: words[2],
-      lemma: primaryProgressiveLemma(words[2].normalized),
-      objectWords: Object.freeze(words.slice(3)),
+      lemma: uniqueContextualLemmas.length === 1
+        ? uniqueContextualLemmas[0]
+        : primaryProgressiveLemma(words[2].normalized),
+      objectWords,
     }));
   }
   return Object.freeze(records);
 }
 
-function progressiveQuestionFamily(analysis) {
+function progressiveQuestionFamily(analysis, budget) {
   const proposals = [];
-  for (const record of progressiveQuestionRecords(analysis)) {
+  for (const record of progressiveQuestionRecords(analysis, budget)) {
     const replacementAuxiliary = ['was', 'were'].includes(record.auxiliary.normalized)
       ? 'did'
       : record.auxiliary.normalized === 'are' ? 'do' : 'does';
@@ -197,8 +232,8 @@ function normalizedObject(words) {
   return words.map((word) => word.normalized).filter((word, index) => index > 0 || !ARTICLES.has(word)).join(' ');
 }
 
-function queryVerbRecords(analysis) {
-  const records = progressiveQuestionRecords(analysis).map((record) => Object.freeze({
+function queryVerbRecords(analysis, budget) {
+  const records = progressiveQuestionRecords(analysis, budget).map((record) => Object.freeze({
     entity: record.subject.normalized,
     lemma: record.lemma,
     object: normalizedObject(record.objectWords),
@@ -219,15 +254,16 @@ function queryVerbRecords(analysis) {
 
 function relatedPredicateTargets(analysis, budget) {
   const memberships = entityMemberships(analysis);
-  const queries = queryVerbRecords(analysis);
+  const queries = queryVerbRecords(analysis, budget);
   const targets = [];
   for (const relation of universalRelationRecords(analysis)) {
-    if (looksLikeThirdPersonVerb(relation.predicate.normalized)) continue;
     const admissible = [];
     for (const membership of memberships) {
       if (membership.className !== relation.classToken.normalized) continue;
       for (const query of queries) {
         if (query.entity !== membership.entity || query.object !== normalizedObject(relation.objectWords)) continue;
+        if (relation.predicate.normalized !== query.lemma
+            && baseThirdPersonSingular(relation.predicate.normalized) === query.lemma) continue;
         const limit = Math.max(relation.predicate.normalized.length, query.lemma.length) >= 7 ? 2 : 1;
         const match = closestUniqueWord(relation.predicate.normalized, [query.lemma], limit, budget);
         if (match) admissible.push({ query, distance: match.distance });
@@ -357,7 +393,7 @@ const FAMILY_RUNNERS = Object.freeze([
   ['grammatical-spelling', (analysis, budget) => [grammaticalSpellingFamily(analysis, budget)]],
   ['determiner-agreement', (analysis) => [determinerAgreementFamily(analysis)]],
   ['quantifier-canonicalization', (analysis) => [quantifierCanonicalizationFamily(analysis)]],
-  ['progressive-question-reduction', (analysis) => progressiveQuestionFamily(analysis)],
+  ['progressive-question-reduction', (analysis, budget) => progressiveQuestionFamily(analysis, budget)],
   ['contextual-predicate-spelling', (analysis, budget) => [contextualPredicateSpellingFamily(analysis, budget)]],
   ['predicate-agreement', (analysis, budget) => [predicateAgreementFamily(analysis, budget)]],
   ['copula-and-auxiliary-insertion', (analysis) => copulaAndAuxiliaryInsertionFamily(analysis)],

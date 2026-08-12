@@ -39,6 +39,12 @@ const REQUEST_STYLE_WORDS = new Set([
 ]);
 const REQUEST_TOPIC_MARKERS = new Set(['about', 'concerning', 'regarding']);
 const REQUEST_ARTIFACT_MARKERS = new Set(['of', 'on']);
+const PLAN_TOPIC_SCAFFOLDING = new Set([
+  ...FUNCTION_WORDS,
+  ...REQUEST_DIRECTIVES,
+  ...REQUEST_ARTIFACT_WORDS,
+  ...REQUEST_STYLE_WORDS,
+]);
 
 function normalizedSurface(value) {
   return String(value ?? '').normalize('NFKD').replace(/\p{M}+/gu, '')
@@ -142,13 +148,38 @@ function focusStrategyEnabled(selected, name) {
   return selected === undefined || selected.includes(`strategy:focus:${name}@1`);
 }
 
+export function normalizedGroundingPlanTopic(value, requestText = '') {
+  const term = normalizedSurface(value);
+  if (!term || metalinguisticTopicTokens(requestText).length > 0) return term;
+  const tokens = normalizedTokens(term);
+  const contentIndexes = tokens.flatMap((token, index) =>
+    PLAN_TOPIC_SCAFFOLDING.has(token) ? [] : [index]);
+  if (contentIndexes.length === 0) return term;
+  return tokens.slice(contentIndexes[0], contentIndexes.at(-1) + 1).join(' ');
+}
+
+function requestTopicRoleHints(semanticFocus) {
+  const roles = new Map();
+  for (const focus of semanticFocus) {
+    if (focus?.role !== 'request-topic') continue;
+    const tokens = normalizedTokens(focus.term);
+    for (let index = 1; index < tokens.length - 1; index += 1) {
+      const token = tokens[index];
+      if (token.length > 4 && token.endsWith('ing')) roles.set(token, 'predicate');
+    }
+  }
+  return roles;
+}
+
 function rankedFocusCandidates(value, { maximumWords, semanticFocus = [], selectedStrategyIdentities }) {
   const candidates = [];
   const metaTokens = metalinguisticTopicTokens(value);
   const metalinguistic = metaTokens.length > 0
     && focusStrategyEnabled(selectedStrategyIdentities, 'metalinguistic-topic');
+  const topicRoleHints = requestTopicRoleHints(semanticFocus);
   if (focusStrategyEnabled(selectedStrategyIdentities, 'semantic-ir-roles')) for (const focus of semanticFocus) {
-    const term = normalizedSurface(focus?.term);
+    const term = focus?.role === 'request-topic'
+      ? normalizedGroundingPlanTopic(focus.term, value) : normalizedSurface(focus?.term);
     if (!term || (isGroundingStructuralTerm(term) && !metalinguistic)) continue;
     candidates.push(makeCandidate({
       term, role: focus.role ?? 'semantic', kind: 'accepted-semantic-ir', score: 130,
@@ -198,7 +229,7 @@ function rankedFocusCandidates(value, { maximumWords, semanticFocus = [], select
   }
 
   for (const record of records) {
-    const role = roles.get(record.span.start) ?? 'content';
+    const role = roles.get(record.span.start) ?? topicRoleHints.get(record.surface) ?? 'content';
     const excludedReason = FUNCTION_WORDS.has(record.surface) && !(metalinguistic && metaTokens.includes(record.surface))
       ? 'grammatical-or-request-scaffolding'
       : record.surface.length < 3 && !roles.has(record.span.start)

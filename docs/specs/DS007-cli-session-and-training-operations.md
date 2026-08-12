@@ -42,12 +42,20 @@ planning remains a target owned by DS008 rather than a current CLI claim.
 
 The user may supply temporary facts or assumptions. These enter a session-scoped context and do not modify persistent KBs unless a separate persistence operation is authorized.
 
-After a direct `UNPARSED`, ordinary CLI execution runs the bounded DS022 heuristic layer by default. A changed accepted
-interpretation is labeled `heuristic-cnl-approximated`, exposes its votes and confidence, returns a strict proof only as
-top-level `DEFEASIBLE`, and discards every fact or rule learned only from that interpreted episode. Common explicit
-summary, expansion, explanation, comparison, outline, retrieval, essay, report, and document requests may instead
-produce a dependency-ordered request plan. The implemented construction route is extractive and returns `PARTIAL`
-with citations and gaps; it is not the general multi-goal planner promised by DS008.
+Ordinary CLI execution evaluates the bounded DS022 request-force planner beside the direct result. Common explicit
+summary, expansion, explanation, comparison, outline, retrieval, essay, report, and document requests may produce a
+dependency-ordered request plan even when the direct parser accidentally accepted their sentence-like material as
+assertions. That route restores the incoming session snapshot, is query-local, and cannot commit tentative direct
+items. The implemented construction route is extractive and returns `PARTIAL` with citations and gaps; it is not the
+general multi-goal planner promised by DS008.
+
+When no request plan applies, direct `UNPARSED` and `UNKNOWN` results enter bounded local approximation. A direct
+`SOLVED` or `PARTIAL` interpretation may also be challenged when a structurally licensed candidate has different
+parse-only Semantic IR; an identical candidate IR preserves the direct result. Selection never depends on whether a
+rewording later finds an answer. A changed accepted interpretation is labeled `heuristic-cnl-approximated`, exposes
+its votes and confidence, returns a strict proof only as top-level `DEFEASIBLE`, and discards every fact or rule learned
+only from that interpreted episode. A well-formed knowledge gap with no structurally licensed alternative remains the
+original `UNKNOWN`; only a final local `UNPARSED` is eligible for the opt-in DS013 Language Agent.
 
 ### 5. Interactive execution
 
@@ -75,6 +83,25 @@ research rows. `--publish` writes the resulting portfolio receipt to
 operator-supplied JSONL suite through the generic scorer. Public catalog probes reject
 `--external-language-agent`; an assisted comparison uses a separately frozen suite so its model, cache, prompt policy,
 and route accounting cannot alter the published direct baseline.
+
+`benchmark generated` is a distinct local development operation for the deterministic DS022 heuristic-language
+suite. With no overrides it executes 1,200 generated cases under the stable generator seed. `--cases N` selects a
+validated finite denominator, `--seed VALUE` selects a reproducible nonce instantiation, and `--publish` writes the
+JSON and HTML reports under the separate `latest-generated-heuristic-benchmark` name. The operation executes the real
+local heuristic runtime with grounding and the Language Agent disabled. It never reads a public benchmark adapter or
+merges its rate with `benchmark run`. Its typed oracles cover executed semantics, request plans, safe abstention, and
+proposal/operator preservation. Separate oracle-level aggregates distinguish answer execution, Semantic IR,
+query-local decomposition, request execution, proposal-only preservation, and safety abstention. The top-level pass
+rate is still a mixed development-contract measure; oracle level, route, and status show whether a passing proposal
+contract also reached executable interpretation.
+
+The package command `benchmark:authored` runs the unchanged five-case authored fixture, while
+`benchmark:generated` publishes the generated development suite. The default `npm run benchmark` sequences those two
+commands and preserves both artifacts. A report from either internal route declares `benchmarkComparable: false` and
+its own evidence regime. The generated report additionally freezes the requested denominator, seed, generator and
+suite digests, replay and behavior identity, work and strategy configuration, bounded representative failures, and
+aggregate diagnostics. Changing its seed or case count creates a different suite identity rather than an implicit
+continuation of the default result.
 
 A static receipt audit verifies frozen result and dependency digests. It classifies an audited receipt as current,
 historical-stale, historical-unrecoverable, invalid, or unavailable rather than inferring currentness from a cache
@@ -289,6 +316,13 @@ useful, clearly labeled human view.
 Response: A short named view is useful for inspecting one architectural area, but treating that view as an implicit
 allowlist would silently disable unrelated mandatory work. Exact stage-to-identity selection is explicit, validated,
 serialized in the work policy, and suitable for replay. The separate preset therefore changes presentation only.
+
+### Question #6: Why does the default benchmark keep authored and generated reports separate?
+
+Response: The authored fixture protects five deliberately readable integration contracts. The generated suite samples
+many deterministic structural variants and is designed for aggregate failure discovery. Combining their numerators
+would make neither result intelligible, while sequencing both commands gives the ordinary development workflow both
+the small review surface and the broad diagnostic surface.
 
 ## Conclusion
 

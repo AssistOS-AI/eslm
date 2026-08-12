@@ -71,3 +71,14 @@ export function boundedNominalSurface(value, options = {}) {
   const analysis = analyzeNominalSurface(value, options);
   return analysis.accepted ? analysis.surface : undefined;
 }
+
+export function canonicalClassSurface(value, model, options = {}) {
+  const surface = boundedNominalSurface(value);
+  if (!surface) return undefined;
+  const declared = model?.reasoning?.classes?.singular?.[surface];
+  if (declared) return declared;
+  if (options.grammaticalNumber !== 'plural') return surface;
+  if (surface.endsWith('ies') && surface.length > 3) return `${surface.slice(0, -3)}y`;
+  if (surface.endsWith('s') && !surface.endsWith('ss')) return surface.slice(0, -1);
+  return surface;
+}

@@ -77,6 +77,13 @@ These are implemented building blocks, not proof that the target architecture be
 benchmark reports must identify which stages actually use the shared registry and which still use their earlier
 bounded coordinator until migration is finished.
 
+The current `instrumented-local` request owner also performs one visible scheduling exception to the target stage
+graph: after the direct attempt it checks explicit request force before running local approximation families. If a
+request plan is accepted, it restores the incoming session snapshot and does not execute those language alternatives;
+otherwise the normal interpretation-recovery eligibility decision follows. This ordering prevents an imperative from
+committing source material as assertions. Migration into the common coordinator must preserve that observable safety
+property and represent the request-force diagnostic as a typed stage transition rather than hiding it in an executor.
+
 ### 3. Canonical stage graph and dataflow
 
 The coordinator owns stage order. A strategy receives one immutable typed envelope and declared host services; it
@@ -88,8 +95,8 @@ The runtime v1 stage catalog is ordered as follows:
 
 | Stage ID | Typed input | Typed output and boundary |
 |---|---|---|
-| `runtime.language.interpret` | bounded text, prior session snapshot, language policy | direct or proposed Semantic IR alternatives with source-span alignments; the direct parser is the authority barrier and local recovery is eligible only after direct `UNPARSED` |
-| `runtime.request.plan` | accepted Semantic IR or bounded instruction/material map | task frame, ordered obligation alternatives, and output contracts |
+| `runtime.language.interpret` | bounded text, prior session snapshot, language policy | direct or proposed Semantic IR alternatives with source-span alignments; the direct parser remains the first authority barrier, while local alternatives may be inspected after `UNPARSED`, `UNKNOWN`, `SOLVED`, or `PARTIAL` and selected without answer evidence; a direct success is superseded only by different accepted Semantic IR |
+| `runtime.request.plan` | bounded instruction/material map plus the direct diagnostic | task frame, ordered obligation alternatives, and output contracts; explicit request force may preempt an accidental direct assertion parse and restores the incoming session snapshot |
 | `runtime.knowledge.focus` | task frame or obligation plan | typed entity, predicate, role, phrase, and metalinguistic focus candidates |
 | `runtime.knowledge.retrieve` | focus, exact package scope, routing and work policy | bounded evidence frontier plus per-source search receipts |
 | `runtime.evidence.assess` | task, evidence frontier, trust and provenance metadata | relevance votes, bridge hypotheses, conflict clusters, and a deterministic evidence ordering; no answer authority |
@@ -227,7 +234,13 @@ filesystem order cannot affect this schedule. The v1 deployable coordinator exec
 sequentially. A future parallel implementation is conforming only when its semantic stage output and canonical
 receipt equal the sequential reference after timing-only fields are removed.
 
-Stage barriers are explicit. A successful direct interpretation makes approximation strategies ineligible. A
+Stage barriers are explicit. The current local wrapper admits bounded interpretation proposals for direct `UNPARSED`,
+`UNKNOWN`, `SOLVED`, and `PARTIAL`. A permissive parser can turn a repairable surface into a wrong unsupported frame or
+flatten an explicit apposition or coordination while still reporting success. Candidate arbitration receives
+parse-only Semantic IR and never downstream answer success. Direct `SOLVED` or `PARTIAL` is superseded only when an
+accepted structural candidate has different Semantic IR; equal IR preserves the direct route, and changed IR is
+query-local with qualified status. An explicit request-force plan may supersede an ordinary direct parse, but it
+discards tentative direct episode state and cannot reinterpret source material as asserted knowledge. A
 completed plan cannot invoke a retrieval strategy recursively; it creates a typed retrieval obligation for the next
 stage. A reasoner cannot call realization, and a constructor cannot repair an invalid proof. Conditional failure
 grounding runs only under DS009 eligibility and its separately reserved budget.
@@ -491,6 +504,26 @@ falsified if behavior depends on registration order, if copied strategies multip
 overrides a failed proof, if a KB can select code, if a strategy disappears on exhaustion, or if a researcher cannot
 reconstruct the stage decision from the receipt.
 
+The deterministic generated heuristic development benchmark is the default broad diagnostic for the coordinated
+language stage. Its 1,200-case default run instantiates 43 reviewed shapes across 18 domains with nonce variation; this
+gives wide repeated execution but not 1,200 independent constructions. It freezes the generator, suite, behavior,
+work-policy, and strategy-catalog identity and aggregates outcomes by generating technique, domain, intended target
+family, oracle level, route, status, confidence, resource outcome, and earliest failure. Those labels organize
+analysis; they are not executor inputs. A promotion claim still requires an explicit baseline-versus-ablation run
+under the same suite identity, because merely listing a
+strategy in the batch configuration does not prove that it executed or contributed on each case.
+
+The report's six oracle levels span answer execution, Semantic IR, query-local decomposition, request execution, safe
+abstention, and proposal/operator preservation. Their aggregates keep those evidence levels separate. A
+strategy-family proposal pass with final `UNPARSED` establishes reach and safety, not successful language execution;
+the top-level mixed contract rate never overrides that distinction.
+
+Failure-guided strategy development begins from repeated clusters. A researcher identifies a typed stage boundary and
+generic precondition shared by the cluster, implements or adjusts one strategy, adds renamed and meaning-changing
+controls, and reruns both the fixed seed and another deterministic seed. The report retains bounded representative
+failures for review while every case remains in aggregate accounting. A favorable project-owned generated result is
+development evidence, not a substitute for the protected product evaluation in DS026 or public evidence in DS010.
+
 ### 18. Target acceptance boundary
 
 The architecture is implemented, rather than merely specified, only when all of the following are true:
@@ -555,6 +588,13 @@ Response: No compatibility requirement applies to undocumented internal APIs at 
 remove redundant local control planes rather than retain them indefinitely. Public versioned protocols, package
 identities, and published receipts still require explicit version changes or deterministic migration; “no backward
 compatibility” is not permission for silent semantic reinterpretation.
+
+### Question #8: What does the generated heuristic benchmark prove about a strategy?
+
+Response: It shows how the selected strategy configuration behaves over a reproducible, varied, project-owned
+language distribution and exposes collective failure patterns. It does not by itself isolate one strategy's causal
+contribution. Causal promotion evidence requires a frozen ablation with equal cases, work policy, oracle, and behavior
+identity, followed by the protected and external evaluation layers appropriate to the claimed capability.
 
 ## Conclusion
 

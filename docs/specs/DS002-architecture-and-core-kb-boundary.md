@@ -101,10 +101,14 @@ The desired long-term shape is a compact, highly tested core; rich but declarati
 The direct answer path is language front-end → accepted Semantic IR → task frame → catalog discovery → shard and
 method planning → bounded execution → proof verification → result realization. DS027 assigns these responsibilities
 to typed strategy stages with one deterministic host coordinator; a strategy cannot make an opaque cross-stage call or
-use downstream answer success to reinterpret an earlier stage. After direct `UNPARSED`, the default
-text interface may instead run the DS022 deterministic candidate ensemble, reparse an eligible candidate with
-query-local episode state, or recognize an explicit artifact request and execute bounded extractive construction. Only
-after local recovery is exhausted may an explicitly enabled DS013 Language Agent propose another reparse candidate.
+use downstream answer success to reinterpret an earlier stage. The default text interface independently recognizes a
+bounded explicit artifact request so instruction text accidentally accepted as assertions cannot commit session state.
+When no request plan applies, direct `UNPARSED` or `UNKNOWN` may enter the DS022 deterministic candidate ensemble. A
+direct `SOLVED` or `PARTIAL` interpretation may also be challenged when visible structure produces an accepted
+candidate whose parse-only Semantic IR differs from the original IR; an equal IR preserves the direct route. Every
+changed candidate interpretation executes with query-local episode state. A normal missing-knowledge `UNKNOWN` with no
+structurally licensed candidate remains unchanged. Only a final local `UNPARSED` may let an explicitly enabled DS013
+Language Agent propose another reparse candidate.
 DS003, DS022, DS013, DS008, DS020, DS015, and DS009 own those typed boundaries. DS004 owns construction and promotion;
 DS017 owns evaluation-pool isolation. The runtime does not discover training files, invoke a coding agent, download a
 source, or execute a KB payload.

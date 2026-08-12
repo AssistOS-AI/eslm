@@ -45,6 +45,43 @@ test('offline runtime repairs a near-CNL episode, votes visibly, and keeps inter
   assert.deepEqual(result.learnedRules, []);
 });
 
+test('progressive reduction uses the aligned class rule instead of guessing a silent-e lemma', async () => {
+  for (const [article, className, finite, progressive, lemma, object] of [
+    ['a', 'grower', 'waters', 'watering', 'water', 'crop'],
+    ['an', 'assembler', 'fixes', 'fixing', 'fix', 'module'],
+    ['a', 'carrier', 'moves', 'moving', 'move', 'parcel'],
+  ]) {
+    const input = `Tavra is ${article} ${className}. Every ${className} ${finite} ${object}. `
+      + `Is Tavra ${progressive} ${object}?`;
+    const result = await (await quickRuntime()).ask(input, {}, { grounding: false });
+    assert.equal(result.status, 'DEFEASIBLE', input);
+    assert.equal(result.answer, 'Yes.', input);
+    assert.equal(result.query.predicate, lemma, input);
+    assert.equal(result.approximation.selectedCandidate.text,
+      `Tavra is ${article} ${className}. Every ${className} ${finite} ${object}. `
+        + `Does Tavra ${lemma} ${object}?`, input);
+  }
+});
+
+test('multi-family spelling and morphology converge across renamed edit classes', async () => {
+  for (const [ruleSurface, progressive, finite, lemma] of [
+    ['waterr', 'watering', 'waters', 'water'],
+    ['fixx', 'fixing', 'fixes', 'fix'],
+    ['psas', 'passing', 'passes', 'pass'],
+    ['buz', 'buzzing', 'buzzes', 'buzz'],
+    ['mapp', 'mapping', 'maps', 'map'],
+    ['moe', 'moving', 'moves', 'move'],
+  ]) {
+    const input = `Relo is an axin. All axin ${ruleSurface} yorin. Is Relo ${progressive} yorin?`;
+    const result = await (await quickRuntime()).ask(input, {}, { grounding: false });
+    assert.equal(result.status, 'DEFEASIBLE', input);
+    assert.equal(result.answer, 'Yes.', input);
+    assert.equal(result.query.predicate, lemma, input);
+    assert.equal(result.approximation.selectedCandidate.text,
+      `Relo is an axin. Every axin ${finite} yorin. Does Relo ${lemma} yorin?`, input);
+  }
+});
+
 test('an exact language-strategy allowlist changes the bounded proposal ensemble', async () => {
   const source = 'Abura is an mura. All mura et bana. Is Abura eating bana?';
   const parser = 'strategy:language:direct-controlled-parser@1';
@@ -99,6 +136,22 @@ test('well-formed direct input remains direct and does not run approximation', a
   assert.equal(result.status, 'SOLVED');
   assert.equal(result.languageRoute, 'direct-symbolic');
   assert.equal(result.approximation, undefined);
+});
+
+test('a structurally different apposition interpretation prevents strict flattened learning', async () => {
+  const runtime = await quickRuntime();
+  const result = await runtime.ask('Tavra, a qerin, is a velin.');
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'heuristic-cnl-approximated');
+  assert.equal(result.approximation.selectedCandidate.text,
+    'Tavra is a qerin. Tavra is a velin.');
+  assert.deepEqual(result.approximation.selectedCandidate.supportingFamilies, [
+    'apposition-expansion',
+  ]);
+  assert.deepEqual(result.learned, []);
+  assert.deepEqual(result.context.session.facts, []);
+  const followUp = await runtime.ask('Is Tavra a qerin?', result.context);
+  assert.equal(followUp.status, 'UNKNOWN');
 });
 
 test('report intent plans KB retrieval and shapes a cited partial document', async () => {
@@ -239,6 +292,21 @@ test('request focus does not retrieve quantifiers as topics in the motivating fa
   assert.ok(!grounded.grounding.entries.some((entry) =>
     /(?:^|\W)all(?:\W|$)/iu.test(entry.statement)));
   assert.ok(!grounded.grounding.queryText.startsWith('all'));
+});
+
+test('typed request-plan focus keeps operators in the plan but not in grounding obligations', async () => {
+  const result = await (await quickRuntime()).ask(
+    'Write a report about all mura eating bana.',
+  );
+  assert.equal(result.requestPlanning.status, 'PLANNED');
+  assert.equal(result.requestPlanning.selectedPlan.topics[0].normalized, 'all mura eating bana');
+  assert.equal(result.grounding.focus.source, 'typed-request-plan');
+  assert.deepEqual(result.grounding.focus.obligations.map((item) => item.term), [
+    'mura eating bana',
+  ]);
+  assert.ok(!result.grounding.focus.terms.some((term) => /(?:^|\s)all(?:\s|$)/u.test(term)));
+  assert.equal(result.grounding.focus.candidates.find((candidate) => candidate.term === 'eat')?.role,
+    'predicate');
 });
 
 test('work profiles change bounded heuristic effort without changing completed direct semantics', async () => {

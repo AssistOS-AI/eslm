@@ -19,6 +19,7 @@ export function verbLemmaCandidates(surface) {
     const stem = word.slice(0, -3);
     candidates.add(stem);
     candidates.add(`${stem}e`);
+    if (/^[^aeiou]ying$/u.test(word)) candidates.add(`${word.slice(0, -4)}ie`);
     if (stem.length >= 2 && stem.at(-1) === stem.at(-2) && !VOWELS.has(stem.at(-1))) {
       candidates.add(stem.slice(0, -1));
     }
@@ -29,24 +30,32 @@ export function verbLemmaCandidates(surface) {
     candidates.add(stem);
     candidates.add(`${stem}e`);
   }
-  if (word.length > 3 && word.endsWith('ies')) candidates.add(`${word.slice(0, -3)}y`);
+  if (word.length > 3 && word.endsWith('ies')) {
+    candidates.add(`${word.slice(0, -3)}y`);
+    candidates.add(`${word.slice(0, -3)}ie`);
+  }
   if (word.length > 3 && /(?:ches|shes|sses|xes|zes|oes)$/u.test(word)) candidates.add(word.slice(0, -2));
   if (word.length > 2 && word.endsWith('s') && !word.endsWith('ss')) candidates.add(word.slice(0, -1));
-  return Object.freeze([...candidates].sort((left, right) => left.length - right.length
-    || left.localeCompare(right)));
+  const ordered = [...candidates].sort((left, right) => left.length - right.length
+    || left.localeCompare(right));
+  if (word.endsWith('ies')) {
+    const preferred = baseThirdPersonSingular(word);
+    ordered.splice(ordered.indexOf(preferred), 1);
+    ordered.unshift(preferred);
+  }
+  return Object.freeze(ordered);
 }
 
 export function primaryProgressiveLemma(surface) {
   const word = surface.toLocaleLowerCase('en-US');
   if (!word.endsWith('ing') || word.length <= 4) return word;
+  if (/^[^aeiou]ying$/u.test(word)) return `${word.slice(0, -4)}ie`;
   const stem = word.slice(0, -3);
-  if (stem.length >= 2 && stem.at(-1) === stem.at(-2) && !VOWELS.has(stem.at(-1))) {
+  if (stem.length >= 2 && stem.at(-1) === stem.at(-2) && !VOWELS.has(stem.at(-1))
+      && !['s', 'z'].includes(stem.at(-1))) {
     return stem.slice(0, -1);
   }
-  if (stem.endsWith('y') || /[aeiou]{2}[^aeiou]?$/u.test(stem)) return stem;
-  const candidates = verbLemmaCandidates(word);
-  const silentE = `${stem}e`;
-  return candidates.includes(silentE) && /[^aeiou][aeiou][^aeiou]$/u.test(stem) ? silentE : stem;
+  return stem;
 }
 
 export function thirdPersonSingular(lemma) {
@@ -60,7 +69,10 @@ export function baseThirdPersonSingular(surface) {
   const word = surface.toLocaleLowerCase('en-US');
   const irregular = { does: 'do', goes: 'go', has: 'have' };
   if (irregular[word]) return irregular[word];
-  if (word.length > 4 && word.endsWith('ies')) return `${word.slice(0, -3)}y`;
+  if (word.length > 3 && word.endsWith('ies')) {
+    const stem = word.slice(0, -3);
+    return stem.length === 1 ? `${stem}ie` : `${stem}y`;
+  }
   if (word.length > 4 && /(?:ches|shes|sses|xes|zes|oes)$/u.test(word)) return word.slice(0, -2);
   if (word.length > 3 && word.endsWith('s') && !word.endsWith('ss')) return word.slice(0, -1);
   return word;
@@ -71,7 +83,20 @@ export function looksLikeThirdPersonVerb(surface) {
   return word.length > 3 && /s$/u.test(word) && !/(?:ss|ous)$/u.test(word);
 }
 
-export function closestUniqueWord(surface, vocabulary, maximumDistance, budget) {
+function sharedCharacterCount(left, right) {
+  const counts = new Map();
+  for (const character of left) counts.set(character, (counts.get(character) ?? 0) + 1);
+  let shared = 0;
+  for (const character of right) {
+    const available = counts.get(character) ?? 0;
+    if (available === 0) continue;
+    shared += 1;
+    counts.set(character, available - 1);
+  }
+  return shared;
+}
+
+export function closestUniqueWord(surface, vocabulary, maximumDistance, budget, options = {}) {
   let closestDistance = Number.POSITIVE_INFINITY;
   const closest = [];
   for (const word of vocabulary) {
@@ -89,8 +114,16 @@ export function closestUniqueWord(surface, vocabulary, maximumDistance, budget) 
       closest.push(word);
     }
   }
-  if (closestDistance > maximumDistance || closest.length !== 1) return undefined;
-  return Object.freeze({ word: closest[0], distance: closestDistance });
+  if (closestDistance > maximumDistance) return undefined;
+  if (closest.length === 1) return Object.freeze({ word: closest[0], distance: closestDistance });
+  if (options.preferCharacterCoverage !== true) return undefined;
+  const ranked = closest.map((word) => Object.freeze({
+    word, coverage: sharedCharacterCount(surface, word),
+  })).sort((left, right) => right.coverage - left.coverage || left.word.localeCompare(right.word));
+  if (ranked.length < 2 || ranked[0].coverage === ranked[1].coverage) return undefined;
+  return Object.freeze({
+    word: ranked[0].word, distance: closestDistance, tieBreak: 'source-character-coverage',
+  });
 }
 
 export function grammaticalSpellingCorrection(surface, budget) {

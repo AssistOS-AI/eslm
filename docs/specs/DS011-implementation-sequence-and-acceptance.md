@@ -69,10 +69,12 @@ Acceptance requires strict and defeasible conclusions to remain distinguishable,
 ### 8. Stage G: broader language and external normalization minimization
 
 Stage G expands relative and embedded clauses, coordination, quantifier scope, modality, reference, discourse, and
-multilingual preservation. DS022 supplies the default deterministic recovery layer after direct `UNPARSED`, including
-confidence-voted spelling and morphology repairs, bounded decomposition proposals, semantic-preservation checks,
-query-local reparse, role-focused grounding terms, and request-intent planning. DS013 remains a later, explicit opt-in
-operator boundary after local recovery is exhausted; it translates or simplifies and never performs reasoning.
+multilingual preservation. DS022 supplies the default deterministic recovery layer after direct `UNPARSED` or
+`UNKNOWN`; it may also challenge direct `SOLVED` or `PARTIAL` when an accepted structural candidate has different
+parse-only Semantic IR. Its mechanisms include confidence-voted spelling and morphology repairs, bounded
+decomposition proposals, query-local reparse, role-focused grounding terms, and explicit request planning that can
+preempt an accidental assertion parse without retaining its episode state. DS013 remains a later, explicit opt-in
+operator boundary only after the local result is `UNPARSED`; it translates or simplifies and never performs reasoning.
 
 Acceptance requires construction-level direct and local-recovery coverage, semantic-preservation and
 meaning-changing contrasts, confidence calibration, ambiguity behavior, query-local session atomicity, route-specific

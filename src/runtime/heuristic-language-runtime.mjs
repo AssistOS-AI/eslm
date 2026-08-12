@@ -2,6 +2,7 @@ import {
   approximateControlledEnglish,
 } from '../language/heuristic-cnl-approximation.mjs';
 import { planHeuristicRequest } from '../language/heuristic-request-planning.mjs';
+import { sessionContextSnapshot } from '../language/session.mjs';
 import { assertRuntimeTextResultContract } from './result-contract.mjs';
 import { synthesizeHeuristicRequest } from './heuristic-request-synthesis.mjs';
 import {
@@ -82,6 +83,13 @@ function reparseReceipt(candidate, ir) {
   });
 }
 
+function alternativeInterpretationRequired(direct, directIr, accepted) {
+  if (['UNPARSED', 'UNKNOWN'].includes(direct.status)) return true;
+  if (!['SOLVED', 'PARTIAL'].includes(direct.status) || directIr.parseStatus !== 'PARSED') return false;
+  const directSignature = semanticSignature(directIr);
+  return accepted.some((item) => item.receipt.semanticSignature !== directSignature);
+}
+
 function ambiguityResult(direct, approximation, reparses, accepted) {
   return assertRuntimeTextResultContract({
     ...direct,
@@ -156,6 +164,19 @@ function acceptedApproximationResult(direct, approximation, reparses, selected) 
         committed: false,
       }),
     },
+  });
+}
+
+function requestLocalPrimary(primary, context) {
+  return Object.freeze({
+    ...primary,
+    learned: Object.freeze([]),
+    learnedRules: Object.freeze([]),
+    context: sessionContextSnapshot(context),
+    episode: Object.freeze({
+      ...primary.episode,
+      transaction: 'heuristic-request-query-local',
+    }),
   });
 }
 
@@ -325,17 +346,16 @@ export class HeuristicLanguageRuntime {
 
   async ask(text, context = {}, executionOptions = {}) {
     const direct = await this.runtime.ask(text, context, { ...executionOptions, grounding: false });
-    if (direct.status !== 'UNPARSED') {
-      return executionOptions.grounding === false ? direct : this.attachGrounding(direct);
-    }
     const requestStrategySelected = strategyIdentitySelected(
       this.workPolicy, 'runtime.request.plan', 'strategy:request:reviewed-pattern-ensemble@1',
     );
     const requestPlanning = requestStrategySelected
       ? planHeuristicRequest(text, requestPlanningOptions(this.workPolicy))
       : Object.freeze({ status: 'NO_SUPPORTED_INTENT' });
+    const requestBase = requestPlanning.status === 'NO_SUPPORTED_INTENT'
+      ? direct : requestLocalPrimary(direct, context);
     const requestAnnotated = requestPlanning.status === 'NO_SUPPORTED_INTENT'
-      ? direct : assertRuntimeTextResultContract({ ...direct, requestPlanning });
+      ? direct : assertRuntimeTextResultContract({ ...requestBase, requestPlanning });
     if (requestPlanning.status === 'AMBIGUOUS') {
       const ambiguous = ambiguousRequestResult(requestAnnotated, requestPlanning);
       return executionOptions.grounding === false ? ambiguous : this.attachGrounding(ambiguous);
@@ -346,6 +366,13 @@ export class HeuristicLanguageRuntime {
       const planned = await this.attachGrounding(requestAnnotated);
       if (planned.status !== 'UNPARSED') return planned;
       return plannedKnowledgeGapResult(planned, requestPlanning);
+    }
+
+    // UNKNOWN can mean that a surface was parsed into the wrong, unsupported semantic frame. A successful
+    // direct parse can also flatten an explicit structural cue such as a comma-bounded apposition. Local
+    // approximation remains interpretation-only and a changed Semantic IR is never exposed as strict evidence.
+    if (!['UNPARSED', 'UNKNOWN', 'SOLVED', 'PARTIAL'].includes(direct.status)) {
+      return executionOptions.grounding === false ? direct : this.attachGrounding(direct);
     }
 
     const approximation = approximateControlledEnglish(text, approximationOptions(this.workPolicy));
@@ -361,6 +388,19 @@ export class HeuristicLanguageRuntime {
       reparses.push(receipt);
       if (receipt.acceptedSemanticIr) accepted.push({ candidate, ir, receipt });
     }
+    const directIr = this.runtime.inspectLanguage(text, context);
+    if (!alternativeInterpretationRequired(direct, directIr, accepted)) {
+      return executionOptions.grounding === false ? direct : this.attachGrounding(direct);
+    }
+    const interpretationBase = ['SOLVED', 'PARTIAL'].includes(direct.status)
+      ? assertRuntimeTextResultContract({
+        ...direct,
+        learned: Object.freeze([]),
+        learnedRules: Object.freeze([]),
+        context: sessionContextSnapshot(context),
+        episode: Object.freeze({ ...direct.episode, transaction: 'heuristic-interpretation-query-local' }),
+      })
+      : direct;
     let result;
     if (accepted.length > 0) {
       const bySignature = new Map();
@@ -374,18 +414,18 @@ export class HeuristicLanguageRuntime {
       const closeConflict = distinct.length > 1
         && distinct[0].candidate.rankScore - distinct[1].candidate.rankScore < 0.08;
       if (closeConflict) {
-        result = ambiguityResult(requestAnnotated, approximation, Object.freeze(reparses), distinct);
+        result = ambiguityResult(interpretationBase, approximation, Object.freeze(reparses), distinct);
       } else {
         const executed = await this.runtime.ask(distinct[0].candidate.text, context, { grounding: false });
         result = acceptedApproximationResult(
-          requestAnnotated, approximation, Object.freeze(reparses), {
+          interpretationBase, approximation, Object.freeze(reparses), {
             ...distinct[0], result: executed,
           },
         );
       }
-    } else {
+    } else if (direct.status === 'UNPARSED') {
       result = assertRuntimeTextResultContract({
-        ...requestAnnotated,
+        ...interpretationBase,
         approximation: {
           ...approximation,
           status: approximation.status === 'RESOURCE_LIMIT'
@@ -394,6 +434,8 @@ export class HeuristicLanguageRuntime {
           selectedCandidate: null,
         },
       });
+    } else {
+      result = direct;
     }
     return executionOptions.grounding === false ? result : this.attachGrounding(result);
   }

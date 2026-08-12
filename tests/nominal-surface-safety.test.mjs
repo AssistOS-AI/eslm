@@ -64,6 +64,20 @@ test('assertion and query class positions reject opaque protected surfaces trans
   }
 });
 
+test('unknown class atoms ending in s remain exact unless the model declares an inflection', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  const result = engine.ask('Tavra is a glaxis. Is Tavra a glaxis?');
+  assert.equal(result.status, 'SOLVED');
+  assert.equal(result.query.object, 'glaxis');
+  assert.equal(result.context.session.facts[0].value, 'glaxis');
+
+  const explicitPlural = engine.ask(
+    'All qerins fear velins. Tavra belongs to the qerin class. Who does Tavra fear?',
+  );
+  assert.equal(explicitPlural.status, 'SOLVED');
+  assert.deepEqual(explicitPlural.values, ['velin']);
+});
+
 test('assertion subjects reject protected material without leaving provisional entities', async () => {
   const engine = new EslmEngine(await createCoreModel());
   const learned = engine.ask('Vela Quorin can glide.');

@@ -63,6 +63,12 @@ resource allocation, explicit exhaustion, bounded exception diagnostics, receipt
 ablations. A mock strategy must use nonce semantic identifiers; it must not encode a motivating example in its ID or
 conditions.
 
+Large generated development suites must be produced by deterministic source-owned generators rather than checked in
+as thousands of hand-maintained fixture rows. The generator must derive each oracle from typed template variables
+before runtime execution, preserve a stable seed and replay identity, use nonce content vocabulary, and emit structural
+tags suitable for aggregate failure analysis. A generated suite may guide implementation, but it remains distinct
+from a public or fresh benchmark and must not introduce a branch on a generated case identifier or expected value.
+
 Fixtures must be small, legible, deterministic, and licensed for repository inclusion. Public datasets remain local ignored inputs. A fixture demonstrates software behavior and is never reported as a scientific benchmark. Tests may write only to operating-system temporary directories or an explicit ignored work directory; they must not mutate published KB versions or promoted reports.
 
 ### Documentation synchronization and diagrams
@@ -75,13 +81,16 @@ documentation policy here.
 
 ### Required checks
 
-`npm test` runs unit and integration tests. `npm run evaluate` and `npm run benchmark` run the fixed five-case authored
-integration fixtures; they do not execute the public adapter portfolio. `npm run benchmark:public-probe` performs the
-separately labeled public execution-and-receipt workflow and never downloads sources silently. `npm run docs:check`
-checks documentation structure, links, explanatory captions, left-to-right Mermaid direction, and the maximum
-five-edge diagram budget. `npm run check` composes the required offline verification without silently rerunning every
-costly public probe. `npm run source:size` reports source-file size and long-line risks while excluding declarative data
-whose canonical representation is intentionally one record per line.
+`npm test` runs unit and integration tests. `npm run evaluate` and `npm run benchmark:authored` run their fixed
+five-case authored integration fixtures. `npm run benchmark:generated` runs the deterministic default 1,200-case
+heuristic-language development suite. `npm run benchmark` sequences the authored and generated benchmark commands but
+keeps their reports, evidence regimes, and metrics separate; none of these commands executes the public adapter
+portfolio. `npm run benchmark:public-probe` performs the separately labeled public execution-and-receipt workflow and
+never downloads sources silently. `npm run docs:check` checks documentation structure, links, explanatory captions,
+left-to-right Mermaid direction, and the maximum five-edge diagram budget. `npm run check` composes the required
+offline verification without silently rerunning every costly public probe. `npm run source:size` reports source-file
+size and long-line risks while excluding declarative data whose canonical representation is intentionally one record
+per line.
 
 ## Decisions & Questions
 

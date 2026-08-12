@@ -10,7 +10,7 @@ const LANGUAGE_APPROXIMATION_STRATEGIES = Object.freeze([
   ['grammatical-spelling', 'cost:bounded-edit-distance', 'witness:surface-edits'],
   ['determiner-agreement', 'cost:linear-token-scan', 'witness:surface-edits'],
   ['quantifier-canonicalization', 'cost:linear-clause-scan', 'witness:protected-operator-alignment'],
-  ['progressive-question-reduction', 'cost:linear-clause-scan', 'witness:surface-edits'],
+  ['progressive-question-reduction', 'cost:bounded-edit-distance', 'witness:surface-edits'],
   ['contextual-predicate-spelling', 'cost:bounded-edit-distance', 'witness:contextual-verb-edit'],
   ['predicate-agreement', 'cost:bounded-edit-distance', 'witness:predicate-morphology'],
   ['copula-and-auxiliary-insertion', 'cost:linear-clause-scan', 'witness:surface-edits'],

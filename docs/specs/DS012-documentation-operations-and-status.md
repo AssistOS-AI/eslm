@@ -113,6 +113,18 @@ arbiter identities, and aggregate stage-receipt summaries. Hand-authored HTML ma
 invent execution receipts for an `instrumented-local` or `planned` entry. Stored rows lacking the snapshot remain
 visibly historical or reporting-incomplete.
 
+The authored integration fixture and the generated heuristic development benchmark publish separate JSON and HTML
+artifacts. `latest-benchmark` remains the readable five-case fixture. `latest-generated-heuristic-benchmark` records
+the deterministic DS010 structural suite, its replay identity, aggregate failure clusters, and bounded representative
+failures. Documentation may state the stable default denominator and generator contract, but mutable pass counts,
+rates, oracle-level distributions, route distributions, confidence distributions, and cluster sizes come from the
+generated report. No page may add the two suites into one accuracy or present the generated internal regime as public,
+fresh, or official evidence. The generated top-level pass rate must be called a mixed development-contract rate
+because the report deliberately contains six oracle levels. Their separate aggregates distinguish answer execution,
+Semantic IR, query-local decomposition, request execution, proposal-only preservation, and safety abstention.
+Proposal-only or operator-preservation success with final `UNPARSED` must never be described as executable
+interpretation coverage.
+
 Roadmap coverage uses `docs/results/current-status.json` with named capability bands, evidence, and boundaries. It remains separate from benchmark accuracy. A check beside a benchmark means the declared probe executed; it does not mean the complete official benchmark is solved.
 
 ### Repository-owned skills
@@ -123,12 +135,17 @@ Imported maintenance skills under `.agents/skills/` remain read-only during prod
 
 ### Canonical verification
 
-The repository exposes focused tests, full `npm test`, evaluation, benchmark, public-probe publication, KB build and validation, random source-KB checks, scale profiling, spec-matrix generation, documentation validation, source-size checks, and composed `npm run check`. Commands that acquire network data remain explicit and are never hidden inside inference or verification.
+The repository exposes focused tests, full `npm test`, authored evaluation, separate authored and generated heuristic
+benchmark commands, their composed default benchmark, public-probe publication, KB build and validation, random
+source-KB checks, scale profiling, spec-matrix generation, documentation validation, source-size checks, and composed
+`npm run check`. Commands that acquire network data remain explicit and are never hidden inside inference or
+verification.
 
 Documentation verification checks required pages, shared navigation, local links, assets, diagram constraints when a
 diagram is actually used, DS structure, contiguous numbering, and specs-loader targets. A page is not required to add
 a decorative diagram. Behavioral tests check generated report schemas, report-owned diagnoses, receipt currentness,
-and that every registered reasoning method is documented.
+that every registered reasoning method is documented, and that the generated heuristic report keeps its fixed
+denominator, non-comparable evidence label, identity envelope, aggregate dimensions, and bounded failure sample.
 
 ### Synchronization rule
 
@@ -155,6 +172,12 @@ appropriate context.
 Response: A descriptor inventory, a local execution gate, and shared-coordinator execution are materially different
 evidence. Keeping `planned`, `instrumented-local`, and `coordinated` explicit lets a beginner understand the migration
 and prevents architectural aspiration from being reported as runtime behavior.
+
+### Question #5: Why does the generated heuristic benchmark have its own result artifact?
+
+Response: Its 1,200-case structural distribution, cluster diagnostics, seed, and strategy configuration answer a
+different question from the five authored integration cases. A separate artifact lets both remain part of the default
+workflow without blending denominators, claim scopes, or mutable measurements.
 
 ## Conclusion
 

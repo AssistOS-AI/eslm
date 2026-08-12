@@ -278,6 +278,34 @@ test('a function word is searchable only when the request explicitly treats it a
   assert.equal(request.query.subject, 'all');
 });
 
+test('typed request topics remove leading grammatical scaffolding before tight-budget retrieval', () => {
+  const request = createGroundingRequest(
+    'Write a report about all mura eating bana.', 'UNPARSED', undefined, {
+      maximumTerms: 4,
+      focus: [{ focusId: 'topic:1', term: 'all mura eating bana', role: 'request-topic' }],
+    },
+  );
+  assert.deepEqual(request.terms, ['mura eating bana', 'eat', 'eating', 'bana']);
+  assert.deepEqual(request.termSelection.obligations, [{
+    focusId: 'topic:1', term: 'mura eating bana', role: 'request-topic', selected: true,
+  }]);
+  assert.ok(!request.terms.some((term) => /(?:^|\s)all(?:\s|$)/u.test(term)));
+  const lemma = request.termSelection.candidates.find((candidate) => candidate.term === 'eat');
+  assert.equal(lemma.role, 'predicate');
+  assert.equal(lemma.kind, 'morphological-variant');
+  assert.equal(lemma.selected, true);
+
+  const renamed = createGroundingRequest(
+    'Write a note about every qorin carrying velm.', 'UNPARSED', undefined, {
+      maximumTerms: 3,
+      focus: [{ focusId: 'topic:7', term: 'every qorin carrying velm', role: 'request-topic' }],
+    },
+  );
+  assert.deepEqual(renamed.terms, ['qorin carrying velm', 'carry', 'carrying']);
+  assert.equal(renamed.termSelection.obligations[0].term, 'qorin carrying velm');
+  assert.deepEqual(groundingTerms('What does all mean?', { maximumTerms: 1 }), ['all']);
+});
+
 test('instruction envelopes focus grounding on the requested topic and prioritize exact compounds', () => {
   const reportTerms = groundingTerms('Write a short report about dogs');
   assert.deepEqual(reportTerms, ['dogs', 'dog']);

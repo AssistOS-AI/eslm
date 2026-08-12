@@ -43,15 +43,30 @@ route order or allow a language strategy to consult answer evidence.
 
 For ordinary text, recovery follows this order:
 
-1. Execute the original input through the direct symbolic and provider routes.
-2. If and only if the final language status is `UNPARSED`, generate bounded local heuristic candidates.
-3. Reparse eligible candidates through the same symbolic runtime without granting them persistent session effects.
-4. If no local candidate is accepted and the operator explicitly enabled a Language Agent, run the DS013 episode.
-5. After the final answer or inability status is known, attach DS009 related-KB grounding when that status permits it.
+1. Execute the original input through the direct symbolic route with ordinary inability grounding deferred.
+2. Independently run the bounded request-force planner. An explicit supported artifact request preempts an accidental
+   direct assertion parse, discards tentative direct episode changes, and continues query-locally through its planned
+   retrieval and construction route.
+3. When no request plan applies and the direct status is `UNPARSED`, `UNKNOWN`, `SOLVED`, or `PARTIAL`, generate bounded
+   local heuristic candidates. Candidate generation still requires visible structural evidence.
+4. Inspect the direct input and eligible candidates through parse-only Semantic IR. For direct `SOLVED` or `PARTIAL`,
+   proceed only when at least one accepted candidate has a different semantic signature; equal IR preserves the direct
+   result. A normal missing-knowledge `UNKNOWN` with no accepted structural alternative also remains unchanged.
+5. Execute at most one selected candidate through the same symbolic runtime without granting it persistent session
+   effects. Any changed interpretation is explicitly attributed and query-local.
+6. If the final local result remains `UNPARSED` and the operator explicitly enabled a Language Agent, run the DS013
+   episode. An unrepaired `UNKNOWN` does not authorize external normalization.
+7. After the final answer or inability status is known, attach DS009 ordinary related-KB grounding when that status
+   permits it.
 
-Grounding is deliberately last. KB records cannot influence how an unparsed sentence is rewritten, and a Language
-Agent never receives grounding, provider answers, proof state, or desired semantic values. A parsed `UNKNOWN`,
-`AMBIGUOUS`, `RESOURCE_LIMIT`, or method gap is not a language-recovery trigger.
+Ordinary inability grounding is deliberately last. Planned retrieval for an explicit artifact request is a typed
+request obligation rather than failure grounding; it may supply cited source material under section 11. Neither kind
+of KB evidence can influence how a sentence is rewritten. Candidate selection sees parser/session compilation only,
+not answer success, provider results, proof state, or desired values. `AMBIGUOUS`, `RESOURCE_LIMIT`, and method gaps are
+not language-recovery triggers. `UNKNOWN` is eligible because a permissive direct parse can construct a wrong
+unsupported frame. `SOLVED` and `PARTIAL` are inspectable because a permissive parse can also flatten an apposition,
+coordination, or another explicit structural cue while still returning a positive status. Semantic-IR comparison and
+query-local status qualification prevent that safeguard from silently relabeling ordinary direct success.
 
 ### 2. Approximation is interpretation, not answer generation
 
@@ -105,6 +120,30 @@ The baseline families are:
    retained question or topic. It cannot remove a premise or operator from the semantic content.
 8. **Controlled clause ordering.** Reorder already identified statements and the final question into an executable
    episode without merging or inventing clauses.
+
+Contextual predicate morphology follows a bounded evidence hierarchy. It does not guess a lemma from the progressive
+surface alone when the same episode supplies an aligned class rule:
+
+1. A candidate rule is eligible only when the entity in the question is explicitly a member of the rule's class and
+   the rule and question have the same normalized object. This class-rule/query role alignment prevents a nearby verb
+   in another clause from becoming spelling evidence.
+2. The analyzer enumerates bounded lemma candidates from the question's progressive surface. For an eligible rule, an
+   exact finite-form round trip has first authority: deriving a lemma from the observed finite form must yield one of
+   those candidates, and regenerating the third-person form from that lemma must reproduce the observed finite token
+   exactly. Thus `ties → tie → ties`, `vies → vie → vies`, and `cries → cry → cries` remain distinguishable without a
+   domain-specific branch.
+3. If no exact round trip applies, the observed rule predicate is compared with the generated finite forms of the
+   candidate lemmas under the bounded Damerau edit budget. A unique nearest finite form supplies one contextual lemma.
+   The current progressive alignment admits distance at most one.
+4. If the finite-form comparison remains unresolved, the rule surface may be compared directly with the candidate
+   lemma surfaces. Edit distance remains primary. At equal distance, one candidate may win only when it accounts for a
+   strictly larger multiset of characters observed in the source token. If the character coverage is also equal, the
+   tie remains unresolved and grants no contextual preference; stable lexical order must not manufacture a winner.
+
+An unresolved contextual comparison does not become answer-guided search. The independently defined primary
+progressive analysis remains a visible fallback with its ordinary uncertainty, and later voting and semantic reparse
+retain their existing safety authority. No KB frequency, benchmark label, expected answer, or downstream proof result
+participates in this hierarchy.
 
 The layer may combine compatible transformations. It must reject combinations that change negation, universal versus
 existential force, modality, temporal direction, relation direction, number, quotation, named entities, or answer
@@ -176,9 +215,12 @@ numbers, named entities, quoted text, question force, negation, quantifiers, mod
 operators, conjunction, disjunction, comparisons, and directed relations. It also accounts for open-class content:
 every removed or changed noun, verb, adjective, or adverb requires a named heuristic transformation and evidence.
 
-A contextual spelling proposal is not self-validating. When the source token could map to several predicate forms at
-the same cost and structural score, the layer retains alternatives or declines recovery. Approximate matching can
-rank interpretations; it cannot silently certify synonymy, world identity, or a missing premise.
+A contextual spelling proposal is not self-validating. Exact finite-form round trips outrank approximate edits only
+inside a role-aligned class-rule/query frame. When the source token could map to several predicate forms at the same
+edit cost, source-character coverage may break the tie only if one candidate covers strictly more observed character
+occurrences. Equal remaining coverage retains alternatives, falls back without a contextual preference, or declines
+recovery; lexical sorting cannot decide meaning. Approximate matching can rank interpretations; it cannot silently
+certify synonymy, world identity, or a missing premise.
 
 Reparse cannot make protected material safe by hiding it inside an opaque nominal identifier. The shared direct
 frontend gate accepts a bounded entity or class surface only when the complete phrase is structurally nominal, removes
@@ -260,7 +302,10 @@ but does not turn relevance or a possible answer bridge into proof.
 
 Language approximation and request planning are separate stages. Approximation proposes what an unsupported sentence
 means in controlled English. Request planning proposes what kind of artifact the user wants and how to obtain the
-material for it. The planner runs only for an explicit request pattern and may recognize `summarize`, `expand`,
+material for it. The bounded planner evaluates explicit request force independently of the ordinary direct result so
+that an imperative containing several sentence-like spans cannot be mistaken for session assertions. When it accepts
+a plan, the caller's prior context—not tentative items learned by the direct attempt—is the request base. The planner
+runs only for an explicit request pattern and may recognize `summarize`, `expand`,
 `explain`, `compare`, `outline`, `retrieve`, or `compose`, together with artifacts such as a summary, explanation,
 essay, report, article, document, table, list, or paragraph. It also extracts requested length and format.
 
@@ -351,7 +396,9 @@ merely because it has a different name.
 
 Language Agent normalization is disabled by default. Operators enable it explicitly with
 `--external-language-agent` or interactive `/normalize on`. The local heuristic route remains active in either mode
-and always runs first after direct `UNPARSED`.
+and always runs before external assistance after a direct `UNPARSED`. The local-only route may also inspect a direct
+`UNKNOWN` for structurally licensed alternatives, but an `UNKNOWN` that remains after that attempt never triggers the
+Language Agent.
 
 Immediately before a real external invocation, interactive output displays a restrained progress message such as
 `Thinking: interpreting with the configured Language Agent…`. One-shot structured commands may place that progress on
@@ -386,6 +433,42 @@ call, grounding exclusion of function words, explicit metalinguistic inclusion, 
 answers across profiles that complete. The core guardian's forbidden-dispatch audit must find no benchmark, record,
 hash, expected answer, or motivating-example constant in executable conditions.
 
+Morphology tests cover exact finite/lemma round trips for sibilants, consonant-`y`, short `-ie`, nonce predicates, and
+the contrasting `tie`, `vie`, and `cries` surfaces. Fully renamed entity, class, and object frames exercise the same
+class-rule/query alignment over `water`, `fix`, `pass`, `buzz`, `map`, and `move`, including deletion, insertion,
+substitution, and transposition spelling inputs. Controls also prove that a well-formed different predicate is not
+overwritten merely because another question predicate is edit-near. These tests protect a generic structural rule,
+not a vocabulary allowlist.
+
+Route tests additionally prove that explicit request force preempts an accidental direct assertion parse without
+committing its learned items; a repaired `UNKNOWN` is chosen from parse-only Semantic IR rather than downstream answer
+success; a normal missing-knowledge `UNKNOWN` remains unchanged; equal candidate and direct IR preserve direct
+`SOLVED` or `PARTIAL`; a structurally licensed different IR is query-local and explicitly qualified; and only a final
+`UNPARSED`, never another parsed status, can reach the opt-in Language Agent wrapper.
+
+The default heuristic development benchmark complements focused tests with 1,200 deterministic runtime episodes. Its
+43 reviewed template shapes are repeatedly instantiated with nonce vocabulary across 18 declared domains and 28
+target families; the row count is renaming and combination breadth, not a count of independent constructions. It
+includes direct controls, deletion, insertion, substitution, and transposition spelling processes, explicit morphology
+strata, repairs expected to succeed, and unsafe or meaning-changing forms expected to remain distinct or be rejected.
+The runner executes the ordinary `HeuristicLanguageRuntime` with grounding and external assistance disabled, so
+proposal generation, protected meaning, voting, reparse, route, status, confidence, and resource behavior remain in
+scope together.
+
+The typed oracle level determines what one pass means. `answer-execution`, `semantic-ir`,
+`query-local-decomposition`, `request-execution`, `proposal-only`, and `safety-abstention` are aggregated separately.
+The current `interpretable-complex-clause` templates use the proposal-only level: they require the expected family and
+protected-operator preservation but can pass with final `UNPARSED`. They establish proposal and safety coverage, not
+executable interpretation coverage. The top-level rate therefore summarizes mixed development contracts and must be
+read with oracle-level, route, and status aggregates.
+
+Development conclusions are drawn from aggregate clusters, not the first unusual sentence in a failure list. Separate
+aggregates cover domain, technique, target family, complexity, status, route, confidence, and resource outcome.
+Earliest-failure clusters combine stage and target family while retaining their domain and technique distributions;
+only a bounded representative sample is printed. A proposed heuristic must explain a repeated generic structural
+cluster and pass renamed, independently seeded, and meaning-changing controls before promotion. The deployed runtime
+never learns from the report or changes its own strategy catalog.
+
 ### 16. Present implementation boundary
 
 The current release implements the pure approximation ensemble in `src/language/heuristic-cnl-*.mjs`, the versioned
@@ -395,6 +478,28 @@ coordination in `src/runtime/heuristic-language-runtime.mjs`, extractive documen
 { grounding: false })` defers grounding and `attachGrounding(result)` attaches it once the final language route is
 known. The CLI composes the heuristic wrapper in every ordinary profile and adds the DS013 wrapper only after explicit
 opt-in.
+
+The wrapper evaluates request planning before it accepts an ordinary direct result as final. A planned request uses a
+snapshot of the caller's incoming session and marks its episode `heuristic-request-query-local`. When no request plan
+applies, `UNPARSED`, `UNKNOWN`, `SOLVED`, and `PARTIAL` are eligible for local candidate generation; candidate
+acceptance uses `inspectLanguage` only. The `alternativeInterpretationRequired` gate always permits recovery work for
+`UNPARSED` and `UNKNOWN`, but lets an accepted candidate supersede direct `SOLVED` or `PARTIAL` only when its canonical
+Semantic IR signature differs from the direct signature. If no candidate reaches accepted Semantic IR, `UNPARSED`
+receives an approximation receipt and every other direct status is returned unchanged. A changed direct success uses
+an incoming-session snapshot and transaction `heuristic-interpretation-query-local`. This preserves ordinary direct
+results while recovering cases where permissive parsing selected or flattened the wrong frame.
+
+`src/evaluation/generated-heuristic-benchmark.mjs` owns the deterministic development generator and runner. Its
+default report has evidence regime `internal-generated-development`, declares `benchmarkComparable: false`, freezes
+the stable seed and 1,200-case denominator, and records batch strategy and work identity beside aggregate diagnostics.
+It is part of the default internal benchmark workflow, while remaining separate from the authored fixture,
+interactive regression smoke, and public benchmark portfolio.
+
+`heuristic-cnl-morphology.mjs` owns lemma candidates, finite-form generation and inversion, bounded Damerau comparison,
+and the strict source-character-coverage tie-break. `heuristic-cnl-families.mjs` owns the role alignment among entity
+membership, universal class rule, question predicate, and normalized object. The progressive family uses the exact
+round trip first, then bounded edit evidence; an unresolved tie contributes no contextual winner. Contextual spelling
+and predicate agreement consume the resulting typed target without gaining answer authority.
 
 The approximation defaults are 16 KiB of input, 768 tokens, 48 sentences, 96 proposals, 24 candidates, 8,192
 edit-distance evaluations, and a 512 KiB receipt. Absolute validated ceilings are 64 KiB, 8,192 tokens, 128
@@ -483,6 +588,21 @@ Response: Their evidence, safety preconditions, calibration, cost, and failure m
 independently, while one coordinator keeps composition deterministic and visible. Static registration retains the
 offline trust boundary, and correlation-aware voting prevents artificial confidence from several implementations of
 the same underlying cue.
+
+### Question #10: Why evaluate many generated near-CNL episodes instead of expanding one motivating example?
+
+Response: One example can reveal a defect but cannot distinguish a generic language weakness from an accidental
+lexical interaction. A deterministic structural distribution supplies repeated and contrastive evidence across
+domains, techniques, nonce vocabularies, and target families. Aggregate clusters then justify reusable heuristics and
+calibration changes, while independent seeds and meaning-changing controls expose memorization or over-repair.
+
+### Question #11: Why can source-character coverage break an edit-distance tie?
+
+Response: Equal edit distance can hide an asymmetric explanation of the token. A candidate retaining strictly more
+occurrences from the observed character multiset is supported by more of the visible surface and may receive a narrow
+deterministic preference after role alignment and finite-form checks. This is weaker than lexical knowledge and cannot
+break an equal-coverage tie. Keeping that last tie unresolved prevents alphabetical order or registration order from
+silently becoming a morphological decision.
 
 ## Conclusion
 

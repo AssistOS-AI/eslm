@@ -4,6 +4,7 @@ import {
 } from './result-payload-shapes.mjs';
 import { assertGroundingEntry } from './result-grounding-entry-contract.mjs';
 import { assertResultStrategySelection } from './result-strategy-contract.mjs';
+import { normalizedGroundingPlanTopic } from '../reasoning/grounding-query-focus.mjs';
 
 const GROUNDING_FORMAT = 'eslm-grounding-bundle-v1';
 const GROUNDING_STATUSES = new Set([
@@ -118,7 +119,8 @@ function groundingFocus(grounding, result) {
     || focus.obligations.length !== plannedTopics.length
     || focus.obligations.some((obligation, index) => {
       const topic = plannedTopics[index];
-      return obligation.focusId !== topic.topicId || obligation.term !== topic.normalized
+      return obligation.focusId !== topic.topicId
+        || obligation.term !== normalizedGroundingPlanTopic(topic.normalized)
         || obligation.role !== 'request-topic';
     }))) {
     throw new TypeError('Runtime result grounding typed focus contradicts its selected request plan.');

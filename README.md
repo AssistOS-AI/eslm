@@ -9,9 +9,12 @@ There are three deliberately separate boundaries:
 
 - **Deployment:** trusted dependency-free Node.js plus inert JSON/JSONL. No network, LLM, child process, `eval`, or
   executable KB payload.
-- **Operator CLI:** direct symbolic execution first, then deterministic local CNL approximation or request planning.
-  A Language Agent is available only through explicit `--external-language-agent` or `/normalize on` opt-in after
-  local language recovery is exhausted. Related-KB grounding is attached only after the final route is known.
+- **Operator CLI:** direct symbolic execution first, with deterministic request-force planning able to preempt an
+  accidental assertion parse. Local CNL approximation inspects `UNPARSED` and `UNKNOWN`; it may also challenge a
+  direct `SOLVED` or `PARTIAL` interpretation when a structurally licensed candidate compiles to different Semantic
+  IR. A Language Agent is available only through explicit `--external-language-agent` or
+  `/normalize on` opt-in after the local result remains `UNPARSED`. Related-KB grounding is attached only after the
+  final route is known.
 - **Training:** an isolated Coding Agent may analyze an authorized, train-visible packet and propose untrusted records
   or changes. Validation and explicit promotion remain host operations.
 
@@ -59,6 +62,8 @@ node src/cli.mjs ask "QUESTION" --strategy-select \
 node src/cli.mjs run --input tests/fixtures/questions.txt --output /tmp/eslm-answers.jsonl
 node src/cli.mjs kb list
 node src/cli.mjs benchmark status
+npm run benchmark
+npm run benchmark:generated
 npm run benchmark:public-probe
 npm run kb:validate
 ```
@@ -77,6 +82,12 @@ related KB record is available, `heuristic-request-planned` returns an explicit 
 Local heuristic interpretation is visible as `heuristic-cnl-approximated` or `heuristic-cnl-ambiguous`; receipts show
 candidate text, confidence, supporting votes, transformations, and reparses. A changed interpretation cannot produce
 a strict top-level `SOLVED`, and its tentative episode facts and rules are never committed to the next turn. The
+candidate selector uses parse-only Semantic IR and cannot prefer a rewrite because it later finds an answer. An
+accepted alternative that changes a direct `SOLVED` or `PARTIAL` interpretation is query-local and receives the same
+conservative status treatment as every changed interpretation; identical Semantic IR leaves the direct route intact.
+Explicit artifact requests are also query-local: if direct parsing tentatively treats their source material as
+assertions, the request plan restores the incoming session snapshot before retrieval and construction. An ordinary
+well-formed missing-knowledge `UNKNOWN` remains unchanged when no structurally licensed candidate is accepted. The
 default work profile is `balanced`; use `quick`, `deep`, or `exhaustive-bounded` with `--work-profile`, or inspect and
 change the profile interactively with `/work` and `/work PROFILE`.
 
@@ -149,7 +160,7 @@ src/                       trusted runtime and operator entry points
   kb/                      schema, compiler, package loader, catalog, projection
   reasoning/               capability registry, planning, inference
   benchmark-adapters/      source validation and label-isolated task adaptation
-  evaluation/              access gates and public development probes
+  evaluation/              generated internal suites, access gates, and public development probes
   language/                symbolic frontend, deterministic heuristic planners, optional operator normalizer
   runtime/                 orchestration, heuristic request synthesis, and bounded work policy
   strategy/                sealed descriptors, registry, coordinator, inventory, and confidence votes
@@ -180,12 +191,27 @@ npm run docs:check
 npm run check
 ```
 
-`npm run evaluate` and `npm run benchmark` are five-case authored integration fixtures. A perfect score there is a
-sanity check, not public evidence. `benchmark probe` may execute selected adapters and may assemble frozen receipt rows;
-each row must say which happened. Report assembly time is not execution time. The static receipt audit marks frozen
-results current, historical-stale, historical-unrecoverable, invalid, or unavailable against behavioral dependencies
-and receipt integrity. Use `npm run benchmark:receipts:audit -- --require-current` before claiming the current
-checkpoint; the normal `npm run check` does not silently rerun every costly public benchmark.
+`npm run evaluate` remains a five-case authored integration fixture. `npm run benchmark` now runs two explicitly
+separate internal suites: the unchanged five-case authored fixture and a deterministic 1,200-case heuristic-language
+development suite. Run them independently with `npm run benchmark:authored` and `npm run benchmark:generated`.
+The generated suite instantiates 43 reviewed template and technique shapes repeatedly across 18 domain themes and 28
+target families, with nonce vocabulary, repair-required inputs, direct controls, and meaning-changing contrasts. The
+1,200 rows provide renaming and combination breadth; they are not 1,200 independent language structures. Each typed
+oracle is derived from the generating variables and labeled as answer execution, Semantic IR, query-local
+decomposition, request execution, proposal-only preservation, or safety abstention. The report clusters the earliest
+failure and aggregates behavior by oracle level, technique, target family, domain, complexity, status, route,
+confidence, and resource use so strategy work is guided by repeated failure patterns instead of one memorable example.
+
+Both internal reports carry `benchmarkComparable: false`. The authored result is published as
+[`latest-benchmark.json`](docs/results/latest-benchmark.json), while the generated development result is published
+separately as
+[`latest-generated-heuristic-benchmark.json`](docs/results/latest-generated-heuristic-benchmark.json). Neither is a
+public or fresh score, and their accuracies are never merged. `benchmark probe` may execute selected public adapters
+and may assemble frozen receipt rows; each row must say which happened. Report assembly time is not execution time.
+The static receipt audit marks frozen results current, historical-stale, historical-unrecoverable, invalid, or
+unavailable against behavioral dependencies and receipt integrity. Use
+`npm run benchmark:receipts:audit -- --require-current` before claiming the current checkpoint; the normal
+`npm run check` does not silently rerun every costly public benchmark.
 
 Forced-choice reports retain every eligible case in end-to-end accuracy, including abstentions and missing methods,
 and separately expose attempt coverage and selective accuracy. They also distinguish raw language, source templates,

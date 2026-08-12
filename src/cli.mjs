@@ -13,7 +13,9 @@ import { LanguageAgentAssistedRuntime } from './runtime/language-agent-assisted-
 import {
   CodexLanguageNormalizer, DEFAULT_CODEX_NORMALIZATION_MODEL,
 } from './language/codex-normalizer.mjs';
-import { checkDocumentation, publishReport } from './docs-reports.mjs';
+import {
+  checkDocumentation, publishGeneratedHeuristicBenchmark, publishReport,
+} from './docs-reports.mjs';
 import {
   DATASET_CATALOG, datasetStatus, fetchDataset, prepareDataset,
 } from './datasets.mjs';
@@ -483,6 +485,7 @@ async function docs(args) {
     for (const kind of ['evaluation', 'benchmark']) {
       try { published.push(await publishReport(kind)); } catch {}
     }
+    try { published.push(await publishGeneratedHeuristicBenchmark()); } catch {}
     printJson({ published });
     return;
   }

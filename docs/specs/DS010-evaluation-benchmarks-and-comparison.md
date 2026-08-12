@@ -3,7 +3,7 @@ id: DS010
 title: Evaluation, Measurement, and External Comparison
 status: in-progress
 owner: evaluation
-summary: Defines evidence layers, fixed-denominator and route metrics, strategy-configuration identity, receipt currentness, structural splits, grounded construction, and external comparison.
+summary: Defines evidence layers, fixed-denominator and route metrics, generated heuristic diagnosis, strategy-configuration identity, receipt currentness, structural splits, grounded construction, and external comparison.
 ---
 
 # DS010 Evaluation, Measurement, and External Comparison
@@ -16,9 +16,17 @@ Evaluation must reveal which layer works and which layer fails. This specificati
 
 ### Evidence layers
 
-Unit tests verify implementation contracts with small repository fixtures. Metamorphic smoke tests preserve accepted generic behavior over generated nonce inputs. Local evaluation measures a fixed internal cross-section. Development probes execute externally defined tasks that may guide repair. Fresh and shadow regimes test a frozen candidate without exposing individual outcomes. Official test or evaluator runs follow the source owner's protocol. External comparisons measure another system under a frozen shared manifest.
+Unit tests verify implementation contracts with small repository fixtures. Metamorphic smoke tests preserve accepted
+generic behavior over generated nonce inputs. The generated heuristic development benchmark executes a larger
+project-owned structural distribution and clusters visible failures for strategy research. Local authored evaluation
+measures a fixed internal cross-section. Development probes execute externally defined tasks that may guide repair.
+Fresh and shadow regimes test a frozen candidate without exposing individual outcomes. Official test or evaluator
+runs follow the source owner's protocol. External comparisons measure another system under a frozen shared manifest.
 
-These layers do not substitute for one another. A fixture is not a public benchmark, an adapter is not a score, a development sample is not an untouched test result, a local exact scorer is not an official semantic grader, and a fresh aggregate ceases to describe a later behavior change.
+These layers do not substitute for one another. A generated project-owned development distribution is broader than a
+small fixture but is still neither a public benchmark nor fresh evidence. An adapter is not a score, a development
+sample is not an untouched test result, a local exact scorer is not an official semantic grader, and a fresh aggregate
+ceases to describe a later behavior change.
 
 ### Case and scorer contract
 
@@ -81,6 +89,22 @@ Strategy measurements distinguish catalog presence, selection, eligibility, exec
 resource exhaustion, and contribution. Reports group those states by canonical stage and exact strategy identity and
 include per-strategy ablations when a result supports an architectural promotion claim. A catalog entry or configured
 arbiter is not counted as executed merely because the row selected its stage.
+
+Heuristic-development measurements additionally group outcomes by structural domain, generating technique, target
+family, oracle level, episode complexity, result status, language route, confidence band, resource outcome, and earliest
+failed stage.
+The fixed denominator includes direct controls, successful repairs, rejected unsafe interpretations, abstentions, and
+resource outcomes. Representative failures are bounded samples from aggregate clusters; they never replace cluster
+counts or remove unprinted cases from the denominator.
+
+End-to-end semantic correctness and strategy activation are different measurements. If the direct parser accepts a
+surface with the oracle's semantic query, value, and epistemic status, the answer cannot be scored wrong merely because
+a heuristic family was not invoked. Such a case records a direct-route pass and a target-family bypass or
+inapplicability. A case intended to require recovery must establish during generation or preflight that the direct
+route is `UNPARSED`, or that the direct Semantic IR differs from the structural oracle. This includes misleading
+`UNKNOWN` frames and successful or partial parses that flattened a licensed structural distinction. Otherwise the case
+is unsuitable as evidence for that family's recall. A direct parse that returns the correct semantic query and answer
+is success; a wrong direct frame that blocks or defeats a licensed repair remains a genuine language-boundary failure.
 
 ### Generalization and robustness
 
@@ -155,9 +179,75 @@ The test suite and `/smoke` execute the same catalog without Language Agent assi
 
 Smoke proves regression preservation for authored templates. It does not establish external task selection, source validity, held-out generalization, or benchmark accuracy.
 
-The default `evaluate` and `benchmark` repository suites are small authored integration fixtures. Their generated HTML
-must show the case count, authored/internal regime, and `benchmarkComparable: false` beside any accuracy. A perfect
-fixture score is useful executable sanity evidence, but it is never a headline public benchmark result.
+The default `evaluate` suite and `benchmark:authored` suite are small authored integration fixtures. Their generated
+HTML must show the case count, authored/internal regime, and `benchmarkComparable: false` beside any accuracy. A
+perfect fixture score is useful executable sanity evidence, but it is never a headline public benchmark result.
+
+### Generated heuristic development benchmark
+
+The repository also owns a separate deterministic heuristic-language development benchmark. Its default suite has
+1,200 cases generated by 43 technique templates across 18 domain themes and 28 target families from the fixed seed
+`eslm-generated-heuristic-development-v1`. Those rows are repeated nonce and domain-themed instantiations of the 43
+reviewed shapes, not 1,200 independent language structures. Each typed oracle is derived directly from template
+variables before the runtime executes; the generator does not ask the runtime to define its own oracle.
+
+The current definition has 15 distinct base predicate lemmas across its 18 domain records, and each domain record owns
+one predicate. Domain and predicate are therefore coupled rather than sampled as an independent factorial product. A
+failure concentration under a domain label can primarily be a lexical or morphology concentration. Reports and
+cluster analysis must state that confound; the next generator revision should cross domain themes with morphology
+classes independently and reserve some lemmas for a vocabulary-disjoint split.
+
+The generated distribution combines direct controlled-language controls, repair-required near-CNL forms, complex or
+multi-clause forms, meaning-preserving variants, and meaning-changing or unsafe contrasts. It includes deletion,
+insertion, substitution, and transposition spelling processes and explicit silent-`e`, doubled-consonant, sibilant,
+final-`y`, `ie`-ending, and terminal-`z` morphology strata, beside agreement, auxiliaries, punctuation, clause
+boundaries, statement order, request envelopes, protected operators, and other declared techniques. All cases
+execute through the real local `HeuristicLanguageRuntime` route with grounding and Language Agent assistance disabled.
+The benchmark therefore observes parser, heuristic proposal, safety, arbitration, reparse, and result behavior rather
+than calling individual helpers as a substitute for end-to-end execution.
+
+Oracle kinds carry different acceptance authority. `boolean-entailment` and `interpreted-question` can require an
+executed semantic query, status, or answer. `request-construction` checks the selected request operation, ordered
+obligations, output contract, and resulting local route. `safe-abstention` protects negative controls.
+`statement-interpretation` and `interpretable-complex-clause` may check that a particular structural family produced a
+retained or recommended candidate and preserved its operator even when the direct runtime remains `UNPARSED`. Such a
+pass is proposal-generation and safety evidence; it is not executable interpretation or answer coverage.
+
+The report uses evidence regime `internal-generated-development` and declares `benchmarkComparable: false`. It freezes
+the fixed denominator, generator seed, generator and suite digests, behavior and replay identity, and the batch-honest
+work and strategy configuration. It records overall outcomes but keeps its principal diagnostic aggregates separate
+by oracle level, domain, technique, target family, complexity, status, route, confidence, and resource outcome. Earliest-failure
+clusters combine the failed stage with the target family and retain their domain and technique distributions. At most
+24 representative failures are retained for human inspection; every omitted failure remains counted in its cluster
+and in the denominator.
+
+The top-level schema field `accuracy` is arithmetically `passed / total`, but its interpretation is a mixed
+development-contract rate over the declared oracle levels, not semantic answer accuracy. The report therefore exposes
+separate aggregates for `answer-execution`, `semantic-ir`, `query-local-decomposition`, `request-execution`,
+`proposal-only`, and `safety-abstention`. Follow-up analysis must inspect those aggregates together with status and
+route. In particular, proposal preservation can be compared separately without removing its cases from the fixed
+denominator or presenting them as executed answers.
+
+The next realism layer must separate row volume from structural diversity. Reports must publish counts of distinct
+templates, base predicates, morphology classes, and technique-by-domain cells. New suites must include template- and
+vocabulary-disjoint splits plus a small independently authored packet. The implemented single-edit spelling processes
+and regular morphology strata must be extended with multi-edit errors, irregular paradigms, and deliberately
+ambiguous nonce predicates. A failing mutation cannot be
+removed merely to restore a perfect score. When visible evidence supports several bases, the correct research target
+is calibrated alternatives or `AMBIGUOUS`, or a separately reviewed declarative lexical resource—not an entity- or
+verb-specific core branch.
+
+This report drives collective research. A maintainer first ranks repeated failure clusters, checks whether failures
+share a generic structural precondition, adds a strategy or calibration change only when it survives renamed and
+meaning-changing controls, and reruns the same seed plus an independently chosen seed. One motivating sentence may
+explain a cluster, but it cannot determine the patch. Case IDs, generated vocabulary, target family labels, and oracle
+values are forbidden runtime dispatch inputs under DS002 and DS004.
+
+`npm run benchmark:authored` and `npm run benchmark:generated` publish distinct reports. The default
+`npm run benchmark` sequences both without adding their correct counts or accuracies. The generated report is a
+replayable measurement of a visible project-owned distribution; claims about unseen language, external source
+selection, or public benchmark accuracy require the separate development, fresh, official, and comparison regimes
+defined above.
 
 ### Grounded-failure and request-construction benchmark
 
@@ -234,6 +324,14 @@ Response: One benchmark row aggregates many case executions. One case receipt ca
 Per-stage counts and a digest over the distinct canonical receipts preserve batch identity and completeness without
 making the row unbounded; the underlying receipts remain the audit evidence. Configured arbiter identities are kept
 separate because configuration alone is not execution.
+
+### Question #6: Why is the 1,200-case heuristic suite separate from both `/smoke` and public benchmarks?
+
+Response: `/smoke` protects a broad catalog of already accepted core behavior, while the heuristic suite concentrates
+on near-CNL interpretation, safety decisions, and strategy failure diagnosis. Both are deterministic project-owned
+evidence and may guide repairs. Public and fresh benchmarks instead test an independently defined task distribution or
+held-out lifecycle. Separate artifacts preserve those claim boundaries while still making the larger heuristic suite
+part of the default development command.
 
 ## Conclusion
 

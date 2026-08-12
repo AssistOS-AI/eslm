@@ -152,11 +152,13 @@ The current implementation has three distinct bounded coordination paths:
 2. **Typed-task path.** `EslmEngine.executeTask` uses an allowlisted operation-to-descriptor-and-executor table. Each
    selected trusted executor validates and runs its own typed task, and the result records the method identifier. This
    path does not call `createPlan` and does not construct a general AND/OR graph.
-3. **Heuristic artifact-request path.** After direct `UNPARSED`, the DS022 planner recognizes an explicit output intent,
-   votes over intent and shape candidates, and emits bounded subrequests for supplied-material extraction, per-topic
-   related-record retrieval, correlation, content selection, and output shaping. Its current executor copies selected
-   source sentences and cited KB statements into a `PARTIAL` artifact. It does not call `createPlan`, derive new factual
-   bridges, treat retrieval as proof, or establish general task decomposition.
+3. **Heuristic artifact-request path.** The DS022 planner evaluates explicit request force independently of the
+   ordinary direct result, so an imperative containing sentence-like material can preempt an accidental assertion
+   parse without retaining its tentative session effects. It votes over intent and shape candidates and emits bounded
+   subrequests for supplied-material extraction, per-topic related-record retrieval, correlation, content selection,
+   and output shaping. Its current executor copies selected source sentences and cited KB statements into a `PARTIAL`
+   artifact. It does not call `createPlan`, derive new factual bridges, treat retrieval as proof, or establish general
+   task decomposition.
 
 SAT is implemented on the typed-task path: `decide-boolean-entailment` invokes
 `method:core:scalable-boolean-entailment`, whose semantics and independent certificate verification are defined in

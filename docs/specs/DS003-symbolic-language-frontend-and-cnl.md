@@ -16,7 +16,15 @@ The language front-end accepts a growing, explicitly tested fragment of ordinary
 
 ### 1. Direct-symbolic-first policy
 
-Every input is first offered to the symbolic language front-end. The front-end must determine whether it can construct a semantically complete and safe representation, not merely whether it can produce a syntactic tree. When that complete direct attempt returns `UNPARSED`, the default operator path remains local: DS022 may plan an explicit document-style request or generate, vote on, and reparse bounded controlled-English candidates. KB evidence may not influence candidate generation.
+Every input is first offered to the symbolic language front-end. The front-end must determine whether it can construct
+a semantically complete and safe representation, not merely whether it can produce a syntactic tree. The default
+operator path then evaluates explicit request force independently of the direct result; an accepted plan restores the
+incoming session snapshot so an imperative cannot commit its source material as assertions. When no plan applies,
+DS022 may generate, vote on, and reparse bounded controlled-English candidates for direct `UNPARSED` or `UNKNOWN`. It
+may also compare a structurally licensed candidate with direct `SOLVED` or `PARTIAL`, but only a different accepted
+Semantic IR can supersede that direct interpretation. Equal IR preserves the direct route, and a normal knowledge gap
+remains unchanged without an accepted structural alternative. KB or answer evidence may not influence candidate
+selection.
 
 Language Agent is never the first recovery path, is disabled by default, and is not part of the deployable runtime. It may run only when the operator explicitly enabled the DS013 wrapper and the direct and deterministic local language routes still end in `UNPARSED`. A Language Agent proposal receives no KB evidence or proof state and must return through the unchanged direct parser and reasoner.
 
@@ -132,7 +140,14 @@ entity lookup itself cannot recover a known alias by suffix, discard an unlicens
 operator. Declared multiword aliases remain valid because exactness concerns the whole normalized phrase rather than
 the number of words.
 
-When direct execution ends in `UNPARSED`, DS022 first applies its bounded request planner and local heuristic CNL ensemble. A changed local interpretation is non-authoritative: a strict proof through that interpretation is exposed as `DEFEASIBLE`, and statements extracted only from the candidate remain query-local rather than entering the returned session.
+After the direct attempt, DS022 first evaluates bounded explicit request force. An accepted plan is query-local and
+discards tentative direct episode changes. Otherwise direct `UNPARSED` or `UNKNOWN` may enter the local heuristic CNL
+ensemble. Direct `SOLVED` and `PARTIAL` can also be inspected when a visible structural proposal compiles to Semantic
+IR different from the original direct IR; an identical interpretation keeps the direct result. Candidate selection
+uses parse-only Semantic IR rather than downstream answer success. A changed local interpretation is
+non-authoritative: a strict proof through that interpretation is exposed as `DEFEASIBLE`, and statements extracted
+only from the candidate remain query-local rather than entering the returned session. An `UNKNOWN` with no accepted
+structural alternative remains the direct knowledge gap.
 
 Only after those local language routes remain `UNPARSED` may an explicitly enabled operator CLI invoke the DS013 Language Agent wrapper. DS013 exclusively defines translation and simplification authority, protected anchors, retry feedback, subprocess isolation, cache, route accounting, and explicit opt-in. The parser and local layer contribute only bounded unsupported-form diagnostics. They never request an answer or expose reasoning state, selected KB records, failure grounding, or desired values.
 

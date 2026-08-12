@@ -42,6 +42,21 @@ test('CLI help presents bounded work controls and external normalization as opt-
   assert.match(output, /--external-language-agent\s+opt in/u);
 });
 
+test('CLI generated benchmark executes a bounded offline diagnostic with replay identity', async () => {
+  const output = await captureMain([
+    'benchmark', 'generated', '--cases', '32', '--seed', 'cli-generated-contract',
+    '--kb', 'quick', '--no-external-language-agent',
+  ]);
+  const report = parseCapturedJson(output);
+  assert.equal(report.format, 'eslm-generated-heuristic-benchmark-report-v1');
+  assert.equal(report.total, 32);
+  assert.equal(report.passed + report.failed, 32);
+  assert.equal(report.execution.grounding, false);
+  assert.equal(report.execution.externalLanguageAgent, false);
+  assert.match(report.execution.replayCommand, /--cases 32 --seed 'cli-generated-contract'/u);
+  assert.deepEqual(report.execution.runtimeIdentity.knowledgeBases, ['quick']);
+});
+
 test('CLI Codex training dry-run constructs an isolated subprocess receipt', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'eslm-cli-agent-'));
   const packet = join(directory, 'packet.json');
