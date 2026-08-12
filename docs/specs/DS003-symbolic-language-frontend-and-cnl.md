@@ -3,20 +3,22 @@ id: DS003
 title: Symbolic Language Front-End and Controlled Natural Language
 status: in-progress
 owner: language
-summary: Specifies direct symbolic parsing, Semantic IR, controlled-language growth, ambiguity, diagnostics, and the exact boundary with external language normalization.
+summary: Specifies direct symbolic parsing, Semantic IR, controlled-language growth, ambiguity, diagnostics, and the boundaries with deterministic local recovery and opt-in external normalization.
 ---
 
 # DS003 Symbolic Language Front-End and Controlled Natural Language
 
 ## Introduction
 
-The language front-end accepts a growing, explicitly tested fragment of ordinary language while refusing interpretations that lose protected meaning. This specification owns direct parsing, semantic composition, ambiguity, and parser diagnostics. DS013 exclusively owns the external Language Agent trigger, proposal protocol, validation, cache, and CLI profile.
+The language front-end accepts a growing, explicitly tested fragment of ordinary language while refusing interpretations that lose protected meaning. This specification owns direct parsing, semantic composition, ambiguity, and parser diagnostics. DS022 owns deterministic local approximation, request-intent planning, confidence voting, query focus, and work profiles. DS013 exclusively owns the explicitly enabled external Language Agent trigger, proposal protocol, validation, cache, and assisted CLI profile.
 
 ## Core Content
 
 ### 1. Direct-symbolic-first policy
 
-Every input is first offered to the symbolic language front-end. Language Agent is never the first path and is not part of the deployable runtime. The default operator CLI keeps the wrapper ready, but no external call occurs unless the complete direct attempt returns `UNPARSED`. The front-end must determine whether it can construct a semantically complete and safe representation, not merely whether it can produce a syntactic tree.
+Every input is first offered to the symbolic language front-end. The front-end must determine whether it can construct a semantically complete and safe representation, not merely whether it can produce a syntactic tree. When that complete direct attempt returns `UNPARSED`, the default operator path remains local: DS022 may plan an explicit document-style request or generate, vote on, and reparse bounded controlled-English candidates. KB evidence may not influence candidate generation.
+
+Language Agent is never the first recovery path, is disabled by default, and is not part of the deployable runtime. It may run only when the operator explicitly enabled the DS013 wrapper and the direct and deterministic local language routes still end in `UNPARSED`. A Language Agent proposal receives no KB evidence or proof state and must return through the unchanged direct parser and reasoner.
 
 The accepted language is an extensible Controlled Natural Language. It begins with the linguistic forms required by reasoning benchmarks and grows through rigorously tested generic additions. The CNL is an interface contract between text and executable semantics, not a benchmark-specific collection of templates.
 
@@ -44,13 +46,27 @@ The second phase builds syntactic alternatives with features. The third phase co
 
 The acceptance gate verifies complete syntactic coverage, complete semantic coverage, preservation of logical operators, safe scope, reference status and compatibility with the Semantic IR schema. A parse may be accepted with unresolved lexical meaning if the symbol remains usable. It may not be accepted when negation, quantification, modality or relation direction has been dropped.
 
+Entity-subject and class positions accept only one bounded nominal surface. The parser may remove one explicitly
+licensed leading article (`a`, `an`, or `the`) before comparison. Every remaining alias token must then match the
+complete declared multiword alias; a known alias at the suffix of a longer phrase is not a reference resolution.
+Nominal surfaces containing coordination, negation, quantifiers, temporal or causal connectives, conditionals, or
+finite-clause cues are not encoded as opaque entity or class identifiers. They remain unsupported until a grammar
+production represents their operator and scope. This gate applies symmetrically to assertions and questions.
+
 ### Present implementation boundary
 
 The current direct frontend is a bounded deterministic collection of token, sentence, pattern, morphology, discourse,
-and task-frame compilers. It handles the documented controlled forms and several explicit task projections; it is not
-the general chart/feature parser described as a target above and does not satisfy the full Semantic IR inventory in
-Section 4. This is why ordinary requests such as open-ended report generation, many broad “why” questions, nested
-scope, and unrestricted prose can still return `UNPARSED` even when a loaded KB contains related facts.
+and task-frame compilers. It handles the documented controlled forms and several explicit task projections. This
+implemented kernel provides exact semantics for its accepted constructions while the chart/feature architecture and
+the full Section 4 Semantic IR inventory remain staged acceptance targets. DS022 extends the operator path around this
+kernel with bounded local recovery and extractive request construction. Common explicit summary, explanation,
+comparison, outline, essay, report, article, document, table, list, and paragraph requests can therefore produce a
+cited `PARTIAL` artifact even though nested scope, implicit relations, broad causal explanation, and verified
+abstractive prose require further accepted language and synthesis mechanisms.
+
+The implemented direct CNL also accepts the generic range-restricted pair `Every CLASS VERBs OBJECT` and `Does ENTITY
+VERB OBJECT?`. Nouns and predicates may be nonce symbols: this is reusable language structure, not a dictionary of the
+motivating example.
 
 The distinction is deliberate and observable. A direct accepted CNL question, a recognized factoid routed to public
 providers, and a source/host structured task use different route metadata. Solver success on the latter two does not
@@ -98,7 +114,7 @@ A new grammar form is accepted only after focused examples, metamorphic equivale
 
 For every failed or partially accepted input, the front-end must expose the longest covered spans, unmatched tokens, candidate lexical categories, failed feature constraints, missing semantic actions, unresolved operators and reference status. These diagnostics are the training signal for the coding agent.
 
-The front-end must report whether an input was directly parsed, handled by an explicit symbolic task adapter, accepted after Language Agent translation or simplification, rejected by host normalization validation, failed in the external normalization process, or left unparsed. The implemented route names are `direct-symbolic`, `direct-symbolic-task-adapter`, `language-agent-normalized`, `language-agent-normalization-rejected`, and `language-agent-normalization-failed`. The normalization receipt separately records whether the accepted candidate declared translation or simplification. This route is part of every benchmark result.
+The front-end must report whether an input was directly parsed, handled by an explicit symbolic task adapter, accepted through deterministic local approximation, left ambiguous among local interpretations, understood as an artifact request without supported source material, handled by extractive request synthesis, accepted after Language Agent translation or simplification, rejected by host normalization validation, failed in the external normalization process, or left unparsed. The implemented route names include `direct-symbolic`, `direct-symbolic-task-adapter`, `heuristic-cnl-approximated`, `heuristic-cnl-ambiguous`, `heuristic-request-planned`, `heuristic-request-synthesis`, `language-agent-normalized`, `language-agent-normalization-rejected`, and `language-agent-normalization-failed`. Approximation receipts record candidate confidence, votes, transformations, and reparse outcomes. Request-planning receipts record intent votes, topics, output contract, and subrequests. Normalization receipts separately record whether an accepted external candidate declared translation or simplification. The route is part of every runtime and benchmark result.
 
 ### 9. Capability curriculum and benchmark evidence
 
@@ -110,7 +126,15 @@ Benchmarks expose constructions that are absent or semantically unsafe, but DS01
 
 The direct frontend preserves original text and records Unicode normalization, punctuation handling, declared lexical variants, and conservative spelling repair. Declared variants take priority over edit distance; short tokens are not guessed aggressively; tied repairs remain ambiguous. Unknown names, nouns, and nonce predicates remain usable symbolic atoms when their syntactic and semantic roles are clear.
 
-When direct execution ends in `UNPARSED`, the operator CLI may invoke the DS013 Language Agent wrapper. DS013 exclusively defines translation and simplification authority, protected anchors, retry feedback, subprocess isolation, cache, route accounting, and offline override. The parser contributes only its direct result and bounded unsupported-form diagnostics. It never requests an answer or exposes reasoning state.
+Direct semantic entity lookup is exact over the complete bounded nominal surface after at most one licensed leading
+article is removed. Any spelling proposal belongs to an earlier visible normalization or DS022 approximation step;
+entity lookup itself cannot recover a known alias by suffix, discard an unlicensed modifier, or absorb a protected
+operator. Declared multiword aliases remain valid because exactness concerns the whole normalized phrase rather than
+the number of words.
+
+When direct execution ends in `UNPARSED`, DS022 first applies its bounded request planner and local heuristic CNL ensemble. A changed local interpretation is non-authoritative: a strict proof through that interpretation is exposed as `DEFEASIBLE`, and statements extracted only from the candidate remain query-local rather than entering the returned session.
+
+Only after those local language routes remain `UNPARSED` may an explicitly enabled operator CLI invoke the DS013 Language Agent wrapper. DS013 exclusively defines translation and simplification authority, protected anchors, retry feedback, subprocess isolation, cache, route accounting, and explicit opt-in. The parser and local layer contribute only bounded unsupported-form diagnostics. They never request an answer or expose reasoning state, selected KB records, failure grounding, or desired values.
 
 ### Implemented factoid and narrative projections
 
@@ -126,10 +150,17 @@ provider query. Provider results are normalized and compared as semantic value s
 disagreement returns ambiguity; no response returns an explicit `UNKNOWN` knowledge gap. The original question, generated provider
 candidate, provider identity, and route remain observable.
 
-After an `UNPARSED` or recognized-but-unanswered question, DS009 may attach a related-evidence grounding bundle. Its
-lexical terms come from the original surface rather than parser spelling repairs. The bundle does not make the input
-parsed, does not become Semantic IR, and is not included in Language Agent feedback. Its presence therefore does not
-change the direct-language route or primary status.
+After an `UNPARSED` or recognized-but-unanswered question, DS009 may attach a related-evidence grounding bundle. DS022
+selects topical phrases, nouns, and predicates from the original request and excludes grammatical scaffolding such as
+articles, quantifiers, auxiliaries, copulas, conjunctions, and style words while content terms exist. The bundle does
+not make the input parsed, does not become Semantic IR, and is not included in Language Agent feedback. For ordinary
+inability it cannot change the primary status, answer provenance, or answer-contributing KB versions.
+
+An explicit DS022 document-style request is a separate operation rather than failure-answer substitution. Its
+extractive synthesis method may select sentences from user-supplied material and cited source claims from the grounding
+bundle, organize them under the requested bounded shape, and return `PARTIAL`. Only the selected records become answer
+provenance and `usedKbVersions`; unselected related records retain `answerSupported: false`, and relevance is never
+described as a deductive proof.
 
 Story continuation records use a separate explicit task adapter because a four-sentence context plus candidate endings
 is already a machine-declared selection task. Each sentence is compiled into a bounded narrative event frame with
@@ -138,6 +169,14 @@ identifiers are derived from visible content and are not answer positions. The a
 evidence from loaded providers, then submits the label-free task to the generic continuation selector. This path does
 not claim that the ordinary question parser understands arbitrary stories, and the host-only correct ending remains
 outside the task.
+
+### 11. Work-policy boundary
+
+Language analysis and reparse work consume the immutable `eslm-work-policy-v1` snapshot defined by DS022. The
+`quick`, `balanced`, `deep`, and `exhaustive-bounded` profiles change finite candidate, reparse, reasoning, provider,
+and grounding budgets; they do not change grammar semantics, protected-operator identity, confidence tie-breaking, or
+epistemic status. `balanced` is the default. CLI `--work-profile` and interactive `/work PROFILE` select the profile,
+while `/work` displays its exact effective limits.
 
 ## Decisions & Questions
 
@@ -168,8 +207,26 @@ KB records, but they remain outside the answer and do not change `UNKNOWN` into 
 
 ### Question #3: Why does Language Agent normalization have a separate authority?
 
-Response: Direct parsing and external normalization have different trust, reproducibility, and deployment boundaries. DS003 stays stable when an adapter model, process protocol, cache, or proposal policy changes; DS013 can evolve that operator service without redefining accepted Semantic IR.
+Response: Direct parsing, deterministic local recovery, and external normalization have different trust, reproducibility, and deployment boundaries. DS003 stays stable when a local voting policy or an adapter model, process protocol, cache, or proposal policy changes; DS022 can evolve inspectable local recovery and DS013 can evolve the opt-in operator service without redefining accepted Semantic IR.
+
+### Question #4: Why is a successful heuristic interpretation not merged into the direct route?
+
+Response: Direct acceptance establishes that the original text belongs to the supported CNL. Heuristic acceptance
+establishes that a disclosed changed text belongs to that CNL and that its interpretation was the best bounded local
+hypothesis. Keeping `heuristic-cnl-approximated`, confidence, competing candidates, and query-local session effects
+visible prevents better spelling recovery from being reported as stronger raw-language certainty than the evidence
+supports.
+
+### Question #5: Why does entity resolution require a complete alias match?
+
+Response: A suffix match makes discarded prefixes semantically invisible. A qualifier, negation, quantifier, or
+clause fragment can then resolve to a shorter known name and inherit facts that were never stated about the complete
+subject. Removing only one licensed article and comparing the complete remaining surface preserves ordinary
+multiword aliases while forcing every other token to receive explicit grammar and semantic treatment.
 
 ## Conclusion
 
-The accepted CNL is an extensible semantic interface rather than a list of benchmark templates. Every accepted path preserves logical operators and ambiguity, and every fallback returns through the same symbolic parser.
+The accepted CNL is an extensible semantic interface rather than a list of benchmark templates. Direct parsing remains
+the exact semantic authority; deterministic approximation, request planning, and explicitly enabled external
+normalization are separately attributed routes. Every interpretation path preserves protected meaning and returns
+through trusted symbolic execution, while related evidence remains distinct from proof.

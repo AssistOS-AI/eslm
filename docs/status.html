@@ -2,8 +2,8 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Implementation status — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/status-dashboard.mjs"></script></head>
 <body><div data-include="partials/header.html"></div><main>
 <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Implementation status</p>
-<h1>What works now, what works only in a narrow route, and what remains a research target</h1>
-<p class="lead">This page is a capability boundary, not a launch announcement. “Implemented” means an executable path and tests exist for the named finite contract. It never means unrestricted English, complete world knowledge, or production readiness by association.</p>
+<h1>Implemented capabilities and the next acceptance gates</h1>
+<p class="lead">This page maps each capability to its executable path, tests, current coverage band, and next acceptance gate. “Implemented” identifies a verified finite contract; broader English, world knowledge, and production workloads advance through their own named evidence gates.</p>
 
 <h2>Short answer</h2>
 <div class="table-wrap"><table><thead><tr><th>State</th><th>Current boundary</th></tr></thead><tbody>
@@ -14,7 +14,7 @@
 
 <h2>Unanswered questions now preserve useful KB context</h2>
 <p>If the runtime cannot support an answer, it does not convert a nearby fact into one. For eligible <code>UNKNOWN</code> and <code>UNPARSED</code> results, it may attach a separate, bounded <code>grounding</code> bundle containing related entries, contributor KB versions, search receipts, truncation, and completeness. The bundle says <code>answerSupported: false</code>. It can help a person reformulate the question or ground a downstream LLM, while the primary answer and provenance remain unchanged.</p>
-<p>Grounding uses the original visible text rather than parser corrections, queries exact bounded postings, and retains the session state produced earlier in the same episode. It does not run after <code>RESOURCE_LIMIT</code>, and incomplete provider searches cannot claim that no related evidence exists. See <a href="grounded-failure.html">grounded failure recovery</a> for examples and <a href="specsLoader.html?spec=DS009-failure-provenance-trust-and-security.md">DS009</a> for the normative failure contract.</p>
+<p>Grounding uses role-weighted focus over the visible request: accepted entities and predicates, content phrases, nouns, and verbs outrank grammatical operators and request scaffolding. It queries exact bounded postings and retains the session state produced earlier in the same episode. It does not run after <code>RESOURCE_LIMIT</code>, and incomplete provider searches cannot claim that no related evidence exists. See <a href="grounded-failure.html">grounded failure recovery</a> for examples and <a href="heuristic-language.html">heuristic language approximation</a> for query focus and work policies.</p>
 
 <h2>Evidence labels matter</h2>
 <p>The local <code>evaluate</code> and <code>benchmark run</code> scripts execute five authored fixture cases apiece. They are useful regression checks and explicitly carry <code>benchmarkComparable: false</code>. Public rows may instead be raw-language, source-template, structured-task, source-annotation, or solver-conformance tracks. Those routes validate different layers and must not share an unlabeled headline score.</p>

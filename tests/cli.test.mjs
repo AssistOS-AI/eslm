@@ -18,14 +18,28 @@ function parseCapturedJson(output) {
   return JSON.parse(output.slice(start, end + 1));
 }
 
-test('CLI one-shot output exposes the new task, plan, KB, and result contracts', async () => {
-  const stdout = await captureMain(['ask', 'Can Penguin swim?', '--kb', 'quick']);
+test('CLI one-shot output exposes task, plan, KB, result, and exact work contracts', async () => {
+  const stdout = await captureMain([
+    'ask', 'Can Penguin swim?', '--kb', 'quick', '--work-profile', 'quick',
+    '--horn-max-rounds', '6', '--grounding-max-lookups', '31',
+  ]);
   const result = parseCapturedJson(stdout);
   assert.equal(result.status, 'SOLVED');
   assert.equal(result.protocol, 'eslm-runtime-result-v1');
   assert.equal(result.taskFrame.goals.length, 1);
   assert.equal(result.plan.methodId, 'method:core:safe-horn-deduction');
   assert.deepEqual(result.model.knowledgeBases, ['quick']);
+  assert.equal(result.workPolicy.requested.profile, 'quick');
+  assert.equal(result.workPolicy.effective.limits.maximumHornRounds, 6);
+  assert.equal(result.workPolicy.effective.limits.maximumGroundingLookups, 31);
+});
+
+test('CLI help presents bounded work controls and external normalization as opt-in', async () => {
+  const output = await captureMain(['--help']);
+  assert.match(output, /--work-profile balanced/u);
+  assert.match(output, /--grounding-max-bytes N/u);
+  assert.match(output, /--horn-max-joins N/u);
+  assert.match(output, /--external-language-agent\s+opt in/u);
 });
 
 test('CLI Codex training dry-run constructs an isolated subprocess receipt', async () => {

@@ -7,7 +7,7 @@
   F[Ground facts and rules] --> C[Indexed fixed point]
   C --> D[Derivation graph]
   P[Formula premises] --> M[Enumeration or Tseitin CNF]
-  M --> X[Certificate or countermodel]</pre><figcaption>Horn deduction grows one closure monotonically. The two propositional methods decide entailment by exhaustive models or SAT search. Every route receives typed formulas rather than benchmark identity and returns evidence that a separate checker can reconstruct.</figcaption></figure>
+  M --> X[Certificate or countermodel]</pre><figcaption>Two exact deductive pathways.</figcaption></figure><p class="diagram-explanation">Horn deduction grows one closure monotonically. The two propositional methods decide entailment by exhaustive models or SAT search. Every route receives typed formulas rather than benchmark identity and returns evidence that a separate checker can reconstruct.</p>
 
 <h2>Safe Horn deduction</h2>
 <p>A fact is represented by a subject, predicate, and object. A rule contains a conjunction of triple patterns and one conclusion pattern. A variable is written as a bounded symbolic term such as <code>?x</code>. Safety requires every head variable to be bound by positive body matches. This makes every emitted conclusion ground over the finite active domain already present in the facts.</p>
@@ -48,6 +48,6 @@ rule:
 <h2>Explicit inconsistency semantics</h2>
 <p>The general default remains <code>INCONSISTENT_CONTEXT</code>. Some formal task calculi deliberately adopt classical explosion. Such an adapter must select <code>classical-explosion</code> explicitly before execution; the result is labeled and carries the independently checked inconsistency certificate. The policy is semantic task metadata and cannot be inferred from a benchmark name, a row identifier, or the desired answer.</p>
 
-<h2>What the implementation does not yet provide</h2>
+<h2>Next reasoning acceptance gates</h2>
 <p>There is no general resolution prover, unification over function terms, equality calculus, unrestricted quantifier alternation, modal theorem prover, CDCL clause learning, or query-directed first-order relevance cone. ProofWriter logical-form success, PrOntoQA's finite grounding, and FOLIO formula execution must therefore remain separate from direct natural-language and unrestricted first-order claims. The theory of <a href="https://en.wikipedia.org/wiki/Propositional_calculus">propositional logic</a>, <a href="https://en.wikipedia.org/wiki/Model_checking">model checking</a>, <a href="https://en.wikipedia.org/wiki/Boolean_satisfiability_problem">Boolean satisfiability</a>, and <a href="https://en.wikipedia.org/wiki/Automated_theorem_proving">automated theorem proving</a> provides context; the operative boundary is the code and <a href="specsLoader.html?spec=DS015-reasoning-method-semantics.md">DS015</a>.</p>
 </main><div data-include="partials/footer.html"></div></body></html>

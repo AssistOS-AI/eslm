@@ -167,6 +167,25 @@ test('router returns no fabricated result when no provider has evidence', async 
   assert.equal(routed.result, undefined);
 });
 
+test('provider-source and paraphrase bounds refuse incomplete routing before claiming absence', async () => {
+  const question = "What is Teskal's anchor mark?";
+  const first = provider('first', new Map([[question, ['amber']]]));
+  const second = provider('second', new Map([[question, ['cobalt']]]));
+  const sourceBound = await routeFactoidQuestion([first, second], question, {
+    maximumSources: 1,
+    maximumParaphrases: 2,
+  });
+  assert.equal(sourceBound.result.status, 'RESOURCE_LIMIT');
+  assert.deepEqual(sourceBound.consultedProviders, []);
+
+  const paraphraseBound = await routeFactoidQuestion([first], question, {
+    maximumSources: 1,
+    maximumParaphrases: 1,
+  });
+  assert.equal(paraphraseBound.result.status, 'RESOURCE_LIMIT');
+  assert.deepEqual(paraphraseBound.consultedProviders, []);
+});
+
 test('provider lifecycle failures are diagnosed and cannot leak a partial factoid answer', async () => {
   const question = 'Who forged the plorin?';
   const working = provider('working', new Map([[question, ['Nera']]]));

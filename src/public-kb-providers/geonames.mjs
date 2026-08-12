@@ -118,7 +118,11 @@ export class GeoNamesProvider {
           },
           epistemicStatus: 'source-assertion',
           provenance: [`GeoNames:${record[11]}`],
-          relevance: { score: 30 - termIndex * 0.25, reasons: ['exact-country-name-match'] },
+          relevance: {
+            score: 30 - termIndex * 0.25,
+            reasons: ['exact-country-name-match'],
+            activeKbOccurrences: 1,
+          },
         }));
       }
       const key = normalize(term);
@@ -145,7 +149,11 @@ export class GeoNamesProvider {
           },
           epistemicStatus: 'source-assertion',
           provenance: [`GeoNames:${id}`],
-          relevance: { score: 24 - termIndex * 0.25, reasons: ['exact-place-name-match'] },
+          relevance: {
+            score: 24 - termIndex * 0.25,
+            reasons: ['exact-place-name-match'],
+            activeKbOccurrences: ids.length,
+          },
         }));
       }
     }

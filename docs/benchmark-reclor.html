@@ -7,7 +7,7 @@
   P[Passage + question] --> A[Argument structure]
   A --> C[Four candidate claims]
   C --> V[Proof or countermodel per candidate]
-  V --> S[Justified selection]</pre><figcaption>The unimplemented center is semantic, not cosmetic: selecting an option requires an explicit argument model and a criterion appropriate to the question family.</figcaption></figure>
+  V --> S[Justified selection]</pre><figcaption>Explicit argument analysis.</figcaption></figure><p class="diagram-explanation">The unimplemented center is semantic, not cosmetic: selecting an option requires an explicit argument model and a criterion appropriate to the question family.</p>
 <h2 id="outcomes">Source boundary and zero-attempt scoring</h2>
 <p>The official v1 release contains 4,638 training, 500 validation, and 1,000 test records. Every train and validation record is retained and streamed through a closed schema. The preferred option is removed from the visible task and held by the evaluation host. The test file is retained in the ignored cache but was never parsed; only its byte length and digest were checked.</p>
 <p>Every evaluated case requires one of four option identifiers. If a non-empty evaluated pool receives no in-domain predictions, end-to-end accuracy and attempt coverage are both 0%, while selective accuracy is <code>null</code>. <code>NO_APPLICABLE_METHOD</code> explains why a case was not attempted; it does not remove that case from the fixed denominator or imply that the system selected the opposite option.</p>

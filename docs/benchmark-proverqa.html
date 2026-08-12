@@ -8,7 +8,7 @@
   A[Official FOL annotations] --> N[Typed predicate reconciliation]
   N --> E[Finite entailment]
   E --> W[Proof or countermodel]
-  W --> O[Host-only oracle]</pre><figcaption>The answer and reference reasoning remain outside the visible task. A label match is accepted only when the returned semantic witness is valid.</figcaption></figure>
+  W --> O[Host-only oracle]</pre><figcaption>Entailment with independently checked evidence.</figcaption></figure><p class="diagram-explanation">The answer and reference reasoning remain outside the visible task. A label match is accepted only when the returned semantic witness is valid.</p>
 
 <h2 id="protocol">Source and partition boundary</h2>
 <p>The pinned <a href="https://huggingface.co/datasets/opendatalab/ProverQA">official dataset release</a> contains 1,500 public evaluation cases—500 easy, 500 medium, and 500 hard—and 5,000 training records. ESLM retains every row and validates all 15,842 premise annotations and 17,342 formulas. Three malformed JSON strings embedded in training-output text are retained and counted; they are not silently dropped or executed.</p>

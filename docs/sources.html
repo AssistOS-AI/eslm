@@ -3,7 +3,7 @@
 <body><div data-include="partials/header.html"></div><main>
 <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Sources and citations</p>
 <h1>Public sources, citations, licenses, and access obligations</h1>
-<p class="lead">This page identifies the external knowledge sources and benchmark families named by ESLM's frozen source manifests. It gives a reviewer the publication to cite, the selected data release, the governing license or access rule, and the immutable identity recorded by the repository. It deliberately contains no benchmark score: measured results belong in timestamped result artifacts, while source identity and attribution must remain stable across runs.</p>
+<p class="lead">This page identifies the external knowledge sources and benchmark families named by ESLM's frozen source manifests. It gives a reviewer the publication to cite, selected data release, governing license or access rule, and immutable repository identity. Benchmark scores remain in timestamped result artifacts so source identity and attribution stay stable across runs.</p>
 <div class="callout"><p><strong>Execution status is generated:</strong> use the <a href="evaluation.html">evaluation dashboard</a> or the <a href="results/latest-public-benchmark-probes.json">raw v2 report</a> for catalog-declared adapter and evaluation state, access state, executed scope, scores, and receipt currentness. A catalog state describes the registered route; only an execution receipt plus its checkpoint audit establishes what actually ran and whether that result still describes the current worktree. A source listed here may be acquired and validated without having a current execution result.</p></div>
 
 <h2>Four records are required for one reproducible source</h2>
@@ -11,7 +11,7 @@
   P[Primary publication] --> D[Dataset release]
   D --> T[License and access terms]
   T --> C[Frozen local artifact]
-  C --> U[Adapter or KB compiler]</pre><figcaption>The publication explains the research object and supplies the scholarly citation. The dataset release supplies the bytes. License and access terms determine permitted use and redistribution. A checksum identifies the exact cached artifact consumed by a validated adapter or knowledge-package compiler. No edge transfers rights from one node to another: in particular, an open-access paper does not make its associated dataset freely redistributable.</figcaption></figure>
+  C --> U[Adapter or KB compiler]</pre><figcaption>From publication to frozen artifact.</figcaption></figure><p class="diagram-explanation">The publication explains the research object and supplies the scholarly citation. The dataset release supplies the bytes. License and access terms determine permitted use and redistribution. A checksum identifies the exact cached artifact consumed by a validated adapter or knowledge-package compiler. No edge transfers rights from one node to another: in particular, an open-access paper does not make its associated dataset freely redistributable.</p>
 <p>A source citation is not a substitute for a license, and a license label is not a substitute for complying with access conditions. Cached files stay under ignored <code>training/.cache/</code> paths. Test labels remain evaluation oracles and are not promoted into knowledge packages or exposed to synthesis agents. If a delivered archive carries terms that differ from this page, the delivered terms control and the source manifest must be updated before use.</p>
 
 <h2>Benchmark research sources and rights</h2>

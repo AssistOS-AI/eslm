@@ -1,6 +1,6 @@
 # Scope
 
-This repository develops an Executable Symbolic Language Model (ESLM): a deterministic symbolic runtime, a declarative knowledge-package format, and an offline toolchain that compiles evidence into reviewable data. Training-time coding agents may analyze prepared training evidence and propose declarative records. The deployed runtime never calls an LLM or agent and never executes knowledge-base content as source code. The general CLI enables a separate Language Agent operator wrapper by default; it may translate or conservatively simplify only after an `UNPARSED` result, and `--no-external-language-agent` selects the entirely offline CLI profile. A Language Agent may be a general coding agent or a translation-focused model; the currently supported adapter invokes Codex. The wrapper is not part of deployed symbolic inference, and every accepted result returns through the unchanged parser and reasoner.
+This repository develops an Executable Symbolic Language Model (ESLM): a deterministic symbolic runtime, a declarative knowledge-package format, and an offline toolchain that compiles evidence into reviewable data. Training-time coding agents may analyze prepared training evidence and propose declarative records. The deployed runtime never calls an LLM or agent and never executes knowledge-base content as source code. The general CLI is entirely local by default: it attempts direct symbolic execution, then deterministic DS022 language approximation or request planning, and finally related-KB grounding when the result permits it. An operator may explicitly enable the separate DS013 Language Agent wrapper with `--external-language-agent` or interactive `/normalize on`; it may translate or conservatively simplify only after the local language routes remain `UNPARSED`. A Language Agent may be a general coding agent or a translation-focused model; the currently supported adapter invokes Codex. The wrapper is not part of deployed symbolic inference, and every accepted proposal returns through the unchanged direct parser and reasoner.
 
 `docs/specs/` is the sole current design authority. `original_specs/` is preserved research input and must not be consulted again after a specification-consolidation task has completed. `.agents/skills/` contains imported project-maintenance skills and must not be edited during ESLM product work. `training/.agents/skills/` contains repository-owned, self-contained training and audit skills.
 
@@ -15,11 +15,12 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 7. For a proposed generic-core change, read `training/.agents/skills/core-change-guardian/SKILL.md` completely.
 8. For KB package review, read `training/.agents/skills/kb-compiler-quality-auditor/SKILL.md` completely.
 9. For specification or documentation maintenance, read the matching imported skill under `.agents/skills/`.
-10. For operator-side language normalization, read `docs/specs/DS013-language-agent-assisted-language-normalization.md` completely and keep the deployable runtime closure independent of the Language Agent subprocess module.
-11. For books, manuals, technical documentation, document ingestion, or symbolic RAG work, read `docs/specs/DS014-symbolic-document-knowledge-bases-and-reasoning-retrieval.md` completely.
-12. For a reasoning-method change, read `docs/specs/DS015-reasoning-method-semantics.md` completely.
-13. For source acquisition or benchmark adaptation, read DS016 and DS017 completely.
-14. Before compiling or routing a new large corpus, read DS018 through DS021 completely and satisfy their source gate, streaming compiler, exact routing, and cache requirements.
+10. For deterministic language approximation, request planning, grounding focus, or work-budget changes, read `docs/specs/DS022-heuristic-language-approximation-and-work-policy.md` completely.
+11. For operator-side Language Agent normalization, read `docs/specs/DS013-language-agent-assisted-language-normalization.md` completely and keep the deployable runtime closure independent of the Language Agent subprocess module.
+12. For books, manuals, technical documentation, document ingestion, or symbolic RAG work, read `docs/specs/DS014-symbolic-document-knowledge-bases-and-reasoning-retrieval.md` completely.
+13. For a reasoning-method change, read `docs/specs/DS015-reasoning-method-semantics.md` completely.
+14. For source acquisition or benchmark adaptation, read DS016 and DS017 completely.
+15. Before compiling or routing a new large corpus, read DS018 through DS021 completely and satisfy their source gate, streaming compiler, exact routing, and cache requirements.
 
 # Current Skill Catalog
 
@@ -44,7 +45,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - HTML documentation explains the same contract from implementation, review, operational, and failure-analysis viewpoints. It must not be a compressed substitute for the DS files.
 - Diagrams must be small, legible, and accompanied by prose that explains nodes, edges, boundaries, and exceptional paths. Prefer a left-to-right two-dimensional flow with three to five primary nodes; replace dense trees and branch fans with prose or several focused diagrams.
 - Keep the documentation home-page KB and benchmark inventories synchronized with package validation, catalog metadata, adapter state, and actually published post-reset results. Never present catalog inclusion as benchmark execution.
-- The deployable runtime closure under `src/runtime/engine.mjs`, `src/runtime/runtime.mjs`, and its transitive inference dependencies must not access networks, invoke an LLM or agent, start child processes, execute corpus strings, use `eval`, or dynamically import corpus-provided paths. Only the explicit DS013 operator wrapper may invoke a configured language-only Language Agent subprocess, and runtime core modules must not import it.
+- The deployable runtime closure under `src/runtime/engine.mjs`, `src/runtime/runtime.mjs`, deterministic DS022 language modules, and their transitive inference dependencies must not access networks, invoke an LLM or agent, start child processes, execute corpus strings, use `eval`, or dynamically import corpus-provided paths. Only the explicitly enabled DS013 operator wrapper may invoke a configured language-only Language Agent subprocess, and runtime core modules must not import it.
 - Knowledge bases are declarative data under `training/KBs/<id>/canonical/` and `training/KBs/<id>/package/`. KB payloads must not be JavaScript modules. Only trusted runtime/compiler code is executable.
 - Treat all training, document, corpus, and benchmark input as untrusted. Validate schemas, freeze source and packet hashes, separate train/development/test visibility, and compile only allowlisted record and package shapes.
 - Resource budgets govern streaming, sharding, cache retention, and bounded execution. They must never delete or silently discard valid source examples or facts. Semantic projections must retain the complete frozen source and report valid rows outside the current language, relation, license, or quality profile as explicit coverage gaps.
@@ -58,16 +59,20 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 
 # Runtime Defaults
 
-- The default runtime is Stage A: deterministic English controlled-language parsing, explicit task frames, capability-aware plans, direct retrieval, safe Horn deduction, provenance, structured gaps, and declarative KB packages.
-- The general CLI enables the direct-first Language Agent normalization wrapper by default. Only `UNPARSED` input may trigger it. Use `--no-external-language-agent` for confidential input, offline reproduction, tests, canonical evaluation, and published direct benchmarks. One episode permits at most three language proposals and may return only parser-form feedback, never answers, KB evidence, or proof state. This interface default never changes the offline `EslmRuntime` contract.
+- Stage A provides deterministic English controlled-language parsing, explicit task frames, capability-aware plans, direct retrieval, safe Horn deduction, provenance, structured gaps, and declarative KB packages.
+- The general CLI is offline by default. It runs the direct route first, then the bounded DS022 heuristic CNL ensemble or explicit request planner, and attaches role-focused related-KB grounding only after the final local status is known. A strict answer reached through a changed interpretation is reported as `DEFEASIBLE`; an approximated learning-only episode is `PARTIAL`, and all candidate-derived facts and rules remain query-local.
+- Language Agent normalization is disabled by default. `--external-language-agent` or interactive `/normalize on` enables it only after direct and local heuristic language recovery remain `UNPARSED`; `--no-external-language-agent` explicitly restates the local profile. One assisted episode permits at most three language proposals and may return only parser-form feedback, never answers, KB evidence, grounding, or proof state. Every accepted proposal is reparsed by the direct symbolic runtime.
+- `balanced` is the default `eslm-work-policy-v1` profile. `quick`, `deep`, and `exhaustive-bounded` select other finite limits for heuristic candidates and reparses, Horn work, provider fan-out, and grounding retrieval. CLI startup flags and interactive `/work PROFILE` may change these budgets without changing logic, trust, selected KB identities, or session facts.
 - The core starts without domain knowledge. `quick` is the small deterministic smoke-test KB. `oewn-2025` and `atomic-2020` are source-derived, query-directed JSON packages loaded within explicit memory policy. `babi-v1.2-language` is a small source-derived package that declares a property domain and an explicitly defeasible induction policy without embedding evaluation answers.
 - Results use `eslm-runtime-result-v1`. Every text result exposes protocol, status, answer, session and episode state,
   language route, selected, consulted, and answer-contributing KB versions, unresolved subgoals, and memory policy.
   Normalized input, parsed query, task frame, selected plan, values, provenance, and reasoning are stage-dependent and
   may be absent after an early `UNPARSED`. Eligible inability results may also expose an
   `eslm-grounding-bundle-v1`: bounded related records and per-source search receipts with
-  `answerSupported: false`. Grounding is never copied into the primary answer, values, provenance, or
-  `usedKbVersions`.
+  `answerSupported: false`. Ordinary inability grounding is never copied into the primary answer, values,
+  provenance, or `usedKbVersions`. The separate `heuristic-request-synthesis` route may select and cite relevant
+  source claims to build a `PARTIAL` extractive artifact; only those selected records enter its answer provenance and
+  `usedKbVersions`, and they are presented as source material rather than deductive proof.
 - Training packets use train-visible records only. A Coding Agent subprocess receives one packet and one copied skill inside an isolated workspace; it cannot mutate the host repository.
 - Promotion is explicit. Candidate records do not become runtime knowledge merely because an agent generated them.
 
@@ -82,7 +87,9 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - KB build and validation: `npm run kb:build` and `npm run kb:validate`
 - Small declarative KB: `node src/cli.mjs ask "Can Penguin swim?" --kb quick`
 - Source-derived KBs: `node src/cli.mjs ask "Define dog" --kb oewn-2025` and `node src/cli.mjs ask "Why might apologize?" --kb atomic-2020`
-- Default operator normalization: `node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick`; explicit offline override: add `--no-external-language-agent`
+- Local heuristic approximation: `node src/cli.mjs ask "Abura is an mura. All mura et bana. Is Abura eating bana?"`
+- Explicit Language Agent normalization: `node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick --external-language-agent`
+- Deeper bounded work: `node src/cli.mjs ask "QUESTION" --kb all --work-profile deep`; interactive inspection and changes use `/work` and `/work PROFILE`
 - Training packet: `node src/cli.mjs train prepare --input tests/fixtures/training.jsonl --namespace example-kb --output /tmp/eslm-packet.json`
 - Isolated Coding Agent dry run: `node src/cli.mjs train run --packet /tmp/eslm-packet.json --output /tmp/eslm-agent --skill document-to-kb-builder --dry-run`
 - Dataset status: `node src/cli.mjs dataset status --dataset babi-15-en-10k-v1.2`
@@ -92,7 +99,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Evaluation: `npm run evaluate`
 - Benchmark: `npm run benchmark`
 - Public benchmark cache status: `node src/cli.mjs benchmark status`
-- Direct-only public portfolio assembly and live development rows: `npm run benchmark:public-probe`. The generated
+- External-agent-free public portfolio assembly and live development rows: `npm run benchmark:public-probe`. The generated
   report distinguishes rows executed during assembly from stored receipts; it is not a rerun of every catalog row.
 - Frozen benchmark receipt audit: `npm run benchmark:receipts:audit`; require every audited checkpoint to be current
   with `node scripts/audit-benchmark-receipts.mjs --require-current`.
@@ -104,6 +111,8 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 
 - CLI and orchestration entry points: `src/`
 - Interactive presentation and operator diagnostics: `src/interface/`
+- Deterministic CNL approximation, decomposition, voting, and request planning: `src/language/heuristic-*.mjs`
+- Heuristic language coordination, extractive request synthesis, and work policy: `src/runtime/heuristic-*.mjs` and `src/runtime/work-policy.mjs`
 - Declarative KB schema, compiler, loader, catalog, and projection: `src/kb/`
 - Capability registry, planning, and inference: `src/reasoning/`
 - Isolated coding-agent training runner: `src/training/`
@@ -114,5 +123,6 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Human-facing HTML documentation: `docs/`
 - Authoritative detailed specifications: `docs/specs/`
 - Reasoning method contracts: `docs/specs/DS015-reasoning-method-semantics.md`
+- Heuristic language, query-focus, request-planning, and work-policy contracts: `docs/specs/DS022-heuristic-language-approximation-and-work-policy.md`
 - Source, adapter, corpus, routing, and cache gates: `docs/specs/DS016-source-identity-license-and-access.md` through `docs/specs/DS021-memory-budgets-and-shard-caches.md`
 - Archived research source, never current authority: `original_specs/`

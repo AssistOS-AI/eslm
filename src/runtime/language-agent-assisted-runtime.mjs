@@ -1,4 +1,10 @@
+import { NORMALIZATION_RESULT_PROTOCOL } from './result-payload-contracts.mjs';
+
 const MAX_LANGUAGE_AGENT_PROPOSALS = 3;
+
+function normalizationResult(value) {
+  return { protocol: NORMALIZATION_RESULT_PROTOCOL, ...value };
+}
 
 export class LanguageAgentAssistedRuntime {
   constructor(runtime, normalizer) {
@@ -9,10 +15,16 @@ export class LanguageAgentAssistedRuntime {
     this.selected = runtime.selected;
     this.model = runtime.model;
     this.memoryPlan = runtime.memoryPlan;
+    this.workPolicy = runtime.workPolicy;
   }
 
   memorySnapshot() {
     return this.runtime.memorySnapshot();
+  }
+
+  attachGrounding(result) {
+    return typeof this.runtime.attachGrounding === 'function'
+      ? this.runtime.attachGrounding(result) : result;
   }
 
   normalizationConfiguration() {
@@ -32,9 +44,12 @@ export class LanguageAgentAssistedRuntime {
   }
 
   async ask(text, context = {}) {
-    const direct = await this.runtime.ask(text, context);
+    const direct = await this.runtime.ask(text, context, { grounding: false });
     if (direct.status !== 'UNPARSED') {
-      return { ...direct, normalization: { attempted: false, triggerStatus: direct.status } };
+      const annotated = {
+        ...direct, normalization: normalizationResult({ attempted: false, triggerStatus: direct.status }),
+      };
+      return this.attachGrounding(annotated);
     }
     let feedback = [];
     let previousCandidate;
@@ -63,52 +78,67 @@ export class LanguageAgentAssistedRuntime {
         proposalLimit: MAX_LANGUAGE_AGENT_PROPOSALS,
       };
       if (normalized.status === 'failed') {
-        return {
+        return this.attachGrounding({
           ...direct, languageRoute: 'language-agent-normalization-failed',
-          normalization: { ...common, status: 'failed', diagnostic: normalized.diagnostic },
-        };
+          normalization: normalizationResult({
+            ...common, status: 'failed', diagnostic: normalized.diagnostic,
+          }),
+        });
       }
       if (normalized.status === 'rejected') {
-        return {
+        return this.attachGrounding({
           ...direct, status: 'UNVERIFIED_NORMALIZATION', languageRoute: 'language-agent-normalization-rejected',
-          normalization: { ...common, status: 'rejected', candidate: normalized.candidate, validation: normalized.validation },
-        };
+          normalization: normalizationResult({
+            ...common,
+            status: 'rejected',
+            candidate: normalized.candidate,
+            validation: normalized.validation,
+          }),
+        });
       }
-      const reparsed = await this.runtime.ask(normalized.candidate.normalizedEnglish, context);
+      const reparsed = typeof this.runtime.askDirect === 'function'
+        ? await this.runtime.askDirect(
+          normalized.candidate.normalizedEnglish, context, { grounding: false },
+        )
+        : await this.runtime.ask(
+          normalized.candidate.normalizedEnglish, context, { grounding: false },
+        );
       if (reparsed.status === 'UNPARSED' && proposalCount < MAX_LANGUAGE_AGENT_PROPOSALS) {
         previousCandidate = normalized.candidate.normalizedEnglish;
         feedback = [
-          'The previous proposal preserved the protected surface anchors but the symbolic language frontend returned UNPARSED.',
-          'Produce a different conservative controlled-English formulation. Keep every fact, operator, entity, and question goal unchanged.',
+          'The previous proposal preserved the protected surface anchors, but the symbolic language '
+            + 'frontend returned UNPARSED.',
+          'Produce a different conservative controlled-English formulation. Keep every fact, '
+            + 'operator, entity, and question goal unchanged.',
         ];
         continue;
       }
       if (['UNPARSED', 'AMBIGUOUS'].includes(reparsed.status)) {
-        return {
+        return this.attachGrounding({
           ...direct, status: 'UNVERIFIED_NORMALIZATION', languageRoute: 'language-agent-normalization-rejected',
-          normalization: {
+          normalization: normalizationResult({
             ...common, status: 'reparse-rejected', candidate: normalized.candidate,
             validation: normalized.validation, reparseStatus: reparsed.status,
-          },
-        };
+          }),
+        });
       }
-      return {
+      return this.attachGrounding({
         ...reparsed,
         languageRoute: 'language-agent-normalized',
         originalInput: direct.input ?? { original: text },
-        normalization: {
+        normalization: normalizationResult({
           ...common, status: 'accepted', candidate: normalized.candidate,
           validation: normalized.validation, reparseStatus: reparsed.status,
-        },
-      };
+        }),
+      });
     }
-    return {
+    return this.attachGrounding({
       ...direct, status: 'UNVERIFIED_NORMALIZATION', languageRoute: 'language-agent-normalization-rejected',
-      normalization: {
+      normalization: normalizationResult({
         attempted: true, triggerStatus: direct.status, status: 'proposal-limit-exhausted',
-        proposalCount, proposalLimit: MAX_LANGUAGE_AGENT_PROPOSALS, externalInvocations,
+        proposalCount, proposalLimit: MAX_LANGUAGE_AGENT_PROPOSALS, externalInvocations, cacheHit,
         receipts: Object.freeze(receipts), diagnostic: 'The bounded Language Agent proposal limit was exhausted.',
-      },
-    };
+      }),
+    });
   }
 }

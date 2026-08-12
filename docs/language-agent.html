@@ -2,22 +2,22 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Language Agent — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head>
 <body><div data-include="partials/header.html"></div><main><p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Foundations / Language Agent</p>
 <h1>External Language Agent: translation into ESLM controlled language</h1>
-<p class="lead">The Language Agent is an operator-side compatibility service for surface language that ESLM cannot parse directly. It may translate or conservatively simplify one utterance. It cannot answer, retrieve facts, inspect a proof, choose an option, or perform symbolic reasoning. The deployed runtime never imports or invokes it.</p>
+<p class="lead">The Language Agent extends operator-side compatibility beyond direct parser coverage by translating or conservatively simplifying one utterance. Host-owned gates keep it strictly linguistic: answers, facts, proof state, option selection, and symbolic reasoning remain inside their authoritative components. The deployed runtime stays independent of the service.</p>
 <figure class="diagram"><pre class="mermaid">flowchart LR
   I[Original utterance] --> D[Offline ESLM first]
-  D -->|UNPARSED only| L[External Language Agent]
+  D -->|still UNPARSED| L[Opt-in Language Agent]
   L --> V[Host validation and reparse]
-  V --> R[Symbolic result]</pre><figcaption>Direct execution always receives the first attempt. External text becomes usable only after host-owned validation and a new run through the unchanged parser, KB providers, planner, and reasoner.</figcaption></figure>
+  V --> R[Symbolic result]</pre><figcaption>Opt-in normalization returns through the parser.</figcaption></figure><p class="diagram-explanation">Direct parsing and deterministic local heuristics receive the first attempts. Only an explicitly enabled external route can follow their final <code>UNPARSED</code> result. External text becomes usable after host-owned validation and a new run through the unchanged parser, KB providers, planner, and reasoner.</p>
 
 <h2>Product-neutral role and current adapter</h2>
 <p><em>Language Agent</em> names the contract. It may be implemented by a small translation-focused service trained to emit ESLM controlled English, or by a general coding agent configured without tools. The repository currently supports a Codex CLI adapter and requests the exact local model slug <code>gpt-5.3-codex-spark</code> at low reasoning effort. This exact slug is intentional: model substitution changes behavior, cost, availability, and cache identity.</p>
-<p>A successful local invocation proves only that the installed Codex version, current account, and service routing accepted the slug at that time. It is not a portable dependency claim. Missing authentication, unavailable model routing, timeout, or nonzero exit returns an attributed Language Agent failure while preserving the original <code>UNPARSED</code> result. The project remains buildable and testable offline through stub executables and <code>--no-external-language-agent</code>.</p>
+<p>A successful local invocation proves only that the installed Codex version, current account, and service routing accepted the slug at that time. It is not a portable dependency claim. Missing authentication, unavailable model routing, timeout, or nonzero exit returns an attributed Language Agent failure while preserving the original <code>UNPARSED</code> result. The default CLI remains buildable, testable, and usable offline; tests exercise the external contract through stub executables.</p>
 
-<h2>Why the CLI default differs from deployment</h2>
-<p><code>EslmRuntime</code> is deterministic, dependency-free, offline, and has no child-process path. The attended CLI wraps it in <code>LanguageAgentAssistedRuntime</code> by default because an operator may prefer a disclosed translation attempt to an immediate syntax failure. The canonical flag <code>--no-external-language-agent</code>, or interactive <code>/normalize off</code>, removes the wrapper. Tests, public direct probes, regression smoke, confidential input, and deployed-style reproduction use that offline profile.</p>
+<h2>Opt-in operator profile and deployment boundary</h2>
+<p><code>EslmRuntime</code> is deterministic, dependency-free, offline, and has no child-process path. The attended CLI uses that local behavior by default, including deterministic heuristic approximation. An operator may explicitly enable <code>LanguageAgentAssistedRuntime</code> for a disclosed external translation attempt. Tests, public direct probes, regression smoke, confidential input, and deployed-style reproduction retain the offline profile.</p>
 
 <h2>Trigger and bounded feedback loop</h2>
-<p>The wrapper executes the complete direct request first. Only terminal status <code>UNPARSED</code> opens one normalization episode. <code>UNKNOWN</code>, <code>AMBIGUOUS</code>, <code>NO_APPLICABLE_METHOD</code>, <code>RESOURCE_LIMIT</code>, or a wrong answer does not. Those statuses indicate knowledge, interpretation, method, or resource issues that translation must not hide.</p>
+<p>The wrapper receives a request only after direct parsing and the local heuristic ensemble leave terminal status <code>UNPARSED</code>. <code>UNKNOWN</code>, <code>AMBIGUOUS</code>, <code>NO_APPLICABLE_METHOD</code>, <code>RESOURCE_LIMIT</code>, or a wrong answer does not trigger it. Those statuses indicate knowledge, interpretation, method, or resource issues that translation must not hide.</p>
 <p>An episode has at most three proposal slots. A schema- or anchor-invalid proposal may receive bounded host validation categories. A surface-valid proposal that reparses to <code>UNPARSED</code> may receive the previous controlled-English text and only the fact that ESLM still did not support its form. No retry receives an answer, expected value, KB result, provider evidence, proof, selected option, benchmark identity, or correctness signal. Once a proposal reaches any parsed semantic status, the Language Agent loop ends.</p>
 
 <h2>Codex subprocess isolation</h2>
@@ -27,7 +27,7 @@
 <h2>Response and protected anchors</h2>
 <p>The response protocol <code>eslm-language-agent-normalization-v2</code> permits exactly five fields: protocol, operation, source language, normalized English, and source-to-target alignments. Operation is <code>translation</code> or <code>simplification</code>. Explanations, answers, confidence, retrieved facts, tool calls, Markdown fences, executable fields, and additional properties are rejected.</p>
 <p>The host independently extracts numbers, answer markers, quotations, likely names, question force, interrogative type, negation, quantifiers, modality, conditionals, temporal operators, conjunction, disjunction, comparisons, and directed relations. Every protected source occurrence needs one exact-substring alignment to one unused compatible target occurrence, and the complete typed identity multisets must match. This catches direction and strength changes that a count-only check misses: <code>left</code> cannot become <code>right</code>, <code>above</code> cannot become <code>below</code>, and a universal quantifier cannot become existential. Operator detection is construction-sensitive: Romanian <code>mai</code> in <code>mai mare decât</code> is comparative, while <code>Ce mai faci?</code> is an idiomatic check-in and must not be rejected merely because it contains the same spelling.</p>
-<p>English simplification has an additional conservation gate: after protected anchors are removed, both its normalized open-class-content multiset and its reviewed function-word multiset must equal the source multisets. Romanian translation is narrower. Non-function content must remain literal or use an occurrence-level alignment from the small reviewed Romanian-to-English equivalence map; other language tags are rejected. The map includes only tested forms such as <code>unde → where</code>, <code>camera → room</code>, and the reviewed <code>Ce mai faci? → How are you?</code> idiom. It is not a general Romanian translation model.</p>
+<p>English simplification has an additional conservation gate: after protected anchors are removed, both its normalized open-class-content multiset and its reviewed function-word multiset must equal the source multisets. Romanian translation uses an intentionally narrow, auditable profile. Non-function content remains literal or uses an occurrence-level alignment from the reviewed Romanian-to-English equivalence map; other language tags are rejected. The map includes tested forms such as <code>unde → where</code>, <code>camera → room</code>, and the reviewed <code>Ce mai faci? → How are you?</code> idiom. Every admitted mapping therefore has a concrete validation rule and regression control.</p>
 <p>This validation is conservative, not a proof of semantic equivalence. Long-distance scope, implicit negation, lexicalized modality, unreviewed idioms, presupposition, coreference, and relations outside the typed allowlist may remain undetected. When preservation cannot be established, the host returns <code>UNVERIFIED_NORMALIZATION</code> instead of trusting fluency.</p>
 
 <h2>Cache and evidence attribution</h2>
@@ -39,9 +39,9 @@
 
 <h2>Operator commands</h2>
 <pre><code>node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick
-node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick --no-external-language-agent
-node src/cli.mjs ask "ce mai faci?" --no-normalization-cache
-node src/cli.mjs --language-agent-model gpt-5.3-codex-spark
+node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick --external-language-agent
+node src/cli.mjs ask "ce mai faci?" --external-language-agent --no-normalization-cache
+node src/cli.mjs --external-language-agent --language-agent-model gpt-5.3-codex-spark
 
 /normalize
 /normalize on

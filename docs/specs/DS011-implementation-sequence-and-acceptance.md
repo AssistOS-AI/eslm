@@ -26,9 +26,10 @@ Stage A fixes Semantic IR, task and result schemas, status meanings, the generic
 
 Acceptance requires a complete executable path from supported text to semantic values and proof, explicit `UNPARSED`
 and `UNKNOWN`, deterministic rebuild, no executable KB content, direct-language measurements, nonce generalization,
-and tests for package, parser, planner, and result boundaries. Failure-time grounding must preserve the primary status,
-keep related records outside answer provenance, report complete versus incomplete search, remain bounded, and survive
-provider-order, distractor, and provider-failure controls.
+and tests for package, parser, planner, and result boundaries. Ordinary failure-time grounding must preserve the
+primary status, keep related records outside answer provenance, report complete versus incomplete search, remain
+bounded, and survive provider-order, distractor, and provider-failure controls. The later DS022 request-construction
+slice has its own `PARTIAL` attribution contract and does not weaken this Stage A inability invariant.
 
 ### 3. Stage B: document-to-KB construction
 
@@ -54,6 +55,11 @@ Stage E implements multi-goal task decomposition, AND/OR alternatives, query-dir
 
 Acceptance requires exact distinction among missing knowledge, no applicable method, underdetermination, inconsistency, and resource exhaustion; valid assignments or proofs; scaling curves; irrelevant-evidence invariance; and source cases that previously exceeded finite enumeration completing through a general scalable method rather than a larger hardcoded constant.
 
+The current DS022 request planner is a useful precursor, not Stage E acceptance. It decomposes only reviewed artifact
+patterns into a fixed dependency order and constructs cited extractive `PARTIAL` results. It does not establish
+semantic AND/OR alternatives, dynamic capability preconditions, arbitrary multi-goal execution, or proof-planner
+completeness.
+
 ### 7. Stage F: defaults, exceptions, abduction, and commonsense
 
 Stage F adds explicit default and exception semantics, conflict priority, skeptical and credulous queries where declared, causal and goal relations, guarded abduction, calibrated abstention, and independently sourced commonsense packages.
@@ -62,9 +68,18 @@ Acceptance requires strict and defeasible conclusions to remain distinguishable,
 
 ### 8. Stage G: broader language and external normalization minimization
 
-Stage G expands relative and embedded clauses, coordination, quantifier scope, modality, reference, discourse, and multilingual preservation. DS013 remains an optional operator boundary that translates or simplifies only after direct `UNPARSED` and never performs reasoning.
+Stage G expands relative and embedded clauses, coordination, quantifier scope, modality, reference, discourse, and
+multilingual preservation. DS022 supplies the default deterministic recovery layer after direct `UNPARSED`, including
+confidence-voted spelling and morphology repairs, bounded decomposition proposals, semantic-preservation checks,
+query-local reparse, role-focused grounding terms, and request-intent planning. DS013 remains a later, explicit opt-in
+operator boundary after local recovery is exhausted; it translates or simplifies and never performs reasoning.
 
-Acceptance requires construction-level direct coverage, semantic-preservation contrasts, ambiguity behavior, route-specific accuracy, declining Language Agent candidate rate as generic CNL grows, and zero hidden external calls in the deployed runtime and canonical direct evaluations.
+Acceptance requires construction-level direct and local-recovery coverage, semantic-preservation and
+meaning-changing contrasts, confidence calibration, ambiguity behavior, query-local session atomicity, route-specific
+accuracy, realistic misspelling and complex-sentence suites, work-profile convergence for completed cases, declining
+Language Agent eligibility as generic parsing and heuristics grow, and zero hidden external calls in the deployed
+runtime and canonical direct evaluations. The present DS022 implementation is a bounded Stage G slice; it does not by
+itself accept unrestricted coordination, reference, discourse, or multilingual semantics.
 
 ### 9. Corpus and benchmark ordering
 
@@ -83,6 +98,12 @@ assembly identity must be reviewable. A small authored fixture or an annotation/
 unqualified end-to-end product score.
 
 A release may contain explicit capability gaps and benchmark exceptions. It may not claim completion merely because a visible development sample is perfect, because unsupported cases were dropped, because a Language Agent answered them, or because a benchmark-specific branch reproduces labels.
+
+Release evidence exercises the default `balanced` work profile, at least one smaller and one larger profile, the
+explicitly disabled Language Agent default, and a controlled opt-in invocation path. For results that complete under
+multiple profiles, semantic values, proof, provenance, trust, and status agree. Request-synthesis fixtures separately
+check `PARTIAL` status, citations for every selected KB statement, explicit coverage gaps, and absence of invented
+bridges.
 
 ## Decisions & Questions
 

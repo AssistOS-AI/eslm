@@ -1,14 +1,14 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LogicSkills protocol — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
 <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation / LogicSkills</p>
 <h1>LogicSkills: symbolization, validity, and finite countermodels</h1>
-<p class="lead">LogicSkills is not one accuracy task with three differently formatted answers. It tests three connected semantic obligations: compile controlled language into first-order formulas, determine whether a conclusion follows from premises, and construct a finite structure that witnesses invalidity. ESLM preserves those output contracts separately because a string match cannot establish logical equivalence or validate a countermodel.</p>
+<p class="lead">LogicSkills combines three connected semantic obligations: compile controlled language into first-order formulas, determine whether a conclusion follows from premises, and construct a finite structure that witnesses invalidity. ESLM evaluates those output contracts separately because logical equivalence and countermodel validity require different verifiers.</p>
 <div class="callout"><p><strong>Current measurements:</strong> Read the generated LogicSkills rows on the <a href="evaluation.html">evaluation dashboard</a> or inspect the <a href="results/latest-public-benchmark-probes.json">raw v2 report</a>. Development and fresh subtracks remain separate there.</p></div>
 
 <figure class="diagram"><pre class="mermaid">flowchart LR
   L[English or Carroll language] --> F[Typed two-variable FOL]
   F --> V[Validity search]
   V -->|valid| P[Proof certificate]
-  V -->|invalid| M[Finite countermodel]</pre><figcaption>Symbolization produces the semantic object consumed by the other tracks. Validity requires an exhaustive or proof-producing method; invalidity requires a concrete interpretation in which every premise is true and the conclusion is false.</figcaption></figure>
+  V -->|invalid| M[Finite countermodel]</pre><figcaption>Symbolization, validity, and countermodels.</figcaption></figure><p class="diagram-explanation">Symbolization produces the semantic object consumed by the other tracks. Validity requires an exhaustive or proof-producing method; invalidity requires a concrete interpretation in which every premise is true and the conclusion is false.</p>
 
 <h2>Source and lifecycle</h2>
 <p>The primary source is Rabern, Mondorf, and Plank, <a href="https://arxiv.org/abs/2602.06533v2">LogicSkills: A Structured Benchmark for Formal Reasoning in Large Language Models</a>, together with the <a href="https://github.com/brianrabern/LogicSkills">official author repository</a>. ESLM freezes the author revision recorded on the <a href="sources.html">sources page</a>, retains the complete archive, and streams every row of the normalized 1,500-case export. The benchmark question and JSON data are CC BY 4.0; repository code is MIT.</p>

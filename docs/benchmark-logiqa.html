@@ -7,7 +7,7 @@
   T[Passage constraints] --> M[Explicit situation model]
   M --> Q[Question operator]
   Q --> O[Candidate obligations]
-  O --> P[Proof, model, or contradiction]</pre><figcaption>Different question forms require different evidence. The final choice must follow from the explicit model rather than candidate position or linguistic plausibility.</figcaption></figure>
+  O --> P[Proof, model, or contradiction]</pre><figcaption>Passage constraints to a justified choice.</figcaption></figure><p class="diagram-explanation">Different question forms require different evidence. The final choice must follow from the explicit model rather than candidate position or linguistic plausibility.</p>
 <h2 id="outcomes">Source scope and forced-choice scoring</h2>
 <p>The pinned source contains 17,356 physical records: 8,678 semantic cases in English and the parallel 8,678 in Chinese. For each language there are 7,376 train, 651 development, and 651 test records. All six source files are retained. Train and development are streamed record by record; the two test files remain unopened and are identified only by bytes and digests.</p>
 <p>Each evaluated case requires one of four physical answer slots. If a non-empty evaluated pool receives no in-domain predictions, end-to-end accuracy and attempt coverage are both 0%, while selective accuracy is <code>null</code>. <code>NO_APPLICABLE_METHOD</code> explains an abstention but does not remove it from the denominator. The generated row also states which language profile ran; preserved rows outside that profile are coverage gaps, not scored failures.</p>

@@ -9,20 +9,26 @@ There are three deliberately separate boundaries:
 
 - **Deployment:** trusted dependency-free Node.js plus inert JSON/JSONL. No network, LLM, child process, `eval`, or
   executable KB payload.
-- **Operator CLI:** direct symbolic execution first; only `UNPARSED` text may be sent to an optional Language Agent for
-  conservative translation or simplification. `--no-external-language-agent` is the fully offline profile.
+- **Operator CLI:** direct symbolic execution first, then deterministic local CNL approximation or request planning.
+  A Language Agent is available only through explicit `--external-language-agent` or `/normalize on` opt-in after
+  local language recovery is exhausted. Related-KB grounding is attached only after the final route is known.
 - **Training:** an isolated Coding Agent may analyze an authorized, train-visible packet and propose untrusted records
   or changes. Validation and explicit promotion remain host operations.
 
 What works now: a documented controlled-English subset; session facts; exact retrieval and safe positive Horn
 deduction; several bounded finite state, relation, categorical, Boolean, spatial, countermodel, induction, abduction,
 and continuation methods; versioned declarative packages; query-directed public providers; structured failures; and
-failure-time grounding with provenance and search receipts.
+failure-time grounding with provenance and search receipts. The default CLI also provides confidence-bearing local
+spelling, morphology, auxiliary, clause-decomposition, and request-intent heuristics; work profiles bound their search.
+Recognized summary, explanation, comparison, outline, essay, report, article, document, table, list, and paragraph
+requests can produce a cited extractive `PARTIAL` artifact from supplied text and selected KB source claims.
 
-What does **not** work generally: unrestricted English, general AND/OR planning, arbitrary document ingestion,
-encyclopedic coverage, unrestricted first-order proof, complete trust/conflict policy, open-ended generation, or hard
-whole-process memory enforcement. Typed adapters, source annotations, and formula tracks can exercise real solvers but
-are not raw-language scores. The authoritative boundary is in [`docs/specs/`](docs/specs/).
+**Current specialization and next acceptance gates:** ESLM's strongest path is explicit language, bounded planning,
+reviewable knowledge, and finite symbolic methods. The staged expansion program covers broader English composition,
+general AND/OR planning, document ingestion, encyclopedic coverage, richer first-order methods, mature trust and
+conflict policy, verified abstractive generation, and enforceable whole-process resource controls. Typed adapters,
+source annotations, and formula tracks exercise real solvers under their own evidence labels rather than being counted
+as raw-language coverage. The authoritative acceptance boundary is in [`docs/specs/`](docs/specs/).
 
 ## Try the implemented path
 
@@ -34,9 +40,11 @@ node src/cli.mjs ask "Define dog" --kb oewn-2025
 node src/cli.mjs ask "Why might apologize?" --kb atomic-2020
 node src/cli.mjs ask "What is the capital of Romania?" --kb geonames-2026
 node src/cli.mjs ask "What is a hammer used for?" --kb conceptnet-5.7.0-en
-node src/cli.mjs ask "Write a report about dogs" --kb oewn-2025,conceptnet-5.7.0-en --no-external-language-agent
-node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick
+node src/cli.mjs ask "Abura is an mura. All mura et bana. Is Abura eating bana?"
+node src/cli.mjs ask "Write a short report about Penguin" --kb quick
+node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick --external-language-agent
 node src/cli.mjs ask "Can Penguin swim?" --kb quick --no-external-language-agent
+node src/cli.mjs ask "QUESTION" --kb all --work-profile deep
 node src/cli.mjs run --input tests/fixtures/questions.txt --output /tmp/eslm-answers.jsonl
 node src/cli.mjs kb list
 node src/cli.mjs benchmark status
@@ -49,7 +57,21 @@ query, task frame, plan, provenance, and reasoning are stage-dependent and can b
 When present, `provenance` and `usedKbVersions` support only the primary result. `selectedKbVersions` and
 `consultedKbVersions` describe scope.
 `grounding`, when present, contains related records with `answerSupported: false`, per-KB search receipts, and explicit
-completion or truncation. The machine answer is never silently rewritten with fallback text.
+completion or truncation. Ordinary inability grounding never rewrites the machine answer or enters its provenance.
+The explicit `heuristic-request-synthesis` route is the narrow exception: it returns a cited extractive `PARTIAL`
+artifact, promotes only the records selected as source material into `provenance` and `usedKbVersions`, and does not
+claim that relevance is deductive proof. If the artifact intent is understood but neither supplied material nor a
+related KB record is available, `heuristic-request-planned` returns an explicit `MISSING_KNOWLEDGE` result.
+
+Local heuristic interpretation is visible as `heuristic-cnl-approximated` or `heuristic-cnl-ambiguous`; receipts show
+candidate text, confidence, supporting votes, transformations, and reparses. A changed interpretation cannot produce
+a strict top-level `SOLVED`, and its tentative episode facts and rules are never committed to the next turn. The
+default work profile is `balanced`; use `quick`, `deep`, or `exhaustive-bounded` with `--work-profile`, or inspect and
+change the profile interactively with `/work` and `/work PROFILE`.
+
+When assistance is explicitly enabled, interactive mode prints `Thinking: interpreting with the configured Language
+Agent…` immediately before a real external invocation. A cache hit remains attributed to the assisted route but does
+not claim that a new external call occurred.
 
 ## Declarative knowledge, not generated executable data
 
@@ -109,7 +131,8 @@ src/                       trusted runtime and operator entry points
   reasoning/               capability registry, planning, inference
   benchmark-adapters/      source validation and label-isolated task adaptation
   evaluation/              access gates and public development probes
-  language/                symbolic frontend and optional operator normalizer
+  language/                symbolic frontend, deterministic heuristic planners, optional operator normalizer
+  runtime/                 orchestration, heuristic request synthesis, and bounded work policy
   training/                isolated Coding Agent subprocess runner
 tests/                     Node tests and immutable fixtures
 training/

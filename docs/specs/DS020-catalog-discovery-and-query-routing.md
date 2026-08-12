@@ -3,7 +3,7 @@ id: DS020
 title: Catalog Discovery and Exact Query-Directed Routing
 status: in-progress
 owner: retrieval
-summary: Defines lightweight package discovery, exact term and predicate directories, conservative approximate ranking, cross-KB alignment, iterative proof-frontier expansion, and exhaustive routing equivalence.
+summary: Defines exact package and shard routing, proof-frontier expansion, role-focused failure retrieval, bounded work, cross-KB alignment, and exhaustive-routing equivalence.
 ---
 
 # DS020 Catalog Discovery and Exact Query-Directed Routing
@@ -61,10 +61,14 @@ Routing tests include negative queries, ambiguous names, multi-hop rule dependen
 ### Failure-time related-evidence routing
 
 When DS009 permits grounding after an inability result, the runtime creates one bounded
-`eslm-grounding-request-v1`. It derives informative terms from the original NFKC surface, removes only a fixed set of
-function/request words, and may add conservative morphology such as singular variants. It does not trust a corrected
-parser token from an unsuccessful parse. Accepted semantic subject, predicate, object, and factoid fields may add exact
-identity lookups.
+`eslm-grounding-request-v1`. DS022 constructs its query focus by role, preferring accepted entity and predicate
+identities, exact multiword content phrases, nouns and verbs, then conservative morphological variants. Articles,
+determiners, quantifiers, auxiliaries, copulas, pronouns, conjunctions, prepositions, request directives, output
+artifacts, and style qualifiers are excluded while content terms exist. A protected operator such as `all` becomes a
+topic only when quotation or an accepted metalinguistic frame asks about the word itself. For a final `UNPARSED`, the
+focus comes from the original NFKC surface rather than a rejected correction. Accepted semantic subject, predicate,
+object, and factoid fields may add exact identity lookups. The selection receipt names each candidate's role, score,
+phrase boundary, included variants, exclusion reason, selected terms, omissions, and completion state.
 
 Every selected source implements a provider-neutral `retrieveGrounding(request)` operation or returns an explicit
 unsupported-interface receipt. The runtime does not dispatch on KB IDs. Canonical in-memory packages use prebuilt
@@ -78,16 +82,28 @@ cross-KB diversity. Provider order cannot choose an answer or change the selecte
 their rule and support witness. Each source emits a receipt naming KB version, searched access path, candidates
 considered, completion, provider failure, and truncation reasons. A complete empty search can support
 `NO_RELATED_EVIDENCE`; any failed or truncated source makes absence inconclusive. The primary answer, status, values,
-and provenance remain unchanged.
+and provenance remain unchanged on this ordinary failure-grounding route.
+
+The active immutable `eslm-work-policy-v1` supplies exact limits for selected sources, focus terms, lookups, values per
+lookup, candidate entries, returned entries, and output bytes. `quick`, `balanced`, `deep`, and
+`exhaustive-bounded` widen those finite limits without changing ranking semantics, trust, or safe-exclusion rules. A
+larger profile may complete a previously truncated search; it cannot turn an approximate ranking signal into a proof
+or make an incomplete miss semantic absence.
+
+If DS022 recognized an explicit artifact request before retrieval, the separately named
+`heuristic-request-synthesis` route may select some returned statements as cited source claims in a `PARTIAL` artifact.
+Routing itself still reports `answerSupported: false` and never decides which claim is true. The construction receipt
+identifies every promoted record; unselected entries remain ordinary grounding and cannot inflate top-level
+provenance or `usedKbVersions`.
 
 ### Present implementation boundary
 
-The current runtime implements exact loaded-model postings plus bounded grounding projections for the session overlay,
-Open English WordNet, ATOMIC exact events, GeoNames, ConceptNet, and the reviewed World Relations ontology. The broader
-always-resident multi-package catalog, conservative no-false-negative directory construction, general proof-frontier
-expansion, and exhaustive/lazy equivalence across arbitrary future packages remain partial target work. Existing
-provider-specific indexes are evidence for the access-path design; they do not establish the entire catalog-routing
-contract.
+The current runtime implements exact loaded-model postings, role-focused bounded grounding terms, named work-profile
+limits, and grounding projections for the session overlay, Open English WordNet, ATOMIC exact events, GeoNames,
+ConceptNet, and the reviewed World Relations ontology. The broader always-resident multi-package catalog, conservative
+no-false-negative directory construction, general proof-frontier expansion, and exhaustive/lazy equivalence across
+arbitrary future packages remain partial target work. Existing provider-specific indexes are evidence for the
+access-path design; they do not establish the entire catalog-routing contract.
 
 ## Decisions & Questions
 

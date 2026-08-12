@@ -24,8 +24,9 @@ benchmark result are three different kinds of claim.
 
 For a new programmer, the system can be read in this order:
 
-1. **Input:** DS003 defines which text can become symbolic meaning; DS013 defines the optional operator-only language
-   normalization loop.
+1. **Input:** DS003 defines direct controlled-language meaning; DS022 defines the default deterministic recovery,
+   request-intent planning, query focus, and bounded work policy; DS013 defines the later, explicit opt-in
+   operator-only Language Agent loop.
 2. **Knowledge:** DS005 defines inert canonical records; DS006, DS019, DS020, and DS021 define packages, physical
    compilation, retrieval, and memory.
 3. **Execution:** DS008 and DS015 define task frames, method selection, and the methods themselves.
@@ -33,10 +34,12 @@ For a new programmer, the system can be read in this order:
    related evidence.
 5. **Evidence:** DS010 and DS017 define what benchmark and comparison claims mean.
 
-At the present checkpoint, direct controlled-language parsing, session overlays, indexed lookup, positive safe-Horn
-deduction, several bounded finite task methods, declarative packages, selected public-source providers, structured
-results, and the CLI normalization wrapper are executable. Capability-aware dispatch, general language, trust and
-conflict policy, large-corpus routing, document ingestion, and multi-step planning cover only documented subsets or
+At the present checkpoint, direct controlled-language parsing, deterministic confidence-bearing local approximation,
+bounded request-intent planning and extractive `PARTIAL` construction, session overlays, indexed lookup, positive
+safe-Horn deduction, several bounded finite task methods, declarative packages, selected public-source providers,
+structured results, and named work profiles are executable. The separate Language Agent wrapper is executable only as
+an operator-enabled final language-recovery route. Capability-aware dispatch, general language, trust and conflict
+policy, large-corpus routing, document ingestion, and general multi-step planning cover only documented subsets or
 remain target contracts. The existence of a DS section does not prove its implementation.
 
 ### 1. System identity
@@ -64,12 +67,14 @@ This separation is the primary architectural invariant. It prevents each dataset
 | Every accepted assertion has provenance | Facts, lexical mappings and learned rules identify their source, extraction path and version. |
 | Every LLM output is untrusted | Translation or simplification must be reparsed and validated before use. |
 | Direct symbolic parsing is attempted first | English input is not sent to the LLM merely because it appears complex. |
+| Local approximation precedes external assistance | After direct `UNPARSED`, deterministic DS022 candidates are voted, safety-checked, and reparsed before an explicitly enabled Language Agent may run. |
+| Guessed episode premises do not persist | Facts and rules accepted only through a changed heuristic interpretation are query-local and cannot enter the returned session. |
 | No routing decision may create silent false negatives | Approximate relevance signals may rank shards, but safe exclusion requires exact or conservative evidence. |
 | Core changes require global regression | A local benchmark gain cannot justify an untested change to reusable code. |
 | Runtime uncertainty is explicit | The system distinguishes solved, unknown, ambiguous, inconsistent, unsupported and resource-limited outcomes. |
 | Generated runtime artifacts are rebuildable | Indexes and binary shards can be regenerated from canonical KB records and manifests. |
 | Correct answers do not excuse invalid traces | Where the task is deterministic, proof or execution validity is independently evaluated. |
-| Related evidence is not an answer | Failure-time retrieval may expose useful KB records, but those records remain outside answer values, answer provenance, and `usedKbVersions` unless a registered method actually uses them as premises. |
+| Related evidence is not proof | Ordinary failure grounding remains outside answer values, answer provenance, and `usedKbVersions`. The separately named DS022 request-synthesis route may cite selected source claims in a `PARTIAL` artifact and account for their KB versions, but it cannot present relevance as entailment or return `SOLVED`. |
 
 ### 4. System lifecycle
 
@@ -79,9 +84,10 @@ benchmark, agent response, package, or cache state to acquire executable authori
 
 DS004 exclusively defines benchmark-guided learning and promotion. DS006 defines package registration and immutable
 identity. DS020 defines query-directed routing. DS009 defines the distinction among interpretation, knowledge, method,
-conflict, and resource failures. DS013 defines the optional operator normalization profile. Those specifications carry
-the operational algorithms, receipts, and exceptional paths; this specification requires that their composition
-preserve the system identity and invariants above.
+conflict, and resource failures. DS022 defines deterministic local language recovery, explicit request construction,
+role-focused grounding terms, and exact work profiles. DS013 defines the later opt-in Language Agent profile. Those
+specifications carry the operational algorithms, receipts, and exceptional paths; this specification requires that
+their composition preserve the system identity and invariants above.
 
 ### 5. Research data produced by the architecture
 
@@ -89,10 +95,11 @@ The system must retain the history necessary to study executable learning. Each 
 
 The most important longitudinal measurements are end-to-end answer accuracy, attempt coverage, selective accuracy,
 direct raw-language coverage, task-adapter coverage, proof validity, structurally held-out generalization, regression
-rate, KB growth, reusable core growth, dynamic loading cost, grounding retrieval quality, unsupported-claim rate, and
-the distribution of honest failure statuses. These measurements reveal whether progress comes from better language
-understanding, better knowledge, stronger reasoning, useful failure grounding, broader assisted language use, or
-unsafe special casing.
+rate, KB growth, reusable core growth, dynamic loading cost, heuristic candidate and acceptance rates, request-plan and
+request-synthesis coverage, grounding retrieval quality, unsupported-claim rate, work-profile completion curves, and
+the distribution of honest failure statuses. These measurements reveal whether progress comes from direct language
+understanding, local approximation, better knowledge, stronger reasoning, useful source-grounded construction,
+failure grounding, optional assisted language use, or unsafe special casing.
 
 ### 6. Definition of success
 

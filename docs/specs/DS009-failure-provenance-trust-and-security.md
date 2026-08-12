@@ -3,7 +3,7 @@ id: DS009
 title: Honest Failure, Provenance, Trust, Conflicts, and Security
 status: in-progress
 owner: assurance
-summary: Defines top-level statuses, capability gaps, failure-time related evidence, traceable lineage, claims versus accepted facts, conflicts, untrusted input boundaries, resource safety, and auditability.
+summary: Defines statuses, query-local interpretation, ordinary grounding versus cited partial construction, provenance, trust, conflicts, untrusted boundaries, resource safety, and auditability.
 ---
 
 # DS009 Honest Failure, Provenance, Trust, Conflicts, and Security
@@ -40,6 +40,13 @@ The runtime separates interpretation failure, missing knowledge, missing method,
 | UNSUPPORTED_OUTPUT | The result could be derived internally but cannot be projected into the requested output contract. |
 
 Language route and result status are related but distinct. A Language Agent subprocess failure leaves the original `UNPARSED` result intact and records `language-agent-normalization-failed`; the external process did not establish a new semantic status. A schema, anchor, or reparse rejection returns `UNVERIFIED_NORMALIZATION` with route `language-agent-normalization-rejected`. Only a host-validated candidate whose normalized text survives the ordinary symbolic runtime may return `language-agent-normalized`, and the final semantic status may still be `UNKNOWN` or `NO_APPLICABLE_METHOD` because successful wording normalization does not create facts or algorithms.
+
+DS022 local approximation is also interpretation rather than inference. Several similarly supported reparses with
+different semantics return `AMBIGUOUS`. A changed candidate that would otherwise return `SOLVED` is exposed as
+`DEFEASIBLE`, with the interpretation confidence and votes separate from proof strength. Facts and rules obtained only
+from that candidate may support its current episode but are query-local and are not committed to the returned session.
+An explicit artifact request may return `PARTIAL` through `heuristic-request-synthesis`; that status means a bounded
+cited draft was constructed, not that the requested explanation, essay, or document was proved complete.
 
 Reasoning methods may use narrower internal lifecycle labels while they are executing. For example, categorical
 methods historically return `ANSWERED` internally. The public `eslm-runtime-result-v1` boundary normalizes every
@@ -87,23 +94,35 @@ The primary result and the grounding bundle are separate contracts:
 | `values` and `answer` | The answer, partial answer, or explicit inability | Never an answer |
 | `provenance` | Premises and methods that support the answer | Source references for related records |
 | KB accounting | `usedKbVersions` lists contributors; `selectedKbVersions` and `consultedKbVersions` have their literal meanings | Each entry and search receipt names its KB version |
+| Truth claim | Licensed by the method's declared semantics | `answerSupported` is always `false` |
 
 The runtime admits at most one provider for each immutable `(kbId, kbVersion)` pair, and every provider declares a
 non-empty adapter `id`, `kbId`, and `kbVersion`. Allowing two adapters to collapse into the same reported pair would make
 consultation and contribution accounting ambiguous, so construction fails before either provider can be queried.
-| Truth claim | Licensed by the method's declared semantics | `answerSupported` is always `false` |
 
-The runtime must not copy grounding entries into top-level values or provenance, change an inability status to
-`SOLVED`, or append evidence text to the machine `answer`. The interactive renderer may show a clearly separated
-section titled “Related KB evidence — not an answer.” A downstream generator receives the bundle as structured
-grounding and must be evaluated as a separate route; fluent synthesis cannot retroactively establish symbolic support.
+On an ordinary inability route, the runtime must not copy grounding entries into top-level values or provenance,
+change the status to `SOLVED`, or append evidence text to the machine `answer`. The interactive renderer may show a
+clearly separated section titled “Related KB evidence — not an answer.” A downstream generator receives the bundle as
+structured grounding and must be evaluated as a separate route; fluent synthesis cannot retroactively establish
+symbolic support.
 
-Automatic grounding is permitted after interpretation, knowledge, method, ambiguity, underdetermination, partial, or
-unsupported-output failures. It must not run after `RESOURCE_LIMIT` unless the task reserved an independent grounding
-budget before execution. For `UNPARSED`, term extraction uses the original normalized surface, not spelling-corrected
-parser tokens, because a failed correction is not accepted semantics. The DS013 Language Agent receives only its
-language-only request and bounded parser feedback; grounding entries, KB search results, and proof state never enter
-its proposal prompt.
+DS022 defines one explicit in-process construction route rather than an exception inferred after failure. The request
+planner must recognize the requested artifact before retrieval. The `heuristic-request-synthesis` executor may then
+copy selected user sentences and related KB statements into a cited `PARTIAL` artifact. Each selected KB statement is
+top-level provenance marked as a source claim, and its package enters `usedKbVersions`; unselected grounding entries
+remain bundle-only. The route returns no entailed semantic values, labels lexical relevance as non-proof, lists
+coverage gaps, and cannot return `SOLVED`. Thus a statement can be authoritative as a citation for what the draft
+copied without becoming proof of the larger requested conclusion.
+
+Automatic ordinary grounding is permitted after interpretation, knowledge, method, ambiguity, underdetermination,
+partial, or unsupported-output failures. It must not run after `RESOURCE_LIMIT` unless the task reserved an independent
+grounding budget before execution. DS022 direct execution, local candidate voting and reparse, and any explicitly
+enabled DS013 Language Agent attempt precede ordinary inability grounding. For a final `UNPARSED`, term extraction uses
+the original normalized surface, not a rejected spelling correction. It selects role-weighted content phrases, nouns,
+verbs, entities, and predicates; grammatical scaffolding such as articles, quantifiers, auxiliaries, copulas, request
+directives, artifact nouns, and style words is excluded while content terms exist, except when an accepted
+metalinguistic frame makes such a word the topic. The DS013 Language Agent receives only its language request and
+bounded parser feedback; grounding entries, KB search results, and proof state never enter its proposal prompt.
 
 The current bundle protocol is `eslm-grounding-bundle-v1`. It contains:
 
@@ -195,6 +214,9 @@ instead of copying the unsafe object. DS015 separately bounds Horn rounds, mater
 
 A resource refusal returns RESOURCE_LIMIT rather than crashing or returning an incomplete answer as complete. DS021
 owns byte-accounted shard-cache and memory behavior; each reasoning method owns its semantic search bounds in DS015.
+DS022 additionally supplies one immutable named work-policy snapshot per result. Its exact heuristic, Horn, provider,
+and grounding bounds control how much finite work is attempted without changing status meanings, trust, logical
+semantics, tie-breaking, or the authority of a premise.
 
 ### 20. Coding-agent changes
 
@@ -216,10 +238,12 @@ but a cleanup failure can never make partially scoped evidence authoritative.
 
 ### 23. Specialized trust boundaries
 
-The DS013 Language Agent wrapper is an operator-side external-process trust boundary with its own input, feedback,
-schema, anchor-validation, reparse, cache, and confidentiality requirements. This specification establishes the general
-rule that its output is untrusted; DS013 owns the complete operational protocol so process or model changes do not
-rewrite the rest of the security contract.
+DS022 owns deterministic local approximation, request construction, topic focus, work limits, and query-local session
+effects. Its trusted code may propose interpretations but cannot grant them strict epistemic authority or learn a
+runtime pattern from one request. The DS013 Language Agent wrapper is a later, explicit opt-in operator-side
+external-process trust boundary with its own input, feedback, schema, anchor-validation, reparse, cache, and
+confidentiality requirements. This specification establishes the general rule that its output is untrusted; DS013 owns
+the complete operational protocol so process or model changes do not rewrite the rest of the security contract.
 
 DS017 owns benchmark pool and oracle isolation. Protected labels and test paths remain unavailable to training agents,
 while independently sourced public KB facts remain separate from benchmark evidence. DS016 owns external source rights,
@@ -252,6 +276,13 @@ than presenting lexical proximity as proof.
 Response: Query-local caches and temporary state have a lifecycle contract. Once cleanup fails, the host cannot prove
 that the contribution was produced and closed under the intended scope. Discarding it is conservative, deterministic,
 and prevents a provider's partial transaction from becoming an answer or score merely because its value arrived first.
+
+### Question #6: Why may request synthesis cite a related record when failure grounding cannot alter an answer?
+
+Response: The routes promise different products. Ordinary grounding follows an inability and cannot redefine that
+result. Request synthesis begins with an explicit artifact intent, selects records as quoted source claims, and returns
+a visibly incomplete `PARTIAL` construction whose citations say exactly what was copied. It does not claim that those
+records entail the requested document's broader explanation, comparison, or conclusion.
 
 ## Conclusion
 

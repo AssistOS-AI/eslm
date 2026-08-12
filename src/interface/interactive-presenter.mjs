@@ -18,6 +18,8 @@ export function interactiveHelp(style) {
   ${command('/memory')}Show eager/lazy strategy and current shard-cache use.
   ${command('/memory N')}Set a soft memory target in MiB and rebuild KB providers.
   ${command('/memory auto|eager|lazy')}Select adaptive, full, or shard-based loading.
+  ${command('/work')}Show the exact heuristic, reasoning, provider, and grounding limits.
+  ${command('/work PROFILE')}Use quick, balanced, deep, or exhaustive-bounded work.
   ${command('/normalize')}Show the external Language Agent normalization policy and state.
   ${command('/normalize on|off')}Enable or disable direct-first Language Agent assistance.
   ${command('/examples [PAGE] [SEED]')}Show a page of 24 diverse cases from the smoke corpus.
@@ -136,6 +138,9 @@ export function interactiveResultText(result, original, style) {
     if (!result.grounding) return primary;
     const bundle = result.grounding;
     const lines = [primary, '', style.bold('Related KB evidence — not an answer')];
+    if (bundle.focus?.terms?.length) {
+      lines.push(style.dim(`  Search focus: ${bundle.focus.terms.join(', ')}.`));
+    }
     if (bundle.entries.length === 0) {
       lines.push(bundle.search.complete
         ? '  The bounded search found no related records.'
@@ -153,6 +158,34 @@ export function interactiveResultText(result, original, style) {
     lines.push(style.dim('  These records may help a person or downstream model reformulate the question; they do not support the primary answer.'));
     return lines.join('\n');
   };
+  if (result.languageRoute === 'heuristic-request-synthesis') {
+    const plan = result.requestPlanning.selectedPlan;
+    const operations = plan.operations.join(' → ');
+    return `${style.blue('Local request plan accepted')} — confidence ${plan.confidence.toFixed(3)} (${plan.confidenceBand})
+  Intent: ${operations}; ${plan.subrequests.length} bounded subrequests.
+  Output: ${plan.outputContract.length} ${plan.outputContract.artifact}, ${plan.outputContract.format}.
+  Evidence policy: cited extraction with explicit coverage gaps; related KB records are not upgraded to proof.
+
+${style.status(result.status, `[${result.status}]`)}
+${result.answer}`;
+  }
+  if (result.languageRoute === 'heuristic-cnl-approximated') {
+    const candidate = result.approximation.selectedCandidate;
+    const families = candidate.supportingFamilies.join(', ');
+    return appendGrounding(`${style.blue('Local heuristic interpretation accepted')} — no Language Agent
+  Original: ${original}
+  Interpreted CNL: ${candidate.text}
+  Confidence: ${candidate.confidence.toFixed(3)} (${candidate.confidenceBand}); votes: ${families}.
+  Session effects: query-local and discarded after this result.
+  Symbolic result: ${style.status(result.status, `[${result.status}]`)} ${result.answer}`);
+  }
+  if (result.languageRoute === 'heuristic-cnl-ambiguous') {
+    const reparses = result.approximation.reparses.filter((item) => item.acceptedSemanticIr);
+    return appendGrounding(`${style.yellow('Local heuristic interpretations remain ambiguous')}
+  Original: ${original}
+${reparses.slice(0, 4).map((item) => `  ${item.rank}. ${item.text} — ${item.status}; confidence ${item.confidence.toFixed(3)}`).join('\n')}
+  No candidate was committed. Use ${style.blue('/trace')} for votes and reparse outcomes.`);
+  }
   if (result.languageRoute === 'language-agent-normalized') {
     const operation = result.normalization.candidate.operation === 'translation' ? 'Translation' : 'Simplification';
     const cache = result.normalization.cacheHit ? ' (validated cache hit)' : '';
@@ -160,6 +193,10 @@ export function interactiveResultText(result, original, style) {
     return appendGrounding(`${style.yellow(`Language Agent ${operation.toLocaleLowerCase('en-US')} accepted${cache}`)}\n  Original: ${original}\n  ${operation}: ${result.normalization.candidate.normalizedEnglish}\n  Agent activity: ${activity}\n  Symbolic result: ${style.status(result.status, `[${result.status}]`)} ${result.answer}`);
   }
   const lines = [`${style.status(result.status, `[${result.status}]`)} ${result.answer}`];
+  if (result.approximation && result.approximation.status !== 'accepted-reparse') {
+    const reparses = result.approximation.reparses ?? [];
+    lines.push(style.yellow(`Local heuristics: ${result.approximation.status}; ${result.approximation.candidates?.length ?? 0} candidate(s), ${reparses.length} symbolic reparse(s).`));
+  }
   if (result.normalization?.attempted && result.normalization.status !== 'accepted') {
     const operation = result.normalization.candidate?.operation ?? result.normalization.requestedOperation ?? 'normalization';
     lines.push(style.red(`Language Agent ${operation} ${result.normalization.status}.`));
@@ -199,11 +236,25 @@ export function memoryText(engine, style) {
   return `${style.bold('Memory strategy')}: ${memory.effectivePolicy}; ${target}.\n${rows.join('\n')}\n${style.dim('The target is advisory. Use an OS or container limit when a hard cap is required.')}`;
 }
 
+export function workText(engine, style) {
+  const policy = engine.workPolicy ?? engine.runtime?.workPolicy;
+  if (!policy) return style.yellow('The active runtime does not expose a work policy.');
+  const limits = policy.effective.limits;
+  const overrides = Object.keys(policy.requested.overrides);
+  return `${style.bold('Work profile')}: ${style.green(policy.effective.profile)}${overrides.length
+    ? `; exact overrides: ${overrides.join(', ')}` : ''}.
+  Heuristics: ${limits.maximumHeuristicCandidates} candidates, ${limits.maximumHeuristicReparses} reparses, ${limits.maximumHeuristicSegments} segments, ${limits.maximumHeuristicTokens} tokens, confidence ≥ ${limits.minimumHeuristicConfidence}.
+  Horn reasoning: ${limits.maximumHornRounds} rounds, ${limits.maximumHornFacts} facts, ${limits.maximumHornJoinAttempts} join attempts.
+  Provider routing: ${limits.maximumProviderSources} sources, ${limits.maximumProviderParaphrases} paraphrases per source.
+  Grounding: ${limits.maximumGroundingTerms} terms, ${limits.maximumGroundingLookups} lookups, ${limits.maximumGroundingValuesPerLookup} values per lookup, ${limits.maximumGroundingCandidateEntries} candidates, ${limits.maximumGroundingEntries} returned entries, ${limits.maximumGroundingSources} sources, ${formatBytes(limits.maximumGroundingOutputBytes)} entry payload.
+${style.dim('All profiles are deterministic and bounded. They do not claim a hard wall-clock deadline.')}`;
+}
+
 export function modelText(engine, selected, context, style) {
   const publicNames = engine.providers.map((provider) => PUBLIC_KB_CATALOG[provider.manifest.id]?.title ?? provider.manifest.id);
   const packageNames = selected.filter((id) => !PUBLIC_KB_CATALOG[id]).map((id) => KB_CATALOG[id]?.title ?? id);
   const active = [...packageNames, ...publicNames];
-  return `${style.bold('Active ESLM runtime')}\nModel: ${engine.core.model.manifest.modelId}\nKnowledge: ${active.length ? active.join('; ') : 'generic symbolic core only'}\nSession: ${context.session?.facts?.length ?? 0} temporary fact(s).\nComparability: ${selected.length ? style.yellow('exploratory — selected KBs expose additional knowledge') : style.green('base-core scope')}\n\n${memoryText(engine, style)}`;
+  return `${style.bold('Active ESLM runtime')}\nModel: ${engine.core.model.manifest.modelId}\nKnowledge: ${active.length ? active.join('; ') : 'generic symbolic core only'}\nSession: ${context.session?.facts?.length ?? 0} temporary fact(s).\nComparability: ${selected.length ? style.yellow('exploratory — selected KBs expose additional knowledge') : style.green('base-core scope')}\n\n${workText(engine, style)}\n\n${memoryText(engine, style)}`;
 }
 
 export function traceText(last, style) {
@@ -214,9 +265,41 @@ export function traceText(last, style) {
     lines.push(`  ${index + 1}. ${item.fact ?? 'fact'} — ${(item.source ?? []).join(', ') || 'source not recorded'}${kb}`);
   }
   if (!(last.provenance ?? []).length) lines.push('  No source facts were used.');
+  if (last.approximation) {
+    lines.push('', style.bold('Local heuristic interpretation'));
+    lines.push(`  Status: ${last.approximation.status}; candidates: ${last.approximation.candidates?.length ?? 0}.`);
+    for (const candidate of (last.approximation.candidates ?? []).slice(0, 8)) {
+      const reparse = (last.approximation.reparses ?? []).find((item) =>
+        item.candidateId === candidate.candidateId);
+      lines.push(`  ${candidate.rank}. ${candidate.text}`);
+      lines.push(`     confidence ${candidate.confidence.toFixed(3)}; score ${candidate.rankScore.toFixed(3)}; ${candidate.supportingFamilies.join(', ')}; reparse ${reparse?.status ?? 'not attempted'}.`);
+    }
+    const declined = (last.approximation.receipt?.familyReceipts ?? [])
+      .filter((item) => item.declined).slice(0, 8);
+    if (declined.length) {
+      lines.push('  Declined decomposition techniques:');
+      for (const item of declined) lines.push(`    ${item.family}: ${item.declineReason}`);
+    }
+    if (last.approximation.ephemeralPremises) {
+      lines.push(`  Query-local premises: ${last.approximation.ephemeralPremises.facts.length} fact(s), ${last.approximation.ephemeralPremises.rules.length} rule(s); committed: no.`);
+    }
+  }
+  if (last.requestPlanning?.selectedPlan) {
+    const plan = last.requestPlanning.selectedPlan;
+    lines.push('', style.bold('Local request plan'));
+    lines.push(`  Intent candidates: ${last.requestPlanning.candidates.map((item) => `${item.intent} ${item.confidence.toFixed(3)}`).join(', ')}.`);
+    lines.push(`  Selected operations: ${plan.operations.join(' → ')}; confidence ${plan.confidence.toFixed(3)}.`);
+    for (const item of plan.subrequests) {
+      lines.push(`  ${item.subrequestId}: ${item.operation}; depends on ${(item.dependsOn ?? []).join(', ') || 'nothing'}.`);
+    }
+    lines.push(`  Output: ${plan.outputContract.length} ${plan.outputContract.artifact}; ${plan.outputContract.format}; gaps remain explicit.`);
+  }
   if (last.grounding) {
     lines.push('', style.bold('Separate related-evidence search'));
     lines.push(`  Status: ${last.grounding.status}; complete: ${last.grounding.search.complete ? 'yes' : 'no'}.`);
+    if (last.grounding.focus?.terms?.length) {
+      lines.push(`  Focus terms: ${last.grounding.focus.terms.join(', ')}.`);
+    }
     for (const receipt of last.grounding.search.receipts) {
       lines.push(`  Searched ${receipt.kbId}${receipt.kbVersion ? `@${receipt.kbVersion}` : ''}: ${receipt.status}; ${receipt.coverage}.`);
     }

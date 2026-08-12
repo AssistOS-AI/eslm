@@ -1,6 +1,8 @@
 import {
-  groundingTerms, groundingTokens, normalizedGroundingSurface,
+  groundingTerms, groundingTokens, isGroundingStructuralTerm, normalizedGroundingSurface,
+  selectGroundingTerms,
 } from './grounding-query-focus.mjs';
+import { estimateGroundingRelevance } from './grounding-relevance-estimator.mjs';
 
 const DEFAULT_MAX_ENTRIES = 8;
 const MAX_INPUT_CHARACTERS = 4096;
@@ -11,6 +13,7 @@ const MAX_REASON_ITEMS = 8;
 const MAX_CANDIDATE_ENTRIES = 512;
 const MAX_SEMANTIC_BYTES = 4096;
 const MAX_SEARCH_RECEIPTS = 64;
+const DEFAULT_MAX_OUTPUT_BYTES = 65_536;
 const SEARCH_RECEIPT_STATUSES = new Set([
   'invalid-grounding-result',
   'matches-found',
@@ -29,6 +32,7 @@ const GROUNDING_TRIGGER_STATUSES = new Set([
   'UNDERDETERMINED',
   'UNKNOWN',
   'UNPARSED',
+  'UNVERIFIED_NORMALIZATION',
   'UNSUPPORTED_OUTPUT',
 ]);
 
@@ -124,14 +128,15 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
   const maximumValuesPerLookup = options.maximumValuesPerLookup ?? 4;
   const maximumSources = options.maximumSources ?? 16;
   const maximumCandidateEntries = options.maximumCandidateEntries ?? 256;
+  const maximumOutputBytes = options.maximumOutputBytes ?? DEFAULT_MAX_OUTPUT_BYTES;
   if (!Number.isInteger(maximumEntries) || maximumEntries < 1 || maximumEntries > 32) {
     throw new Error('Grounding request maximumEntries must be an integer from 1 to 32.');
   }
   if (!Number.isInteger(maximumTerms) || maximumTerms < 1 || maximumTerms > 32) {
     throw new Error('Grounding request maximumTerms must be an integer from 1 to 32.');
   }
-  if (!Number.isInteger(maximumLookups) || maximumLookups < 1 || maximumLookups > 128) {
-    throw new Error('Grounding request maximumLookups must be an integer from 1 to 128.');
+  if (!Number.isInteger(maximumLookups) || maximumLookups < 1 || maximumLookups > 512) {
+    throw new Error('Grounding request maximumLookups must be an integer from 1 to 512.');
   }
   if (!Number.isInteger(maximumValuesPerLookup) || maximumValuesPerLookup < 1
     || maximumValuesPerLookup > 32) {
@@ -144,16 +149,47 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
     || maximumCandidateEntries > MAX_CANDIDATE_ENTRIES) {
     throw new Error('Grounding request maximumCandidateEntries must contain the output and be at most 512.');
   }
+  if (!Number.isInteger(maximumOutputBytes) || maximumOutputBytes < 4_096
+    || maximumOutputBytes > 1_048_576) {
+    throw new Error('Grounding request maximumOutputBytes must be an integer from 4096 to 1048576.');
+  }
   if (!shouldRetrieveGrounding(triggerStatus)) {
     throw new Error(`Grounding is not permitted after status ${triggerStatus}.`);
   }
   const rawText = String(text ?? '');
   const boundedInput = rawText.slice(0, MAX_INPUT_CHARACTERS);
-  const allTerms = groundingTerms(boundedInput, { maximumTerms: 10_000 });
-  const terms = allTerms.slice(0, maximumTerms);
-  const boundedQueryValue = (value) => {
+  const explicitFocus = Array.isArray(options.focus) ? options.focus.slice(0, 32).map((focus, index) => {
+    if (!focus || typeof focus !== 'object' || Array.isArray(focus)) {
+      throw new Error('Grounding typed focus entries must be objects.');
+    }
+    return Object.freeze({
+      focusId: boundedIdentifier(focus.focusId ?? `focus:${index + 1}`, 'Grounding focus ID'),
+      term: boundedIdentifier(normalizedGroundingSurface(focus.term), 'Grounding focus term'),
+      role: boundedIdentifier(focus.role ?? 'topic', 'Grounding focus role'),
+    });
+  }) : [];
+  const semanticFocus = query && typeof query === 'object' ? [
+    { term: query.subject, role: 'entity' },
+    { term: query.predicate, role: 'predicate' },
+    { term: query.object, role: 'object' },
+    { term: query.target, role: 'target' },
+    { term: query.factoidFrame?.relationSurface, role: 'predicate' },
+    { term: query.factoidFrame?.subjectSurface, role: 'entity' },
+  ].filter((focus) => focus.term !== undefined && focus.term !== null) : [];
+  semanticFocus.unshift(...explicitFocus);
+  const focusSurface = explicitFocus.length > 0
+    ? explicitFocus.map((focus) => focus.term).join('. ') : boundedInput;
+  const focusSelection = selectGroundingTerms(focusSurface, {
+    maximumTerms,
+    maximumCandidates: Math.min(256, Math.max(maximumTerms, maximumTerms * 8)),
+    semanticFocus,
+  });
+  const terms = [...focusSelection.terms];
+  const boundedQueryValue = (value, semanticFocus = false) => {
     if (value === undefined || value === null || typeof value === 'boolean') return value;
     if (typeof value === 'number') return Number.isFinite(value) ? value : undefined;
+    if (semanticFocus && isGroundingStructuralTerm(value)
+      && !terms.includes(normalizedGroundingSurface(value))) return undefined;
     return boundedText(value, 256);
   };
   return Object.freeze({
@@ -162,21 +198,29 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
     triggerStatus: boundedIdentifier(triggerStatus, 'Grounding trigger status'),
     terms: Object.freeze(terms),
     termSelection: Object.freeze({
-      candidates: allTerms.length,
+      candidates: focusSelection.candidates,
+      observedCandidates: focusSelection.observedCandidates,
+      retainedCandidates: focusSelection.retainedCandidates,
+      omittedCandidates: focusSelection.omittedCandidates,
       selected: terms.length,
-      complete: rawText.length <= MAX_INPUT_CHARACTERS && allTerms.length <= maximumTerms,
+      complete: rawText.length <= MAX_INPUT_CHARACTERS && focusSelection.complete,
+      strategy: focusSelection.strategy,
+      focusSource: explicitFocus.length > 0 ? 'typed-request-plan' : 'visible-request',
+      obligations: Object.freeze(explicitFocus.map((focus) => Object.freeze({
+        ...focus, selected: terms.includes(focus.term),
+      }))),
     }),
     query: query && typeof query === 'object' ? Object.freeze({
       intent: boundedQueryValue(query.intent),
-      subject: boundedQueryValue(query.subject),
-      predicate: boundedQueryValue(query.predicate),
-      object: boundedQueryValue(query.object),
-      target: boundedQueryValue(query.target),
+      subject: boundedQueryValue(query.subject, true),
+      predicate: boundedQueryValue(query.predicate, true),
+      object: boundedQueryValue(query.object, true),
+      target: boundedQueryValue(query.target, true),
       factoidFrame: query.factoidFrame ? Object.freeze({
         wh: boundedQueryValue(query.factoidFrame.wh),
         construction: boundedQueryValue(query.factoidFrame.construction),
-        relationSurface: boundedQueryValue(query.factoidFrame.relationSurface),
-        subjectSurface: boundedQueryValue(query.factoidFrame.subjectSurface),
+        relationSurface: boundedQueryValue(query.factoidFrame.relationSurface, true),
+        subjectSurface: boundedQueryValue(query.factoidFrame.subjectSurface, true),
         direction: boundedQueryValue(query.factoidFrame.direction),
       }) : undefined,
     }) : undefined,
@@ -187,6 +231,7 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
       maximumValuesPerLookup,
       maximumSources,
       maximumCandidateEntries,
+      maximumOutputBytes,
     }),
   });
 }
@@ -281,6 +326,16 @@ export function makeGroundingEntry(value) {
     relevance: Object.freeze({
       score: value.relevance.score,
       reasons: Object.freeze(reasons),
+      ...(Number.isSafeInteger(value.relevance.activeKbOccurrences)
+        && value.relevance.activeKbOccurrences >= 0
+        ? { activeKbOccurrences: value.relevance.activeKbOccurrences } : {}),
+      ...(Number.isSafeInteger(value.relevance.activePostingSize)
+        && value.relevance.activePostingSize >= 0
+        ? { activePostingSize: value.relevance.activePostingSize } : {}),
+      ...(value.relevance.estimator ? {
+        estimator: Object.freeze(boundedJson(value.relevance.estimator,
+          `Grounding entry ${recordId} relevance estimator`)),
+      } : {}),
     }),
   });
 }
@@ -306,6 +361,10 @@ function orderedEntries(entries) {
     right.relevance.score - left.relevance.score
       || left.kbId.localeCompare(right.kbId)
       || left.recordId.localeCompare(right.recordId));
+}
+
+function relevanceRankedEntries(entries, request) {
+  return orderedEntries(estimateGroundingRelevance(entries, request));
 }
 
 function diverseSelection(entries, maximum) {
@@ -343,6 +402,19 @@ function diverseSelection(entries, maximum) {
   return selected;
 }
 
+function byteBoundedSelection(entries, maximumEntries, maximumBytes) {
+  const selected = [];
+  let returnedEntryBytes = 0;
+  for (const entry of diverseSelection(entries, entries.length)) {
+    if (selected.length >= maximumEntries) break;
+    const entryBytes = Buffer.byteLength(JSON.stringify(entry), 'utf8');
+    if (returnedEntryBytes + entryBytes > maximumBytes) continue;
+    selected.push(entry);
+    returnedEntryBytes += entryBytes;
+  }
+  return { selected, returnedEntryBytes };
+}
+
 export function createGroundingBundle({
   text,
   request,
@@ -365,8 +437,11 @@ export function createGroundingBundle({
   if (request?.triggerStatus && request.triggerStatus !== boundedTriggerStatus) {
     throw new Error('Grounding bundle trigger status differs from its request.');
   }
-  const ranked = orderedEntries(entries);
-  const selected = diverseSelection(ranked, maximumEntries);
+  const ranked = relevanceRankedEntries(entries, request);
+  const maximumOutputBytes = request?.limits?.maximumOutputBytes ?? DEFAULT_MAX_OUTPUT_BYTES;
+  const { selected, returnedEntryBytes } = byteBoundedSelection(
+    ranked, maximumEntries, maximumOutputBytes,
+  );
   const receipts = searchReceipts.map(makeGroundingSearchReceipt);
   const termSelectionComplete = request?.termSelection?.complete !== false;
   const complete = receipts.length > 0 && receipts.every((receipt) => receipt.complete)
@@ -380,6 +455,13 @@ export function createGroundingBundle({
     answerSupported: false,
     interpretation: 'Entries are related by explicit semantic identity or bounded lexical overlap. '
       + 'They are not a proof of the requested answer.',
+    focus: Object.freeze({
+      strategy: request?.termSelection?.strategy ?? 'semantic-role-phrase-morphology-v3',
+      source: request?.termSelection?.focusSource ?? 'visible-request',
+      terms: Object.freeze([...(request?.terms ?? [])]),
+      candidates: Object.freeze([...(request?.termSelection?.candidates ?? [])]),
+      obligations: Object.freeze([...(request?.termSelection?.obligations ?? [])]),
+    }),
     search: Object.freeze({
       complete,
       termSelectionComplete,
@@ -394,8 +476,10 @@ export function createGroundingBundle({
       maximumValuesPerLookup: request?.limits?.maximumValuesPerLookup,
       maximumSources: request?.limits?.maximumSources,
       maximumCandidateEntries: request?.limits?.maximumCandidateEntries,
+      maximumOutputBytes,
+      returnedEntryBytes,
       candidatesConsidered: ranked.length,
-      outputTruncated: ranked.length > maximumEntries,
+      outputTruncated: ranked.length > selected.length,
     }),
   });
 }

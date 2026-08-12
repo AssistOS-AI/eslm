@@ -3,7 +3,7 @@ id: DS010
 title: Evaluation, Measurement, and External Comparison
 status: in-progress
 owner: evaluation
-summary: Defines evidence layers, fixed-denominator and route metrics, receipt currentness, proof and grounding validation, public reports, structural splits, freeze rules, and external comparison.
+summary: Defines evidence layers, fixed-denominator and language-route metrics, grounding and request-construction validation, receipt currentness, structural splits, and external comparison.
 ---
 
 # DS010 Evaluation, Measurement, and External Comparison
@@ -61,7 +61,12 @@ comparable result.
 
 Correctness measurements include correct count, tested denominator, available source scope, accuracy, capability and stratum breakdowns, exact match where appropriate, and official-versus-local scorer identity. Proof measurements independently validate proof graphs, countermodels, assignments, relation paths, transition traces, feature witnesses, and source provenance.
 
-Language measurements include direct accepted semantics, direct `UNPARSED`, Language Agent candidates, actual external calls, cache hits, accepted translations, accepted simplifications, host rejections, process failures, and accuracy by route. A normalization-candidate rate is the direct `UNPARSED` fraction; it is not agent use and not wrong-answer rate. A cached normalization remains assisted even when no live process ran.
+Language measurements include direct accepted semantics, direct `UNPARSED`, DS022 heuristic proposals and voting
+families, candidates above threshold, reparses, accepted changed interpretations, semantic ties, request plans,
+request-synthesis results, and accuracy by route. They separately count Language Agent eligibility after local
+exhaustion, explicit opt-in, proposals, actual external calls, cache hits, accepted translations or simplifications,
+host rejections, and process failures. A direct-`UNPARSED` rate is not agent use, and an eligible assisted request is
+not an actual invocation. A cached normalization remains assisted even when no live process ran.
 
 Every benchmark row identifies two separate classifications. Its **measured track** is `raw-language`,
 `structured-task`, or `solver-conformance`. Its **input route** is `raw-language`, `source-template`,
@@ -70,7 +75,7 @@ Every benchmark row identifies two separate classifications. Its **measured trac
 generic solver, but it is not direct natural-language coverage. Reports may show both the adapter or solver result and
 an independent raw-language diagnostic; they must not replace the latter with the former.
 
-Reliability measurements separate correct abstention from accidental failure: `UNKNOWN`, `AMBIGUOUS`, `UNDERDETERMINED`, `INCONSISTENT_CONTEXT`, `NO_APPLICABLE_METHOD`, `RESOURCE_LIMIT`, and `UNPARSED` retain their meanings. Efficiency measurements include elapsed time, peak application memory where measurable, loaded bytes, shard and cache activity, search nodes, package size, and deterministic replay. Updateability measurements cover changed records, changed compiled bytes, affected answers, unaffected-answer stability, and provenance.
+Reliability measurements separate correct abstention from accidental failure: `UNKNOWN`, `AMBIGUOUS`, `UNDERDETERMINED`, `INCONSISTENT_CONTEXT`, `NO_APPLICABLE_METHOD`, `RESOURCE_LIMIT`, and `UNPARSED` retain their meanings. A heuristic proof exposed as `DEFEASIBLE` is scored under that public status, and an extractive artifact is scored as `PARTIAL`, never as a strict answer. Efficiency measurements include elapsed time, peak application memory where measurable, loaded bytes, shard and cache activity, search nodes, package size, exact work-policy profile and overrides, heuristic work counts, and deterministic replay. Updateability measurements cover changed records, changed compiled bytes, affected answers, unaffected-answer stability, and provenance.
 
 ### Generalization and robustness
 
@@ -133,33 +138,44 @@ The default `evaluate` and `benchmark` repository suites are small authored inte
 must show the case count, authored/internal regime, and `benchmarkComparable: false` beside any accuracy. A perfect
 fixture score is useful executable sanity evidence, but it is never a headline public benchmark result.
 
-### Grounded-failure benchmark
+### Grounded-failure and request-construction benchmark
 
-Failure-time grounding has an independent, frozen product benchmark. Cases cover answerable, partially answerable,
-unanswerable, ambiguous, conflicting, malformed, typo/paraphrase, multilingual, multi-KB, and wrong-KB-distractor
-requests. The pool is authored independently of the retrieval implementation and contains host-only expected answer
-support plus acceptable related-record sets.
+Failure-time grounding and the adjacent DS022 request-construction route have an independent, frozen product benchmark.
+Cases cover answerable, partially answerable, unanswerable, ambiguous, conflicting, malformed, typo/paraphrase,
+multilingual, multi-KB, wrong-KB-distractor, summary, expansion, explanation, comparison, and document-shaping requests.
+The pool is authored independently of the retrieval implementation and contains host-only expected answer support,
+acceptable related-record sets, and construction obligations.
 
-Scoring separates four layers:
+Scoring separates five layers:
 
 1. **Primary result:** end-to-end answer correctness, status correctness, abstention calibration, proof validity, and
    unsupported-claim rate.
 2. **Retrieval:** record or span recall@k, precision@k, ranking quality, contradiction/distractor rate, and search
    completeness calibration.
-3. **Attribution:** KB/version identity, citation validity, provenance reachability, derived witness validity, and the
-   invariant that grounding never appears in answer provenance.
-4. **Optional downstream formulation:** a separately declared model receives only the structured bundle and visible
+3. **Attribution for ordinary inability:** KB/version identity, citation validity, provenance reachability, derived
+   witness validity, and the invariant that ordinary failure grounding never appears in answer provenance.
+4. **Deterministic request construction:** explicit intent precision and recall, subrequest and dependency validity,
+   output-contract adherence, selected-record relevance, citation coverage, unsupported-claim rate, and the invariant
+   that the route remains `PARTIAL`. Only selected source claims may enter its provenance and `usedKbVersions`; the
+   scorer checks that every rendered KB statement has such an attribution and that no uncited factual bridge appears.
+5. **Optional downstream formulation:** a separately declared model receives only the structured bundle and visible
    question; its answer quality, citation use, unsupported claims, model configuration, latency, and cost are scored as
    an assisted generation track, never as deterministic ESLM inference.
 
 Metamorphic controls rename entities and predicates, vary provider order, inject irrelevant high-overlap records,
-remove the supporting KB, alter the requested relation, truncate search, and force provider failure. A correct system
+remove the supporting KB, alter the requested relation, truncate search, force provider failure, and vary articles,
+quantifiers, auxiliaries, request scaffolding, output formats, and named work profiles. They verify that grammatical
+words such as `all` are not ordinary search topics, that metalinguistic requests can make them topical, that larger
+completed profiles do not change semantics, and that approximated episode premises do not persist. A correct system
 must preserve a truthful primary inability while returning useful related evidence when available and must distinguish
 complete absence from incomplete search.
 
 ### Freeze before external comparison
 
-Before a final comparison, freeze the symbolic commit, accepted KB versions, adapters, CNL version, Language Agent policy, prompts and model when an assisted track is included, seeds, scorers, resource budgets, and prediction schema. A label-free export manifest lets another system produce predictions. The local deterministic oracle joins by stable identifier, validates shape, and counts omissions.
+Before a final comparison, freeze the symbolic commit, accepted KB versions, adapters, CNL and heuristic-catalog
+versions, named work profile and overrides, Language Agent opt-in policy, prompts and model when an assisted track is
+included, seeds, scorers, memory policy, and prediction schema. A label-free export manifest lets another system
+produce predictions. The local deterministic oracle joins by stable identifier, validates shape, and counts omissions.
 
 Results from final comparison do not feed patches into that frozen candidate. A later patch starts a new comparison version. Reports retain raw predictions and name model identity, quantization, prompt, context window, decoding, tools or retrieval, hardware, cost, and evidence regime.
 

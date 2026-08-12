@@ -3,7 +3,7 @@ id: DS021
 title: Memory Budgets and Versioned Shard Caches
 status: in-progress
 owner: runtime
-summary: Defines memory policy as a physical execution input, byte-accounted versioned caches, oversize-block behavior, observable resource refusal, and separation of source, runtime, and Language Agent caches.
+summary: Defines memory policy and its separation from work policy, byte-accounted versioned caches, oversize-block behavior, resource refusal, and distinct source/runtime/agent caches.
 ---
 
 # DS021 Memory Budgets and Versioned Shard Caches
@@ -19,6 +19,12 @@ Memory limits determine how compiled knowledge is loaded and retained. They do n
 A runtime memory policy declares a soft target for retained KB data, pinned structures, maximum active block size, proof-frontier or search limits, and cache strategy. The application can byte-account dictionaries, indexes, decoded blocks, provider state, and query-local structures. It cannot promise exact whole-process resident memory because the Node.js runtime and garbage collector retain their own allocations. A hard process limit belongs to an operating-system or container boundary.
 
 Changing a soft target may change I/O, eviction frequency, and latency. It must not change semantic results when the same package set, query frontier, and execution bounds can complete. If the plan cannot complete, it returns `RESOURCE_LIMIT` with the exact exhausted resource and remaining frontier.
+
+Memory policy and DS022 work policy are orthogonal. `eslm-memory-plan-v1` controls provider residence and advisory byte
+targets. `eslm-work-policy-v1` selects exact finite counts for heuristic candidates and reparses, Horn closure,
+provider search, and grounding retrieval. Every result exposes both applicable snapshots. Changing either policy may
+change latency, I/O, or whether a finite frontier completes; neither may change logic, trust, tie-breaking, or the
+semantic result once the same frontier completes.
 
 ### Cache identity
 
@@ -57,9 +63,10 @@ returns `RESOURCE_LIMIT`.
 
 ### Operator observability
 
-The target structured result and profiler expose the requested policy, selected packages, shard and block loads, bytes,
-hits, misses, evictions, oversize bypasses, pinned data, expansion count, search limits, and any refusal. Interactive
-`/memory` explains current settings and recent use. Human output may condense these fields, but machine JSON remains
+The target structured result and profiler expose the requested memory and work policies, selected packages, shard and
+block loads, bytes, hits, misses, evictions, oversize bypasses, pinned data, expansion count, search limits, and any
+refusal. Interactive `/memory` explains residence settings and recent use; `/work` displays the exact active
+heuristic, Horn, provider, and grounding bounds. Human output may condense these fields, but machine JSON remains
 authoritative.
 
 Every direct `EslmEngine` text and typed-task result exposes an `eslm-memory-plan-v1` snapshot. Its core-only snapshot
@@ -84,6 +91,10 @@ automatically launch more retrieval: doing so would hide the exhausted resource 
 query. A product that requires grounding after primary exhaustion reserves a separate time, byte, lookup, posting, and
 entry budget before execution and reports both budgets independently.
 
+The four DS022 profiles provide exact grounding term, source, lookup, value, candidate, returned-entry, and output-byte
+limits for eligible non-resource failures. They do not by themselves constitute a reservation after a primary
+`RESOURCE_LIMIT`; that exceptional route still requires an independently declared remaining budget.
+
 For other inability statuses, grounding still obeys provider-local shard caches and exact lookup limits. A source that
 cannot complete returns a search receipt with truncation or provider failure; the bundle reports
 `SEARCH_INCOMPLETE` when no record was returned and never translates a cache miss into complete absence. Grounding
@@ -92,10 +103,12 @@ latency and bytes belong in profiling, not in deterministic semantic values, sor
 ### Present implementation boundary
 
 The present public-provider cache is byte-estimated and LRU-like, and `--memory-mb` is an advisory application target
-with a fixed reserve. It is not a hard whole-process RSS limit. Published probes must record measured peak RSS and
-elapsed time when making resource claims, and costly benchmark families should execute in isolated processes under a
-real OS or container limit when a hard cap is required. The broader per-query block accounting and reserved grounding
-budget described above remain only partially implemented.
+with a fixed reserve. The runtime also exposes implemented `quick`, `balanced`, `deep`, and `exhaustive-bounded` work
+snapshots, with `balanced` as the default, for exact heuristic, Horn, provider, and grounding counts. Neither policy is
+a hard whole-process RSS limit. Published probes must record measured peak RSS and elapsed time when making resource
+claims, and costly benchmark families should execute in isolated processes under a real OS or container limit when a
+hard cap is required. The broader per-query block accounting and reserved grounding budget described above remain only
+partially implemented.
 
 ## Decisions & Questions
 
@@ -117,6 +130,12 @@ the limit misleading and could worsen overload. Grounding is allowed only when a
 Response: `providers` describes independently planned public-provider stores and their caches. The core model is
 already materialized before a direct task begins, so it is represented by the eager effective policy rather than by a
 fictional provider entry. The profiler, not this policy snapshot, is responsible for measured process memory.
+
+### Question #5: Why are `/memory` and `/work` separate controls?
+
+Response: Residence policy answers how validated KB bytes are retained; work policy answers how many bounded
+interpretation, inference, provider, and grounding operations may be attempted. Conflating them would make an advisory
+cache target appear to authorize more reasoning or make a larger reasoning profile look like a hard RSS guarantee.
 
 ## Conclusion
 

@@ -6,7 +6,7 @@
 <figure class="diagram"><pre class="mermaid">flowchart LR
   G[Typed family graph] --> A[Relation algebra]
   A --> Q[Ordered query]
-  Q --> O[Relation or ambiguity]</pre><figcaption>The current route starts from validated structured edges. The algebra composes those types for the ordered endpoints and preserves ambiguity when the graph does not identify one label.</figcaption></figure>
+  Q --> O[Relation or ambiguity]</pre><figcaption>Typed kinship composition.</figcaption></figure><p class="diagram-explanation">The current route starts from validated structured edges. The algebra composes those types for the ordered endpoints and preserves ambiguity when the graph does not identify one label.</p>
 
 <h2>What enters the symbolic method</h2>
 <p>The structured route uses validated source evidence: typed story edges, edge types, gender metadata, node mapping, and the ordered query endpoints. It does not claim unrestricted extraction of those relations from every narrative rendering. The <code>clutrr-kinship-algebra</code> package declares relation classes, inverses, endpoint refinements, and compositions. Trusted generic code applies that algebra to the graph.</p>

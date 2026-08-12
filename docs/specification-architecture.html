@@ -6,7 +6,7 @@
 <figure class="diagram"><pre class="mermaid">flowchart LR
   V[System invariants] --> C[Component contracts]
   C --> S[Specialized semantics]
-  S --> E[Generated evidence]</pre><figcaption>Normative stability decreases from left to right. Generated evidence may change after every run without changing the contracts that define how the run is interpreted.</figcaption></figure>
+  S --> E[Generated evidence]</pre><figcaption>Stable contracts lead to replaceable evidence.</figcaption></figure><p class="diagram-explanation">Normative stability decreases from left to right. Generated evidence may change after every run without changing the contracts that define how the run is interpreted.</p>
 
 <h2>Responsibility map</h2>
 <table><thead><tr><th>Specifications</th><th>Owned boundary and normal reason to change</th></tr></thead><tbody>

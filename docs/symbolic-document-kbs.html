@@ -2,16 +2,16 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Symbolic document KBs — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head>
 <body><div data-include="partials/header.html"></div><main><p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / System / Symbolic document KBs</p>
 <h1>Compiling books, manuals, and technical documentation into reasoning knowledge</h1>
-<p class="lead">A document KB preserves the frozen edition and its addressable structure, then represents definitions, claims, rules, events, procedures, quantities, exceptions, and time as typed records. Retrieval selects symbolic evidence; registered methods derive an answer and cite every contributing source span. This is planned symbolic retrieval-augmented reasoning, not passage retrieval followed by free-form generation.</p>
+<p class="lead">A document KB preserves the frozen edition and its addressable structure, then represents definitions, claims, rules, events, procedures, quantities, exceptions, and time as typed records. Retrieval selects symbolic evidence; registered methods derive an answer and cite every contributing source span. The acceptance target is symbolic retrieval-augmented reasoning with replayable derivations, distinct from passage retrieval followed by free-form generation.</p>
 <figure class="diagram"><pre class="mermaid">flowchart LR
   D[Frozen edition and spans] --> K[Canonical document KB]
   K --> I[Exact indexes and shards]
   Q[Typed question] --> P[Proof-directed retrieval]
   I --> P
-  P --> A[Derivation and citations]</pre><figcaption>The original edition remains the evidential authority. Compiled records and indexes are reproducible views. A query expands through rule and relation dependencies and returns a proof whose leaves resolve to exact document spans.</figcaption></figure>
+  P --> A[Derivation and citations]</pre><figcaption>Document evidence becomes cited reasoning.</figcaption></figure><p class="diagram-explanation">The original edition remains the evidential authority. Compiled records and indexes are reproducible views. A query expands through rule and relation dependencies and returns a proof whose leaves resolve to exact document spans.</p>
 
 <h2>Implementation status</h2>
-<p>The repository implements the canonical record validator, generic small-package compiler, several query-directed public providers, exact source provenance, proof-bearing methods, and bounded caches. It does not yet implement a general PDF, EPUB, HTML-book, or manual compiler. The data shapes and algorithms below are the DS014 target, constrained by the mechanisms that already exist and by the explicit gaps named here.</p>
+<p>The repository implements the canonical record validator, generic small-package compiler, several query-directed public providers, exact source provenance, proof-bearing methods, and bounded caches. The next document-ingestion gate adds general PDF, EPUB, HTML-book, and manual compilers. The data shapes and algorithms below are the DS014 target, grounded in the mechanisms that already exist and the explicit acceptance work named here.</p>
 
 <h2>Source and structural address space</h2>
 <p>The source manifest freezes title, author or publisher, edition, language, acquisition record, license, bytes, digest, media type, and decoder version. Decoding produces a hierarchy rather than anonymous chunks:</p>

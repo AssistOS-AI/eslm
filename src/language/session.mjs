@@ -1,4 +1,7 @@
 import { tokenize } from './normalization.mjs';
+import { baseThirdPersonSingular } from './heuristic-cnl-morphology.mjs';
+import { genericRelationObjectSurface } from './generic-relation-surface.mjs';
+import { boundedNominalSurface } from './nominal-surface.mjs';
 import {
   SESSION_LIMITS,
   SessionInputValidationError,
@@ -52,8 +55,14 @@ function ensureEntity(phrase, kind, model, entities) {
   return id;
 }
 
+function ensureSubject(phrase, kind, model, entities) {
+  const surface = boundedNominalSurface(phrase);
+  return surface ? ensureEntity(surface, kind, model, entities) : undefined;
+}
+
 function singularClass(value, model) {
-  const normalized = normalizedPhrase(value).replace(/^(?:the|a|an) /u, '');
+  const normalized = boundedNominalSurface(normalizedPhrase(value));
+  if (!normalized) return undefined;
   return model.reasoning?.classes?.singular?.[normalized]
     ?? (normalized.endsWith('ies') ? `${normalized.slice(0, -3)}y`
       : normalized.endsWith('s') ? normalized.slice(0, -1) : normalized);
@@ -63,6 +72,21 @@ function propertyPredicate(surface, value, model) {
   const requested = normalizedPhrase(surface).replaceAll(' ', '_');
   return Object.entries(model.reasoning?.propertyValues ?? {}).find(([predicate, values]) =>
     predicate.replaceAll(' ', '_') === requested && values.includes(value))?.[0];
+}
+
+const RESERVED_RELATION_VERBS = new Set([
+  'all', 'and', 'are', 'be', 'been', 'being', 'can', 'could', 'did', 'do', 'does', 'every', 'has', 'have',
+  'if', 'is', 'may', 'might', 'must', 'not', 'or', 'should', 'was', 'were', 'will', 'would',
+]);
+
+function baseRelationVerb(surface) {
+  const verb = normalizedPhrase(surface);
+  if (verb.length < 3 || RESERVED_RELATION_VERBS.has(verb)) return undefined;
+  return baseThirdPersonSingular(verb);
+}
+
+function relationObject(value) {
+  return genericRelationObjectSurface(normalizedPhrase(value));
 }
 
 function assertionFrom(text, model, entities, ruleNumber) {
@@ -81,77 +105,90 @@ function assertionFrom(text, model, entities, ruleNumber) {
       session: true,
     };
   }
+  if ((match = normalized.match(/^(?:every|all) (.+?) ([a-z][a-z0-9_-]*) (.+)$/u))) {
+    const predicate = baseRelationVerb(match[2]);
+    const object = relationObject(match[3]);
+    if (predicate && object && !RESERVED_RELATION_VERBS.has(object)) return {
+      kind: 'rule',
+      id: `session:r${ruleNumber}`,
+      when: [['?entity', 'is_a', singularClass(match[1], model)]],
+      then: ['?entity', predicate, object],
+      source: `session:rule:${ruleNumber + 1}`,
+      sourceText: text,
+      session: true,
+    };
+  }
   if ((match = normalized.match(/^(.+?) (?:went(?: back)?|travelled|traveled|moved|journeyed) to (?:the )?(.+?)(?: there)?$/u))) {
     return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'located_in',
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate: 'located_in',
       object: ensureEntity(match[2], 'place', model, entities), sourceText: text, transition: 'move',
     };
   }
   if ((match = normalized.match(/^(.+?) (?:grabbed|got|took|picked up) (?:a |an |the )?(.+?)(?: there)?$/u))) {
     return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'owns',
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate: 'owns',
       object: ensureEntity(match[2], 'object', model, entities), sourceText: text, transition: 'acquire',
     };
   }
   if ((match = normalized.match(/^(.+?) (?:dropped|left|discarded|put down) (?:a |an |the )?(.+?)(?: there)?$/u))) {
     return {
-      kind: 'transition', transition: 'release', subject: ensureEntity(match[1], 'entity', model, entities),
+      kind: 'transition', transition: 'release', subject: ensureSubject(match[1], 'entity', model, entities),
       object: ensureEntity(match[2], 'object', model, entities), sourceText: text,
     };
   }
   if ((match = normalized.match(/^(.+?) (?:is (?:located )?(?:in|at)|can be found (?:in|at)|stays (?:in|at)|occupies) (.+)$/u))) {
     return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'located_in',
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate: 'located_in',
       object: ensureEntity(match[2], 'place', model, entities), sourceText: text,
     };
   }
   if ((match = normalized.match(/^(.+?) (?:belongs to the (.+?) class|is classified as (?:a|an) (.+)|is one of the (.+))$/u))) {
     return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'is_a',
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate: 'is_a',
       value: singularClass(match[2] ?? match[3] ?? match[4], model), sourceText: text,
     };
   }
   if ((match = normalized.match(/^the category of (.+?) is (.+)$/u))) {
     return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'is_a',
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate: 'is_a',
       value: singularClass(match[2], model), sourceText: text,
     };
   }
   if ((match = normalized.match(/^(.+?) (?:is able|has the ability) to ([a-z][a-z0-9_-]*)$/u))) {
     return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'can',
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate: 'can',
       value: match[2], sourceText: text,
     };
   }
   if ((match = normalized.match(/^(?:the )?([a-z][a-z0-9_-]*) of (.+?) is ([a-z][a-z0-9_-]*)$/u))) {
     const predicate = propertyPredicate(match[1], match[3], model);
     if (predicate) return {
-      subject: ensureEntity(match[2], 'entity', model, entities), predicate,
+      subject: ensureSubject(match[2], 'entity', model, entities), predicate,
       value: match[3], sourceText: text,
     };
   }
   if ((match = normalized.match(/^(.+?) has ([a-z][a-z0-9_-]*) ([a-z][a-z0-9_-]*)$/u))) {
     const predicate = propertyPredicate(match[2], match[3], model);
     if (predicate) return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate,
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate,
       value: match[3], sourceText: text,
     };
   }
   if ((match = normalized.match(/^(.+?) (?:owns|has|carries) (?:a |an |the )?(.+)$/u))) {
     return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'owns',
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate: 'owns',
       object: ensureEntity(match[2], 'object', model, entities), sourceText: text,
     };
   }
   if ((match = normalized.match(/^(?:the )?(.+?) belongs to (.+)$/u))) {
     return {
-      subject: ensureEntity(match[2], 'entity', model, entities), predicate: 'owns',
+      subject: ensureSubject(match[2], 'entity', model, entities), predicate: 'owns',
       object: ensureEntity(match[1], 'object', model, entities), sourceText: text,
     };
   }
   if ((match = normalized.match(/^(.+?) can ([a-z][a-z0-9_-]*)$/u))) {
     return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'can',
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate: 'can',
       value: match[2], sourceText: text,
     };
   }
@@ -160,18 +197,38 @@ function assertionFrom(text, model, entities, ruleNumber) {
     for (const [predicate, values] of Object.entries(model.reasoning?.propertyValues ?? {})) {
       if (!values.includes(property)) continue;
       return {
-        subject: ensureEntity(match[1], 'entity', model, entities), predicate,
+        subject: ensureSubject(match[1], 'entity', model, entities), predicate,
         value: property, sourceText: text,
       };
     }
   }
   if ((match = normalized.match(/^(.+?) is (?:a|an) (.+)$/u))) {
     return {
-      subject: ensureEntity(match[1], 'entity', model, entities), predicate: 'is_a',
-      value: match[2], sourceText: text,
+      subject: ensureSubject(match[1], 'entity', model, entities), predicate: 'is_a',
+      value: singularClass(match[2], model), sourceText: text,
     };
   }
   return undefined;
+}
+
+function isSemanticTerm(value) {
+  return typeof value === 'string' && value.length > 0;
+}
+
+function isCompleteAssertion(assertion) {
+  if (!assertion || typeof assertion !== 'object') return false;
+  if (assertion.kind === 'rule') {
+    return Array.isArray(assertion.when) && assertion.when.length > 0
+      && assertion.when.every((atom) => Array.isArray(atom) && atom.length === 3 && atom.every(isSemanticTerm))
+      && Array.isArray(assertion.then) && assertion.then.length === 3 && assertion.then.every(isSemanticTerm);
+  }
+  if (assertion.kind === 'transition') {
+    return assertion.transition === 'release'
+      && isSemanticTerm(assertion.subject) && isSemanticTerm(assertion.object);
+  }
+  const hasObject = isSemanticTerm(assertion.object);
+  const hasValue = isSemanticTerm(assertion.value);
+  return isSemanticTerm(assertion.subject) && isSemanticTerm(assertion.predicate) && hasObject !== hasValue;
 }
 
 export function splitEpisode(text) {
@@ -249,11 +306,14 @@ export function compileSessionEpisode(text, model, context = {}) {
     return fact;
   };
   for (const segment of statementSegments) {
-    const assertion = assertionFrom(segment, model, entities, rules.length);
-    if (!assertion) {
+    const provisionalEntities = [...entities];
+    const assertion = assertionFrom(segment, model, provisionalEntities, rules.length);
+    if (!isCompleteAssertion(assertion)) {
       unsupportedStatements.push(segment);
       continue;
     }
+    entities.push(...provisionalEntities.slice(entities.length));
+    requireCapacity('entities', entities.length, SESSION_LIMITS.maximumEntities);
     if (assertion.kind === 'rule') {
       const duplicate = rules.some((rule) => JSON.stringify(rule.when) === JSON.stringify(assertion.when)
         && JSON.stringify(rule.then) === JSON.stringify(assertion.then));
@@ -275,7 +335,6 @@ export function compileSessionEpisode(text, model, context = {}) {
       continue;
     }
     addFact(assertion);
-    requireCapacity('entities', entities.length, SESSION_LIMITS.maximumEntities);
     if (assertion.transition === 'move') {
       const carriedObjects = facts.filter((fact) => fact.subject === assertion.subject && fact.predicate === 'owns');
       for (const possession of carriedObjects) addFact({
@@ -299,6 +358,25 @@ export function compileSessionEpisode(text, model, context = {}) {
     learnedRules,
     unsupportedStatements,
     segments,
+  };
+}
+
+export function inspectSessionEpisode(text, model, context = {}) {
+  const episode = compileSessionEpisode(text, model, context);
+  return {
+    original: text,
+    segments: episode.segments,
+    unsupportedStatements: episode.unsupportedStatements,
+    question: episode.question,
+    assertions: episode.learned.map((fact) => ({
+      subject: fact.subject,
+      predicate: fact.predicate,
+      ...(fact.object !== undefined ? { object: fact.object } : { value: fact.value }),
+    })),
+    rules: episode.learnedRules.map((rule) => ({
+      when: rule.when.map((atom) => [...atom]),
+      then: [...rule.then],
+    })),
   };
 }
 

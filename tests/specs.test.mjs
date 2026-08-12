@@ -6,7 +6,7 @@ import { PROJECT_ROOT } from '../src/paths.mjs';
 test('consolidated specifications are contiguous and structurally complete', async () => {
   const root = `${PROJECT_ROOT}/docs/specs`;
   const files = (await readdir(root)).filter((file) => /^DS\d{3}-.+\.md$/u.test(file)).sort();
-  assert.equal(files.length, 22);
+  assert.equal(files.length, 23);
   files.forEach((file, index) => assert.equal(file.slice(2, 5), String(index).padStart(3, '0')));
   for (const file of files) {
     const text = await readFile(`${root}/${file}`, 'utf8');

@@ -1,3 +1,6 @@
+import { assertWorkPolicy } from './work-policy.mjs';
+import { assertRuntimePayloadContracts } from './result-payload-contracts.mjs';
+
 const PUBLIC_RUNTIME_STATUSES = Object.freeze([
   'SOLVED',
   'PARTIAL',
@@ -103,6 +106,56 @@ function requireArray(result, field) {
   }
 }
 
+function assertRuntimeRoutePayloadInvariants(result) {
+  if (['heuristic-cnl-approximated', 'heuristic-cnl-ambiguous'].includes(result.languageRoute)
+    && !result.approximation) throw new TypeError(`${result.languageRoute} requires approximation evidence.`);
+  if (['heuristic-request-planned', 'heuristic-request-synthesis'].includes(result.languageRoute)
+    && result.requestPlanning?.status !== 'PLANNED') {
+    throw new TypeError(`${result.languageRoute} requires a PLANNED requestPlanning extension.`);
+  }
+  if (result.languageRoute === 'heuristic-request-ambiguous'
+    && (result.status !== 'AMBIGUOUS' || result.requestPlanning?.status !== 'AMBIGUOUS')) {
+    throw new TypeError('heuristic-request-ambiguous requires matching AMBIGUOUS result and request plan.');
+  }
+  if (result.languageRoute === 'heuristic-request-planned' && result.status !== 'MISSING_KNOWLEDGE') {
+    throw new TypeError('heuristic-request-planned requires MISSING_KNOWLEDGE status.');
+  }
+  if (result.languageRoute === 'heuristic-request-synthesis' && !result.synthesis) {
+    throw new TypeError('heuristic-request-synthesis requires a synthesis extension.');
+  }
+  if (result.synthesis && result.languageRoute !== 'heuristic-request-synthesis') {
+    throw new TypeError('A synthesis extension is valid only on heuristic-request-synthesis.');
+  }
+  if (result.languageRoute.startsWith('language-agent-') && !result.normalization?.attempted) {
+    throw new TypeError(`${result.languageRoute} requires attempted normalization evidence.`);
+  }
+  const normalizationStatus = result.normalization?.status;
+  if (result.languageRoute === 'language-agent-normalized' && normalizationStatus !== 'accepted') {
+    throw new TypeError('language-agent-normalized requires accepted normalization evidence.');
+  }
+  if (result.languageRoute === 'language-agent-normalization-failed'
+    && normalizationStatus !== 'failed') {
+    throw new TypeError('language-agent-normalization-failed requires failed normalization evidence.');
+  }
+  if (result.languageRoute === 'language-agent-normalization-rejected'
+    && (!['rejected', 'reparse-rejected', 'proposal-limit-exhausted'].includes(normalizationStatus)
+      || result.status !== 'UNVERIFIED_NORMALIZATION')) {
+    throw new TypeError('language-agent-normalization-rejected requires matching rejected evidence and status.');
+  }
+  if (result.languageRoute === 'heuristic-request-synthesis') {
+    if ((result.values?.length ?? 0) !== 0) {
+      throw new TypeError('heuristic-request-synthesis cannot expose entailed semantic values.');
+    }
+    if (JSON.stringify(result.usedKbVersions)
+      !== JSON.stringify(result.synthesis.contributingKbVersions)) {
+      throw new TypeError('heuristic-request-synthesis KB accounting must match selected source claims.');
+    }
+    if ((result.provenance?.length ?? 0) !== result.synthesis.evidence.selected.length) {
+      throw new TypeError('heuristic-request-synthesis provenance must match selected KB records.');
+    }
+  }
+}
+
 export function assertRuntimeResultContract(result) {
   if (!result || typeof result !== 'object' || Array.isArray(result)) {
     throw new TypeError('Runtime result must be an object.');
@@ -123,6 +176,9 @@ export function assertRuntimeResultContract(result) {
     throw new TypeError('Runtime result model must be an object.');
   }
   if (result.model.memory !== undefined) assertRuntimeMemoryPlanContract(result.model.memory);
+  if (result.workPolicy !== undefined) assertWorkPolicy(result.workPolicy);
+  assertRuntimePayloadContracts(result);
+  assertRuntimeRoutePayloadInvariants(result);
   return result;
 }
 

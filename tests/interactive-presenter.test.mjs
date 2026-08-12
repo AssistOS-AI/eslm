@@ -71,3 +71,41 @@ test('accepted Language Agent normalization is shown as original, transformation
   assert.match(output, /Translation: How are you\?/u);
   assert.match(output, /Symbolic result: \[SOLVED\] I am ready\./u);
 });
+
+test('accepted local approximation shows selected CNL, confidence votes, and ephemeral effects', () => {
+  const result = {
+    status: 'DEFEASIBLE', answer: 'Yes.', languageRoute: 'heuristic-cnl-approximated',
+    approximation: {
+      selectedCandidate: {
+        text: 'Tarin is a zoral. Every zoral glims vepa. Does Tarin glim vepa?',
+        confidence: 0.81, confidenceBand: 'medium',
+        supportingFamilies: ['predicate-agreement', 'question-reduction'],
+      },
+    },
+  };
+  const output = interactiveResultText(result,
+    'Tarin is an zoral. All zoral gim vepa. Is Tarin gliming vepa?', style);
+  assert.match(output, /Local heuristic interpretation accepted — no Language Agent/u);
+  assert.match(output, /Interpreted CNL: Tarin is a zoral/u);
+  assert.match(output, /Confidence: 0\.810 \(medium\)/u);
+  assert.match(output, /predicate-agreement, question-reduction/u);
+  assert.match(output, /query-local and discarded/u);
+  assert.match(output, /Symbolic result: \[DEFEASIBLE\] Yes\./u);
+});
+
+test('request synthesis shows intent, bounded subrequests, output shape, and evidence policy', () => {
+  const output = interactiveResultText({
+    status: 'PARTIAL', languageRoute: 'heuristic-request-synthesis',
+    answer: '# Report: zorals\n\n- A zoral is a mineral. [nonce@1; r1]',
+    requestPlanning: { selectedPlan: {
+      operations: ['compose'], confidence: 0.91, confidenceBand: 'high',
+      subrequests: [{}, {}, {}],
+      outputContract: { length: 'brief', artifact: 'report', format: 'sections' },
+    } },
+  }, 'Write a short report about zorals.', style);
+  assert.match(output, /Local request plan accepted/u);
+  assert.match(output, /Intent: compose; 3 bounded subrequests/u);
+  assert.match(output, /brief report, sections/u);
+  assert.match(output, /related KB records are not upgraded to proof/u);
+  assert.match(output, /\[PARTIAL\]/u);
+});

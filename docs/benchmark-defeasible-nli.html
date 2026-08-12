@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Defeasible NLI protocol — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
 <p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation / Defeasible NLI</p>
 <h1>Defeasible NLI: whether new information strengthens or weakens an inference</h1>
-<p class="lead">Defeasible NLI does not ask whether a hypothesis follows deductively. It starts with a plausible premise-to-hypothesis inference, adds an update, and asks whether that update makes the inference more or less plausible. The correct symbolic target is a comparison between two defeasible support states, not a hard-coded word classifier.</p>
+<p class="lead">Defeasible NLI compares a plausible premise-to-hypothesis inference before and after an update, asking whether the new information makes that inference stronger or weaker. The symbolic target is a comparison between two explicit defeasible support states, with evidence contributions visible in each state.</p>
 <div class="callout"><p><strong>Current measurements:</strong> Read the generated Defeasible NLI row on the <a href="evaluation.html">evaluation dashboard</a> or inspect the <a href="results/latest-public-benchmark-probes.json">raw v2 report</a>. This page retains official source eligibility and scoring semantics, not mutable execution totals.</p></div>
 
 <figure class="diagram"><pre class="mermaid">flowchart LR
@@ -9,7 +9,7 @@
   U[Update] --> R[Revised theory]
   D --> C[Preferred-support comparison]
   R --> C
-  C --> L[Strengthener or weakener]</pre><figcaption>The intended method compares an unchanged base theory with a theory revised by the update. Both support values require explicit event, causal, physical, or normative evidence.</figcaption></figure>
+  C --> L[Strengthener or weakener]</pre><figcaption>Defeasible support before and after an update.</figcaption></figure><p class="diagram-explanation">The intended method compares an unchanged base theory with a theory revised by the update. Both support values require explicit event, causal, physical, or normative evidence.</p>
 
 <h2 id="protocol">Source and official eligibility</h2>
 <p>The <a href="https://github.com/rudinger/defeasible-nli">official release</a> combines three upstream families: ATOMIC event inferences, SNLI premise–hypothesis pairs, and Social Chemistry situations and norms. ESLM pins one immutable release, streams all nine train/development/test files, validates closed family-specific schemas, and retains all 245,720 rows. No row is rejected because of source or file size.</p>

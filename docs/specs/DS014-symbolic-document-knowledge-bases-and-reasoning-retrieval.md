@@ -120,6 +120,13 @@ The recovery path preserves four distinctions:
 Document-scale grounding remains query directed and bounded. It never scans an entire compiled collection after every
 failure, and it never runs after an exhausted primary resource budget unless a separate grounding budget was reserved.
 
+DS022 also defines an explicit artifact-request route that is distinct from ordinary failure recovery. When the
+request planner recognizes a summary, explanation, comparison, outline, essay, report, article, or document before
+retrieval, bounded construction may select source-addressable document records, copy their statements into a cited
+`PARTIAL` artifact, and list the selected packages in `usedKbVersions`. Those citations support only the source claims
+actually copied. They do not establish an inferred narrative, causal bridge, or complete answer, and unselected
+grounding records remain outside answer provenance.
+
 ### 10. Document build pipeline
 
 The document pipeline consumes a DS016 source, decodes it, and establishes the structural spans defined here. DS004
@@ -140,6 +147,11 @@ Absent required document premises return `MISSING_KNOWLEDGE` with the searched s
 completed applicable search in which available knowledge neither entails nor contradicts the target. A missing
 transformation remains `NO_APPLICABLE_METHOD`.
 
+A DS022 extractive document draft instead returns `PARTIAL`. Selected KB records used in the rendered artifact enter
+top-level provenance as source claims; copied user material retains its source-span receipt inside the request and
+synthesis records. Any attached grounding bundle remains `answerSupported: false`. A downstream reader can therefore
+trace copied material without confusing citation coverage with proof of the requested document's overall argument.
+
 ### 12. Security and review invariants
 
 DS009 owns the untrusted-document threat model, DS006 owns package path and dependency validation, and DS019 owns
@@ -154,9 +166,10 @@ runtime. Source strings remain normalized index data and never become JavaScript
 
 The present repository implements canonical KB records, compiled packages, several public-source indexes,
 query-directed shard loading, bounded caches, proof-bearing core methods, provenance, and a generic failure-time
-grounding bundle over canonical facts, the session overlay, and selected public providers. The fallback is an
-implemented bounded record-retrieval foundation, not document comprehension: it does not yet search book-scale span
-indexes or compile a general book or manual. The next document stage should use a small legally distributable
+grounding bundle over canonical facts, the session overlay, and selected public providers. DS022 additionally
+implements request planning and extractive `PARTIAL` construction over supplied text and those currently searchable
+records. This is a bounded record-selection and citation foundation; it does not yet search book-scale span indexes or
+compile a general book or manual. The next document stage should use a small legally distributable
 technical source with definitions, procedures, temporal changes, and cross-section questions, then demonstrate
 complete source retention, stable compilation, eager/lazy equivalence, derived answers with citations, and useful
 grounding for deliberately unanswerable or partially supported requests.
@@ -179,8 +192,10 @@ Response: Events reference stable participant concepts or entities through typed
 
 ### Question #4: Is a related source span a citation for the answer?
 
-Response: Only when a registered method uses the corresponding record in the answer proof. A span returned solely by
-failure-time grounding is cited as a related record inside the bundle and is explicitly not answer provenance.
+Response: For an inferred answer, only when a registered method uses the corresponding record in the proof. A span
+returned solely by failure-time grounding is cited as a related record inside the bundle and is explicitly not answer
+provenance. On the separate DS022 request-synthesis route, a selected span may instead be attribution for the exact
+source claim copied into a `PARTIAL` artifact, but it still is not proof of a broader explanation or conclusion.
 
 ## Conclusion
 

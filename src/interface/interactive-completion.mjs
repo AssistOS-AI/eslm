@@ -1,11 +1,12 @@
 const COMMANDS = Object.freeze([
-  '/help', '/kbs', '/load ', '/unload ', '/model', '/memory', '/normalize', '/examples ', '/smoke ',
+  '/help', '/kbs', '/load ', '/unload ', '/model', '/memory', '/work', '/normalize', '/examples ', '/smoke ',
   '/trace', '/profile', '/clear', '/quit', '/exit',
 ]);
 
 const ARGUMENTS = Object.freeze({
   '/normalize ': Object.freeze(['on', 'off']),
   '/memory ': Object.freeze(['auto', 'eager', 'lazy']),
+  '/work ': Object.freeze(['quick', 'balanced', 'deep', 'exhaustive-bounded']),
 });
 
 function matches(values, prefix) {

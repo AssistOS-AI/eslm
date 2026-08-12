@@ -8,7 +8,7 @@
   C[Typed clues] --> B[Boolean CSP encoding]
   B --> S[Deterministic SAT search]
   S --> A[Complete assignment]
-  A --> V[Clue replay + uniqueness proof]</pre><figcaption>The output is constructive. Solving, direct clue replay, and the blocked-assignment uniqueness check are separate stages.</figcaption></figure>
+  A --> V[Clue replay + uniqueness proof]</pre><figcaption>Constraint solving with uniqueness verification.</figcaption></figure><p class="diagram-explanation">The output is constructive. Solving, direct clue replay, and the blocked-assignment uniqueness check are separate stages.</p>
 
 <h2 id="semantics">Constraint semantics</h2>
 <p>For every value and position, the adapter creates a Boolean proposition saying that the value occupies that position. Exactly-one clauses enforce that every value occupies one position and every position receives one value from each domain. A direct-position clue selects one position; an exclusion clue removes one; same-position clues equate positions across domains; left, right, adjacency, direct-left, and exact-distance clues constrain ordered position pairs. Unknown wording is a parse failure. It is never ignored, guessed from a row identifier, or replaced with an answer-derived condition.</p>
@@ -18,7 +18,7 @@
 <p>The pinned public release contains 1,000 grid puzzles and 3,259 multiple-choice rows. All 4,259 rows are retained; none is rejected because of file or dataset size. The public grid assignments are redacted and the multiple-choice rows omit their answers. The 1,000 public grid puzzles were partitioned by their declared row-by-column size before text inspection: eight development members and thirty-two sealed members in each of twenty-five size strata, producing 200 development and 800 fresh puzzles.</p>
 <p>A protected execution may begin only after the adapter, parser, solver dependencies, verifier, tests, source identity, and partition are frozen. It returns aggregates only: no protected clue, identifier, assignment, certificate, or per-case outcome may become tuning input. The report owns the executed count, completion count, failure statuses, Language Agent policy, and checkpoint classification.</p>
 
-<h2 id="score-boundary">Why public-clue completion is not an official answer score</h2>
+<h2 id="score-boundary">Evidence scope of public-clue completion</h2>
 <p><strong>Public-clue CSP completion</strong> says whether ESLM constructed and verified the unique solution implied by visible clues. It does not compare cells against the private official assignments. Therefore it is symbolic-method evidence, but it is not ZebraLogic leaderboard accuracy or cell accuracy. The dashboard labels completion separately and leaves correctness metrics <code>null</code> when the oracle is unavailable.</p>
 <p>Official-label comparison requires access to <a href="https://huggingface.co/datasets/allenai/ZebraLogicBench-private">ZebraLogicBench-private</a>. An authorized operator must accept its terms, authenticate locally, and reacquire the pinned private revision recorded in the source manifest. The public and private dataset cards declare no dataset license; local research cache is retained, while redistribution requires clarification from the publisher.</p>
 

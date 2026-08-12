@@ -191,6 +191,61 @@ test('property induction follows renamed predicate metadata instead of a benchma
   assert.equal(result.reasoning.selection, 'latest-member');
 });
 
+test('generic quantified transitive relations execute under fully renamed vocabulary', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  const entailed = engine.ask(
+    'Tarin is a zoral. Every zoral glims vepa. Does Tarin glim vepa?',
+  );
+  assert.equal(entailed.status, 'SOLVED');
+  assert.deepEqual(entailed.values, [true]);
+  assert.equal(entailed.query.predicate, 'glim');
+  assert.ok(entailed.provenance.some((item) => item.rule === 'session:r0'));
+
+  const contrast = engine.ask(
+    'Tarin is a zoral. Every zoral glims vepa. Does Tarin avoid vepa?',
+  );
+  assert.equal(contrast.status, 'UNKNOWN');
+  assert.deepEqual(contrast.values, []);
+});
+
+test('generic quantified relations lemmatize supported third-person endings symmetrically', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  const cases = [
+    ['fixes', 'fix'], ['watches', 'watch'], ['passes', 'pass'], ['buzzes', 'buzz'],
+    ['carries', 'carry'], ['glims', 'glim'],
+  ];
+  for (const [surface, lemma] of cases) {
+    const result = engine.ask(
+      `Every zoral ${surface} vepa. Tarin is a zoral. Does Tarin ${lemma} vepa?`,
+    );
+    assert.equal(result.status, 'SOLVED', `${surface}/${lemma}`);
+    assert.equal(result.answer, 'Yes.', `${surface}/${lemma}`);
+  }
+});
+
+test('generic relation objects reject embedded operators instead of encoding them as opaque symbols', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  for (const object of [
+    'tea and drinks water', 'tea or coffee', 'tea because Odo waits', 'tea before noon',
+  ]) {
+    const result = engine.ask(
+      `Every zoral eats ${object}. Tarin is a zoral. Does Tarin eat ${object}?`,
+    );
+    assert.equal(result.status, 'UNPARSED', object);
+    assert.ok(!result.provenance?.some((item) => JSON.stringify(item).includes('_and_')
+      || JSON.stringify(item).includes('_or_') || JSON.stringify(item).includes('_because_')
+      || JSON.stringify(item).includes('_before_')), object);
+  }
+});
+
+test('short unknown relation spellings stay unsupported for heuristic recovery', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  const result = engine.ask('Abura is a mura. All mura et bana. Does Abura eat bana?');
+  assert.equal(result.status, 'UNPARSED');
+  assert.deepEqual(result.episode.unsupportedStatements, ['All mura et bana.']);
+  assert.equal(result.context.session.facts.length, 0);
+});
+
 test('container-state core executes a renamed semantic program without dataset surface vocabulary', async () => {
   const engine = new EslmEngine(await createCoreModel());
   const result = engine.executeTask({

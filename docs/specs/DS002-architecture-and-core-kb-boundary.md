@@ -25,14 +25,16 @@ The central question for every learned artifact is not where it is easiest to pu
 `src` is the only location for trusted executable mechanisms. In the target architecture this includes the symbolic
 tokenizer, morphology, feature grammar or chart parser, semantic-composition operators, reference resolution,
 task-frame builder, planner, rule interpreters, graph and temporal methods, default reasoning, constraint solvers,
-search, proof construction, contradiction handling, confidence semantics, shard loaders, failure grounding, and result
-formatting. This list assigns ownership; it does not claim that every mechanism is implemented.
+search, proof construction, contradiction handling, confidence semantics, deterministic language approximation,
+request-intent planning, bounded result construction, role-focused grounding, shard loaders, and result formatting.
+This list assigns ownership; it does not claim that every mechanism is implemented.
 
-At the present checkpoint, `src` contains bounded deterministic language compilers rather than a general chart parser,
-a single-goal plan skeleton and typed-operation dispatch rather than general AND/OR planning, positive Horn reasoning
-and several finite typed methods rather than every listed logic, and provider-specific retrieval/caches rather than the
-complete future catalog. DS003, DS008, DS015, and DS020 state those exact boundaries. Documentation must not infer an
-executor from the appearance of a mechanism in this ownership list.
+At the present checkpoint, `src` contains bounded deterministic language compilers and the DS022 confidence-voted
+recovery ensemble rather than a general chart parser, a request-intent planner with bounded extractive `PARTIAL`
+construction plus a single-goal reasoning skeleton rather than general AND/OR planning, positive Horn reasoning and
+several finite typed methods rather than every listed logic, and provider-specific retrieval/caches rather than the
+complete future catalog. DS003, DS008, DS015, DS020, and DS022 state those exact boundaries. Documentation must not
+infer an executor from the appearance of a mechanism in this ownership list.
 
 A new mechanism belongs in `src` when its behavior is independent of the vocabulary and topic of the benchmark. Passive-voice semantic-role inversion, quantifier scope, temporal state supersession, unification, backtracking and proof search are representative examples.
 
@@ -63,7 +65,11 @@ The generic grammar and semantic composition of the CNL belong in `src`. Languag
 
 The distinction is important during document ingestion. If the sentence fails because the word `purchase` is unknown but the `buy` event frame already exists, a lexical mapping belongs in the relevant KB. If all passive constructions fail, the missing operation is grammatical and belongs in `src`.
 
-A new CNL form must not be added merely because one source document uses an unusual sentence. It should first be handled by the optional simplifier or treated as unsupported. Promotion into the generic grammar requires evidence across independent examples and a regression suite that demonstrates stable semantics.
+A new CNL form must not be added merely because one source document uses an unusual sentence. DS022 first permits a
+bounded deterministic interpretation proposal; if local recovery is exhausted, an operator may explicitly enable the
+DS013 Language Agent, otherwise the form remains unsupported. Promotion into the direct grammar or the reviewed
+heuristic catalog requires evidence across independent examples, renamed and meaning-changing controls, confidence
+calibration where applicable, and a regression suite that demonstrates stable semantics.
 
 ### 6. Multiple KBs and overlays
 
@@ -87,15 +93,21 @@ The desired long-term shape is a compact, highly tested core; rich but declarati
 
 ### Runtime phase boundaries
 
-The deployed path is language front-end → accepted Semantic IR → task frame → catalog discovery → shard and method
-planning → bounded execution → proof verification → result realization. DS003, DS008, DS020, DS015, and DS009 own
-those typed boundaries in order. DS004 owns construction and promotion; DS017 owns evaluation-pool isolation. The
-runtime does not discover training files, invoke a coding agent, download a source, or execute a KB payload.
+The direct answer path is language front-end → accepted Semantic IR → task frame → catalog discovery → shard and
+method planning → bounded execution → proof verification → result realization. After direct `UNPARSED`, the default
+text interface may instead run the DS022 deterministic candidate ensemble, reparse an eligible candidate with
+query-local episode state, or recognize an explicit artifact request and execute bounded extractive construction. Only
+after local recovery is exhausted may an explicitly enabled DS013 Language Agent propose another reparse candidate.
+DS003, DS022, DS013, DS008, DS020, DS015, and DS009 own those typed boundaries. DS004 owns construction and promotion;
+DS017 owns evaluation-pool isolation. The runtime does not discover training files, invoke a coding agent, download a
+source, or execute a KB payload.
 
 If the primary path cannot establish an answer, a bounded related-evidence phase may query already selected declarative
-indexes under DS009 and DS020. This remains trusted generic retrieval in `src`; source facts and lexical neighborhoods
-remain KB data. The phase cannot execute KB content, change the primary status, or pass evidence into the DS013
-language-only normalizer.
+indexes under DS009, DS020, and the exact DS022 work policy. This remains trusted generic retrieval in `src`; source
+facts and lexical neighborhoods remain KB data. Ordinary failure grounding cannot execute KB content, change the
+primary status, or pass evidence into the DS013 language-only normalizer. A separately identified DS022 artifact
+request may select related records as cited source claims in a `PARTIAL` extractive result; that route is construction,
+not a proof method, and records every selected contributor without upgrading relevance to truth.
 
 ### Capability descriptors
 

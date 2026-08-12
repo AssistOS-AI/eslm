@@ -150,6 +150,32 @@ function providerOutcome(matches, frame) {
     : mergedAgreement(answered, frame);
 }
 
+function providerBudgetResult(frame, diagnostic) {
+  return {
+    status: 'RESOURCE_LIMIT',
+    answer: 'I stopped before provider retrieval because the selected bounded work policy cannot cover the '
+      + 'complete provider search.',
+    values: [],
+    provenance: [],
+    reasoning: { method: 'bounded-provider-routing', complete: false, diagnostic },
+    query: frame ? { factoidFrame: frame } : { operation: 'direct-provider-question' },
+    learned: [], learnedRules: [], context: {},
+  };
+}
+
+function providerLimits(options = {}) {
+  const maximumSources = options.maximumSources ?? 64;
+  const maximumParaphrases = options.maximumParaphrases ?? 16;
+  if (!Number.isSafeInteger(maximumSources) || maximumSources < 1 || maximumSources > 64) {
+    throw new Error('Provider maximumSources must be an integer from 1 to 64.');
+  }
+  if (!Number.isSafeInteger(maximumParaphrases) || maximumParaphrases < 1
+    || maximumParaphrases > 16) {
+    throw new Error('Provider maximumParaphrases must be an integer from 1 to 16.');
+  }
+  return { maximumSources, maximumParaphrases };
+}
+
 async function collectProviderOutcomes(providers, operation, ask) {
   const ordered = [...providers].toSorted((left, right) =>
     left.manifest.id.localeCompare(right.manifest.id));
@@ -171,10 +197,31 @@ async function collectProviderOutcomes(providers, operation, ask) {
  * Ask every loaded provider that accepts one of the semantically equivalent
  * surfaces in a factoid frame. Provider order is never an answer-selection rule.
  */
-export async function routeFactoidQuestion(providers, text) {
+export async function routeFactoidQuestion(providers, text, options = {}) {
   const frame = parseFactoidQuestion(text);
   if (!frame || !Array.isArray(providers) || providers.length === 0) {
     return { frame, result: undefined, consultedProviders: [], providerErrors: [] };
+  }
+  const limits = providerLimits(options);
+  if (providers.length > limits.maximumSources) {
+    return {
+      frame,
+      result: providerBudgetResult(
+        frame, `${providers.length} sources exceed the ${limits.maximumSources}-source limit.`,
+      ),
+      consultedProviders: [],
+      providerErrors: [],
+    };
+  }
+  if (frame.candidates.length > limits.maximumParaphrases) {
+    return {
+      frame,
+      result: providerBudgetResult(
+        frame, `${frame.candidates.length} paraphrases exceed the ${limits.maximumParaphrases}-paraphrase limit.`,
+      ),
+      consultedProviders: [],
+      providerErrors: [],
+    };
   }
   const collected = await collectProviderOutcomes(
     providers, 'factoid-question', (provider) => askProvider(provider, frame),
@@ -192,9 +239,19 @@ export async function routeFactoidQuestion(providers, text) {
  * frame. This preserves legacy provider-specific surfaces without allowing
  * registration order to select among incompatible semantic answers.
  */
-export async function routeDirectProviderQuestion(providers, text) {
+export async function routeDirectProviderQuestion(providers, text, options = {}) {
   if (!Array.isArray(providers) || providers.length === 0) {
     return { result: undefined, consultedProviders: [], providerErrors: [] };
+  }
+  const limits = providerLimits(options);
+  if (providers.length > limits.maximumSources) {
+    return {
+      result: providerBudgetResult(
+        undefined, `${providers.length} sources exceed the ${limits.maximumSources}-source limit.`,
+      ),
+      consultedProviders: [],
+      providerErrors: [],
+    };
   }
   const collected = await collectProviderOutcomes(
     providers,

@@ -110,6 +110,8 @@ export class CodexLanguageNormalizer {
     this.command = options.command ?? 'codex';
     this.timeoutMs = Number(options.timeoutMs ?? 120_000);
     this.cacheEnabled = options.cache !== false;
+    this.onExternalInvocation = typeof options.onExternalInvocation === 'function'
+      ? options.onExternalInvocation : undefined;
     this.cacheDirectory = resolve(
       options.cacheDirectory ?? join(PROJECT_ROOT, 'training/.cache/codex-normalization'),
     );
@@ -212,6 +214,13 @@ export class CodexLanguageNormalizer {
         const repairErrors = attempt === 0 ? initialFeedback : validation.errors;
         const responsePath = join(workspace, 'response.json');
         await rm(responsePath, { force: true });
+        this.onExternalInvocation?.(Object.freeze({
+          phase: 'language-agent-interpretation',
+          adapter: 'codex',
+          model: this.model,
+          attempt: attempt + 1,
+          maximumAttempts: remainingAttempts,
+        }));
         const execution = await spawnBoundedNormalizer(invocation.command, invocation.args, {
           cwd: workspace,
           input: normalizationPrompt(input, route, repairErrors, episode.previousCandidate),

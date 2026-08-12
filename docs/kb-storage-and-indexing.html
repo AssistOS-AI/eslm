@@ -7,7 +7,7 @@
   C[Canonical JSONL] --> P[Deterministic compiler]
   P --> S[Immutable shards and indexes]
   S --> Q[Exact query router]
-  Q --> M[Reasoning method]</pre><figcaption>Canonical records define meaning. Compilation creates validated access paths. Routing selects the exact candidate shards for a typed subgoal, and a reasoning method consumes verified records. Cache residence changes I/O only.</figcaption></figure>
+  Q --> M[Reasoning method]</pre><figcaption>Canonical knowledge to bounded execution.</figcaption></figure><p class="diagram-explanation">Canonical records define meaning. Compilation creates validated access paths. Routing selects the exact candidate shards for a typed subgoal, and a reasoning method consumes verified records. Cache residence changes I/O only.</p>
 
 <h2>Canonical record envelope</h2>
 <p><code>src/kb/schema.mjs</code> accepts thirteen record types: term, lexeme, assertion, event, role edge, semantic frame, rule, constraint, context, provenance, alignment, retraction, and plan. Every record has <code>recordType</code>, <code>recordId</code>, <code>kbNamespace</code>, <code>schemaVersion</code>, and <code>provenanceRefs</code>. Non-provenance records require at least one provenance reference. The validator then checks record-specific fields and the complete reference graph.</p>

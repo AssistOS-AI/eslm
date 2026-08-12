@@ -184,6 +184,7 @@ export function retrieveModelGrounding({
   if (semanticQuery?.object) values.add(semanticQuery.object);
   if (semanticQuery?.predicate) predicateIds.add(semanticQuery.predicate);
   const candidateFacts = new Map();
+  const candidatePostingSizes = new Map();
   const addPosting = (posting = []) => {
     if (lookupCount >= maximumLookups) { truncated = true; return; }
     lookupCount += 1;
@@ -196,7 +197,9 @@ export function retrieveModelGrounding({
         continue;
       }
       if (candidateFacts.size >= MAX_CANDIDATE_FACTS) { truncated = true; return; }
-      candidateFacts.set(`${fact.kbId ?? ''}\u0000${fact.id}`, fact);
+      const key = `${fact.kbId ?? ''}\u0000${fact.id}`;
+      candidateFacts.set(key, fact);
+      candidatePostingSizes.set(key, Math.max(candidatePostingSizes.get(key) ?? 0, posting.length));
     }
   };
   for (const entityId of matchedEntities.keys()) {
@@ -245,7 +248,10 @@ export function retrieveModelGrounding({
         support: fact.support ?? [],
         depth: fact.depth,
       } } : {}),
-      relevance: { score, reasons },
+      relevance: {
+        score, reasons,
+        activePostingSize: candidatePostingSizes.get(`${fact.kbId ?? ''}\u0000${fact.id}`) ?? 0,
+      },
     }));
   }
   const ordered = orderGroundingEntries(candidates).slice(0, maximumEntries * 3);

@@ -45,6 +45,15 @@ export function validateDocumentationDiagrams(file, html) {
     if (!/<figcaption(?:\s[^>]*)?>\s*\S[\s\S]*?<\/figcaption>/u.test(figure[1])) {
       throw new Error(`${file} must explain each Mermaid figure with a non-empty figcaption.`);
     }
+    const caption = figure[1].match(/<figcaption(?:\s[^>]*)?>([\s\S]*?)<\/figcaption>/u)?.[1]
+      .replace(/<[^>]+>/gu, ' ').replace(/\s+/gu, ' ').trim();
+    if (caption.length > 72) {
+      throw new Error(`${file} Mermaid captions must be short labels; put the explanation in normal prose.`);
+    }
+    const afterFigure = html.slice((figure.index ?? 0) + figure[0].length);
+    if (!/^\s*<p class="diagram-explanation">\s*\S/gu.test(afterFigure)) {
+      throw new Error(`${file} must follow each diagram with a left-aligned prose explanation.`);
+    }
     explainedDiagrams += figureDiagrams.length;
   }
   if (explainedDiagrams !== diagrams.length) {
@@ -57,6 +66,11 @@ export function validateDocumentationDiagrams(file, html) {
     if (!/^flowchart LR\s*$/mu.test(diagram[1])) throw new Error(`${file} diagrams must use a left-to-right flow.`);
     const edges = (diagram[1].match(/-->/gu) ?? []).length;
     if (edges > 5) throw new Error(`${file} diagram has ${edges} edges; split or explain it in prose.`);
+    for (const label of diagram[1].matchAll(/\[([^\]\n]+)\]/gu)) {
+      if (label[1].trim().length > 42) {
+        throw new Error(`${file} Mermaid node labels must stay within 42 characters.`);
+      }
+    }
   }
 }
 
@@ -76,7 +90,8 @@ export async function checkDocumentation() {
     'reasoning-deduction-and-models.html', 'reasoning-defaults-and-abduction.html',
     'reasoning-state-time-and-relations.html', 'reasoning-narrative-and-compatibility.html',
     'language-agent.html', 'research-decisions.html', 'specification-architecture.html',
-    'kb-storage-and-indexing.html', 'symbolic-document-kbs.html', 'grounded-failure.html', 'sources.html', 'specsLoader.html',
+    'kb-storage-and-indexing.html', 'symbolic-document-kbs.html', 'grounded-failure.html', 'heuristic-language.html',
+    'sources.html', 'specsLoader.html',
     'benchmark-logicbench.html', 'benchmark-iibench.html', 'benchmark-proofwriter.html',
     'benchmark-prontoqa.html', 'benchmark-folio.html', 'assets/site.css',
     'assets/mermaid-loader.mjs', 'assets/public-benchmark-dashboard.mjs', 'assets/status-dashboard.mjs',

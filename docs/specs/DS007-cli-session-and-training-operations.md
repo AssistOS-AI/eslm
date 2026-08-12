@@ -3,7 +3,7 @@ id: DS007
 title: CLI, Session, and Training Operations
 status: in-progress
 owner: interface
-summary: Defines interactive and one-shot execution, declarative KB construction and registration, Coding Agent-based training, benchmark operations, reproducibility, and structured output.
+summary: Defines local-first one-shot and interactive execution, work profiles, declarative KB operations, supervised training, benchmark commands, reproducibility, and structured output.
 ---
 
 # DS007 CLI, Session, and Training Operations
@@ -22,7 +22,9 @@ The CLI is the primary operational interface for KB construction, registration, 
 
 A KB construction operation accepts one or more documents, a target KB identity, an existing KB version when updating, and the approved coding-agent skills. It starts the document-to-KB process, permits supervised code proposals when necessary, runs validation and produces canonical and compiled KB packages plus a report.
 
-The operation must support a mode that forbids changes to `src`. This mode is useful for determining how far the current CNL and reasoning system can process a source using only KB additions and validated LLM normalization.
+The operation must support a mode that forbids changes to `src`. This mode is useful for determining how far the
+current CNL and reasoning system can process a source using only KB additions, the unchanged deterministic DS022
+recovery layer, and, when explicitly authorized, validated DS013 Language Agent normalization.
 
 ### 3. KB registration operation
 
@@ -39,6 +41,13 @@ statement is rejected transactionally; tentative facts and history do not leak i
 planning remains a target owned by DS008 rather than a current CLI claim.
 
 The user may supply temporary facts or assumptions. These enter a session-scoped context and do not modify persistent KBs unless a separate persistence operation is authorized.
+
+After a direct `UNPARSED`, ordinary CLI execution runs the bounded DS022 heuristic layer by default. A changed accepted
+interpretation is labeled `heuristic-cnl-approximated`, exposes its votes and confidence, returns a strict proof only as
+top-level `DEFEASIBLE`, and discards every fact or rule learned only from that interpreted episode. Common explicit
+summary, expansion, explanation, comparison, outline, retrieval, essay, report, and document requests may instead
+produce a dependency-ordered request plan. The implemented construction route is extractive and returns `PARTIAL`
+with citations and gaps; it is not the general multi-goal planner promised by DS008.
 
 ### 5. Interactive execution
 
@@ -95,10 +104,11 @@ trace, unresolved subgoals, language route, optional failure-time grounding bund
 
 The current `eslm-runtime-result-v1` is an implemented, stage-dependent subset. Every text result exposes the protocol,
 status, answer, session and episode state, language route, the three KB-version sets, unresolved subgoals, and
-model/memory metadata. Normalized `input`, accepted `query`, `taskFrame`, `plan`, semantic `values`, answer
+model/memory metadata plus the immutable DS022 `workPolicy` snapshot. Normalized `input`, accepted `query`, `taskFrame`, `plan`, semantic `values`, answer
 `provenance`, and a `reasoning` summary appear only when execution reached the stage that can truthfully construct
 them; an early `UNPARSED` result can omit all of those fields. The result may additionally expose grounding, a
-typed-task witness, normalization receipts, or profiler measurements. It does not yet promise a confidence object, a
+typed-task witness, heuristic approximation and request-plan receipts, extractive synthesis details, Language Agent
+normalization receipts, or profiler measurements. It does not yet promise a general answer-confidence object, a
 standalone accepted-Semantic-IR field, loaded-shard identifiers, complete per-step receipts, or measured resources on
 an ordinary non-profiled call. Clients must branch on status and feature-detect optional fields rather than infer them
 from the target example in DS008.
@@ -112,15 +122,19 @@ memory. Consumers must read the requested policy and reserve from the same snaps
 provider count.
 
 `usedKbVersions` lists only KBs whose records or policy contributed to the primary result. Merely loading, selecting,
-consulting, or returning a KB in the grounding bundle does not make it used.
+consulting, or returning a KB in ordinary failure grounding does not make it used. The explicit
+`heuristic-request-synthesis` route is the narrow exception: records actually selected and cited in its `PARTIAL`
+artifact are source-claim contributions, so their package identities appear in `usedKbVersions` and their records in
+top-level provenance. Unselected grounding entries never become contributors.
 
 Human-readable output may be concise, but a machine-readable result must be available for benchmark evaluation and agent diagnostics.
 
-When the runtime cannot answer but returns related KB records, one-shot JSON keeps the primary `answer` unchanged and
-serializes `grounding` separately. Interactive output prints the primary status and answer first, then a visibly
-separated “Related KB evidence — not an answer” section. `/trace` distinguishes answer premises from grounding search
-receipts and exposes incomplete coverage. This presentation is not permission to synthesize a new answer inside the
-symbolic runtime.
+When the runtime cannot answer but returns ordinary related KB records, one-shot JSON keeps the primary `answer`
+unchanged and serializes `grounding` separately. Interactive output prints the primary status and answer first, then a
+visibly separated “Related KB evidence — not an answer” section. `/trace` distinguishes answer premises from grounding
+search receipts and exposes incomplete coverage. Only a request recognized before retrieval under DS022 may enter the
+separately named extractive synthesis route; its `PARTIAL` answer visibly cites selected source claims and states the
+remaining gaps. A generic inability result cannot acquire that route after retrieval merely because records exist.
 
 ### 9. Determinism and reproducibility
 
@@ -143,17 +157,30 @@ The canonical executable is `node src/cli.mjs` or the package bin `eslm`. With n
 
 `train validate` currently validates an existing compiled KB package through the trusted host. Candidate canonical JSONL is checked first by the portable validator included in the copied skill and again by `kb compile`, whose host validator is authoritative. Candidate compilation, package validation, catalog registration, and publication are intentionally distinct gates. Promotion is not yet exposed as a command: when implemented, it must remain an explicit reviewed operation with a named source candidate and destination version; passing tests or compiling successfully must never authorize promotion by itself.
 
-Dataset acquisition, source probing, compilation, evaluation, benchmark execution, external prediction export/import, and documentation publication remain explicit operations. No direct or deployed-runtime inference path downloads data or calls an agent. The DS013 operator-side normalization wrapper is the only agent-call exception exposed beside inference commands. The general CLI enables that wrapper by default, labels it in result metadata, and invokes it only after `UNPARSED`; it remains outside the deployed runtime. `--no-external-language-agent` removes the wrapper from the command. Network acquisition is never an implicit effect of asking a question, and no dataset credential is inferred from the normalization profile.
+Dataset acquisition, source probing, compilation, evaluation, benchmark execution, external prediction export/import,
+and documentation publication remain explicit operations. No direct or deployed-runtime inference path downloads data
+or calls an agent. The DS013 operator-side normalization wrapper is the only agent-call exception exposed beside
+inference commands. It is disabled by default and is added only by `--external-language-agent` or interactive
+`/normalize on`; even then, direct execution and DS022 local recovery run before it. `--no-external-language-agent`
+explicitly selects the same entirely local profile used by default. Network acquisition is never an implicit effect
+of asking a question, and no dataset credential is inferred from the normalization profile.
 
 ### Interactive commands and session state
 
 The current interactive command set exposes help, installed and loaded KBs, model and selected versions, memory policy,
-normalization policy, last trace, last available profile, whole-session clearing, bounded examples, and the smoke
-regression. `/model` reports the retained fact count; structured results expose the full overlay and provenance.
+DS022 work policy, normalization policy, last trace, last available execution profile, whole-session clearing, bounded
+examples, and the smoke regression. `/work` displays every effective heuristic, Horn, provider, and grounding bound;
+`/work PROFILE` rebuilds the runtime with `quick`, `balanced`, `deep`, or `exhaustive-bounded` while retaining selected
+KB identities and accepted session state. `/model` reports the retained fact count; structured results expose the full
+overlay and provenance.
 Fine-grained fact inspection and retraction plus interactive clarification remain acceptance criteria for a later
 command revision. Session assertions retain provenance, and an uncertain conclusion is never inserted as a fact.
 
-Readline Tab completion covers slash-command names, the declared values of `/normalize` and `/memory`, and cataloged or registered KB identifiers for `/load` and `/unload`, including the active comma-separated identifier fragment. Completion proposes syntax and identifiers only. It never executes a command, loads a KB, changes the normalization profile, or mutates session state. Ordinary language input is returned unchanged so pressing Tab while composing a question cannot rewrite its meaning.
+Readline Tab completion covers slash-command names, the declared values of `/normalize`, `/memory`, and `/work`, and
+cataloged or registered KB identifiers for `/load` and `/unload`, including the active comma-separated identifier
+fragment. Completion proposes syntax and identifiers only. It never executes a command, loads a KB, changes a work or
+normalization profile, or mutates session state. Ordinary language input is returned unchanged so pressing Tab while
+composing a question cannot rewrite its meaning.
 
 The session context is an explicit overlay and can be serialized in structured output. It does not mutate a published
 KB. A follow-up may refer to prior entities only through bounded discourse state that remains inspectable. When several
@@ -183,14 +210,26 @@ Smoke output is review evidence, not a progress animation. It prints one represe
 The CLI exposes the DS013 operator profile through the canonical flags `--external-language-agent`,
 `--no-external-language-agent`, `--language-agent-model`, `--language-agent-timeout-ms`, and
 `--no-normalization-cache`, plus interactive `/normalize`, `/normalize on`, and `/normalize off`. The assisted profile
-is the general CLI default; canonical verification, public probe publication, sensitive input, and deployed-style
-reproduction select the offline flag explicitly. Product-specific normalization flags, including the former
-`--no-codex-normalize`, are rejected rather than retained as aliases; scripts must use the role-based interface.
+is disabled by default. An operator opts in explicitly after considering disclosure; canonical verification, public
+probe publication, sensitive input, and deployed-style reproduction keep it disabled. Product-specific normalization
+flags, including the former `--no-codex-normalize`, are rejected rather than retained as aliases; scripts must use the
+role-based interface.
 
 Startup, status, structured results, and human output disclose the active adapter, model, cache policy, route, proposal
 and invocation counts, original input, transformed English when accepted, host validation, and final symbolic result.
 DS013 exclusively defines the trigger, proposal feedback, authority, validation, cache, and failure routes. Loading a KB
 or changing session state never changes the Language Agent policy.
+
+### Work profiles and bounded overrides
+
+`--work-profile quick|balanced|deep|exhaustive-bounded` selects one immutable `eslm-work-policy-v1`; `balanced` is the
+default. The CLI also accepts the validated numeric override families `--heuristic-*`, `--horn-*`, `--provider-*`, and
+`--grounding-*` documented in help. Each override names one exact bound and is rejected when unknown, fractional where
+an integer is required, negative, inconsistent, or above its absolute ceiling. Human startup and `/work` output show
+the effective profile, while every machine result carries the complete requested/effective snapshot. A larger profile
+may complete work that a smaller one could not, but it cannot alter logic, trust, tie-breaking, session authority, or
+benchmark denominators. `exhaustive-bounded` means the largest finite policy supplied by this release, not an unbounded
+scan.
 
 ## Decisions & Questions
 

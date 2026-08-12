@@ -8,7 +8,7 @@
   S[Official relation sentences] --> F[Typed vector facts]
   F --> P[Coordinate propagation]
   P --> V[Replayable path sum]
-  V --> O[Host-only label]</pre><figcaption>The label is joined only after the vector result exists. Relation words and templates never enter generic core control flow.</figcaption></figure>
+  V --> O[Host-only label]</pre><figcaption>Spatial relations with label isolation.</figcaption></figure><p class="diagram-explanation">The label is joined only after the vector result exists. Relation words and templates never enter generic core control flow.</p>
 
 <h2 id="protocol">Source and denominator</h2>
 <p>ESLM pins the corrected March 2024 official dataset release and the official generator repository separately. The source contains 155,000 rows: 50,000 training, 5,000 validation, and 100,000 test. Every JSONL row is streamed and retained; no case is rejected by file size. An execution row states which split and hop depths ran; source inventory alone is not an execution denominator.</p>

@@ -8,6 +8,7 @@ import { appendFile, writeFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
 import { EslmEngine } from './runtime/engine.mjs';
 import { EslmRuntime } from './runtime/runtime.mjs';
+import { HeuristicLanguageRuntime } from './runtime/heuristic-language-runtime.mjs';
 import { LanguageAgentAssistedRuntime } from './runtime/language-agent-assisted-runtime.mjs';
 import {
   CodexLanguageNormalizer, DEFAULT_CODEX_NORMALIZATION_MODEL,
@@ -32,72 +33,23 @@ import { createCoreModel } from './runtime/core-model.mjs';
 import { PROJECT_ROOT, resolveProjectPath } from './paths.mjs';
 import { prepareTraining, validateGeneratedModel, writeCandidateSkeleton } from './training/packet.mjs';
 import { prepareAgentWorkspace, runCodexTraining, TRAINING_SKILLS } from './training/agent-runner.mjs';
-import { parseArgs } from './util.mjs';
-import { editDistance } from './util.mjs';
+import { editDistance, parseArgs } from './util.mjs';
 import { createTerminalStyle } from './terminal-style.mjs';
 import {
   interactiveCountAndSeed, interactiveExamplePage, interactiveExamples, interactiveHelp, interactiveKbText,
-  interactiveResultText, interactiveSmoke, memoryText, modelText, profileText, traceText,
+  interactiveResultText, interactiveSmoke, memoryText, modelText, profileText, traceText, workText,
 } from './interface/interactive-presenter.mjs';
 import { benchmarkCommand } from './interface/benchmark-command.mjs';
 import {
-  languageAgentNormalizationEnabled, withLanguageAgentNormalization,
+  languageAgentNormalizationEnabled, withLanguageAgentNormalization, withWorkProfile,
+  workPolicyFromCliOptions,
 } from './interface/cli-runtime-policy.mjs';
 import { interactiveCompletions } from './interface/interactive-completion.mjs';
+import { cliHelpText, cliStartupText } from './interface/cli-help.mjs';
 const runFile = promisify(execFile);
 let writeOutput = (text) => stdout.write(text);
-
-function printJson(value) {
-  writeOutput(`${JSON.stringify(value, null, 2)}\n`);
-}
-function help() {
-  stdout.write(`ESLM — offline executable symbolic language model
-
-Usage:
-  eslm                         interactive conversation
-  eslm ask <question>          answer one question
-  eslm run --input FILE [--output FILE]
-  eslm train prepare --input FILE --namespace ID [--output FILE]
-  eslm train candidate --packet FILE --output DIRECTORY
-  eslm train run --packet FILE --output DIRECTORY --skill NAME [--dry-run]
-  eslm train validate [--model KB_PACKAGE_DIRECTORY]
-  eslm dataset catalog
-  eslm dataset fetch --dataset ID
-  eslm dataset prepare --dataset ID [--chunk-size 500]
-  eslm dataset status --dataset ID
-  eslm corpus catalog
-  eslm corpus status [--corpus ID[,ID]|all]
-  eslm corpus probe --corpus oewn-2025 --archive FILE
-  eslm kb list
-  eslm kb show ID
-  eslm kb register MANIFEST
-  eslm kb unregister ID
-  eslm kb compile --input RECORDS --output DIRECTORY --id ID --version VERSION --namespace ID
-  eslm kb build ID|all
-  eslm kb validate ID|all
-  eslm evaluate --suite FILE [--publish]
-  eslm benchmark catalog
-  eslm benchmark references
-  eslm benchmark status
-  eslm benchmark probe --benchmark all|ID[,ID] [--publish]
-  eslm benchmark run --suite FILE [--publish]
-  eslm benchmark export --suite FILE --output FILE
-  eslm benchmark score-predictions --suite FILE --input FILE --protocol-metadata FILE [--output FILE]
-  eslm benchmark import-results --input FILE [--output FILE]
-  eslm docs check|publish
-
-Global options:
-  --kb quick,oewn-2025          declarative knowledge packages; use --kb all for every catalog entry
-  --memory-mb 512               soft process-memory target; enables adaptive shard loading
-  --memory-policy auto          auto, eager, or lazy public-KB loading
-  --color auto                  auto, always, or never; structured output is never colored
-  --profile                      include per-stage timing, CPU, memory deltas, and work counts
-  --external-language-agent      explicitly select the default assisted CLI profile
-  --no-external-language-agent   keep this command entirely offline and direct-symbolic
-  --language-agent-model MODEL   adapter model; default ${DEFAULT_CODEX_NORMALIZATION_MODEL}
-  --no-normalization-cache       do not read or write the ignored operator normalization cache
-`);
-}
+function printJson(value) { writeOutput(`${JSON.stringify(value, null, 2)}\n`); }
+function help() { writeOutput(cliHelpText(DEFAULT_CODEX_NORMALIZATION_MODEL)); }
 async function selectedRuntimeKbIds(value) {
   if (!value) return [];
   const registered = await registeredKnowledgeBases();
@@ -110,16 +62,22 @@ async function selectedRuntimeKbIds(value) {
   return [...new Set(ids)];
 }
 async function engineFor(options) {
+  const workPolicy = workPolicyFromCliOptions(options);
   const base = await createCoreModel(options.model);
   const selected = await selectedRuntimeKbIds(options.kb);
   const publicIds = selected.filter((id) => PUBLIC_KB_CATALOG[id]);
   const graphIds = selected.filter((id) => !PUBLIC_KB_CATALOG[id]);
   const knowledgeBases = await loadKnowledgeBases(graphIds.join(','));
-  const core = new EslmEngine(mergeModels(base, knowledgeBases), { profile: options.profile });
+  const core = new EslmEngine(mergeModels(base, knowledgeBases), {
+    profile: options.profile,
+    workPolicy,
+  });
   const loaded = await loadPublicKnowledgeBases(publicIds, {
     memoryMb: options['memory-mb'], memoryPolicy: options['memory-policy'],
   });
-  const runtime = new EslmRuntime(core, loaded.providers, selected, loaded.memoryPlan);
+  const runtime = new HeuristicLanguageRuntime(
+    new EslmRuntime(core, loaded.providers, selected, loaded.memoryPlan, workPolicy),
+  );
   if (!languageAgentNormalizationEnabled(options)) return runtime;
   const timeoutMs = Number(options['language-agent-timeout-ms'] ?? options['codex-timeout-ms'] ?? 120_000);
   if (!Number.isFinite(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 600_000) {
@@ -129,6 +87,7 @@ async function engineFor(options) {
     model: options['language-agent-model'] ?? options['codex-model'] ?? DEFAULT_CODEX_NORMALIZATION_MODEL,
     command: options['language-agent-command'] ?? options['codex-command'], timeoutMs,
     cache: !options['no-normalization-cache'],
+    onExternalInvocation: options.onLanguageAgentInvocation,
   }));
 }
 function globExpression(value) {
@@ -167,7 +126,12 @@ async function matchInteractiveKnowledgeBases(value, { includeQuick = true } = {
 
 async function chat(options) {
   const style = createTerminalStyle(options.color, stdout);
-  let runtimeOptions = withLanguageAgentNormalization(options, languageAgentNormalizationEnabled(options));
+  let runtimeOptions = {
+    ...withLanguageAgentNormalization(options, languageAgentNormalizationEnabled(options)),
+    onLanguageAgentInvocation: () => stdout.write(
+      `${style.dim('Thinking: interpreting with the configured Language Agent…')}\n`,
+    ),
+  };
   let selected = await selectedRuntimeKbIds(options.kb ?? Object.keys(PUBLIC_KB_CATALOG).join(','));
   let engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
   const registeredIds = (await registeredKnowledgeBases()).map((entry) => entry.kbId);
@@ -181,7 +145,8 @@ async function chat(options) {
   });
   let context = {};
   let last;
-  stdout.write(`${style.bold(style.blue('ESLM'))} is ready. Public knowledge: ${style.green(selected.join(', ') || 'none')}.\nUse ${style.blue('/help')} for an explanation, ${style.blue('/examples')} for varied examples, or ${style.blue('/smoke')} to execute a regression check. Press Tab to complete commands and KB names. Language Agent normalization is ${runtimeOptions['external-language-agent'] ? style.yellow('on') : style.green('off')}. The current Language Agent adapter invokes Codex.\n`);
+  stdout.write(`${cliStartupText(style, selected, engine.workPolicy,
+    runtimeOptions['external-language-agent'])}\n`);
   while (true) {
     let answer;
     try { answer = await terminal.question(style.blue('eslm> ')); }
@@ -199,6 +164,18 @@ async function chat(options) {
       continue;
     }
     if (line === '/memory') { stdout.write(`${memoryText(engine, style)}\n`); continue; }
+    if (line === '/work') { stdout.write(`${workText(engine, style)}\n`); continue; }
+    if (line.startsWith('/work ')) {
+      const value = line.slice('/work '.length).trim().toLocaleLowerCase('en-US');
+      if (!['quick', 'balanced', 'deep', 'exhaustive-bounded'].includes(value)) {
+        stdout.write(`${style.red('Expected quick, balanced, deep, or exhaustive-bounded.')}\n`);
+        continue;
+      }
+      runtimeOptions = withWorkProfile(runtimeOptions, value);
+      engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+      stdout.write(`${workText(engine, style)}\n`);
+      continue;
+    }
     if (line === '/normalize') {
       const configuration = engine.normalizationConfiguration?.();
       stdout.write(configuration
@@ -489,8 +466,8 @@ async function docs(args) {
 async function dispatch(arguments_) {
   const { positional, options } = parseArgs(arguments_);
   const [command, ...args] = positional;
-  if (!command || command === 'chat') return chat(options);
   if (['help', '-h'].includes(command) || options.help) return help();
+  if (!command || command === 'chat') return chat(options);
   if (command === 'ask') return ask(args, options);
   if (command === 'run') return runBatch(options);
   if (command === 'train') return train(args, options);

@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Defaults, induction, and abduction — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head>
 <body><div data-include="partials/header.html"></div><main><p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Foundations / Reasoning / Defaults and abduction</p>
-<h1>Defaults, induction, and abduction without pretending they are deduction</h1>
+<h1>Qualified reasoning through defaults, induction, and abduction</h1>
 <p class="lead">Incomplete worlds require conclusions weaker than theoremhood. ESLM separates three such operations: configured induction generalizes a recurring property, guarded abduction proposes premises that could explain an observation, and preferred entailment asks what holds in every best finite model under explicit default priorities.</p>
 <figure class="diagram"><pre class="mermaid">flowchart LR
   E[Observed evidence] --> H[Hypothesis method]
   P[Declared policy] --> H
   H --> A[Alternatives and support]
-  A --> S[Defeasible or underdetermined result]</pre><figcaption>Evidence and an explicit policy jointly produce hypotheses or preferred models. The result records alternatives, counterevidence, and the weaker epistemic status; it is never inserted as an unqualified source fact.</figcaption></figure>
+  A --> S[Defeasible or underdetermined result]</pre><figcaption>Explicit policy produces qualified conclusions.</figcaption></figure><p class="diagram-explanation">Evidence and an explicit policy jointly produce hypotheses or preferred models. The result records alternatives, counterevidence, and the weaker epistemic status; it is never inserted as an unqualified source fact.</p>
 
 <h2>Why non-monotonicity matters</h2>
 <p>Strict deduction is monotonic: adding premises cannot invalidate an already entailed conclusion. A default such as “birds normally fly” behaves differently because evidence that an individual is a penguin can defeat the earlier conclusion. Raymond Reiter formalized this family in <a href="https://doi.org/10.1016/0004-3702(80)90014-4">A Logic for Default Reasoning</a>. Kraus, Lehmann, and Magidor developed a preferential account in <a href="https://doi.org/10.1016/0004-3702(90)90101-5">Nonmonotonic Reasoning, Preferential Models and Cumulative Logics</a>. ESLM implements neither formalism wholesale; it implements one finite prioritized preferred-model policy and names that difference.</p>

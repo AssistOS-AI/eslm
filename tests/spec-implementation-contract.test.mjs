@@ -125,7 +125,7 @@ test('DS008 labels the bounded planner and typed SAT dispatch without claiming g
   assert.deepEqual(descriptor, CORE_METHOD_DESCRIPTORS.datalog);
   const planRecord = examples.find((example) => example.recordType === 'plan');
   assert.doesNotThrow(() => validateCanonicalRecord(planRecord));
-  assert.match(specification, /The current implementation has two distinct bounded dispatch paths:/u);
+  assert.match(specification, /The current implementation has three distinct bounded coordination paths:/u);
   assert.match(specification, /SAT is implemented on the typed-task path/u);
   assert.match(specification, /The current planner does not construct this graph\./u);
   assert.match(specification, /This is the target complete gap shape\./u);

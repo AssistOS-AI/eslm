@@ -9,6 +9,10 @@ test('interactive Tab completion expands slash commands and declared command val
     '/normalize o',
   ]);
   assert.deepEqual(interactiveCompletions('/memory l'), [['/memory lazy'], '/memory l']);
+  assert.deepEqual(interactiveCompletions('/work e'), [
+    ['/work exhaustive-bounded'],
+    '/work e',
+  ]);
 });
 
 test('interactive Tab completion uses KB catalog metadata and comma-separated selections', () => {

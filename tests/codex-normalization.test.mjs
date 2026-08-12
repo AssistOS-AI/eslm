@@ -280,8 +280,10 @@ writeFileSync(output, JSON.stringify(${JSON.stringify(romanianWhereCandidate())}
 process.stdout.write('{"type":"turn.completed"}\\n');
 `, 'utf8');
   await chmod(executable, 0o755);
+  const invocationEvents = [];
   const normalizer = new CodexLanguageNormalizer({
     command: executable, cacheDirectory: join(directory, 'cache'), timeoutMs: 5_000,
+    onExternalInvocation: (event) => invocationEvents.push(event),
   });
   const first = await normalizer.normalize('Unde este Gertrude?');
   const second = await normalizer.normalize('Unde este Gertrude?');
@@ -290,6 +292,14 @@ process.stdout.write('{"type":"turn.completed"}\\n');
   assert.equal(second.status, 'accepted');
   assert.equal(second.cacheHit, true);
   assert.equal(second.receipt.model, DEFAULT_CODEX_NORMALIZATION_MODEL);
+  assert.equal(invocationEvents.length, 1);
+  assert.deepEqual(invocationEvents[0], {
+    phase: 'language-agent-interpretation',
+    adapter: 'codex',
+    model: DEFAULT_CODEX_NORMALIZATION_MODEL,
+    attempt: 1,
+    maximumAttempts: 3,
+  });
 });
 
 test('normalizer escalates from TERM to KILL and completes when a timed-out child ignores TERM', async () => {

@@ -3,7 +3,7 @@ id: DS008
 title: Task Planning, Method Capabilities, Traces, and Results
 status: in-progress
 owner: reasoning
-summary: Defines the current bounded single-goal dispatch, the target capability-aware AND/OR planner, Task Calculus audit operators, traces, and normative result contracts.
+summary: Defines current single-goal, typed-task, and extractive request-plan paths; the target capability-aware AND/OR planner; Task Calculus audit operators; traces; and normative results.
 ---
 
 # DS008 Task Planning, Method Capabilities, Traces, and Results
@@ -14,7 +14,10 @@ The target runtime interprets more than a graph lookup: it identifies goals and 
 executable methods, decomposes work into typed subproblems, monitors resource use, verifies evidence, and diagnoses the
 precise point at which progress stops. The current implementation is a smaller, bounded vertical slice. It constructs a
 single-goal plan skeleton for ordinary language requests and uses an explicit operation-to-executor dispatch table for
-typed tasks. This specification preserves the complete target while labeling that current boundary directly.
+typed tasks. A separate DS022 heuristic request planner can decompose recognized artifact requests into
+dependency-ordered retrieval, correlation, selection, and shaping subrequests, but it executes only bounded extractive
+construction. This specification preserves the complete target while labeling those distinct current boundaries
+directly.
 
 ## Core Content
 
@@ -34,7 +37,10 @@ A complex request may contain several goals and dependencies. The task frame pre
 
 Currently, `taskFrameFromQuery` creates exactly one goal from one parsed query. It records assertions, constraints, an
 output contract, a context stack, a language route, and default or supplied budgets. Multi-goal order and dependency
-semantics remain target behavior rather than a current parser or planner claim.
+semantics remain target behavior for the general semantic planner. The separate DS022 request planner does preserve a
+bounded dependency list for recognized summarize, expand, explain, compare, outline, retrieve, and compose patterns;
+that list is an artifact-construction receipt, not evidence that `taskFrameFromQuery` or `createPlan` implements general
+multi-goal planning.
 
 ### 3. Capability registry
 
@@ -58,8 +64,10 @@ hypotheses.
 The planner should prefer small, typed and verifiable subgoals. It may retrieve knowledge before finalizing the plan because discovered predicates or constraints can change the applicable method set.
 
 The current planner does not construct this graph. It selects one advertised capability for one goal and emits one
-linear audit sequence. References to AND/OR nodes elsewhere in this specification therefore describe the target
-architecture, not the behavior of `createPlan` today.
+linear audit sequence. The DS022 request planner constructs a fixed dependency order among its bounded subrequests but
+does not create alternatives, dynamically expand proof obligations, or interpret arbitrary dependencies. References
+to AND/OR nodes elsewhere in this specification therefore describe the target architecture, not the behavior of
+`createPlan` or the request planner today.
 
 ### 5. Planning and execution
 
@@ -70,6 +78,12 @@ explicitly labeled.
 Execution monitors derived facts, unresolved references, resource use and contradictions. A failed method may trigger another branch. New terms or subgoals may request additional KB shards through the loader.
 
 The planner must not continue indefinitely. Search budgets, depth limits, time limits and memory limits are explicit inputs. Exceeding a budget produces a resource-limit result with the best partial trace rather than a fabricated answer.
+
+The current `eslm-work-policy-v1` supplies exact named bounds for DS022 approximation and request analysis, Horn
+closure, provider search, and failure grounding. Its `quick`, `balanced`, `deep`, and `exhaustive-bounded` profiles are
+physical work choices, not new inference regimes. A larger profile may finish an otherwise bounded frontier, but
+completed executions with the same semantics must agree on values, proof, and provenance. The broader task-frame
+time, memory, and search model shown below remains a target wherever the selected executor does not enforce it.
 
 ### 6. Declarative domain plans
 
@@ -110,7 +124,7 @@ DS015 is the normative catalog for executable method semantics and provider-coor
 does not duplicate those algorithms. The target planner consumes capability descriptors, checks typed preconditions and
 budgets, invokes a bound executor, and preserves its witness and uncertainty status in the task trace.
 
-The current implementation has two distinct bounded dispatch paths:
+The current implementation has three distinct bounded coordination paths:
 
 1. **Ordinary-language path.** `taskFrameFromQuery` creates one goal. `createPlan` maps the query's reasoning tag to
    `deduction`, `induction`, `abduction`, or `temporal-predecessor`, filters registry entries by that capability, chooses
@@ -123,6 +137,11 @@ The current implementation has two distinct bounded dispatch paths:
 2. **Typed-task path.** `EslmEngine.executeTask` uses an allowlisted operation-to-descriptor-and-executor table. Each
    selected trusted executor validates and runs its own typed task, and the result records the method identifier. This
    path does not call `createPlan` and does not construct a general AND/OR graph.
+3. **Heuristic artifact-request path.** After direct `UNPARSED`, the DS022 planner recognizes an explicit output intent,
+   votes over intent and shape candidates, and emits bounded subrequests for supplied-material extraction, per-topic
+   related-record retrieval, correlation, content selection, and output shaping. Its current executor copies selected
+   source sentences and cited KB statements into a `PARTIAL` artifact. It does not call `createPlan`, derive new factual
+   bridges, treat retrieval as proof, or establish general task decomposition.
 
 SAT is implemented on the typed-task path: `decide-boolean-entailment` invokes
 `method:core:scalable-boolean-entailment`, whose semantics and independent certificate verification are defined in
@@ -145,8 +164,9 @@ assumes an executor will later appear.
 
 Currently, ordinary-language plan skeletons emit only OBSERVE, DERIVE, VERIFY, and CONSTRUCT in one fixed order. Those
 labels make the intended phases auditable; they do not prove that the plan object invoked the executor or verifier. The
-engine performs the actual branch described in Section 9. None of THEN, ALL, CHOOSE, EACH, UNTIL, BEAM, MEMO, or
-COMPENSATE is currently an executable planner control.
+engine performs the actual branch described in Section 9. DS022 request subrequests use explicit dependency IDs, but
+those IDs are a fixed bounded construction schedule and do not implement the Task Calculus control vocabulary. None of
+THEN, ALL, CHOOSE, EACH, UNTIL, BEAM, MEMO, or COMPENSATE is currently an executable general-planner control.
 
 DS004 owns the general training and evaluation assignment contract. Language-question execution uses the specific task
 frame below. Every runtime intermediate node must enable execution, verification, selection, caching, provenance,
@@ -157,6 +177,9 @@ effect control, or reuse; a wrapper that only renames prose is invalid.
 The task frame is the authoritative semantic input to planning. It is produced by the language front-end and session
 manager. The following is the target multi-goal-capable shape. The current ordinary-language helper fills the same
 families of fields but places one parsed query object in `goals` and does not yet interpret dependencies among goals.
+The DS022 artifact route returns a task-frame-shaped view whose goals are its explicit request subrecords and whose
+output contract carries artifact, format, length, citation, and unsupported-content policy; clients distinguish it by
+language route and must not treat that view as a general semantic AND/OR graph.
 
 ```json
 {
@@ -289,8 +312,11 @@ This example states the durable target result contract. Current results use `esl
 implemented subset of these fields directly. For PARTIAL, MISSING_KNOWLEDGE, NO_APPLICABLE_METHOD or another
 non-solved status, `answer` may be null and `unresolvedSubgoals` carries structured gap descriptions.
 `selectedKbVersions` is the configured search scope, `consultedKbVersions` is the subset actually queried, and
-`usedKbVersions` contains only KBs whose evidence contributed to the primary result. Failure-time grounding keeps its
-contributor versions inside the separate bundle and never inflates `usedKbVersions`.
+`usedKbVersions` contains only KBs whose evidence contributed to the primary result. Ordinary failure-time grounding
+keeps its contributor versions inside the separate bundle and never inflates `usedKbVersions`. On the explicitly
+planned `heuristic-request-synthesis` route, records copied into the cited `PARTIAL` artifact are primary source-claim
+contributions, so those selected records and their versions appear in top-level provenance and `usedKbVersions`; they
+remain non-entailing evidence and cannot support `SOLVED`.
 
 ### 16. Capability-gap record
 
@@ -313,7 +339,23 @@ more detailed precondition analysis illustrated above.
 
 ### 17. Language-route values
 
-The implemented route vocabulary is `direct-symbolic` for ordinary offline language execution, `direct-symbolic-task-adapter` for an explicit deterministic task projection such as Entity Tracking, `language-agent-normalized` for an accepted assisted rewrite that was reparsed, `language-agent-normalization-rejected` for failed host validation or reparse, and `language-agent-normalization-failed` for an unavailable or unsuccessful subprocess. A rejected candidate uses status `UNVERIFIED_NORMALIZATION`; a subprocess failure preserves the direct `UNPARSED` status and distinguishes the attempted route in the normalization diagnostic. Future symbolic recovery methods must add a named route and tests rather than reuse one of these values ambiguously.
+The implemented route vocabulary is:
+
+- `direct-symbolic` for ordinary offline language execution and `direct-symbolic-task-adapter` for an explicit
+  deterministic task projection such as Entity Tracking;
+- `heuristic-cnl-approximated` for a locally changed candidate accepted through reparse,
+  `heuristic-cnl-ambiguous` when similarly supported accepted candidates differ semantically,
+  `heuristic-request-planned` when an artifact intent was understood but no source material was available, and
+  `heuristic-request-synthesis` for bounded cited `PARTIAL` construction;
+- `language-agent-normalized` for an accepted assisted rewrite that was reparsed,
+  `language-agent-normalization-rejected` for failed host validation or reparse, and
+  `language-agent-normalization-failed` for an unavailable or unsuccessful subprocess.
+
+A changed local interpretation that would otherwise be strict is exposed as `DEFEASIBLE`, and its episode-derived
+premises are query-local. A rejected Language Agent candidate uses status `UNVERIFIED_NORMALIZATION`; a subprocess
+failure preserves the direct `UNPARSED` status and distinguishes the attempted route in the normalization diagnostic.
+The Language Agent routes are reachable only after explicit opt-in and exhaustion of DS022 local recovery. Future
+recovery methods must add a named route and tests rather than reuse one of these values ambiguously.
 
 ## Decisions & Questions
 
@@ -341,14 +383,15 @@ budgets but does not itself enforce them.
 
 Response: That is the behavior the code actually exposes. The ordinary planner returns a selected descriptor and an
 audit skeleton, after which `EslmEngine.ask` executes an explicit reasoning branch. Typed tasks use a different
-allowlisted operation table. Treating either path as a completed general planner would hide missing precondition checks,
-placeholder registry callbacks, absent AND/OR decomposition, and adapter-local solvers. The paths may be unified later
-only when one tested planner owns selection, invocation, budgets, witnesses, and gaps without weakening existing method
-contracts.
+allowlisted operation table. The heuristic artifact route uses a third fixed construction schedule. Treating any of
+these paths as a completed general planner would hide missing precondition checks, placeholder registry callbacks,
+absent AND/OR decomposition, and adapter-local solvers. They may be unified later only when one tested planner owns
+selection, invocation, budgets, witnesses, and gaps without weakening existing method contracts.
 
 ## Conclusion
 
 In the target architecture, a task is solvable only when accepted semantics, relevant declarative evidence, registered
 methods, and budgets compose into a verified plan. Today, bounded single-goal selection and typed operation dispatch
-provide smaller reviewable slices of that architecture. The result contract must identify the path actually used and
-make either its verified composition or its exact gap inspectable.
+provide smaller reviewable reasoning slices, while DS022 provides a separately bounded extractive construction slice.
+The result contract must identify the path actually used and make its verified composition, cited source claims, or
+exact gap inspectable.

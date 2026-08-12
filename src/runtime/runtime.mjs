@@ -22,18 +22,22 @@ import {
 import {
   assertRuntimeResultContract, assertRuntimeTextResultContract, normalizeRuntimeStatus,
 } from './result-contract.mjs';
+import {
+  groundingLimitsFromWorkPolicy, resolveWorkPolicy,
+} from './work-policy.mjs';
 
 function contextSnapshot(context) {
   return sessionContextSnapshot(context);
 }
 
 export class EslmRuntime {
-  constructor(core, providers = [], selected = [], memoryPlan) {
+  constructor(core, providers = [], selected = [], memoryPlan, workPolicy) {
     this.core = core;
     this.providers = canonicalProviders(providers);
     this.selected = [...new Set(selected)].toSorted(compareText);
     this.model = core.model;
     this.memoryPlan = canonicalMemoryPlan(memoryPlan);
+    this.workPolicy = resolveWorkPolicy(workPolicy ?? core.workPolicy);
   }
 
   memorySnapshot() {
@@ -44,23 +48,44 @@ export class EslmRuntime {
     };
   }
 
-  async ask(text, context = {}) {
+  inspectLanguage(text, context = {}) {
+    return this.core.inspectLanguage(text, context);
+  }
+
+  async ask(text, context = {}, executionOptions = {}) {
     try {
       validateSessionRequest(text, context);
     } catch (error) {
       if (error instanceof SessionResourceLimitError
         || error instanceof SessionContextValidationError
-        || error instanceof SessionInputValidationError) return this.core.ask(text, context);
+        || error instanceof SessionInputValidationError) {
+        const refusal = this.core.ask(text, context);
+        return this.#finishPrimary({
+          ...refusal,
+          selectedKbVersions: this.#selectedKbVersions(),
+          consultedKbVersions: [],
+          model: {
+            ...refusal.model,
+            knowledgeBases: this.selected,
+            benchmarkComparable: this.selected.length === 0 && refusal.model.benchmarkComparable,
+            memory: this.memorySnapshot(),
+          },
+        }, executionOptions);
+      }
       throw error;
     }
     const started = performance.now();
     const before = this.core.profileEnabled ? process.memoryUsage() : undefined;
-    const routed = await routeFactoidQuestion(this.providers, text);
+    const providerLimits = {
+      maximumSources: this.workPolicy.effective.limits.maximumProviderSources,
+      maximumParaphrases: this.workPolicy.effective.limits.maximumProviderParaphrases,
+    };
+    const routed = await routeFactoidQuestion(this.providers, text, providerLimits);
     let knowledgeResult = routed.result;
     const consultedProviders = [...(routed.consultedProviders ?? [])];
     const providerErrors = [...(routed.providerErrors ?? [])];
     if (!routed.frame) {
-      const direct = await routeDirectProviderQuestion(this.providers, text);
+      const direct = await routeDirectProviderQuestion(this.providers, text, providerLimits);
       knowledgeResult = direct.result;
       consultedProviders.push(...direct.consultedProviders);
       providerErrors.push(...direct.providerErrors);
@@ -113,7 +138,7 @@ export class EslmRuntime {
           },
         } } : {}),
       };
-      return this.#withGrounding(primary, text, resultContext);
+      return this.#finishPrimary(primary, executionOptions);
     }
     const result = this.core.ask(text, context);
     const metaIntent = String(result.query?.intent ?? '').startsWith('system-')
@@ -158,7 +183,25 @@ export class EslmRuntime {
         memory: this.memorySnapshot(),
       },
     };
-    return this.#withGrounding(primary, text, primary.context ?? context);
+    return this.#finishPrimary(primary, executionOptions);
+  }
+
+  #finishPrimary(primary, executionOptions) {
+    const annotated = { ...primary, workPolicy: this.workPolicy };
+    if (executionOptions?.grounding === false) return assertRuntimeTextResultContract(annotated);
+    return this.attachGrounding(annotated);
+  }
+
+  async attachGrounding(primary) {
+    const annotated = assertRuntimeTextResultContract({
+      ...primary,
+      workPolicy: primary?.workPolicy ?? this.workPolicy,
+    });
+    if (JSON.stringify(annotated.workPolicy) !== JSON.stringify(this.workPolicy)) {
+      throw new Error('Cannot attach grounding under a different work policy.');
+    }
+    if (annotated.grounding || !shouldRetrieveGrounding(annotated.status)) return annotated;
+    return this.#withGrounding(annotated, annotated.episode.original, annotated.context);
   }
 
   #selectedKbVersions() {
@@ -170,14 +213,15 @@ export class EslmRuntime {
 
   async #withGrounding(primary, text, context) {
     if (!shouldRetrieveGrounding(primary.status)) return assertRuntimeTextResultContract(primary);
-    const maximumEntries = 8;
+    const groundingLimits = groundingLimitsFromWorkPolicy(this.workPolicy);
+    const maximumEntries = groundingLimits.maximumEntries;
+    const plannedFocus = primary.requestPlanning?.status === 'PLANNED'
+      ? (primary.requestPlanning.selectedPlan?.topics ?? []).map((topic) => ({
+        focusId: topic.topicId, term: topic.surface, role: 'request-topic',
+      })) : [];
     const request = createGroundingRequest(text, primary.status, primary.query, {
-      maximumEntries,
-      maximumTerms: 12,
-      maximumLookups: 96,
-      maximumValuesPerLookup: 4,
-      maximumSources: 16,
-      maximumCandidateEntries: 256,
+      ...groundingLimits,
+      ...(plannedFocus.length > 0 ? { focus: plannedFocus } : {}),
     });
     const groundingResults = createGroundingAccumulator(request);
     const ordinarySourceLimit = request.limits.maximumSources - 1;
@@ -393,6 +437,7 @@ export class EslmRuntime {
         knowledgeBases: this.selected,
         memory: this.memorySnapshot(),
       },
+      workPolicy: this.workPolicy,
     });
   }
 }

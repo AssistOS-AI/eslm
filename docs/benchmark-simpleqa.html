@@ -6,7 +6,7 @@
 <figure class="diagram"><pre class="mermaid">flowchart LR
   Q[Factoid question] --> F[Question frame]
   F --> K[Public KB routing]
-  K --> O[Answer or gap]</pre><figcaption>The direct frontend must first identify the requested fact relation. Query-directed providers then return provenance-bearing evidence or an explicit knowledge gap.</figcaption></figure>
+  K --> O[Answer or gap]</pre><figcaption>Factoid routing through public knowledge.</figcaption></figure><p class="diagram-explanation">The direct frontend must first identify the requested fact relation. Query-directed providers then return provenance-bearing evidence or an explicit knowledge gap.</p>
 
 <h2>What the factoid route tests</h2>
 <p>The factoid frontend recognizes a bounded collection of interrogative frames and routes understood questions to selected public knowledge providers. Open English WordNet supplies lexical facts, GeoNames supplies a selected geographic profile, ConceptNet supplies reviewed commonsense relations, and other packages provide narrower evidence. The runtime does not use the SimpleQA answer column as a KB and does not ask Language Agent to supply facts.</p>
@@ -14,7 +14,7 @@
 <h2 id="protocol">ESLM protocol</h2>
 <p>The frozen official source contains 4,326 question records. A diagnostic sample is selected deterministically across topics, and its exact selected and available counts are recorded in the report. Reference answers remain in the host evaluator. The local scorer normalizes the returned short string and applies exact match. This deliberately differs from the official semantic model grader, which can accept semantically equivalent wording and distinguish incorrect answers from non-attempts. A local percentage is therefore a parser-and-KB diagnostic, not an official SimpleQA score.</p>
 
-<h2 id="unknown-and-unparsed">UNKNOWN and UNPARSED are different failures</h2>
+<h2 id="unknown-and-unparsed">Separate diagnoses for UNKNOWN and UNPARSED</h2>
 <p><strong>UNPARSED</strong> means the direct symbolic frontend could not construct a supported question representation. Only this outcome is a candidate for operator-side Language Agent normalization, because a conservative language rewrite may bring the same request into the supported grammar. <strong>UNKNOWN</strong> means the question frame was understood but the selected declarative knowledge packages did not provide sufficient evidence for an answer. Rephrasing an <code>UNKNOWN</code> question would not supply the missing fact and is therefore not an authorized normalization trigger.</p>
 <p>A normalization-candidate rate is the fraction of direct cases that end <code>UNPARSED</code>; it is not a count of external invocations and not a claim that the Language Agent could solve those questions. The report records actual calls, cache hits, accepted proposals, and direct outcomes separately.</p>
 

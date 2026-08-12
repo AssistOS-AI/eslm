@@ -7,7 +7,7 @@
   N[Narrative event frames] --> F[Structural features]
   K[Provider evidence] --> F
   F --> R[Signed candidate scores]
-  R --> O[Selection or abstention]</pre><figcaption>The scorer does not read an expected ending. It compares visible candidates using declared features and source-attributed evidence, then applies a visible margin rather than candidate order.</figcaption></figure>
+  R --> O[Selection or abstention]</pre><figcaption>Candidate scoring from visible evidence.</figcaption></figure><p class="diagram-explanation">The scorer does not read an expected ending. It compares visible candidates using declared features and source-attributed evidence, then applies a visible margin rather than candidate order.</p>
 
 <h2>Event-frame approximation</h2>
 <p><code>compileNarrativeSentence</code> normalizes and tokenizes at most 4,096 characters and 512 tokens. It recognizes bounded named-participant candidates, pronoun groups, content lemmas, predicate candidates, polarity, modality, and a coarse tense. Event identifiers are derived from sentence content and position, not answer choice. A sequence has at most 64 events and records all named participants plus the dominant observed tense.</p>

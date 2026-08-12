@@ -194,6 +194,7 @@ export class ConceptNetProvider {
             relevance: {
               score: 20 - termIndex * 0.25 + Math.log1p(edge[1]),
               reasons: ['exact-concept-endpoint-match', 'typed-relation-neighborhood'],
+              activeKbOccurrences: edges.length,
             },
           }));
         }

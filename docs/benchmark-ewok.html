@@ -6,7 +6,7 @@
 <figure class="diagram"><pre class="mermaid">flowchart LR
   C[Two contexts] --> S[Compatibility scorer]
   T[Target statement] --> S
-  S --> P[Strict preference]</pre><figcaption>The same target is evaluated against both contexts through the same symbolic compatibility method. The evaluator observes only which context receives the higher score.</figcaption></figure>
+  S --> P[Strict preference]</pre><figcaption>Context-conditioned compatibility.</figcaption></figure><p class="diagram-explanation">The same target is evaluated against both contexts through the same symbolic compatibility method. The evaluator observes only which context receives the higher score.</p>
 
 <h2>How ESLM represents the comparison</h2>
 <p>The adapter constructs two context-target comparisons without exposing the preferred context to the runtime. Provider-neutral compatibility code derives signed evidence from typed proposition frames, relation direction, polarity, implications, changes, comparisons, affordances, and declarative world knowledge. <code>world-relations-1.0</code> supplies reviewed semantic constructions and ConceptNet may supply independent relational evidence. Neither package contains protected EWoK rows or expected choices.</p>

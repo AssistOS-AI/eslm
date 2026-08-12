@@ -6,7 +6,7 @@
 <figure class="diagram"><pre class="mermaid">flowchart LR
   O[Ordered operations] --> S[Container state]
   S --> Q[Final query]
-  Q --> C[Exact contents]</pre><figcaption>Add, remove, and move operations update one explicit state in order. The final query reads that state and returns an exact set rather than completing text by similarity.</figcaption></figure>
+  Q --> C[Exact contents]</pre><figcaption>Ordered container-state execution.</figcaption></figure><p class="diagram-explanation">Add, remove, and move operations update one explicit state in order. The final query reads that state and returns an exact set rather than completing text by similarity.</p>
 
 <h2>Representation and execution</h2>
 <p>The reviewed adapter projects each bounded story into allowlisted operations. The generic state-transition method applies those operations in order and records the resulting container contents. This representation lets tests rename every object and container, insert irrelevant operations, reverse a movement, or query a different container without adding source vocabulary to the state engine.</p>
@@ -15,6 +15,6 @@
 <p>A development probe selects cases deterministically across operation counts so it does not contain only the shortest stories. The scorer compares the final unordered contents required by the masked span: every required entity must appear and no extra entity may be returned.</p>
 <p>A structured-case score does not mean that every available development row ran, that another split ran, or that unrestricted event prose can always be converted into operations. The generated row keeps tested-versus-available scope beside the numerator, denominator, input route, and execution receipt.</p>
 
-<h2>Failure interpretation</h2>
+<h2>Outcome diagnosis</h2>
 <p>A wrong set indicates an operation, ordering, binding, or output-projection error. <code>UNPARSED</code> indicates that the adapter could not construct the declared operation sequence. <code>UNKNOWN</code> indicates that the sequence was understood but lacked the state needed for a determinate answer. Any development sample must be accompanied by nonce objects, changed operation order, removal controls, and queries whose correct result is empty.</p>
 </main><div data-include="partials/footer.html"></div></body></html>

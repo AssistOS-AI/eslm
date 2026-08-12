@@ -209,6 +209,7 @@ class WordNetProvider {
           relevance: {
             score: 30 - termIndex * 0.25 - senseIndex * 0.01,
             reasons: ['exact-lemma-match', 'lexical-sense-neighborhood'],
+            activeKbOccurrences: senseIds.length,
           },
         }));
       }
@@ -403,6 +404,7 @@ class AtomicProvider {
           relevance: {
             score: 20 - termIndex * 0.25 + match.score * 10,
             reasons: ['bounded-event-token-overlap', 'source-relation-neighborhood'],
+            activeKbOccurrences: tuples.length,
           },
         }));
       }

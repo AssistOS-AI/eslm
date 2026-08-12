@@ -36,6 +36,7 @@ The stable responsibility map is:
 | DS015 | registered reasoning method semantics |
 | DS016–DS017 | source authority and benchmark adapter/oracle lifecycle |
 | DS018–DS021 | corpus gate, streaming compilation, exact routing, and cache/memory behavior |
+| DS022 | deterministic language approximation, request-intent planning and construction, grounding focus, and named work policy |
 
 A change updates only the DS files whose primary responsibility changes. A new benchmark normally changes the typed catalog, source receipt, adapter, tests, benchmark HTML page, and generated report, not the generic language, storage, CLI, roadmap, or documentation DS. A new reasoning method changes DS015 and the planner contract only if planner behavior also changes.
 
@@ -54,6 +55,11 @@ HTML pages are substantial technical chapters. Every behavioral claim is verifie
 
 Academic background links to primary papers, books, standards, and clearly identified secondary references such as Wikipedia. References establish theoretical context; they do not substitute for describing ESLM's actual algorithm or imply equivalence to a broader formalism.
 
+Capability prose is accurate and confident. It begins with the implemented mechanism and its evidence, then states the
+next acceptance gate and the condition that would satisfy it. It must not hide a limitation, but it also must not frame
+the project through vague self-negation such as “not a general assistant” when an exact supported boundary and forward
+gate can say more. Target language is clearly labeled and never presented as current execution.
+
 ### Navigation and page layout
 
 The site uses one shared header navigation and breadcrumbs. The home page is a short “start here” view: project
@@ -62,15 +68,24 @@ identity and actual boundary, a compact evidence warning and link to the current
 and roadmap state, links to the evidence report, and does not embed a second dashboard. Other material receives a
 dedicated page linked from the sitemap and menu.
 
-Long prose is bounded to a readable measure and left-aligned. Wide tables and code blocks scroll inside their own
-containers instead of widening paragraphs; benchmark rows stack into labeled blocks on narrow screens. The desktop
+The shared desktop layout may use a main canvas up to approximately 96 rem, while ordinary prose may grow to roughly
+112 characters per line when the viewport permits. Headings use the available prose width and are not forced into an
+arbitrarily narrow inner column. Prose remains left-aligned; it wraps only at words or explicit break opportunities,
+not at decorative midpoint boundaries. Wide tables and code blocks scroll inside their own containers instead of
+widening paragraphs; benchmark rows stack into labeled blocks on narrow screens. The desktop
 benchmark table uses approximately 30% for benchmark identity, execution mark, concise score, tested/possible scope,
 and route coverage, and 70% for human-readable outcomes, protocol, diagnosis, and action. Technical identifiers wrap;
 source hashes remain in raw or secondary audit views.
 
 ### Diagrams
 
-Use a diagram only when spatial structure clarifies data flow, sequence, hierarchy, ownership, or branching. Mermaid diagrams are normally left-to-right, use three to five primary nodes, short labels, readable bold fonts, and visibly larger labels for acceptance-critical nodes. The surrounding prose explains every node, edge, trust boundary, exceptional path, and limit. Dense graphs are split into several focused diagrams or replaced with prose and tables.
+Use a diagram only when spatial structure clarifies data flow, sequence, hierarchy, ownership, or branching. Mermaid
+diagrams are normally left-to-right, use three to five primary nodes, short labels, readable bold fonts, and visibly
+larger labels for acceptance-critical nodes. The shared visual grammar uses three principal box roles—source or input,
+trusted process, and result or acceptance outcome—plus at most one exceptional/gap style when a diagram needs it. A
+short centered caption names the relationship shown; explanatory detail follows in ordinary left-aligned paragraphs,
+not in a long centered caption. That prose explains every node, edge, trust boundary, exceptional path, and limit.
+Dense graphs are split into several focused diagrams or replaced with prose and tables.
 
 ### Generated status and empirical values
 

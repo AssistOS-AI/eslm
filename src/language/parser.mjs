@@ -1,34 +1,24 @@
-import { damerauDistance } from '../util.mjs';
+import { genericRelationObjectSurface } from './generic-relation-surface.mjs';
+import { analyzeNominalSurface, boundedNominalSurface } from './nominal-surface.mjs';
 
 function resolveEntityPhrase(words, model, context) {
-  const phrase = words.join(' ').replace(/^(the|a|an) /u, '').trim();
+  const original = words.join(' ').trim();
+  const nominal = analyzeNominalSurface(original);
+  if (!nominal.accepted) return { invalid: original, nominal };
+  const phrase = nominal.surface;
   if (['it', 'he', 'she', 'they', 'el', 'ea'].includes(phrase) && context.lastEntity) {
     return { id: context.lastEntity, confidence: 0.65, source: 'discourse' };
   }
   const candidates = [];
   for (const entity of model.entities) {
     for (const name of entity.names) {
-      const normalizedName = name.toLocaleLowerCase('en-US').replace(/^(the|a|an) /u, '');
-      if (phrase === normalizedName || phrase.endsWith(normalizedName)) candidates.push(entity.id);
+      const normalizedName = boundedNominalSurface(name);
+      if (normalizedName && phrase === normalizedName) candidates.push(entity.id);
     }
   }
   const unique = [...new Set(candidates)];
   if (unique.length === 1) return { id: unique[0], confidence: 1, source: 'alias' };
   if (unique.length > 1) return { ambiguous: unique };
-  const fuzzy = [];
-  for (const candidate of model.entities) {
-    for (const name of candidate.names) {
-      const alias = name.toLocaleLowerCase('en-US').replace(/^(the|a|an) /u, '');
-      if (alias.split(' ').length !== phrase.split(' ').length) continue;
-      const distance = damerauDistance(phrase, alias);
-      const limit = alias.length >= 7 ? 3 : alias.length >= 5 ? 2 : 1;
-      if (distance <= limit) fuzzy.push({ id: candidate.id, distance });
-    }
-  }
-  const bestDistance = Math.min(...fuzzy.map((item) => item.distance));
-  const best = [...new Set(fuzzy.filter((item) => item.distance === bestDistance).map((item) => item.id))];
-  if (best.length === 1) return { id: best[0], confidence: 0.7, source: 'bounded-name-similarity' };
-  if (best.length > 1) return { ambiguous: best };
   return { missing: phrase };
 }
 
@@ -39,6 +29,10 @@ function predicateQuery(intent, subject, predicate, object, target = 'object') {
 function resolvedEntityQuery(resolved, build) {
   if (resolved.id) return build(resolved.id);
   if (resolved.ambiguous) return { status: 'AMBIGUOUS', candidates: resolved.ambiguous };
+  if (resolved.invalid) return {
+    status: 'UNSUPPORTED', invalidNominal: resolved.invalid,
+    diagnostic: `The entity surface is unsafe as one nominal phrase (${resolved.nominal.reason}).`,
+  };
   return {
     status: 'UNKNOWN', missingEntity: resolved.missing,
     diagnostic: 'The question construction is supported, but the referenced entity is not known in the active session or knowledge bases.',
@@ -46,16 +40,40 @@ function resolvedEntityQuery(resolved, build) {
 }
 
 function singularClass(value, model) {
-  const normalized = value.replace(/^(?:the|a|an) /u, '').trim();
+  const normalized = boundedNominalSurface(value);
+  if (!normalized) return undefined;
   return model.reasoning?.classes?.singular?.[normalized]
     ?? (normalized.endsWith('ies') ? `${normalized.slice(0, -3)}y`
       : normalized.endsWith('s') ? normalized.slice(0, -1) : normalized);
+}
+
+function classMembershipQuery(subjectSurface, classSurface, model, context) {
+  const className = singularClass(classSurface, model);
+  if (!className) return {
+    status: 'UNSUPPORTED', invalidNominal: classSurface,
+    diagnostic: 'The class surface contains protected material or is not one bounded nominal phrase.',
+  };
+  return resolvedEntityQuery(resolveEntityPhrase(subjectSurface.split(' '), model, context), (id) =>
+    predicateQuery('yes-no', id, 'is_a', className, 'boolean'));
 }
 
 function declaredProperty(surface, model) {
   const requested = surface.trim().replaceAll(' ', '_');
   return Object.keys(model.reasoning?.propertyValues ?? {}).find((predicate) =>
     predicate.replaceAll(' ', '_') === requested);
+}
+
+const RESERVED_RELATION_VERBS = new Set([
+  'all', 'and', 'are', 'be', 'been', 'being', 'can', 'could', 'did', 'do', 'does', 'every', 'has', 'have',
+  'if', 'is', 'may', 'might', 'must', 'not', 'or', 'should', 'was', 'were', 'will', 'would',
+]);
+
+function genericRelationObject(surface, model) {
+  const normalized = surface.replace(/^(?:the|a|an) /u, '').trim();
+  const safeSurface = genericRelationObjectSurface(normalized);
+  if (!safeSurface) return undefined;
+  const resolved = resolveEntityPhrase(normalized.split(' '), model, {});
+  return resolved.id ?? safeSurface;
 }
 
 export function parseQuestion(normalized, model, context = {}) {
@@ -176,16 +194,21 @@ export function parseQuestion(normalized, model, context = {}) {
   if ((match = joined.match(/^does (.+?) belong to the (.+?) class$/u))
     || (match = joined.match(/^is (.+?) classified as (?:a|an) (.+)$/u))
     || (match = joined.match(/^would you classify (.+?) as (?:a|an) (.+)$/u))) {
-    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
-      predicateQuery('yes-no', id, 'is_a', singularClass(match[2], model), 'boolean'));
+    return classMembershipQuery(match[1], match[2], model, context);
   }
   if ((match = joined.match(/^does the (.+?) category include (.+)$/u))) {
-    return resolvedEntityQuery(resolveEntityPhrase(match[2].split(' '), model, context), (id) =>
-      predicateQuery('yes-no', id, 'is_a', singularClass(match[1], model), 'boolean'));
+    return classMembershipQuery(match[2], match[1], model, context);
+  }
+  if ((match = joined.match(/^does (.+?) ([a-z][a-z0-9_-]*) (.+)$/u))) {
+    const predicate = match[2];
+    const object = genericRelationObject(match[3], model);
+    if (!RESERVED_RELATION_VERBS.has(predicate) && predicate.length >= 3 && object) {
+      return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
+        predicateQuery('yes-no', id, predicate, object, 'boolean'));
+    }
   }
   if ((match = joined.match(/^is (.+?) (?:a|an) (.+)$/u))) {
-    return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
-      predicateQuery('yes-no', id, 'is_a', singularClass(match[2], model), 'boolean'));
+    return classMembershipQuery(match[1], match[2], model, context);
   }
   if ((match = joined.match(/^(?:who is|what is|what kind of thing is) (.+)$/u))
     || (match = joined.match(/^which class does (.+?) belong to$/u))
@@ -194,9 +217,7 @@ export function parseQuestion(normalized, model, context = {}) {
       predicateQuery('entity-description', id, 'is_a', undefined, 'value'));
   }
   if ((match = joined.match(/^is (.+?) ([a-z][a-z0-9_-]*)$/u))) {
-    const subject = resolveEntityPhrase(match[1].split(' '), model, context);
-    if (subject.id) return predicateQuery('yes-no', subject.id, 'is_a', match[2], 'boolean');
-    return resolvedEntityQuery(subject, () => undefined);
+    return classMembershipQuery(match[1], match[2], model, context);
   }
   if ((match = joined.match(/^why is (.+?) (?:in|at) (.+)$/u))) {
     const left = resolveEntityPhrase(match[1].split(' '), model, context);

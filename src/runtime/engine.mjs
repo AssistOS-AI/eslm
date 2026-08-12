@@ -5,7 +5,8 @@ import {
 } from '../reasoning/datalog.mjs';
 import { realize } from '../language/realizer.mjs';
 import {
-  compileSessionEpisode, emptySessionContext, modelWithSession, SessionContextValidationError,
+  compileSessionEpisode, emptySessionContext, inspectSessionEpisode, modelWithSession,
+  SessionContextValidationError,
   SessionInputValidationError, SessionResourceLimitError, sessionContextSnapshot,
 } from '../language/session.mjs';
 import { ExecutionProfiler } from '../profiling.mjs';
@@ -26,9 +27,12 @@ import { executeEpisodicWorldTask } from '../reasoning/episodic-world.mjs';
 import { createModelGroundingIndex } from '../reasoning/grounding-model-retrieval.mjs';
 import { retrieveCoreRelatedEvidence } from './core-grounding.mjs';
 import {
-  assertRuntimeTextResultContract, directCoreMemorySnapshot, normalizeRuntimeStatus,
+  assertRuntimeResultContract, assertRuntimeTextResultContract, directCoreMemorySnapshot, normalizeRuntimeStatus,
 } from './result-contract.mjs';
 import { executeTypedTask } from './typed-task-execution.mjs';
+import {
+  hornLimitsFromWorkPolicy, resolveWorkPolicy,
+} from './work-policy.mjs';
 
 function uniqueKbVersions(values) {
   const byIdentity = new Map(values.filter((item) => item?.kbId).map((item) => [
@@ -43,6 +47,18 @@ export class EslmEngine {
   constructor(model, options = {}) {
     this.model = model;
     this.profileEnabled = Boolean(options.profile);
+    const declaredDeduction = model.reasoning?.deduction ?? {};
+    this.workPolicy = resolveWorkPolicy(options.workPolicy ?? {
+      profile: 'balanced',
+      overrides: {
+        ...(declaredDeduction.maxRounds === undefined
+          ? {} : { maximumHornRounds: declaredDeduction.maxRounds }),
+        ...(declaredDeduction.maximumFacts === undefined
+          ? {} : { maximumHornFacts: declaredDeduction.maximumFacts }),
+        ...(declaredDeduction.maximumJoinAttempts === undefined
+          ? {} : { maximumHornJoinAttempts: declaredDeduction.maximumJoinAttempts }),
+      },
+    });
     this.capabilities = new CapabilityRegistry()
       .register(CORE_METHOD_DESCRIPTORS.datalog, () => undefined)
       .register(CORE_METHOD_DESCRIPTORS.induction, () => undefined)
@@ -62,7 +78,9 @@ export class EslmEngine {
     const profiler = new ExecutionProfiler('engine-initialization', this.profileEnabled, {
       modelId: model.manifest.modelId,
     });
-    this.closure = profiler.measureSync('reasoning.full-closure', () => deriveClosure(model), {
+    this.closure = profiler.measureSync('reasoning.full-closure', () => deriveClosure(
+      model, hornLimitsFromWorkPolicy(this.workPolicy),
+    ), {
       directFacts: model.facts.length, rules: model.rules.length,
     });
     this.facts = this.closure.facts;
@@ -115,8 +133,26 @@ export class EslmEngine {
           benchmarkComparable: this.model.manifest.benchmarkComparable !== false,
           memory: this.memorySnapshot(),
         },
+        workPolicy: this.workPolicy,
       });
     }
+  }
+
+  inspectLanguage(text, context = {}) {
+    const episode = inspectSessionEpisode(text, this.model, context);
+    if (episode.unsupportedStatements.length > 0 || !episode.question) {
+      return { ...episode, parseStatus: episode.unsupportedStatements.length > 0 ? 'UNPARSED' : 'PARSED' };
+    }
+    const compiled = compileSessionEpisode(text, this.model, context);
+    const activeModel = modelWithSession(this.model, compiled.session);
+    const normalized = normalizeInput(episode.question, activeModel);
+    const query = parseQuestion(normalized, activeModel, context);
+    return {
+      ...episode,
+      normalizedQuestion: normalized.normalized,
+      query,
+      parseStatus: query.status === 'UNSUPPORTED' ? 'UNPARSED' : 'PARSED',
+    };
   }
 
   #askValidated(text, context = {}) {
@@ -251,6 +287,7 @@ export class EslmEngine {
     const taskFrame = taskFrameFromQuery(query, {
       assertions: episode.session.facts.map((fact) => fact.id),
       contextStack: ['context:runtime:baseline', ...(hasSessionOverlay ? ['context:session:current'] : [])],
+      searchNodes: this.workPolicy.effective.limits.maximumHornJoinAttempts,
     });
     const plan = createPlan(taskFrame, this.capabilities);
     if (plan.status === 'NO_APPLICABLE_METHOD') {
@@ -263,7 +300,9 @@ export class EslmEngine {
       });
     }
     const activeClosure = hasSessionOverlay
-      ? profiler.measureSync('reasoning.session-closure', () => deriveClosure(activeModel), {
+      ? profiler.measureSync('reasoning.session-closure', () => deriveClosure(
+        activeModel, hornLimitsFromWorkPolicy(this.workPolicy),
+      ), {
         directFacts: activeModel.facts.length, rules: activeModel.rules.length,
       }) : this.closure;
     const activeFacts = activeClosure.facts;
@@ -434,6 +473,7 @@ export class EslmEngine {
         benchmarkComparable: this.model.manifest.benchmarkComparable !== false,
         memory: this.memorySnapshot(),
       },
+      workPolicy: this.workPolicy,
     };
     if (!this.profileEnabled) return assertRuntimeTextResultContract(annotated);
     return assertRuntimeTextResultContract({
@@ -465,6 +505,9 @@ export class EslmEngine {
   }
 
   executeTask(task) {
-    return executeTypedTask(this.model, task);
+    return assertRuntimeResultContract({
+      ...executeTypedTask(this.model, task),
+      workPolicy: this.workPolicy,
+    });
   }
 }

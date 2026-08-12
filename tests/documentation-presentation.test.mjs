@@ -112,10 +112,16 @@ test('generated fixture report labels count, regime, and non-comparability', () 
 
 test('documentation stylesheet keeps prose readable and tables responsive', async () => {
   const css = await readProjectFile('docs/assets/site.css');
-  assert.match(css, /width:min\(calc\(100% - 2rem\),90rem\)/u);
-  assert.match(css, /max-width:78ch/u);
+  assert.match(css, /width:min\(calc\(100% - 2rem\),96rem\)/u);
+  assert.match(css, /--reading-measure:100%/u);
+  assert.match(css, /main p,main li,[^{]+\{ max-width:100%/u);
   assert.match(css, /text-align:left/u);
   assert.doesNotMatch(css, /text-align:justify/u);
+  assert.doesNotMatch(css, /h1[^}]*max-width:\s*(?:32|42|78)ch/u);
+  assert.doesNotMatch(css, /\.nodes\s*>\s*\.node:nth-child/u);
+  for (const role of ['source', 'process', 'outcome']) {
+    assert.match(css, new RegExp(`\\.node\\.diagram-${role}`, 'u'));
+  }
   assert.match(css, /table-layout:auto/u);
   assert.match(css, /overflow-x:auto/u);
   assert.match(css, /\.public-benchmark-table tbody,[^{]+\{ display:block/u);
@@ -145,7 +151,7 @@ test('diagrams are optional but every present diagram remains constrained and ex
   ));
   assert.doesNotThrow(() => validateDocumentationDiagrams(
     'flow.html',
-    '<script src="assets/mermaid-loader.mjs"></script><figure><pre class="mermaid">flowchart LR\nA --> B</pre><figcaption>A short, explained flow.</figcaption></figure>',
+    '<script src="assets/mermaid-loader.mjs"></script><figure><pre class="mermaid">flowchart LR\nA --> B</pre><figcaption>Short flow.</figcaption></figure><p class="diagram-explanation">A normal prose explanation follows the compact caption.</p>',
   ));
   assert.throws(
     () => validateDocumentationDiagrams(
@@ -157,10 +163,55 @@ test('diagrams are optional but every present diagram remains constrained and ex
   assert.throws(
     () => validateDocumentationDiagrams(
       'vertical.html',
-      '<script src="assets/mermaid-loader.mjs"></script><figure><pre class="mermaid">flowchart TD\nA --> B</pre><figcaption>Wrong direction.</figcaption></figure>',
+      '<script src="assets/mermaid-loader.mjs"></script><figure><pre class="mermaid">flowchart TD\nA --> B</pre><figcaption>Wrong direction.</figcaption></figure><p class="diagram-explanation">The prose remains separate.</p>',
     ),
     /left-to-right flow/u,
   );
+});
+
+test('documentation diagrams use topology roles, short labels, and prose explanations', async () => {
+  const loader = await readProjectFile('docs/assets/mermaid-loader.mjs');
+  assert.match(loader, /class \$\{sources\.join\(','\)\} diagram-source/u);
+  assert.match(loader, /class \$\{processes\.join\(','\)\} diagram-process/u);
+  assert.match(loader, /class \$\{outcomes\.join\(','\)\} diagram-outcome/u);
+
+  const htmlFiles = (await readdir(join(PROJECT_ROOT, 'docs'))).filter((file) => file.endsWith('.html'));
+  for (const file of htmlFiles) {
+    const html = await readProjectFile(`docs/${file}`);
+    if (!html.includes('<pre class="mermaid">')) continue;
+    assert.doesNotThrow(() => validateDocumentationDiagrams(file, html));
+  }
+});
+
+test('documentation introductions state scope affirmatively', async () => {
+  const htmlFiles = (await readdir(join(PROJECT_ROOT, 'docs'))).filter((file) => file.endsWith('.html'));
+  for (const file of htmlFiles) {
+    const html = await readProjectFile(`docs/${file}`);
+    assert.doesNotMatch(html, /not yet (?:an? )?general/iu, file);
+    const lead = html.match(/<p class="lead">([\s\S]*?)<\/p>/u)?.[1]
+      .replace(/<[^>]+>/gu, ' ').replace(/\s+/gu, ' ').trim();
+    if (!lead) continue;
+    assert.doesNotMatch(lead, /^(?:[\p{L}0-9/+-]+\s+){0,4}(?:is not|does not|cannot)\b/iu, file);
+  }
+});
+
+test('heuristic-language chapter explains the local-first recovery contract', async () => {
+  const [page, header, home] = await Promise.all([
+    readProjectFile('docs/heuristic-language.html'),
+    readProjectFile('docs/partials/header.html'),
+    readProjectFile('docs/index.html'),
+  ]);
+  assert.match(header, /href="heuristic-language\.html"/u);
+  assert.match(home, /href="heuristic-language\.html"/u);
+  assert.match(page, /Proposal lattice, voting, and confidence/u);
+  assert.match(page, /Decomposition techniques and their safety gates/u);
+  assert.match(page, /Request-intent planning for larger outputs/u);
+  assert.match(page, /summarize, expand, explain, compare, draft an essay, or assemble a document/u);
+  assert.match(page, /Language Agent escalation is opt-in and disabled by default/u);
+  assert.match(page, /content nouns and verbs/u);
+  assert.match(page, /<code>all<\/code> is a protected quantifier/u);
+  assert.match(page, /DS022-heuristic-language-approximation-and-work-policy\.md/u);
+  assert.ok((page.match(/<tr><td>/gu) ?? []).length >= 14);
 });
 
 test('grounded-failure documentation preserves answer authority and current trigger boundaries', async () => {

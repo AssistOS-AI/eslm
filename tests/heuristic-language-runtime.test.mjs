@@ -1,0 +1,239 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { loadKnowledgeBase, mergeModels } from '../src/kbs.mjs';
+import { EslmEngine } from '../src/runtime/engine.mjs';
+import { HeuristicLanguageRuntime } from '../src/runtime/heuristic-language-runtime.mjs';
+import { LanguageAgentAssistedRuntime } from '../src/runtime/language-agent-assisted-runtime.mjs';
+import { EslmRuntime } from '../src/runtime/runtime.mjs';
+import { createCoreModel } from '../src/runtime/core-model.mjs';
+import { resolveWorkPolicy } from '../src/runtime/work-policy.mjs';
+
+async function quickRuntime(profile = 'balanced') {
+  const policy = resolveWorkPolicy(profile);
+  const model = mergeModels(await createCoreModel(), [await loadKnowledgeBase('quick')]);
+  const core = new EslmEngine(model, { workPolicy: policy });
+  return new HeuristicLanguageRuntime(new EslmRuntime(core, [], ['quick'], undefined, policy));
+}
+
+test('offline runtime repairs a near-CNL episode, votes visibly, and keeps interpretation defeasible', async () => {
+  const runtime = await quickRuntime();
+  const result = await runtime.ask(
+    'Abura is an mura. All mura et bana. Is Abura eating bana?',
+  );
+  assert.equal(result.status, 'DEFEASIBLE');
+  assert.equal(result.answer, 'Yes.');
+  assert.equal(result.languageRoute, 'heuristic-cnl-approximated');
+  assert.equal(result.approximation.selectedCandidate.text,
+    'Abura is a mura. Every mura eats bana. Does Abura eat bana?');
+  assert.equal(result.approximation.selectedCandidate.consensus, true);
+  assert.deepEqual(result.approximation.selectedCandidate.supportingFamilies, [
+    'determiner-agreement', 'predicate-agreement', 'progressive-question-reduction',
+    'quantifier-canonicalization',
+  ]);
+  assert.ok(result.approximation.selectedCandidate.edits.every((edit) => edit.votes.length > 0));
+  assert.equal(result.approximation.ephemeralPremises.committed, false);
+  assert.equal(result.context.session.facts.length, 0);
+  assert.equal(result.context.session.rules.length, 0);
+  assert.deepEqual(result.learned, []);
+  assert.deepEqual(result.learnedRules, []);
+});
+
+test('an approximated episode never persists its guessed facts into a later turn', async () => {
+  const runtime = await quickRuntime();
+  const approximated = await runtime.ask(
+    'Abura is an mura. All mura et bana. Is Abura eating bana?',
+  );
+  assert.equal(approximated.context.session.facts.length, 0);
+  const followUp = await runtime.ask('Does Abura eat bana?', approximated.context);
+  assert.equal(followUp.status, 'UNKNOWN');
+  assert.equal(followUp.query.missingEntity, 'abura');
+  assert.equal(followUp.context.session.facts.length, 0);
+});
+
+test('a statement-only approximation never claims that its query-local premise was learned', async () => {
+  const result = await (await quickRuntime()).ask('Nira a zoral.');
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'heuristic-cnl-approximated');
+  assert.match(result.answer, /did not save it/u);
+  assert.doesNotMatch(result.answer, /I learned/u);
+  assert.deepEqual(result.learned, []);
+  assert.deepEqual(result.provenance, []);
+  assert.equal(result.context.session.facts.length, 0);
+  assert.equal(result.approximation.ephemeralPremises.facts.length, 1);
+});
+
+test('well-formed direct input remains direct and does not run approximation', async () => {
+  const result = await (await quickRuntime()).ask('Can Penguin swim?');
+  assert.equal(result.status, 'SOLVED');
+  assert.equal(result.languageRoute, 'direct-symbolic');
+  assert.equal(result.approximation, undefined);
+});
+
+test('report intent plans KB retrieval and shapes a cited partial document', async () => {
+  const result = await (await quickRuntime()).ask('Write a short report about Penguin.');
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'heuristic-request-synthesis');
+  assert.equal(result.requestPlanning.status, 'PLANNED');
+  assert.equal(result.requestPlanning.selectedPlan.outputContract.artifact, 'report');
+  assert.equal(result.requestPlanning.selectedPlan.outputContract.length, 'brief');
+  assert.match(result.answer, /# Report: Penguin/u);
+  assert.match(result.answer, /Penguin is a bird\. \[quick@1\.0\.0; fact:quick:penguin-bird\]/u);
+  assert.match(result.answer, /Penguin can swim\. \[quick@1\.0\.0; fact:quick:penguin-swim\]/u);
+  assert.deepEqual(result.usedKbVersions, [{ kbId: 'quick', version: '1.0.0' }]);
+  assert.ok(result.provenance.every((item) =>
+    item.method === 'extractive-request-synthesis' && item.sourceClaim === true));
+  assert.equal(result.synthesis.answerAuthority, 'related-evidence-is-not-entailment');
+  assert.equal(result.grounding.focus.strategy, 'semantic-role-phrase-morphology-v3');
+  assert.equal(result.grounding.focus.source, 'typed-request-plan');
+  assert.deepEqual(result.grounding.focus.obligations.map((item) => item.term), ['penguin']);
+  assert.equal(result.grounding.search.termSelectionComplete, true);
+  assert.equal(result.grounding.focus.terms[0], 'penguin');
+  assert.ok(!result.grounding.focus.terms.some((term) =>
+    ['write', 'short', 'report'].includes(term)));
+});
+
+test('planned retrieval remains local when ordinary failure grounding is deferred for an optional agent', async () => {
+  const result = await (await quickRuntime()).ask(
+    'Write a short report about Penguin.', {}, { grounding: false },
+  );
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'heuristic-request-synthesis');
+  assert.equal(result.requestPlanning.status, 'PLANNED');
+  assert.match(result.answer, /Penguin can swim/u);
+});
+
+test('a recognized document request without source material returns a knowledge gap, not a language failure', async () => {
+  const policy = resolveWorkPolicy('balanced');
+  const core = new EslmEngine(await createCoreModel(), { workPolicy: policy });
+  const runtime = new HeuristicLanguageRuntime(new EslmRuntime(core, [], [], undefined, policy));
+  const result = await runtime.ask('Write an essay about zorals.', {}, { grounding: false });
+  assert.equal(result.status, 'MISSING_KNOWLEDGE');
+  assert.equal(result.languageRoute, 'heuristic-request-planned');
+  assert.equal(result.requestPlanning.status, 'PLANNED');
+  assert.match(result.answer, /understood the requested artifact/u);
+  assert.deepEqual(result.usedKbVersions, []);
+});
+
+test('explicit Language Agent mode still lets the local request planner finish first', async () => {
+  let normalizerCalls = 0;
+  const normalizer = {
+    configuration: () => ({}),
+    normalize: async () => {
+      normalizerCalls += 1;
+      throw new Error('The Language Agent must not run for a locally planned request.');
+    },
+  };
+  const runtime = new LanguageAgentAssistedRuntime(await quickRuntime(), normalizer);
+  const result = await runtime.ask('Write a short report about Penguin.');
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'heuristic-request-synthesis');
+  assert.equal(normalizerCalls, 0);
+});
+
+test('a tied local request plan is terminal ambiguity and never invokes the Language Agent', async () => {
+  let normalizerCalls = 0;
+  const runtime = new LanguageAgentAssistedRuntime(await quickRuntime(), {
+    configuration: () => ({}),
+    normalize: async () => {
+      normalizerCalls += 1;
+      throw new Error('A locally identified intent tie must remain local ambiguity.');
+    },
+  });
+  const result = await runtime.ask('Please write a summary outline about zorals.');
+  assert.equal(result.status, 'AMBIGUOUS');
+  assert.equal(result.languageRoute, 'heuristic-request-ambiguous');
+  assert.equal(result.requestPlanning.status, 'AMBIGUOUS');
+  assert.equal(result.unresolvedSubgoals[0].operation, 'confirm-request-intent');
+  assert.ok(result.unresolvedSubgoals[0].candidates.length >= 2);
+  assert.equal(normalizerCalls, 0);
+});
+
+test('a negated artifact request never executes the forbidden positive plan', async () => {
+  const result = await (await quickRuntime()).ask('Do not write a report about Penguin.');
+  assert.notEqual(result.languageRoute, 'heuristic-request-synthesis');
+  assert.doesNotMatch(result.answer, /^# Report/mu);
+  assert.notEqual(result.requestPlanning?.status, 'PLANNED');
+});
+
+test('request focus does not retrieve quantifiers as topics in the motivating failure', async () => {
+  const runtime = await quickRuntime('quick');
+  const direct = await runtime.askDirect(
+    'Abura is an mura. All mura et bana. Is Abura eating bana?', {}, { grounding: false },
+  );
+  const grounded = await runtime.attachGrounding(direct);
+  assert.ok(grounded.grounding);
+  assert.ok(!grounded.grounding.entries.some((entry) =>
+    /(?:^|\W)all(?:\W|$)/iu.test(entry.statement)));
+  assert.ok(!grounded.grounding.queryText.startsWith('all'));
+});
+
+test('work profiles change bounded heuristic effort without changing completed direct semantics', async () => {
+  const quick = await quickRuntime('quick');
+  const deep = await quickRuntime('deep');
+  const quickResult = await quick.ask('Can Penguin swim?');
+  const deepResult = await deep.ask('Can Penguin swim?');
+  assert.equal(quickResult.status, deepResult.status);
+  assert.deepEqual(quickResult.values, deepResult.values);
+  assert.equal(quickResult.workPolicy.effective.profile, 'quick');
+  assert.equal(deepResult.workPolicy.effective.profile, 'deep');
+  assert.ok(deepResult.workPolicy.effective.limits.maximumHeuristicCandidates
+    > quickResult.workPolicy.effective.limits.maximumHeuristicCandidates);
+});
+
+test('work profiles keep the same interpretation threshold and agree on the completed motivating episode', async () => {
+  const source = 'Abura is an mura. All mura et bana. Is Abura eating bana?';
+  const results = [];
+  for (const profile of ['quick', 'balanced', 'deep', 'exhaustive-bounded']) {
+    results.push(await (await quickRuntime(profile)).ask(source));
+  }
+  assert.deepEqual(results.map((result) => result.status),
+    ['DEFEASIBLE', 'DEFEASIBLE', 'DEFEASIBLE', 'DEFEASIBLE']);
+  assert.deepEqual(results.map((result) => result.answer), ['Yes.', 'Yes.', 'Yes.', 'Yes.']);
+  assert.ok(results.every((result) => result.approximation.selectedCandidate.text
+    === 'Abura is a mura. Every mura eats bana. Does Abura eat bana?'));
+  assert.ok(results.every((result) =>
+    result.workPolicy.effective.limits.minimumHeuristicConfidence === 0.68));
+});
+
+test('candidate selection compiles semantic IR locally and executes providers only after selection', async () => {
+  const policy = resolveWorkPolicy('balanced');
+  const model = await createCoreModel();
+  const core = new EslmEngine(model, { workPolicy: policy });
+  let providerCalls = 0;
+  const provider = {
+    manifest: { id: 'provider:nonce', kbId: 'nonce', kbVersion: '1' },
+    memorySnapshot: () => ({ mode: 'eager' }),
+    ask: () => { providerCalls += 1; return undefined; },
+  };
+  const runtime = new HeuristicLanguageRuntime(new EslmRuntime(
+    core, [provider], ['nonce'], undefined, policy,
+  ));
+  const result = await runtime.ask(
+    'Abura is an mura. All mura et bana. Is Abura eating bana?', {}, { grounding: false },
+  );
+  assert.equal(result.status, 'DEFEASIBLE');
+  assert.equal(providerCalls, 2);
+  assert.ok(result.approximation.reparses.length > 2);
+  assert.ok(result.approximation.reparses.every((receipt) =>
+    !receipt.semanticSignature.includes('values')));
+});
+
+test('surface cleanup around an opaque question remains unparsed and eligible for an enabled agent', async () => {
+  const runtime = await quickRuntime();
+  const local = await runtime.ask('Actually, Flibber wobble?', {}, { grounding: false });
+  assert.equal(local.status, 'UNPARSED');
+  assert.notEqual(local.approximation.status, 'accepted-reparse');
+  assert.ok(local.approximation.reparses.every((receipt) => receipt.acceptedSemanticIr === false));
+
+  let calls = 0;
+  const assisted = new LanguageAgentAssistedRuntime(runtime, {
+    configuration: () => ({}),
+    normalize: async () => {
+      calls += 1;
+      return { status: 'failed', externalInvocations: 1, receipts: [], diagnostic: 'fixture stop' };
+    },
+  });
+  const result = await assisted.ask('Actually, Flibber wobble?');
+  assert.equal(calls, 1);
+  assert.equal(result.languageRoute, 'language-agent-normalization-failed');
+});

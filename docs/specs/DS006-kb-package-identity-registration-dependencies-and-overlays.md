@@ -129,8 +129,11 @@ The source archive governed by DS016, the compiled package governed here, the in
 
 Result accounting preserves the same separation. `selectedKbVersions` names the immutable package set available to the
 task. `consultedKbVersions` names sources whose indexes or policies were queried. `usedKbVersions` names only packages
-whose records or declarative policy contributed to the primary result's witness. A DS009 grounding entry names its own
-source version but does not make that package an answer contributor. When semantically duplicate records from several
+whose records or declarative policy contributed to the primary result's witness. An ordinary DS009 failure-grounding
+entry names its own source version but does not make that package an answer contributor. On the separately named DS022
+request-synthesis route, a selected record copied into a cited `PARTIAL` artifact is a source-claim contributor and is
+therefore accounted in answer provenance and `usedKbVersions`; this never upgrades relevance to proof. When
+semantically duplicate records from several
 packages are merged for execution, the projected fact retains every contributing identity and provenance reference;
 deduplication must not erase source lineage.
 

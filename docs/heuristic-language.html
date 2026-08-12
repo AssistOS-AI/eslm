@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Heuristic language approximation — ESLM Documentation</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="partials-loader.js" defer></script>
+  <script type="module" src="assets/mermaid-loader.mjs"></script>
+</head>
+<body>
+<div data-include="partials/header.html"></div>
+<main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Foundations / Heuristic language approximation</p>
+<h1>Fast local interpretation before optional external assistance</h1>
+<p class="lead">The heuristic language route extends controlled-English coverage with deterministic, confidence-bearing proposals. It repairs near-CNL wording, decomposes suitable complex requests, reparses every candidate through the ordinary symbolic runtime, and preserves uncertainty whenever several interpretations remain plausible.</p>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  I[Visible request] --> D[Direct parser]
+  D --> H[Ranked local heuristics]
+  H --> L[Opt-in Language Agent]
+  L --> G[Focused KB grounding]</pre><figcaption>Language recovery follows one bounded order.</figcaption></figure><p class="diagram-explanation">Direct parsing retains first authority. A final <code>UNPARSED</code> result opens the local proposal lattice; eligible candidates return through the same parser and reasoner. External Language Agent assistance is disabled by default and can run only after local proposals fail, when the operator has explicitly enabled it. Grounding follows the final inability result and cannot influence a rewrite.</p>
+
+<h2>Proposal lattice, voting, and confidence</h2>
+<p>The analyzer preserves the original text and builds a bounded lattice of alternative repairs rather than destructively rewriting it once. Every edge records the source spans it changed, the heuristic family that proposed the change, protected operators, unresolved semantic risks, edit cost, and its confidence contribution. Compatible edges may compose. Equivalent terminal strings merge while retaining all independent supporting paths; semantically different candidates remain separate.</p>
+<p>Heuristic families vote for candidates instead of choosing answers. Agreement among independent spelling, morphology, agreement, punctuation, and structural heuristics raises an interpretation score. Inferred open-class words, removed material, competing candidates, and interacting repairs lower it. The score estimates confidence in the interpretation, never confidence that the eventual answer is true. Candidates above the active work threshold are reparsed without persistent session effects. Close accepted candidates with different meanings yield an explicit ambiguity rather than a winner chosen by order.</p>
+<p>A parser-accepted candidate receives no privileged path. Assertions, queries, provider access, planning, reasoning, provenance, and resource limits remain unchanged. Because a guessed spelling or decomposition can still differ from user intent, a result reached through a materially changed interpretation carries qualified epistemic status and an approximation receipt.</p>
+
+<h2>Decomposition techniques and their safety gates</h2>
+<p>Each technique below creates a proposal only when its local structural preconditions are visible. The safety column is executable review evidence, not an informal assurance.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Technique</th><th>Candidate transformation</th><th>Required safety evidence</th></tr></thead>
+<tbody>
+<tr><td>Clause-boundary recovery</td><td>Restore punctuation and separate independently finite clauses.</td><td>Every token remains in one aligned span and question force is unchanged.</td></tr>
+<tr><td>Coordination expansion</td><td>Turn “A verbs X and verbs Y” into two clauses with one explicit subject.</td><td>Subject and conjunction scope are unique; structurally licensed negation and modality are preserved in both clauses.</td></tr>
+<tr><td>Parallel ellipsis repair</td><td>Reconstruct the repeated predicate in “A verbs X and B Y.”</td><td>Both conjuncts have the same argument pattern; competing predicates remain competing candidates.</td></tr>
+<tr><td>Relative-clause extraction</td><td>Separate an attached property or class clause from the main clause.</td><td>The antecedent is unique and a restrictive condition is never promoted to a global assertion.</td></tr>
+<tr><td>Apposition expansion</td><td>Turn “A, a B, …” into “A is a B” plus the remaining clause.</td><td>Attachment and entity identity are unique.</td></tr>
+<tr><td>Explicit passive inversion</td><td>Turn “B is VERBed by A” into “A VERBs B.”</td><td>Agent and patient are overt; polarity, tense class, and modality remain aligned.</td></tr>
+<tr><td>Conditional normalization</td><td>Compile an explicit if/then boundary into a controlled implication or universal rule.</td><td>Antecedent, consequent, variable sharing, and target CNL representation are all explicit.</td></tr>
+<tr><td>Temporal normalization</td><td>Map before, after, when, or while clauses to a supported temporal form.</td><td>Direction, simultaneity, and event identity survive the transformation.</td></tr>
+<tr><td>Causal-clause extraction</td><td>Produce retained assertions plus an explicit causal relation.</td><td>The causal edge remains represented; replacing it with punctuation alone is declined.</td></tr>
+<tr><td>Embedded-question extraction</td><td>Reduce “Could you tell me whether Q?” to the question Q.</td><td>The matrix clause is request scaffolding rather than a factual premise.</td></tr>
+<tr><td>WH and nominalization reduction</td><td>Turn “What is the location of A?” into “Where is A?”</td><td>The relation frame is equivalent and every argument remains aligned.</td></tr>
+<tr><td>Parenthetical handling</td><td>Remove discourse-only asides or expand semantic appositives.</td><td>Every removed span is classified as non-semantic; content-bearing parentheses remain.</td></tr>
+<tr><td>Reference substitution</td><td>Replace a pronoun with one overt antecedent in a proposal.</td><td>Type, number, scope, and uniqueness agree; several antecedents generate alternatives.</td></tr>
+<tr><td>Statement/question ordering</td><td>Place retained premises before one final question.</td><td>Dependency and temporal order permit the move; no statement crosses a scoped operator.</td></tr>
+</tbody>
+</table></div>
+<p>Unsafe splits are first-class declined proposals. For example, splitting a negated coordination can change the scope of <em>not</em>; extracting a restrictive relative clause can create a false global fact; deleting <em>because</em> can erase the relation the user asked about. A declined edge retains its reason in the receipt, making conservative failure reviewable and giving future work a concrete acceptance target.</p>
+
+<h2>Request-intent planning for larger outputs</h2>
+<p>Requests such as summarize, expand, explain, compare, draft an essay, or assemble a document need more than sentence repair. The request-intent planner represents them as an explicit output contract and a bounded graph of subrequests. Proposals identify the requested operation, subject, audience, length or structure constraints, comparison axes, evidence requirements, and desired output form. Independent construction cues vote on those fields, and unresolved alternatives remain visible with confidence and gap records.</p>
+<p>The current route accepts the plan only after explicit operation, artifact, topic, length, and format cues vote above the selected work threshold. It isolates supplied source material, creates one related-evidence retrieval obligation per topic, adds a correlation step for comparison requests, selects bounded content, and shapes cited paragraphs, sections, bullets, outlines, or tables. Every selected KB statement keeps a provenance edge to its record and package version.</p>
+<p>Current construction is extractive and returns <code>PARTIAL</code>: source sentences and KB statements may be selected, deduplicated, grouped, and ordered, while shared comparison relations are reported only when their typed relation labels are explicit. Missing causal evidence, incomplete search, unrelated records, and output-budget omissions remain visible gaps. The route does not invent transitions or causal prose merely to make an essay sound complete. Future compositional realization must add a claim-level verifier before it can broaden this boundary.</p>
+<p>The request-pattern catalog is versioned and grows through reviewed generic patterns, renamed examples, meaning-changing controls, confidence calibration, and release tests. Runtime requests may reveal useful failure clusters, but deployed execution never rewrites its own rules or memorizes an answer. This keeps step-by-step improvement visible and reproducible.</p>
+
+<h2>Content-focused grounding</h2>
+<p>Related-KB retrieval ranks accepted entity or predicate identities first, followed by exact multiword content phrases, content nouns and verbs, and conservative morphological variants. Articles, determiners, quantifiers, auxiliaries, copulas, pronouns, conjunctions, prepositions, request directives, output nouns, and style qualifiers are excluded as primary topics while content terms are available.</p>
+<p>This rule keeps <code>all</code> out of the search topics for “All mura et bana”: <code>all</code> is a protected quantifier, while <code>mura</code>, the inferred predicate candidate, and <code>bana</code> carry subject matter. A quoted or definition-framed request such as “What does ‘all’ mean?” provides the explicit metalinguistic exception. The term-selection receipt exposes phrase boundaries, grammatical role, inclusion scores, exclusion reasons, variants, omissions, and search completeness.</p>
+<p>A second, independent relevance estimator ranks the bounded records returned by those postings. It combines exact phrase and term coverage, co-occurrence of several focus terms, coverage of entity/predicate/object roles, a typed answer-bridge match, and a capped logarithmic vote for occurrence evidence in the active KB. This gives a fast symbolic estimate of which records are worth reviewing or reasoning over. Frequency is deliberately non-absolute: a very common token cannot outrank a record that matches the complete semantic frame merely because it appears more often.</p>
+<p>Each ranked record exposes its matched terms and roles, frontier document frequency, available active-posting count, answer-bridge score, and additive relevance contribution. The receipt continues to declare <code>answerSupported: false</code>. A possible bridge is a retrieval hypothesis that can feed a later registered reasoner; it is not itself a proof or an answer.</p>
+
+<h2>Local-first operation and bounded effort</h2>
+<p>Local heuristics are the normal recovery route and use no network, child process, model, KB scan, or mutable global dictionary. Language Agent escalation is opt-in and disabled by default. When enabled, the operator interface announces a real external interpretation attempt before invocation, while structured output preserves a machine-readable activity receipt. A cache-assisted route remains attributed to the Language Agent without being described as a live call.</p>
+<p>Named work profiles coordinate candidate generation, reparses, proof search, provider routing, and grounding breadth through exact finite limits. Increasing a profile can complete a previously truncated search, but it cannot change logic, trust, tie-breaking, answer authority, or the meaning of an inability status. The result records requested and effective effort together with exhausted budgets, so speed and coverage remain inspectable.</p>
+
+<h2>Acceptance evidence</h2>
+<p>Acceptance tests cover renamed nonce entities and predicates, punctuation and agreement variants, unique and tied spelling repairs, predicate morphology, quantified rules, missing auxiliaries, request-envelope reduction, complex decomposition, unsafe declined splits, confidence monotonicity, deterministic replay, rollback, and hard candidate limits. Grounding tests prove that function words such as <code>all</code> are excluded from ordinary topical lookup and included for explicit metalinguistic questions.</p>
+<p>The authoritative contract is <a href="specsLoader.html?spec=DS022-heuristic-language-approximation-and-work-policy.md">DS022: Heuristic Language Approximation, Query Focus, and Work Policy</a>. The direct frontend remains documented in <a href="language.html">Language and task frames</a>, the external boundary in <a href="language-agent.html">Language Agent</a>, and inability retrieval in <a href="grounded-failure.html">Grounded failure</a>.</p>
+</main>
+<div data-include="partials/footer.html"></div>
+</body>
+</html>

@@ -222,6 +222,61 @@ test('original-surface grounding keeps informative unigrams and conservative plu
   assert.ok(!terms.includes('does'));
 });
 
+test('structural grounding focus excludes quantifiers and auxiliaries when content terms exist', () => {
+  const input = 'Abura is an mura. All mura et bana. Is Abura eating bana?';
+  const terms = groundingTerms(input);
+  assert.equal(terms[0], 'abura eating bana');
+  assert.ok(terms.includes('mura'));
+  assert.ok(terms.includes('eating'));
+  assert.ok(terms.includes('bana'));
+  assert.ok(!terms.some((term) => ['a', 'all', 'an', 'et', 'is'].includes(term)));
+
+  const renamed = groundingTerms(
+    'Every qorin is a velm. Does Nera skulpt amber?',
+  );
+  assert.ok(renamed.includes('skulpt'));
+  assert.ok(renamed.includes('amber'));
+  assert.ok(!renamed.some((term) => ['a', 'does', 'every', 'is'].includes(term)));
+
+  const request = createGroundingRequest(input, 'UNPARSED', {
+    subject: 'abura', predicate: 'all', object: 'bana',
+  });
+  assert.equal(request.query.predicate, undefined);
+  assert.equal(request.query.subject, 'abura');
+  assert.equal(request.query.object, 'bana');
+});
+
+test('grounding morphology spends tight budgets on typed lemmas instead of malformed suffixes', () => {
+  const machineTerms = groundingTerms('Are machines eating berries?', { maximumTerms: 6 });
+  assert.deepEqual(machineTerms, [
+    'machines eating berries', 'eat', 'eating', 'berry', 'machine', 'berries',
+  ]);
+  assert.ok(!machineTerms.some((term) => ['machin', 'berri', 'berrie'].includes(term)));
+
+  const watchTerms = groundingTerms('Do watches pass boxes?', { maximumTerms: 6 });
+  assert.deepEqual(watchTerms, ['watches pass boxes', 'pass', 'box', 'watch', 'boxes', 'watches']);
+  assert.ok(!watchTerms.some((term) => ['watche', 'boxe'].includes(term)));
+
+  const request = createGroundingRequest('Are machines eating berries?', 'UNKNOWN');
+  assert.equal(request.termSelection.strategy, 'semantic-role-phrase-morphology-v3');
+  const lemma = request.termSelection.candidates.find((candidate) => candidate.term === 'eat');
+  assert.equal(lemma.role, 'predicate');
+  assert.equal(lemma.kind, 'morphological-variant');
+  assert.equal(lemma.variantOf, 'eating');
+  assert.deepEqual(lemma.span, { start: 13, end: 19 });
+  assert.equal(lemma.selected, true);
+  const auxiliary = request.termSelection.candidates.find((candidate) => candidate.term === 'are');
+  assert.equal(auxiliary.exclusionReason, 'grammatical-or-request-scaffolding');
+});
+
+test('a function word is searchable only when the request explicitly treats it as a term', () => {
+  assert.deepEqual(groundingTerms('What does all mean?'), ['all']);
+  assert.deepEqual(groundingTerms('Define every'), ['every']);
+  assert.ok(!groundingTerms('All qorin can shimmer. What can qorin do?').includes('all'));
+  const request = createGroundingRequest('What does all mean?', 'UNKNOWN', { subject: 'all' });
+  assert.equal(request.query.subject, 'all');
+});
+
 test('instruction envelopes focus grounding on the requested topic and prioritize exact compounds', () => {
   const reportTerms = groundingTerms('Write a short report about dogs');
   assert.deepEqual(reportTerms, ['dogs', 'dog']);
@@ -259,6 +314,118 @@ test('grounding ranking is provider-order independent, diverse, and explicitly b
   assert.deepEqual(forward, reverse);
   assert.deepEqual(forward.entries.map((item) => item.recordId), ['a-high', 'b']);
   assert.equal(forward.limits.outputTruncated, true);
+});
+
+test('bounded relevance voting combines active frequency, term coverage, cooccurrence, and answer bridges', () => {
+  const request = createGroundingRequest('What does a qorin use to open a velm?', 'UNKNOWN', {
+    subject: 'qorin', predicate: 'used_for', object: 'open_velm',
+  });
+  const commonOnly = makeGroundingEntry({
+    ...entry('kb-a', 'common-only', 3),
+    statement: 'A qorin is frequently mentioned.',
+    semantic: { subject: 'qorin', predicate: 'mentioned' },
+    relevance: { score: 3, reasons: ['posting-match'], activeKbOccurrences: 1_000_000 },
+  });
+  const bridged = makeGroundingEntry({
+    ...entry('kb-b', 'bridged', 1),
+    statement: 'A qorin uses a key to open a velm.',
+    semantic: { subject: 'qorin', predicate: 'used_for', object: 'open_velm' },
+    relevance: { score: 1, reasons: ['posting-match'], activeKbOccurrences: 2 },
+  });
+  const receipts = ['kb-a', 'kb-b'].map((kbId) => ({
+    kbId, kbVersion: '1', status: 'matches-found', coverage: 'bounded-test-posting',
+    complete: true, candidatesConsidered: 1, truncationReasons: [],
+  }));
+  const result = createGroundingBundle({
+    request, triggerStatus: 'UNKNOWN', entries: [commonOnly, bridged],
+    searchReceipts: receipts, maximumEntries: 2,
+  });
+  assert.equal(result.entries[0].recordId, 'bridged');
+  assert.ok(result.entries[0].relevance.estimator.answerBridgeScore > 0);
+  assert.ok(result.entries[0].relevance.estimator.matchedTerms.length >= 2);
+  assert.equal(result.entries[0].relevance.estimator.answerSupported, false);
+  assert.ok(result.entries[1].relevance.estimator.activeKbOccurrences > 100_000);
+  assert.ok(result.entries[0].relevance.score > result.entries[1].relevance.score,
+    'frequency is a capped vote and cannot outrank a multi-role answer bridge by itself');
+});
+
+test('grounding entry payload obeys its exact UTF-8 byte budget', () => {
+  const request = createGroundingRequest('qorin', 'UNKNOWN', undefined, {
+    maximumEntries: 8,
+    maximumCandidateEntries: 32,
+    maximumOutputBytes: 4_096,
+  });
+  const entries = Array.from({ length: 12 }, (_, index) => makeGroundingEntry({
+    kbId: 'kb-byte', kbVersion: '1', recordId: `byte-${index}`,
+    statement: `${'q'.repeat(430)} ${index}`,
+    semantic: { subject: `qorin-${index}`, predicate: 'related_to', object: 'bytes' },
+    provenance: [`source:byte:${index}`],
+    relevance: { score: 100 - index, reasons: ['nonce-term-match'] },
+  }));
+  const bundle = createGroundingBundle({
+    request,
+    triggerStatus: 'UNKNOWN',
+    entries,
+    searchReceipts: [{
+      kbId: 'kb-byte', kbVersion: '1', status: 'matches-found',
+      coverage: 'exact-byte-fixture', complete: true,
+      candidatesConsidered: entries.length, truncationReasons: [],
+    }],
+    maximumEntries: 8,
+  });
+  assert.ok(bundle.limits.returnedEntryBytes <= 4_096);
+  assert.equal(bundle.limits.maximumOutputBytes, 4_096);
+  assert.equal(bundle.limits.returnedEntryBytes, bundle.entries.reduce((total, item) =>
+    total + Buffer.byteLength(JSON.stringify(item), 'utf8'), 0));
+  assert.equal(bundle.limits.outputTruncated, true);
+});
+
+test('grounding can be deferred until heuristic and assisted language routes have finished', async () => {
+  const createRuntime = async (calls) => {
+    const provider = {
+      manifest: { id: 'related-source', kbId: 'related-source', kbVersion: '1' },
+      memorySnapshot: () => ({ mode: 'fixture' }),
+      ask: async () => undefined,
+      beginQuery() {},
+      endQuery() {},
+      retrieveGrounding: async (request) => {
+        calls.push([...request.terms]);
+        return {
+          entries: [],
+          receipt: {
+            kbId: 'related-source', kbVersion: '1', status: 'no-match',
+            coverage: 'exact-fixture-postings', complete: true,
+            candidatesConsidered: 0, truncationReasons: [],
+          },
+        };
+      },
+    };
+    return new EslmRuntime(
+      new EslmEngine(await createCoreModel()), [provider], ['related-source'],
+    );
+  };
+  const deferredCalls = [];
+  const deferredRuntime = await createRuntime(deferredCalls);
+  const primary = await deferredRuntime.ask(
+    'Write a report about qorin.', {}, { grounding: false },
+  );
+  assert.equal(primary.status, 'UNPARSED');
+  assert.equal(primary.grounding, undefined);
+  assert.equal(primary.workPolicy.requested.profile, 'balanced');
+  assert.deepEqual(deferredCalls, []);
+  const attached = await deferredRuntime.attachGrounding(primary);
+  assert.equal(deferredCalls.length, 1);
+  assert.equal(attached.grounding.answerSupported, false);
+  assert.equal(attached.grounding.limits.maximumLookups,
+    attached.workPolicy.effective.limits.maximumGroundingLookups);
+  assert.equal(attached.grounding.limits.maximumOutputBytes,
+    attached.workPolicy.effective.limits.maximumGroundingOutputBytes);
+
+  const automaticCalls = [];
+  const automatic = await (await createRuntime(automaticCalls)).ask('Write a report about qorin.');
+  assert.equal(automaticCalls.length, 1);
+  assert.deepEqual(attached, automatic);
+  assert.deepEqual(await deferredRuntime.attachGrounding(attached), attached);
 });
 
 test('a complete empty search differs from an incomplete empty search', () => {
@@ -333,6 +500,7 @@ test('derived grounding entries require a bounded rule and non-empty support wit
 test('resource exhaustion never launches an unreserved grounding search', () => {
   assert.equal(shouldRetrieveGrounding('RESOURCE_LIMIT'), false);
   assert.equal(shouldRetrieveGrounding('UNKNOWN'), true);
+  assert.equal(shouldRetrieveGrounding('UNVERIFIED_NORMALIZATION'), true);
 });
 
 test('a grounding provider failure preserves the primary result and reports incomplete search', async () => {
