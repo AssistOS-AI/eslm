@@ -2,9 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EslmEngine } from '../src/runtime/engine.mjs';
 import { EslmRuntime } from '../src/runtime/runtime.mjs';
+import { HeuristicLanguageRuntime } from '../src/runtime/heuristic-language-runtime.mjs';
 import { createCoreModel } from '../src/runtime/core-model.mjs';
 import { loadKnowledgeBase, mergeModels } from '../src/kbs.mjs';
 import { regressionSmokeCases, smokeCatalogSummary, smokeExamples } from '../src/conversation-smoke.mjs';
+import { assessGeneratedHeuristicCase } from '../src/evaluation/generated-heuristic-benchmark.mjs';
 import { SESSION_LIMITS } from '../src/language/session.mjs';
 import { directCoreMemorySnapshot } from '../src/runtime/result-contract.mjs';
 
@@ -145,11 +147,31 @@ test('interactive smoke catalog agrees with the implemented base and QUICK runti
 
 test('multi-thousand nonce smoke corpus is deterministic and passes without agent assistance', async () => {
   const engine = new EslmEngine(await createCoreModel());
+  const heuristic = new HeuristicLanguageRuntime(new EslmRuntime(engine));
   const cases = regressionSmokeCases();
+  const replay = regressionSmokeCases();
+  const summary = smokeCatalogSummary();
   assert.equal(cases.length, 4096);
-  assert.equal(smokeCatalogSummary().total, 4096);
+  assert.deepEqual(cases, replay);
+  assert.equal(summary.format, 'eslm-smoke-catalog-summary-v2');
+  assert.equal(summary.total, 4096);
+  assert.deepEqual(summary.catalogKinds, { 'core-regression': 2896, 'heuristic-language': 1200 });
+  assert.equal(summary.heuristicTechniqueCount, 43);
+  assert.equal(summary.coreTemplateCount, 26);
+  assert.equal(summary.templateCount, 69);
+  assert.deepEqual(Object.keys(summary.oracleLevels), [
+    'answer-execution', 'candidate-selection', 'proposal-only', 'query-local-decomposition',
+    'request-execution', 'safety-abstention',
+  ]);
   assert.equal(new Set(cases.map((item) => item.input)).size, 4096);
   for (const item of cases) {
+    if (item.catalogKind === 'heuristic-language') {
+      const result = await heuristic.ask(item.input, {}, { grounding: false });
+      const assessment = assessGeneratedHeuristicCase(item, result);
+      assert.equal(assessment.pass, true,
+        `${item.id} ${item.technique}: ${assessment.failures.map((failure) => failure.code).join(', ')}`);
+      continue;
+    }
     if (item.kind === 'preference') {
       assert.ok(engine.score(item.good).score > engine.score(item.bad).score, item.id);
       continue;

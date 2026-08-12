@@ -17,7 +17,9 @@ function coverageSummary(status) {
   const table = element('table');
   const head = element('thead');
   const headRow = element('tr');
-  for (const label of ['Coverage area', 'Editorial states', 'Evidence represented', 'Main gap']) headRow.append(element('th', label));
+  for (const label of ['Coverage area', 'Current evidence, editorial state, and main gap']) {
+    headRow.append(element('th', label));
+  }
   head.append(headRow);
   const body = element('tbody');
   for (const area of status.coverage.areas) {
@@ -27,12 +29,13 @@ function coverageSummary(status) {
     const evidence = `${implemented.length ? `Implemented: ${implemented.join(', ')}. ` : ''}`
       + `${partial.length ? `Partial: ${partial.join(', ')}.` : ''}`;
     const tr = element('tr');
-    tr.append(
-      element('td', area.label),
-      element('td', `${counts.implemented} implemented · ${counts.partial} partial · ${counts.absent} absent`),
-      element('td', evidence),
-      element('td', area.mainGap),
+    const details = element('td');
+    details.append(
+      element('p', `${counts.implemented} implemented · ${counts.partial} partial · ${counts.absent} absent`),
+      element('p', evidence),
+      element('p', `Main gap: ${area.mainGap}`),
     );
+    tr.append(element('td', area.label), details);
     body.append(tr);
   }
   table.append(head, body);
@@ -49,15 +52,17 @@ function coverageDetails(status) {
     const table = element('table');
     const head = element('thead');
     const headRow = element('tr');
-    for (const label of ['Target band', 'Editorial state', 'Current evidence and boundary']) headRow.append(element('th', label));
+    for (const label of ['Target band', 'Editorial state, current evidence, and boundary']) {
+      headRow.append(element('th', label));
+    }
     head.append(headRow);
     const body = element('tbody');
     for (const band of area.bands) {
       const tr = element('tr');
       const badgeClass = band.state === 'implemented' ? 'yes' : band.state === 'partial' ? 'partial' : 'no';
-      const state = element('td');
-      state.append(element('span', band.state, `cap cap--${badgeClass}`));
-      tr.append(element('td', band.label), state, element('td', band.evidence));
+      const details = element('td');
+      details.append(element('span', band.state, `cap cap--${badgeClass}`), element('p', band.evidence));
+      tr.append(element('td', band.label), details);
       body.append(tr);
     }
     table.append(head, body);

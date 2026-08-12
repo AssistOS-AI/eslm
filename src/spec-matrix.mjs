@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { PROJECT_ROOT } from './paths.mjs';
 
 const specsDirectory = join(PROJECT_ROOT, 'docs/specs');
+const SAFE_SPEC_FILE = /^DS\d{3}-[A-Za-z0-9-]+\.md$/u;
 
 function frontmatter(markdown) {
   const end = markdown.indexOf('\n---\n', 4);
@@ -16,8 +17,13 @@ function frontmatter(markdown) {
 }
 
 export async function generateSpecMatrix() {
-  const files = (await readdir(specsDirectory))
-    .filter((file) => /^DS\d{3}-.*\.md$/u.test(file))
+  const directoryFiles = await readdir(specsDirectory);
+  const invalid = directoryFiles.filter((file) => /^DS\d{3}-.+\.md$/u.test(file) && !SAFE_SPEC_FILE.test(file));
+  if (invalid.length > 0) {
+    throw new Error(`Specification filenames are unsafe for static publication: ${invalid.join(', ')}.`);
+  }
+  const files = directoryFiles
+    .filter((file) => SAFE_SPEC_FILE.test(file))
     .sort((left, right) => left.localeCompare(right, undefined, { numeric: true }));
   const specifications = [];
   for (const file of files) specifications.push({ file, ...frontmatter(await readFile(join(specsDirectory, file), 'utf8')) });
@@ -27,7 +33,7 @@ export async function generateSpecMatrix() {
     for (const field of ['title', 'status', 'owner', 'summary']) if (!specification[field]) throw new Error(`${specification.file} lacks ${field}.`);
   });
   const rows = specifications.map((specification) =>
-    `| [${specification.id}](specsLoader.html?spec=${specification.file}) | ${specification.title} | [[status:${specification.status}]] | ${specification.owner} | ${specification.summary.replaceAll('|', '\\|')} |`).join('\n');
+    `| [${specification.id}](specsLoader.html?spec=${encodeURIComponent(specification.file)}) | ${specification.title} | [[status:${specification.status}]] | ${specification.owner} | ${specification.summary.replaceAll('|', '\\|')} |`).join('\n');
   const output = `# Specification Matrix
 
 Generated from DS frontmatter by \`src/spec-matrix.mjs\`. Edit DS files and rerun the generator instead of editing this file manually.

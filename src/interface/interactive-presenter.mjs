@@ -2,8 +2,10 @@ import { performance } from 'node:perf_hooks';
 import { KB_CATALOG, loadKnowledgeBase, registeredKnowledgeBases, summarizeKnowledgeBase } from '../kbs.mjs';
 import { PUBLIC_KB_CATALOG, publicKbStatuses } from '../public-kbs.mjs';
 import {
-  REGRESSION_SMOKE_CATALOG_SIZE, SMOKE_EXAMPLES_PER_PAGE, regressionSmokeCases, smokeCatalogSummary,
+  REGRESSION_SMOKE_CATALOG_SIZE, REGRESSION_SMOKE_SEED, SMOKE_EXAMPLES_PER_PAGE,
+  regressionSmokeCases, stratifiedSmokeCases, summarizeSmokeCases,
 } from '../conversation-smoke.mjs';
+import { assessGeneratedHeuristicCase } from '../evaluation/generated-heuristic-benchmark.mjs';
 import { strategyInventory } from '../strategy/strategy-inventory.mjs';
 
 export function interactiveHelp(style) {
@@ -27,8 +29,8 @@ export function interactiveHelp(style) {
   ${command('/strategy clear')}Clear exact execution allowlists.
   ${command('/normalize')}Show the external Language Agent normalization policy and state.
   ${command('/normalize on|off')}Enable or disable direct-first Language Agent assistance.
-  ${command('/examples [PAGE] [SEED]')}Show a page of 24 diverse cases from the smoke corpus.
-  ${command('/smoke [COUNT] [SEED]')}Execute the generated regression catalog.
+  ${command('/examples [PAGE] [SEED]')}Show 24 stratified heuristic and core smoke cases.
+  ${command('/smoke [COUNT] [SEED]')}Execute the combined heuristic and core regression catalog.
   ${command('/trace')}Explain the sources and symbolic steps behind the last answer.
   ${command('/profile')}Show timing and memory measurements for the last answer.
   ${command('/clear')}Forget temporary conversation facts and references.
@@ -40,13 +42,13 @@ You can teach bounded session facts before a question, for example:
   Mice are afraid of wolves. Gertrude is a mouse. What is Gertrude afraid of?`;
 }
 
-export function interactiveCountAndSeed(value, defaultCount, suffix) {
+export function interactiveCountAndSeed(value, defaultCount, defaultSeed = REGRESSION_SMOKE_SEED) {
   const parts = value.trim().split(/\s+/u).filter(Boolean);
   const parsed = /^\d+$/u.test(parts[0] ?? '') ? Number.parseInt(parts.shift(), 10) : defaultCount;
   if (!Number.isSafeInteger(parsed) || parsed < 1 || parsed > 100_000) {
     throw new Error('Interactive case count must be from 1 to 100000.');
   }
-  return { count: parsed, seed: parts.join(' ') || `${Date.now().toString(36)}-${suffix}` };
+  return { count: parsed, seed: parts.join(' ') || defaultSeed };
 }
 
 export function interactiveExamplePage(value) {
@@ -56,32 +58,39 @@ export function interactiveExamplePage(value) {
   if (!Number.isSafeInteger(page) || page < 1 || page > pageCount) {
     throw new Error(`Example page must be from 1 to ${pageCount}.`);
   }
-  return { page, seed: parts.join(' ') || 'stage-a-regression-v1', pageCount };
+  return { page, seed: parts.join(' ') || REGRESSION_SMOKE_SEED, pageCount };
 }
 
 export function interactiveExamples(style, seed, page = 1) {
   const groups = new Map();
   const all = regressionSmokeCases({ size: REGRESSION_SMOKE_CATALOG_SIZE, seed });
+  const displayOrder = stratifiedSmokeCases(all);
   const start = (page - 1) * SMOKE_EXAMPLES_PER_PAGE;
-  const generated = all.slice(start, start + SMOKE_EXAMPLES_PER_PAGE);
+  const generated = displayOrder.slice(start, start + SMOKE_EXAMPLES_PER_PAGE);
   const pageCount = Math.ceil(all.length / SMOKE_EXAMPLES_PER_PAGE);
   for (const example of generated) {
     groups.set(example.group, [...(groups.get(example.group) ?? []), example]);
   }
   const catalog = [...groups].map(([group, examples]) => {
     const rendered = examples.map((example) => {
-      const label = example.label ?? (example.expectedStatus === 'UNKNOWN' ? 'unknown by design' : 'supported');
+      const label = example.catalogKind === 'heuristic-language'
+        ? example.oracle.oracleLevel
+        : example.label ?? (example.expectedStatus === 'UNKNOWN' ? 'unknown by design' : 'core execution');
       const marker = `[${label}]`;
       const colored = label === 'unsupported' ? style.red(marker)
-        : label === 'unknown by design' ? style.yellow(marker) : style.green(marker);
-      return `${colored} ${example.input}\n    Template: ${example.templateId}; metamorphic control: ${example.metamorphicRelation}.`;
+        : label === 'unknown by design' || label.includes('abstention') || label === 'proposal-only'
+          ? style.yellow(marker) : style.green(marker);
+      const context = example.catalogKind === 'heuristic-language'
+        ? `domain: ${example.domain}; complexity: ${example.complexity}; target: ${example.targetFamily}`
+        : `capability: ${example.group}`;
+      return `${colored} ${example.input}\n    Template: ${example.templateId}; ${context}; control: ${example.metamorphicRelation}.`;
     });
     return `${style.bold(group)} (${examples.length})\n  ${rendered.join('\n  ')}`;
   }).join('\n\n');
   return `${style.bold('What this evidence means')}
 Seed: ${style.blue(seed)} — reuse it with /examples or /smoke.
-Page: ${style.green(`${page} of ${pageCount}`)} — ${generated.length} cases shown, cases ${start + 1}–${start + generated.length} of ${all.length}. Use ${style.blue(`/examples ${page === pageCount ? 1 : page + 1} ${seed}`)} for the next page.
-Current executable evidence: ${style.green('generated nonce regressions plus fixed fixtures')} for controlled language, state replacement, task planning, retrieval, preference scoring, and safe Horn deduction.
+Page: ${style.green(`${page} of ${pageCount}`)} — ${generated.length} stratified cases shown, display positions ${start + 1}–${start + generated.length} of ${all.length}. Use ${style.blue(`/examples ${page === pageCount ? 1 : page + 1} ${seed}`)} for the next page.
+Current executable evidence: ${style.green('1,200 heuristic-language cases plus 2,896 core regressions')} covering all 43 DS022 technique shapes and six oracle levels alongside 26 direct, state, relation, preference, and typed-task templates.
 WordNet and ATOMIC checks are source-exposed integration evidence, ${style.yellow('not public benchmark scores')}.
 The ${style.blue('benchmark probe --benchmark all')} report includes every registered public and research row. A single-ID probe returns only that benchmark. Each row distinguishes current execution from stored receipt assembly and current from stale frozen dependencies; generated examples never substitute for those receipts.
 
@@ -92,7 +101,26 @@ function sameExpectedValues(actual, expected) {
   return expected === undefined || JSON.stringify(actual ?? []) === JSON.stringify(expected);
 }
 
+function increment(counts, key) {
+  counts.set(key, (counts.get(key) ?? 0) + 1);
+}
+
+function renderCounts(counts) {
+  return [...counts].toSorted(([left], [right]) => left.localeCompare(right))
+    .map(([key, total]) => `${key} ${total}`).join(', ');
+}
+
+function heuristicExpected(item) {
+  const statuses = item.oracle.acceptableStatuses?.join(' or ')
+    ?? `not ${item.oracle.forbiddenStatuses?.join(' or ') ?? 'an unsafe answer'}`;
+  const route = item.oracle.expectedRoute ? `; route ${item.oracle.expectedRoute}` : '';
+  return `${item.oracle.oracleLevel}; status ${statuses}${route}`;
+}
+
 export async function interactiveSmoke(engine, selected, style, seed, count = REGRESSION_SMOKE_CATALOG_SIZE) {
+  if (typeof engine?.askDirect !== 'function') {
+    throw new TypeError('Interactive smoke requires the complete local HeuristicLanguageRuntime.');
+  }
   const directEngine = engine.runtime ?? engine;
   const cases = regressionSmokeCases({ seed, size: count });
   const started = performance.now();
@@ -101,20 +129,33 @@ export async function interactiveSmoke(engine, selected, style, seed, count = RE
   let failed = 0;
   let skipped = 0;
   const displayedTemplates = new Set();
+  const oracleLevels = new Map();
+  const routes = new Map();
+  const statuses = new Map();
   for (const item of cases) {
     if (item.kb !== 'base' && !selected.includes(item.kb)) {
       skipped += 1;
       lines.push(`${style.yellow('SKIP')} ${item.input} — requires ${item.kb}`);
       continue;
     }
-    const result = item.kind === 'preference'
-      ? { status: 'SCORED', values: [directEngine.score(item.good).score, directEngine.score(item.bad).score] }
-      : item.kind === 'task'
-        ? directEngine.executeTask(item.taskFrame)
-      : await directEngine.ask(item.input, {});
-    const pass = item.kind === 'preference'
-      ? result.values[0] > result.values[1]
-      : result.status === item.expectedStatus && sameExpectedValues(result.values, item.expectedValues);
+    const result = item.catalogKind === 'heuristic-language'
+      ? await engine.ask(item.input, {}, { grounding: false })
+      : item.kind === 'preference'
+        ? { status: 'SCORED', languageRoute: 'preference-scoring',
+          values: [directEngine.score(item.good).score, directEngine.score(item.bad).score] }
+        : item.kind === 'task'
+          ? directEngine.executeTask(item.taskFrame)
+          : await directEngine.ask(item.input, {}, { grounding: false });
+    const assessment = item.catalogKind === 'heuristic-language'
+      ? assessGeneratedHeuristicCase(item, result)
+      : undefined;
+    const pass = assessment ? assessment.pass
+      : item.kind === 'preference'
+        ? result.values[0] > result.values[1]
+        : result.status === item.expectedStatus && sameExpectedValues(result.values, item.expectedValues);
+    increment(oracleLevels, item.contractLevel);
+    increment(routes, result.languageRoute ?? 'no-language-route');
+    increment(statuses, result.status);
     if (pass) passed += 1; else failed += 1;
     if (!pass || !displayedTemplates.has(item.templateId)) {
       displayedTemplates.add(item.templateId);
@@ -122,16 +163,23 @@ export async function interactiveSmoke(engine, selected, style, seed, count = RE
       const answer = String(result.answer ?? result.values ?? '').replace(/\s+/gu, ' ').slice(0, 120);
       const expected = item.kind === 'preference'
         ? 'first grammatical form receives the higher score'
-        : `${item.expectedStatus}; values ${JSON.stringify(item.expectedValues ?? [])}`;
+        : assessment ? heuristicExpected(item)
+          : `${item.expectedStatus}; values ${JSON.stringify(item.expectedValues ?? [])}`;
       const actual = item.kind === 'preference'
         ? `${result.status}; scores ${result.values.map((value) => value.toFixed(3)).join(' versus ')}`
         : `${result.status}; ${answer}${answer.length === 120 ? '…' : ''}; values ${JSON.stringify(result.values ?? [])}`;
-      lines.push(`${marker} [${item.templateId}]\n     Input: ${item.input}\n     Expected: ${expected}\n     Actual: ${actual}`);
+      const diagnosis = !pass && assessment
+        ? `\n     Failed contract: ${assessment.failures.map((failure) => `${failure.stage}/${failure.code}`).join(', ')}`
+        : '';
+      lines.push(`${marker} [${item.templateId}]\n     Input: ${item.input}\n     Expected: ${expected}\n     Actual: ${actual}${diagnosis}`);
     }
   }
   const elapsed = performance.now() - started;
   lines.push('', `${style.bold('Summary')}: ${style.green(`${passed} passed`)}, ${failed ? style.red(`${failed} failed`) : style.green('0 failed')}, ${style.yellow(`${skipped} skipped`)} in ${elapsed.toFixed(1)} ms.`);
-  const summary = smokeCatalogSummary(count);
+  const summary = summarizeSmokeCases(cases);
+  lines.push(style.dim(`Contract levels: ${renderCounts(oracleLevels)}.`));
+  lines.push(style.dim(`Observed routes: ${renderCounts(routes)}.`));
+  lines.push(style.dim(`Observed statuses: ${renderCounts(statuses)}.`));
   lines.push(style.dim(`Coverage tags: ${Object.entries(summary.sourceFamilies).map(([name, total]) => `${name} ${total}`).join(', ')}.`));
   lines.push(style.dim(`${displayedTemplates.size} template shapes are shown above with their actual runtime outputs; every remaining case contributes to the aggregate.`));
   lines.push(style.dim('Cases are original nonce and metamorphic regressions inspired by capability shapes; they are not copied benchmark items or public benchmark scores.'));

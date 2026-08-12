@@ -455,12 +455,21 @@ The runner executes the ordinary `HeuristicLanguageRuntime` with grounding and e
 proposal generation, protected meaning, voting, reparse, route, status, confidence, and resource behavior remain in
 scope together.
 
-The typed oracle level determines what one pass means. `answer-execution`, `semantic-ir`,
+The default receipt measures 1,200 unique surface inputs and 593 observed cells out of the 774 possible declared
+43-technique by 18-domain pairs. That makes duplicate surfaces and empty grid regions visible. It does not turn nonce
+renaming into structural novelty, and it does not remove the current domain-to-predicate coupling.
+
+The typed oracle level determines what one pass means. `answer-execution`, `candidate-selection`,
 `query-local-decomposition`, `request-execution`, `proposal-only`, and `safety-abstention` are aggregated separately.
+The candidate-selection level requires the exact intended structural candidate to win, carry its required family,
+receive a matching accepted parse-only reparse, and execute as the query-local interpreted episode under the declared
+route and status. It does not require a complete relation-shaped query and can pass with `UNKNOWN` and `missingEntity`;
+it must not be reported as complete relational interpretation coverage.
 The current `interpretable-complex-clause` templates use the proposal-only level: they require the expected family and
-protected-operator preservation but can pass with final `UNPARSED`. They establish proposal and safety coverage, not
-executable interpretation coverage. The top-level rate therefore summarizes mixed development contracts and must be
-read with oracle-level, route, and status aggregates.
+protected-operator preservation but can pass with final `UNPARSED`. The fixed generator definition contains 112 such
+proposal-only rows. They establish proposal and safety coverage, not executable interpretation coverage. The
+top-level rate therefore summarizes mixed development contracts and must be read with oracle-level, route, and status
+aggregates; the generated report, not this stable contract, owns their mutable runtime statuses.
 
 Development conclusions are drawn from aggregate clusters, not the first unusual sentence in a failure list. Separate
 aggregates cover domain, technique, target family, complexity, status, route, confidence, and resource outcome.
@@ -492,8 +501,10 @@ results while recovering cases where permissive parsing selected or flattened th
 `src/evaluation/generated-heuristic-benchmark.mjs` owns the deterministic development generator and runner. Its
 default report has evidence regime `internal-generated-development`, declares `benchmarkComparable: false`, freezes
 the stable seed and 1,200-case denominator, and records batch strategy and work identity beside aggregate diagnostics.
-It is part of the default internal benchmark workflow, while remaining separate from the authored fixture,
-interactive regression smoke, and public benchmark portfolio.
+It is part of the default internal benchmark workflow. Interactive regression smoke separately instantiates all 43
+generator shapes and applies the same typed assessor inside its combined 4,096-case catalog, but it does not reuse the
+published suite identity or report metric. The authored fixture and public benchmark portfolio remain separate
+evidence regimes as well.
 
 `heuristic-cnl-morphology.mjs` owns lemma candidates, finite-form generation and inversion, bounded Damerau comparison,
 and the strict source-character-coverage tie-break. `heuristic-cnl-families.mjs` owns the role alignment among entity
@@ -594,7 +605,9 @@ the same underlying cue.
 Response: One example can reveal a defect but cannot distinguish a generic language weakness from an accidental
 lexical interaction. A deterministic structural distribution supplies repeated and contrastive evidence across
 domains, techniques, nonce vocabularies, and target families. Aggregate clusters then justify reusable heuristics and
-calibration changes, while independent seeds and meaning-changing controls expose memorization or over-repair.
+calibration changes, while independent seeds and meaning-changing controls expose memorization or over-repair. Each
+pass retains the authority of its oracle level: choosing the expected candidate is useful evidence, but it does not
+establish a complete relational Semantic IR when the runtime stops at `UNKNOWN` with `missingEntity`.
 
 ### Question #11: Why can source-character coverage break an edit-distance tie?
 

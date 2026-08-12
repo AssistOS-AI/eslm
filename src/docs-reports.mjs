@@ -1,4 +1,4 @@
-import { access, readFile, readdir, writeFile } from 'node:fs/promises';
+import { access, lstat, readFile, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { benchmarkBehaviorIdentity } from './evaluation/benchmark-execution-identity.mjs';
 import { auditFreshBenchmarkReceipts } from './evaluation/benchmark-receipt-audit.mjs';
@@ -6,6 +6,8 @@ import { validatePublicBenchmarkRows } from './evaluation/benchmark-report-contr
 import { assertGeneratedHeuristicBenchmarkReport } from './evaluation/generated-heuristic-benchmark-contract.mjs';
 import { renderGeneratedHeuristicBenchmarkHtml } from './evaluation/generated-heuristic-benchmark-html.mjs';
 import { PROJECT_ROOT } from './paths.mjs';
+
+const SAFE_SPEC_SOURCE = /^(?:matrix|DS\d{3}-[A-Za-z0-9-]+)\.md$/u;
 
 function escapeHtml(value) {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -21,8 +23,9 @@ export function renderReportHtml(title, report) {
   const comparable = report.model?.comparable !== false;
   const regime = report.evidenceRegime ?? 'unspecified';
   const datasetPath = report.dataset?.path ?? report.suite ?? 'not recorded';
-  const rows = cases.map((item) => `<tr><td>${escapeHtml(item.id)}</td><td>${item.pass ? 'pass' : 'fail'}</td>`
-    + `<td><code>${escapeHtml(JSON.stringify(item.actual))}</code></td></tr>`).join('\n');
+  const rows = cases.map((item) => `<tr><td>${escapeHtml(item.id)}</td>`
+    + `<td><strong>${item.pass ? 'pass' : 'fail'}</strong><br><code>`
+    + `${escapeHtml(JSON.stringify(item.actual))}</code></td></tr>`).join('\n');
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <base href="../"><title>${escapeHtml(title)} — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script></head>
@@ -34,7 +37,7 @@ export function renderReportHtml(title, report) {
 <p>Generated ${escapeHtml(report.createdAt)}. Protocol: <code>${escapeHtml(report.protocol ?? report.format)}</code>. Claim scope: <code>${escapeHtml(report.claimScope ?? 'not recorded')}</code>.</p>
 <h2>What this result means</h2>
 <p>A passing row shows that one fixed software contract still works for this runtime and fixture. It does not estimate performance on unseen language, an official dataset, or a production workload. Public benchmark evidence, route labels, split quality, and receipt freshness are reported separately on the <a href="evaluation.html">evaluation page</a>.</p>
-<div class="table-wrap"><table><thead><tr><th>Case</th><th>Verdict</th><th>Actual</th></tr></thead><tbody>${rows}</tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Case</th><th>Verdict and actual result</th></tr></thead><tbody>${rows}</tbody></table></div>
 </main></body></html>\n`;
 }
 
@@ -76,6 +79,55 @@ export function validateDocumentationDiagrams(file, html) {
   }
 }
 
+export async function validatePublishedSpecificationSources() {
+  const docsDirectory = join(PROJECT_ROOT, 'docs');
+  const specsDirectory = join(docsDirectory, 'specs');
+  const noJekyllPath = join(docsDirectory, '.nojekyll');
+  const noJekyll = await lstat(noJekyllPath);
+  if (!noJekyll.isFile() || (await readFile(noJekyllPath, 'utf8')).trim() !== '') {
+    throw new Error('docs/.nojekyll must be an empty regular file so GitHub Pages publishes raw DS Markdown.');
+  }
+
+  const matrix = await readFile(join(specsDirectory, 'matrix.md'), 'utf8');
+  const rows = [...matrix.matchAll(
+    /^\|\s*\[(DS\d{3})\]\(specsLoader\.html\?spec=([^)]+)\)\s*\|/gmu,
+  )];
+  const files = (await readdir(specsDirectory))
+    .filter((file) => /^DS\d{3}-.+\.md$/u.test(file))
+    .sort();
+  if (rows.length !== files.length) {
+    throw new Error(`Specification matrix exposes ${rows.length} DS sources, but ${files.length} files exist.`);
+  }
+
+  const targets = [];
+  for (const row of rows) {
+    let target;
+    try {
+      target = decodeURIComponent(row[2]);
+    } catch {
+      throw new Error(`Specification matrix contains an invalid encoded target: ${row[2]}.`);
+    }
+    if (!SAFE_SPEC_SOURCE.test(target) || target === 'matrix.md') {
+      throw new Error(`Specification matrix contains an unsafe loader target: ${target}.`);
+    }
+    if (!target.startsWith(`${row[1]}-`)) {
+      throw new Error(`Specification matrix label ${row[1]} does not identify ${target}.`);
+    }
+    await access(join(specsDirectory, target));
+    targets.push(target);
+  }
+  if (JSON.stringify(targets.toSorted()) !== JSON.stringify(files)) {
+    throw new Error('Specification matrix targets must identify every DS source exactly once.');
+  }
+
+  const loader = await readFile(join(docsDirectory, 'specsLoader.html'), 'utf8');
+  if (!loader.includes('fetch(this.specResourcePath(this.specPath))')
+      || !loader.includes('return `specs/${encodeURIComponent(specPath)}`;')) {
+    throw new Error('Specification loader must fetch validated, encoded paths from the published specs directory.');
+  }
+  return { noJekyll: true, sources: targets.length, targets };
+}
+
 export async function publishReport(kind) {
   const jsonPath = join(PROJECT_ROOT, 'docs/results', `latest-${kind}.json`);
   const report = JSON.parse(await readFile(jsonPath, 'utf8'));
@@ -95,7 +147,7 @@ export async function publishGeneratedHeuristicBenchmark() {
 
 export async function checkDocumentation() {
   const required = [
-    'index.html', 'architecture.html', 'language.html', 'knowledge-bases.html', 'training.html',
+    '.nojekyll', 'index.html', 'architecture.html', 'language.html', 'knowledge-bases.html', 'training.html',
     'evaluation.html', 'cli.html', 'status.html', 'research-program.html', 'reasoning-methods.html',
     'reasoning-categorical-logic.html',
     'reasoning-deduction-and-models.html', 'reasoning-defaults-and-abduction.html',
@@ -118,6 +170,7 @@ export async function checkDocumentation() {
     try { await access(join(PROJECT_ROOT, 'docs', path)); } catch { missing.push(path); }
   }
   if (missing.length) throw new Error(`Missing documentation files: ${missing.join(', ')}`);
+  await validatePublishedSpecificationSources();
   const publicReport = JSON.parse(await readFile(join(PROJECT_ROOT, 'docs/results/latest-public-benchmark-probes.json'), 'utf8'));
   if (publicReport.format !== 'eslm-public-benchmark-probe-report-v2' || !Array.isArray(publicReport.rows) || publicReport.rows.length === 0) {
     throw new Error('Latest public benchmark report must use the supported format and contain rows.');
@@ -208,7 +261,13 @@ export async function checkDocumentation() {
     }
   }
   const header = await readFile(join(PROJECT_ROOT, 'docs/partials/header.html'), 'utf8');
-  if ((header.match(/<details>/gu) ?? []).length !== 4) throw new Error('Shared navigation must contain four grouped menus.');
+  const navigationGroups = [...header.matchAll(/<details><summary>([^<]+)<\/summary>/gu)]
+    .map((match) => match[1]);
+  if (JSON.stringify(navigationGroups) !== JSON.stringify([
+    'Overview', 'Language', 'System', 'Reasoning', 'Development', 'Reference',
+  ])) {
+    throw new Error('Shared navigation must contain the six canonical role-based menus.');
+  }
   const home = await readFile(join(PROJECT_ROOT, 'docs/index.html'), 'utf8');
   if ((home.match(/<section(?:\s|>)/gu) ?? []).length !== 3) throw new Error('Home page must contain exactly three substantive sections.');
   if (home.includes('data-public-benchmark-dashboard')) throw new Error('Home page must link to, not duplicate, the full benchmark dashboard.');

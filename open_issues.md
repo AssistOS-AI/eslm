@@ -58,16 +58,21 @@ remain explicit work rather than simulated plugins.
 
 ## P1 — research and evaluation
 
-- [ ] Republish the expanded default deterministic 1,200-case heuristic-language development suite under its own
+- [x] Republish the expanded default deterministic 1,200-case heuristic-language development suite under its own
   `internal-generated-development` report. Keep its structural oracle, seed, generator/suite digests, work and strategy
   identity, fixed denominator, aggregate dimensions, bounded representative failures, and
   `benchmarkComparable: false` claim boundary machine-reviewable.
-- [ ] Review the expanded suite's largest earliest-failure clusters and record collective conclusions by structural
-  domain, technique, target family, complexity, route, status, confidence, and resource outcome. Promote only generic
-  strategy hypotheses that survive renamed, meaning-changing, and independently seeded controls.
-- [x] Split generated-suite reporting by oracle level: answer execution, Semantic IR, query-local decomposition,
+- [x] Review the expanded suite's largest earliest-failure clusters and record collective conclusions by structural
+  domain, technique, target family, complexity, route, status, confidence, and resource outcome. Derive changes only
+  from generic hypotheses supported by renamed and meaning-changing controls plus repeated pre-fix seed clusters;
+  retain the completed post-fix seed audit and its limits as a separate checkpoint below.
+- [x] Split generated-suite reporting by oracle level: answer execution, candidate selection, query-local decomposition,
   request execution, safe abstention, and proposal/operator preservation. Never count a proposal-only pass whose final
-  status is `UNPARSED` as executable interpretation coverage.
+  status is `UNPARSED` as executable interpretation coverage. Candidate selection must bind the exact winner to its
+  required family, accepted matching parse-only reparse, query-local interpreted episode, route, and status; never
+  promote that evidence to complete relational Semantic IR coverage.
+- [ ] Add a distinct executed relational-Semantic-IR oracle for cases that expose and validate a complete typed query.
+  Keep it separate from candidate selection, answer execution, and proposal preservation.
 - [ ] Report actual target-family applicability, execution, selection, and contribution separately from the current
   target-family contract totals; a generated target label is not proof that its strategy ran or caused the result.
 - [ ] Add template-disjoint, vocabulary-disjoint, and independently authored language suites. Report the number of
@@ -88,6 +93,9 @@ remain explicit work rather than simulated plugins.
 - [x] Include the failure diagnostic code in generated cluster identity.
 - [ ] Compare fixed-seed, independent-seed, template-disjoint, and vocabulary-disjoint cluster persistence before
   promoting a generic heuristic.
+- [x] Complete the post-fix independent-seed replay. Five independent 1,200-case seeds pass 6,000/6,000 declared
+  contracts with no failure cluster, compared with the pre-fix 5,898/6,000 baseline. Preserve the oracle-level and
+  status limits documented below rather than presenting this as general language coverage.
 - [ ] Freeze independent suites for each stage: language recovery, scope-safe decomposition, retrieval focus,
   relevance ranking, answer-bridge recall, reasoning selection, aggregation, synthesis grounding, and abstention.
 - [ ] Compare individual strategies, ablations, voting rules, budget allocations, and selected ensembles on identical
@@ -100,28 +108,34 @@ remain explicit work rather than simulated plugins.
   retrieval, calibrated arbitration, conflict-aware evidence fusion, verified long-form synthesis, and new-source KB
   induction.
 
-### Expanded generated-development checkpoint — pending republication
+### Expanded generated-development checkpoint — published 2026-08-12
 
-The generator now defines 43 reviewed shapes across 18 domains and 28 target families. It explicitly labels six oracle
-levels—answer execution, Semantic IR, query-local decomposition, request execution, proposal-only preservation, and
-safety abstention—and aggregates them separately. It also restores deletion, insertion, substitution, and
-transposition spelling processes and adds six named morphology strata. The prior 31-shape artifact is superseded; its
-pass count, digest, route totals, and cluster state are not a result for this expanded definition. Do not check the two
-publication tasks above until the fixed 1,200-case seed has executed, the new report validates, and its collective
-clusters have been reviewed.
+The generator now defines 43 reviewed shapes across 18 domains and 28 target families. Its default receipt records all
+1,200 surfaces as unique and observes 593 of the 774 possible declared technique-by-domain cells. These are combination
+and surface-diversity measures, not 1,200 independent constructions or an independent domain-by-predicate design. It
+explicitly labels six oracle levels—answer execution, candidate selection, query-local decomposition, request
+execution, proposal-only preservation, and safety abstention—and aggregates them separately. It also restores
+deletion, insertion, substitution, and
+transposition spelling processes and adds six named morphology strata. The published report validates with definition
+digest `sha256:909549edb887ba4729ada5c45ed0b15a94775463afc9a243292ee198fdf971b3`, suite digest
+`sha256:c1f969787f328b8bd6dc74a7bf4235cfa33e5a3d82dfd1edca2a4f5dc2c7d319`, and behavior digest
+`427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b`. The prior 31-shape artifact is superseded;
+its pass count, digest, route totals, and cluster state are not results for this expanded definition.
 
 Pre-expansion failure-guided work remains useful history. It found recurring, domain-independent problems: permissive
 direct parses could hide intended progressive or multi-family repairs; suffix-like nonce classes could be
 singularized; and progressive derivation could create competing bases. The generic runtime changes compare parse-only
 Semantic IR, keep changed interpretations query-local, and use visible context for covered cases. Earlier experiments
 also showed that replacing a difficult insertion mutation with an easier deletion could hide a genuine ambiguity.
-The expanded generator now retains both processes, but its unpublished result cannot yet establish their behavior.
+The expanded generator now retains both processes. Its published fixed-seed result and independent-seed audit establish
+their behavior only under the declared generated contracts.
 Targeted renamed ambiguity probes remain research input for calibrated alternatives, `AMBIGUOUS`, or a reviewed
 lexical resource—never a reason for verb-specific core branches.
 
 A non-publishing fixed-seed run of the expanded definition produced 1,170/1,200 mixed contract passes and 30 failures.
 This is diagnostic evidence, not the published checkpoint. Twenty-eight failures are at `answer-execution` and two at
-`semantic-ir`; the other four oracle levels pass their current contracts. The repeated clusters are not random:
+the then-labeled `semantic-ir` level, whose actual contract is now named `candidate-selection`; the other four oracle
+levels pass their current contracts. The repeated clusters are not random:
 
 - 14 cases fail first at candidate generation in `multi-family-consensus`;
 - 13 fail first on the resulting status in the same target family;
@@ -131,13 +145,14 @@ This is diagnostic evidence, not the published checkpoint. Twenty-eight failures
 Representative multi-family errors select `watere`, `mapp`, `fixe`, `pas`, or `buz` instead of the structural oracle's
 `water`, `map`, `fix`, `pass`, or `buzz`. These failures span insertion, substitution, transposition, progressive
 reduction, and several domains. They make the next research decision concrete: preserve and compare competing lemma
-analyses, use reviewed lexical evidence when available, calibrate confidence against ambiguity, and verify the chosen
-Semantic IR before treating an affirmative answer as supported. Do not restore a green suite by deleting these
+analyses, use reviewed lexical evidence when available, calibrate confidence against ambiguity, and verify a complete
+relational query before treating an affirmative answer as supported. Do not restore a green suite by deleting these
 mutation/domain combinations or by adding predicate-specific branches. The embedded-question cluster should be
 audited separately for the interaction between `ties`, the declared `tie` lemma, and sentence-form recognition.
 
 Five independent non-publishing 1,200-case seeds reproduce the diagnosis: 5,898/6,000 mixed contracts pass and 102
-fail. Only `answer-execution` and `semantic-ir` contain failures; query-local decomposition, request execution,
+fail. Only `answer-execution` and the then-labeled `semantic-ir` contract, now named `candidate-selection`, contain
+failures; query-local decomposition, request execution,
 proposal-only preservation, and safety abstention pass their current contracts. The two multi-family candidate/status
 clusters recur in all five seeds and contain 84/102 failures. Contextual spelling failures recur around `pass`, while
 embedded or polite question-envelope failures recur around `tie/ties`. All failed rows retain distinct nonce names,
@@ -153,14 +168,24 @@ distance, with strictly greater source-character coverage as the only permitted 
 coverage produces no contextual winner. Renamed controls cover the recurring spelling processes and the independent
 `tie`/`vie`/`cries` morphology distinctions.
 
-A post-fix, non-publishing run of the unchanged default seed now passes all 1,200 declared contracts and has no failure
-cluster. This is a diagnostic checkpoint until the generated artifact is explicitly republished and validated. Its
+The published post-fix default seed passes all 1,200 declared contracts and has no remaining failure cluster. Its
 interpretation remains narrow: the distribution still has 43 reviewed shapes, 18 domain records coupled to their
-predicates, and six different oracle levels. Generator/runtime inspection identifies 112 passing proposal-only rows
-whose final status is `UNPARSED`; those are operator-preserving proposals, not executable interpretations. Another 112
-passing `UNPARSED` rows are safety-abstention controls. The green fixed distribution therefore demonstrates that the
+predicates, 28 target-family labels, and six different oracle levels. The report has 224 passing `UNPARSED` outcomes;
+generator/runtime inspection attributes 112 to proposal-only operator preservation and 112 to safety abstention. The
+proposal-only rows are not executable interpretations. The green fixed distribution therefore demonstrates that the
 specific repeated baseline clusters are closed under these project-owned contracts; it does not establish general
 English morphology, independent structural generalization, KB grounding, or public benchmark performance.
+
+Five post-fix independent 1,200-case seeds pass 6,000/6,000 declared contracts on runtime behavior identity
+`427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b`, with no mismatch or earliest-failure cluster.
+This closes the seed replay checkpoint for the fixed 43-shape distribution, but it also exposes why the oracle labels
+must remain narrow. Across those runs, 280 candidate-selection rows select and execute the expected candidate with a
+matching accepted parse-only receipt and required family, yet end `UNKNOWN` with `missingEntity` and do not expose a
+complete relation-shaped query. They are exact candidate-selection evidence, not relational Semantic IR execution.
+Another 559 proposal-only rows remain `UNPARSED`, 555 safety-abstention controls
+remain `UNPARSED`, and 137 understood and planned request rows end `MISSING_KNOWLEDGE`; each passes its own declared
+contract. Template-disjoint, vocabulary-disjoint, independently authored, grounded-KB, and public evaluation gates
+remain open, so 6,000/6,000 must not be generalized beyond this project-owned structural distribution.
 
 ## P1 — documentation and architecture visibility
 

@@ -506,15 +506,22 @@ reconstruct the stage decision from the receipt.
 
 The deterministic generated heuristic development benchmark is the default broad diagnostic for the coordinated
 language stage. Its 1,200-case default run instantiates 43 reviewed shapes across 18 domains with nonce variation; this
-gives wide repeated execution but not 1,200 independent constructions. It freezes the generator, suite, behavior,
-work-policy, and strategy-catalog identity and aggregates outcomes by generating technique, domain, intended target
+gives wide repeated execution but not 1,200 independent constructions. The default receipt records 1,200 unique
+surface inputs, 28 observed target families, six oracle levels, and 593 of the 774 possible declared
+technique-by-domain cells; those are diversity measures, not proof of independent structures or domain semantics. It
+freezes the generator, suite, behavior, work-policy, and strategy-catalog identity and aggregates outcomes by
+generating technique, domain, intended target
 family, oracle level, route, status, confidence, resource outcome, and earliest failure. Those labels organize
 analysis; they are not executor inputs. A promotion claim still requires an explicit baseline-versus-ablation run
 under the same suite identity, because merely listing a
 strategy in the batch configuration does not prove that it executed or contributed on each case.
 
-The report's six oracle levels span answer execution, Semantic IR, query-local decomposition, request execution, safe
-abstention, and proposal/operator preservation. Their aggregates keep those evidence levels separate. A
+The report's six oracle levels span answer execution, candidate selection, query-local decomposition, request
+execution, safe abstention, and proposal/operator preservation. Candidate selection requires the exact intended
+structural candidate to win, carry its required family, receive a matching accepted parse-only reparse, and execute as
+the query-local interpreted episode under the declared route and status. It does not establish a complete
+relation-shaped query and can terminate `UNKNOWN` with `missingEntity`. Their aggregates keep those evidence levels
+separate. A
 strategy-family proposal pass with final `UNPARSED` establishes reach and safety, not successful language execution;
 the top-level mixed contract rate never overrides that distinction.
 
@@ -595,6 +602,8 @@ Response: It shows how the selected strategy configuration behaves over a reprod
 language distribution and exposes collective failure patterns. It does not by itself isolate one strategy's causal
 contribution. Causal promotion evidence requires a frozen ablation with equal cases, work policy, oracle, and behavior
 identity, followed by the protected and external evaluation layers appropriate to the claimed capability.
+Candidate-selection success inside that report proves only the declared structural selection contract; it does not
+prove that a full relational Semantic IR or answer was produced.
 
 ## Conclusion
 

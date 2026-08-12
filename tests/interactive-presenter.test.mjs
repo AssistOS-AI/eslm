@@ -2,8 +2,12 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { EslmEngine } from '../src/runtime/engine.mjs';
 import { createCoreModel } from '../src/runtime/core-model.mjs';
+import { EslmRuntime } from '../src/runtime/runtime.mjs';
+import { HeuristicLanguageRuntime } from '../src/runtime/heuristic-language-runtime.mjs';
+import { REGRESSION_SMOKE_SEED } from '../src/conversation-smoke.mjs';
 import {
-  interactiveExamplePage, interactiveExamples, interactiveResultText, interactiveSmoke, traceText,
+  interactiveCountAndSeed, interactiveExamplePage, interactiveExamples, interactiveResultText,
+  interactiveSmoke, traceText,
 } from '../src/interface/interactive-presenter.mjs';
 
 const style = Object.freeze({
@@ -37,6 +41,12 @@ test('related KB records render below an explicit not-an-answer boundary', () =>
 });
 
 test('examples uses deterministic 24-case pages from the executable smoke catalog', () => {
+  assert.deepEqual(interactiveCountAndSeed('', 4096), {
+    count: 4096, seed: REGRESSION_SMOKE_SEED,
+  });
+  assert.deepEqual(interactiveExamplePage(''), {
+    page: 1, seed: REGRESSION_SMOKE_SEED, pageCount: 171,
+  });
   assert.deepEqual(interactiveExamplePage('2 review-seed'), {
     page: 2, seed: 'review-seed', pageCount: 171,
   });
@@ -46,16 +56,28 @@ test('examples uses deterministic 24-case pages from the executable smoke catalo
   assert.match(second, /Page: 2 of 171/u);
   assert.equal((first.match(/Template:/gu) ?? []).length, 24);
   assert.equal((second.match(/Template:/gu) ?? []).length, 24);
+  assert.match(first, /1,200 heuristic-language cases plus 2,896 core regressions/u);
+  for (const level of [
+    'answer-execution', 'candidate-selection', 'proposal-only', 'query-local-decomposition',
+    'request-execution', 'safety-abstention',
+  ]) assert.match(first, new RegExp(`\\[${level}\\]`, 'u'));
+  assert.match(first, /categorical-subalternation/u);
+  assert.match(first, /boolean-entailment-chain/u);
   assert.notEqual(first, second);
 });
 
 test('smoke output displays representative input, expected contract, and actual runtime response', async () => {
-  const engine = new EslmEngine(await createCoreModel());
+  const engine = new HeuristicLanguageRuntime(new EslmRuntime(
+    new EslmEngine(await createCoreModel()),
+  ));
   const output = await interactiveSmoke(engine, [], style, 'review-seed', 24);
   assert.match(output, /Input:/u);
   assert.match(output, /Expected:/u);
   assert.match(output, /Actual:/u);
   assert.match(output, /24 passed, 0 failed, 0 skipped/u);
+  assert.match(output, /Contract levels:/u);
+  assert.match(output, /Observed routes:/u);
+  assert.match(output, /Observed statuses:/u);
   assert.equal((output.match(/^PASS \[/gmu) ?? []).length, 24);
 });
 

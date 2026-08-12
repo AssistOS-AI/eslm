@@ -133,11 +133,12 @@ function entailmentOracle(values, expectedCandidateText, requiredFamilies, direc
 
 function interpretedQuestionOracle(values, candidate, families) {
   return Object.freeze({
-    kind: 'interpreted-question', oracleLevel: 'semantic-ir',
+    kind: 'interpreted-question', oracleLevel: 'candidate-selection',
     acceptableStatuses: Object.freeze(['UNKNOWN']),
     expectedRoute: 'heuristic-cnl-approximated', expectedAnswer: null,
     expectedQuery: null,
-    expectedCandidateText: candidate, requiredFamilies: Object.freeze(families),
+    expectedCandidateText: candidate, requireSelectedCandidate: true,
+    requiredFamilies: Object.freeze(families),
   });
 }
 

@@ -90,8 +90,11 @@ validated finite denominator, `--seed VALUE` selects a reproducible nonce instan
 JSON and HTML reports under the separate `latest-generated-heuristic-benchmark` name. The operation executes the real
 local heuristic runtime with grounding and the Language Agent disabled. It never reads a public benchmark adapter or
 merges its rate with `benchmark run`. Its typed oracles cover executed semantics, request plans, safe abstention, and
-proposal/operator preservation. Separate oracle-level aggregates distinguish answer execution, Semantic IR,
-query-local decomposition, request execution, proposal-only preservation, and safety abstention. The top-level pass
+proposal/operator preservation. Separate oracle-level aggregates distinguish answer execution, candidate selection,
+query-local decomposition, request execution, proposal-only preservation, and safety abstention. Candidate-selection
+rows require the intended structural candidate to win, carry its required family, receive a matching accepted
+parse-only reparse, and execute as the query-local interpreted episode under the declared route and status. They do
+not require a complete relation-shaped query and may terminate `UNKNOWN` with `missingEntity`. The top-level pass
 rate is still a mixed development-contract measure; oracle level, route, and status show whether a passing proposal
 contract also reached executable interpretation.
 
@@ -228,14 +231,39 @@ change the meaning of an existing status, answer, provenance item, or KB-version
 
 ### Generated examples and regression smoke
 
-Interactive `/examples [PAGE] [SEED]` selects a reproducible page over the exact generated regression catalog executed by `/smoke`. A page contains 24 cases, so `/examples 1` and `/examples 2` expose different bounded portions without pretending that the terminal rendered all 4,096 default cases. Each row names its template and metamorphic relation. The default seed is stable; an explicit seed permits a different deterministic nonce instantiation. `/smoke [COUNT] [SEED]` executes the requested number of cases, defaults to 4,096, accepts from 1 through 100,000, and reports pass, fail, skip, elapsed time, and source-family capability tags. The command constructs a fresh offline regression runtime containing the generic core and QUICK fixture package regardless of the session's selected KBs. Consequently a prior `/load`, `/unload`, memory-policy change, or enabled normalization wrapper cannot add evidence, turn expected unknowns into answers, skip QUICK cases, or change the smoke result.
+Interactive `/examples [PAGE] [SEED]` selects a reproducible, stratified page over the exact default generated
+regression catalog executed by `/smoke`. A page contains 24 cases and round-robins the six heuristic oracle levels and
+the established core capability groups before taking a second example from a stratum. Thus the first page visibly
+contains direct, repair, decomposition, request, safety, preference, state, relation, and typed-task work instead of
+an accidental run of adjacent templates. Page order is presentation only; no case is omitted or duplicated.
+
+The default catalog contains exactly 4,096 cases: 1,200 fresh instantiations from all 43 DS022 heuristic-development
+technique shapes and 2,896 instantiations from the 26 established core templates. The heuristic portion retains its
+six honest oracle levels: answer execution, candidate selection, query-local decomposition, request execution,
+proposal-only preservation, and safety abstention. The core portion retains class and relation queries, state and
+temporal execution, open-world controls, preference scoring, scalable Boolean entailment, and categorical logic.
+
+The shared default seed is stable for both commands; an explicit seed deterministically changes nonce surfaces without
+changing the contract distribution. `/smoke [COUNT] [SEED]` executes the requested bounded mixture, defaults to 4,096,
+and accepts 1 through 100,000. It reports pass, fail, skip, elapsed time, source-family capability tags, and aggregate
+counts by contract level, observed language route, and observed status. The command constructs a fresh offline
+regression runtime containing the generic core, QUICK fixture package, balanced work policy, and default exact strategy
+set, regardless of the interactive session's selected KBs or policies. Consequently a prior `/load`, `/unload`,
+`/memory`, `/work`, `/strategy`, or `/normalize` command cannot add evidence, remove a strategy, change an oracle,
+turn expected unknowns into answers, skip QUICK cases, or change the smoke result.
 
 DS010 owns the generated corpus membership, metamorphic semantics, capability groups, expected-value validation, and
 scientific claim boundary. The CLI owns only selection, invocation, and truthful presentation: every typed template
 must call the same public execution boundary used by adapters, and source-family tags never turn generated cases into
 public benchmark evidence.
 
-Smoke output is review evidence, not a progress animation. It prints one representative execution for every template encountered: the input text, expected status and semantic values, actual status, actual human answer or preference scores, and actual semantic values. Every additional generated case still contributes to the pass/fail aggregate. A passing summary is invalid if displayed answers were fabricated or if the command compared expectations without invoking the runtime.
+Smoke output is review evidence, not a progress animation. It prints one representative execution for every template
+encountered: the input text, typed oracle or expected status and semantic values, actual status, actual human answer or
+preference scores, and actual semantic values. Heuristic cases execute through `HeuristicLanguageRuntime` with
+grounding disabled and are scored by the same typed oracle assessor as the generated development runner. Established
+direct, preference, and typed-task cases use their ordinary public engine boundaries. Every additional generated case
+still contributes to the pass/fail aggregate. A passing summary is invalid if displayed answers were fabricated or if
+the command compared expectations without invoking the runtime.
 
 ### Optional operator normalization
 
@@ -299,11 +327,18 @@ Response: Cache presence and access authorization are operational facts, while a
 
 ### Question #2: Why is `/examples` a paged view of the larger smoke corpus?
 
-Response: The 4,096-case default is useful as a regression denominator but unreadable as terminal documentation. `/examples` exposes stable 24-case pages over that same catalog; `/smoke` executes the requested deterministic catalog and provides the regression evidence. Page numbering makes omissions visible and lets a reviewer move through the corpus without redefining the smoke denominator.
+Response: The 4,096-case default is useful as a regression denominator but unreadable as terminal documentation.
+`/examples` exposes stable 24-case pages over that same catalog; stratification keeps every page broad enough for human
+review without changing membership or execution order. `/smoke` executes the requested deterministic catalog and
+provides the regression evidence. Page numbering makes omissions visible and lets a reviewer move through the corpus
+without redefining the smoke denominator.
 
 ### Question #3: Why does `/smoke` print representative executions and totals?
 
-Response: An aggregate alone cannot show whether the runtime was really invoked or whether status and semantic values were interpreted honestly. One actual input/output record per template keeps a default run readable while exposing the computation behind the total. Failures are always printed even when their template was already represented.
+Response: An aggregate alone cannot show whether the runtime was really invoked or whether status, route, and semantic
+values were interpreted honestly. One actual input/output record per template keeps a default run readable while
+exposing the computation behind the total. Contract-level, route, and status aggregates disclose what kind of pass was
+obtained, and failures are always printed even when their template was already represented.
 
 ### Question #4: Why is related KB evidence not appended to the answer string?
 
@@ -322,7 +357,9 @@ serialized in the work policy, and suitable for replay. The separate preset ther
 Response: The authored fixture protects five deliberately readable integration contracts. The generated suite samples
 many deterministic structural variants and is designed for aggregate failure discovery. Combining their numerators
 would make neither result intelligible, while sequencing both commands gives the ordinary development workflow both
-the small review surface and the broad diagnostic surface.
+the small review surface and the broad diagnostic surface. Its candidate-selection level is also intentionally
+narrower than complete Semantic IR execution, so the CLI must present oracle level, route, and status beside the mixed
+pass rate.
 
 ## Conclusion
 

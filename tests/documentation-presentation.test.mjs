@@ -2,12 +2,77 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import test from 'node:test';
-import { renderReportHtml, validateDocumentationDiagrams } from '../src/docs-reports.mjs';
+import {
+  renderReportHtml,
+  validateDocumentationDiagrams,
+  validatePublishedSpecificationSources,
+} from '../src/docs-reports.mjs';
 import { PROJECT_ROOT } from '../src/paths.mjs';
 
 async function readProjectFile(path) {
   return readFile(join(PROJECT_ROOT, path), 'utf8');
 }
+
+test('shared navigation is balanced by reader role and covers every substantive chapter', async () => {
+  const [header, home, benchmarkDashboard] = await Promise.all([
+    readProjectFile('docs/partials/header.html'),
+    readProjectFile('docs/index.html'),
+    readProjectFile('docs/assets/public-benchmark-dashboard.mjs'),
+  ]);
+  const expectedGroups = Object.freeze({
+    Overview: Object.freeze([
+      'research-program.html', 'status.html', 'research-horizons.html', 'research-decisions.html',
+    ]),
+    Language: Object.freeze([
+      'language.html', 'heuristic-language.html', 'language-agent.html', 'grounded-failure.html',
+    ]),
+    System: Object.freeze([
+      'architecture.html', 'strategy-architecture.html', 'knowledge-bases.html',
+      'kb-storage-and-indexing.html', 'symbolic-document-kbs.html',
+    ]),
+    Reasoning: Object.freeze([
+      'reasoning-methods.html', 'reasoning-deduction-and-models.html',
+      'reasoning-categorical-logic.html', 'reasoning-state-time-and-relations.html',
+      'reasoning-defaults-and-abduction.html', 'reasoning-narrative-and-compatibility.html',
+    ]),
+    Development: Object.freeze([
+      'training.html', 'evaluation.html', 'metamorphic-testing.html', 'exceptions-issues.html',
+    ]),
+    Reference: Object.freeze([
+      'cli.html', 'sources.html', 'specification-architecture.html',
+      'specsLoader.html?spec=matrix.md',
+    ]),
+  });
+  const groups = [...header.matchAll(
+    /<details><summary>([^<]+)<\/summary><div class="submenu">([\s\S]*?)<\/div><\/details>/gu,
+  )];
+  assert.deepEqual(groups.map((match) => match[1]), Object.keys(expectedGroups));
+  for (const [, label, submenu] of groups) {
+    const links = [...submenu.matchAll(/href="([^"]+)"/gu)].map((match) => match[1]);
+    assert.deepEqual(links, expectedGroups[label], label);
+    assert.ok(links.length >= 4 && links.length <= 6, `${label} is not balanced`);
+  }
+  assert.doesNotMatch(header, /Foundations/u);
+
+  const headerTargets = new Set([...header.matchAll(/href="([^"]+)"/gu)]
+    .map((match) => match[1].split('?')[0]));
+  const benchmarkTargets = new Set([...benchmarkDashboard.matchAll(
+    /page:\s*'(benchmark-[^']+\.html)'/gu,
+  )].map((match) => match[1]));
+  const substantivePages = (await readdir(join(PROJECT_ROOT, 'docs')))
+    .filter((file) => file.endsWith('.html')).toSorted();
+  const reachablePages = new Set([...headerTargets, ...benchmarkTargets]);
+  assert.deepEqual(substantivePages.filter((file) => !reachablePages.has(file)), []);
+
+  const sitemapGroups = [...home.matchAll(
+    /<div class="sitemap-branch"><h3>([^<]+)<\/h3>([\s\S]*?)<\/div>/gu,
+  )];
+  assert.deepEqual(sitemapGroups.map((match) => match[1]), Object.keys(expectedGroups));
+  for (const [, label, branch] of sitemapGroups) {
+    const links = [...branch.matchAll(/href="([^"]+)"/gu)].map((match) => match[1]);
+    assert.deepEqual(links, expectedGroups[label], `${label} sitemap`);
+  }
+});
 
 test('public benchmark presentation reads mutable diagnoses and coverage from the report', async () => {
   const dashboard = await readProjectFile('docs/assets/public-benchmark-dashboard.mjs');
@@ -110,7 +175,7 @@ test('generated fixture report labels count, regime, and non-comparability', () 
   assert.doesNotMatch(html, /<span>accuracy<\/span>|mermaid/u);
 });
 
-test('documentation stylesheet keeps prose readable and tables responsive', async () => {
+test('documentation stylesheet keeps prose readable and two-column tables responsive', async () => {
   const css = await readProjectFile('docs/assets/site.css');
   assert.match(css, /width:min\(calc\(100% - 2rem\),96rem\)/u);
   assert.match(css, /--reading-measure:100%/u);
@@ -122,9 +187,27 @@ test('documentation stylesheet keeps prose readable and tables responsive', asyn
   for (const role of ['source', 'process', 'outcome']) {
     assert.match(css, new RegExp(`\\.node\\.diagram-${role}`, 'u'));
   }
-  assert.match(css, /table-layout:auto/u);
-  assert.match(css, /overflow-x:auto/u);
-  assert.match(css, /\.public-benchmark-table tbody,[^{]+\{ display:block/u);
+  assert.match(css, /table-layout:fixed/u);
+  assert.match(css, /overflow-x:visible/u);
+  assert.doesNotMatch(css, /\.table-wrap\s*>\s*table\s*\{[^}]*min-width/u);
+  assert.match(css, /overflow-wrap:break-word; word-break:normal/u);
+  assert.match(css, /\.table-wrap > table tbody,[^{]+\{ display:block/u);
+  assert.match(css, /\.table-details > div,[^{]+grid-template-columns:minmax\(7rem,\.28fr\)/u);
+});
+
+test('every hand-authored documentation table has exactly two cells per row', async () => {
+  const htmlFiles = (await readdir(join(PROJECT_ROOT, 'docs')))
+    .filter((file) => file.endsWith('.html') && file !== 'specsLoader.html')
+    .sort();
+  for (const file of htmlFiles) {
+    const html = await readProjectFile(`docs/${file}`);
+    for (const table of html.matchAll(/<table\b[\s\S]*?<\/table>/gu)) {
+      for (const row of table[0].matchAll(/<tr\b[^>]*>([\s\S]*?)<\/tr>/gu)) {
+        const cellCount = (row[1].match(/<(?:th|td)\b/gu) ?? []).length;
+        assert.equal(cellCount, 2, `${file} has a table row with ${cellCount} structural cells`);
+      }
+    }
+  }
 });
 
 test('specification viewer preserves document structure and orientation aids', async () => {
@@ -138,10 +221,33 @@ test('specification viewer preserves document structure and orientation aids', a
   assert.match(loader, /\.join\(' '\)/u);
   assert.doesNotMatch(loader, /\.join\('<br>'\)/u);
   assert.doesNotMatch(loader, /cdn\.jsdelivr\.net/u);
+  assert.match(loader, /specResourcePath\(specPath\)/u);
+  assert.match(loader, /encodeURIComponent\(specPath\)/u);
+  assert.match(loader, /const detailsHeader = headers\.length === 2 \? headers\[1\] : 'Details'/u);
+  assert.match(loader, /tableDetails\(headers, row\)/u);
+  assert.match(loader, /class="spec-table__details"/u);
+  assert.match(loader, /data-label=/u);
+  assert.doesNotMatch(loader, /headers\.map\(\(cell\) => `<th>/u);
+  assert.doesNotMatch(loader, /row\.map\(\(cell\) => `<td>/u);
 
   const inlineScripts = [...loader.matchAll(/<script>([\s\S]*?)<\/script>/gu)];
   assert.equal(inlineScripts.length, 1);
   assert.match(inlineScripts[0][1], /class SpecsLoader/u);
+});
+
+test('GitHub Pages publication preserves every loader-addressable DS source', async () => {
+  const publication = await validatePublishedSpecificationSources();
+  assert.equal(publication.noJekyll, true);
+  assert.equal(publication.sources, 28);
+  for (const target of publication.targets) {
+    const rawUrl = new URL(
+      `specs/${encodeURIComponent(target)}`,
+      'https://assistos-ai.github.io/eslm/',
+    );
+    assert.equal(rawUrl.origin, 'https://assistos-ai.github.io');
+    assert.equal(rawUrl.pathname, `/eslm/specs/${target}`);
+    assert.match(target, /^DS\d{3}-[A-Za-z0-9-]+\.md$/u);
+  }
 });
 
 test('diagrams are optional but every present diagram remains constrained and explained', () => {

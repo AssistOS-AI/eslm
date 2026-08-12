@@ -1,6 +1,6 @@
 {
   "format": "eslm-public-benchmark-probe-report-v2",
-  "assembledAt": "2026-08-12T16:57:15.158Z",
+  "assembledAt": "2026-08-12T18:40:56.469Z",
   "assembly": {
     "mode": "mixed-current-execution-and-stored-receipts",
     "requestedBenchmarkIds": [
@@ -559,12 +559,12 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 225.10226399999988,
-        "cpuUserMicroseconds": 268151,
-        "cpuSystemMicroseconds": 8135,
-        "startRssBytes": 376512512,
-        "endRssBytes": 381485056,
-        "sampledPeakRssBytes": 381485056,
+        "wallMilliseconds": 275.0302949999998,
+        "cpuUserMicroseconds": 350082,
+        "cpuSystemMicroseconds": 8896,
+        "startRssBytes": 369713152,
+        "endRssBytes": 375283712,
+        "sampledPeakRssBytes": 375283712,
         "rssSamples": 9
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark clutrr --memory-mb 256 --no-external-language-agent",
@@ -580,8 +580,8 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "1613d72fc0e23b1dd9579da8a4a0d4bc08fc19b52ef8a59266fb347fa65f8d5a",
-        "files": 168,
+        "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
+        "files": 172,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
@@ -593,7 +593,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:99c9184e185abd1eb3f1fd07f8b9edf5bf340ce3c9a83970d9695e902d4f232e"
+          "digest": "sha256:3dfc28863e78ce2a6f7586199d037c5cfe4bdc804d9796dd6c876851893548e4"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -612,12 +612,12 @@
         ],
         "stageReceipts": [],
         "adapterLocal": null,
-        "configurationDigest": "sha256:adc04d821299edcdcacf1f932282d568f144cdb697b55fd825834a4aaed0294c"
+        "configurationDigest": "sha256:67f7056f89508dfc1cdb1d7ff6e6b45ea907bf6de69c97de06d5b4d4a66fcfc4"
       },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T16:53:25.861Z"
+        "executedAt": "2026-08-12T18:36:44.797Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "development-probe-executed",
@@ -993,13 +993,13 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 38192.43282399999,
-        "cpuUserMicroseconds": 59553302,
-        "cpuSystemMicroseconds": 2944320,
-        "startRssBytes": 978006016,
-        "endRssBytes": 1017393152,
-        "sampledPeakRssBytes": 1140346880,
-        "rssSamples": 673
+        "wallMilliseconds": 38661.783226,
+        "cpuUserMicroseconds": 60862511,
+        "cpuSystemMicroseconds": 2974022,
+        "startRssBytes": 979312640,
+        "endRssBytes": 1008787456,
+        "sampledPeakRssBytes": 1129111552,
+        "rssSamples": 686
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark simpleqa --memory-mb 256 --no-external-language-agent",
       "behaviorDependency": {
@@ -1014,8 +1014,8 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "1613d72fc0e23b1dd9579da8a4a0d4bc08fc19b52ef8a59266fb347fa65f8d5a",
-        "files": 168,
+        "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
+        "files": 172,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
@@ -1027,7 +1027,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:99c9184e185abd1eb3f1fd07f8b9edf5bf340ce3c9a83970d9695e902d4f232e"
+          "digest": "sha256:3dfc28863e78ce2a6f7586199d037c5cfe4bdc804d9796dd6c876851893548e4"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -1112,12 +1112,12 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:dc26a5d590b1aefdaea98d5f9aee921fb3a3ecde51d0cbe810dae4874975afce"
+        "configurationDigest": "sha256:7c1fb5b77704fa794f08e04b646e80d7ed66e58077aab204c045f68852eb7a82"
       },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T16:57:15.115Z"
+        "executedAt": "2026-08-12T18:40:56.424Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "diagnostic-probe-executed",
@@ -1193,12 +1193,12 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 1739.837798,
-        "cpuUserMicroseconds": 1879333,
-        "cpuSystemMicroseconds": 63680,
-        "startRssBytes": 381747200,
-        "endRssBytes": 507731968,
-        "sampledPeakRssBytes": 508514304,
+        "wallMilliseconds": 1859.8237240000003,
+        "cpuUserMicroseconds": 2048807,
+        "cpuSystemMicroseconds": 52133,
+        "startRssBytes": 375283712,
+        "endRssBytes": 501665792,
+        "sampledPeakRssBytes": 501665792,
         "rssSamples": 3
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark entity-tracking --memory-mb 256 --no-external-language-agent",
@@ -1214,8 +1214,8 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "1613d72fc0e23b1dd9579da8a4a0d4bc08fc19b52ef8a59266fb347fa65f8d5a",
-        "files": 168,
+        "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
+        "files": 172,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
@@ -1227,7 +1227,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:99c9184e185abd1eb3f1fd07f8b9edf5bf340ce3c9a83970d9695e902d4f232e"
+          "digest": "sha256:3dfc28863e78ce2a6f7586199d037c5cfe4bdc804d9796dd6c876851893548e4"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -1246,12 +1246,12 @@
         ],
         "stageReceipts": [],
         "adapterLocal": null,
-        "configurationDigest": "sha256:adc04d821299edcdcacf1f932282d568f144cdb697b55fd825834a4aaed0294c"
+        "configurationDigest": "sha256:67f7056f89508dfc1cdb1d7ff6e6b45ea907bf6de69c97de06d5b4d4a66fcfc4"
       },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T16:53:27.601Z"
+        "executedAt": "2026-08-12T18:36:46.658Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "development-probe-executed",
@@ -1351,13 +1351,13 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 189332.00746000002,
-        "cpuUserMicroseconds": 310981228,
-        "cpuSystemMicroseconds": 15140924,
-        "startRssBytes": 507731968,
-        "endRssBytes": 978006016,
-        "sampledPeakRssBytes": 1050722304,
-        "rssSamples": 5781
+        "wallMilliseconds": 211112.343422,
+        "cpuUserMicroseconds": 352154203,
+        "cpuSystemMicroseconds": 16373366,
+        "startRssBytes": 501796864,
+        "endRssBytes": 979312640,
+        "sampledPeakRssBytes": 1037205504,
+        "rssSamples": 6207
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark story-cloze --memory-mb 256 --no-external-language-agent",
       "behaviorDependency": {
@@ -1372,8 +1372,8 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "1613d72fc0e23b1dd9579da8a4a0d4bc08fc19b52ef8a59266fb347fa65f8d5a",
-        "files": 168,
+        "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
+        "files": 172,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
@@ -1385,7 +1385,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:99c9184e185abd1eb3f1fd07f8b9edf5bf340ce3c9a83970d9695e902d4f232e"
+          "digest": "sha256:3dfc28863e78ce2a6f7586199d037c5cfe4bdc804d9796dd6c876851893548e4"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -1404,12 +1404,12 @@
         ],
         "stageReceipts": [],
         "adapterLocal": null,
-        "configurationDigest": "sha256:adc04d821299edcdcacf1f932282d568f144cdb697b55fd825834a4aaed0294c"
+        "configurationDigest": "sha256:67f7056f89508dfc1cdb1d7ff6e6b45ea907bf6de69c97de06d5b4d4a66fcfc4"
       },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T16:56:36.921Z"
+        "executedAt": "2026-08-12T18:40:17.755Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "development-probe-executed",

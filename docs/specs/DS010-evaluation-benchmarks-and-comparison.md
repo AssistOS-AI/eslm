@@ -173,11 +173,27 @@ The report may contain development, diagnostic, or fresh rows, but each row name
 
 ### Generated regression and examples
 
-The repository owns a deterministic 4,096-case default metamorphic corpus built from 26 rotating templates in twelve structural groups. Cases use nonce entities, concepts, predicates, objects, places, and values rather than copied public benchmark rows. Meaning-preserving variants and meaning-changing controls exercise direct retrieval, class inference, Horn rules, open-world behavior, state replacement, temporal predecessor, possession, paraphrase, preference semantics, scalable Boolean entailment, and categorical logic.
+The repository owns a deterministic 4,096-case default metamorphic corpus with two explicitly accounted components.
+The language component contains 1,200 independently instantiated rows from the same 43 reviewed generator shapes used
+by the heuristic development suite. It includes all six oracle levels and exercises direct controls, spelling and
+morphology repair, decomposition, request planning and construction, proposal preservation, and safety abstention.
+The core component contains 2,896 cases from 26 rotating templates and exercises direct retrieval, class inference,
+Horn rules, open-world behavior, state replacement, temporal predecessor, possession, paraphrase, preference
+semantics, scalable Boolean entailment, and categorical logic. Both use nonce entities, concepts, predicates, objects,
+places, and values rather than copied public rows. The combined catalog therefore has 69 template identities.
 
-The test suite and `/smoke` execute the same catalog without Language Agent assistance. `/examples [PAGE] [SEED]` displays 24 cases per page from that catalog. `/smoke [COUNT] [SEED]` executes the selected deterministic prefix or sampling contract and prints one actual input, expected result, and actual result per encountered template plus every failure and aggregate totals. Comparing expectations without invoking the runtime or fabricating displayed answers invalidates the smoke result.
+The test suite and `/smoke` execute the same catalog without Language Agent assistance or ordinary inability
+grounding. Heuristic-language cases call the complete local wrapper and the generated-suite typed oracle assessor;
+core, preference, and typed-task cases call their normal public engine boundaries. `/examples [PAGE] [SEED]` displays
+24 cases per page in a deterministic round-robin over heuristic oracle levels and core groups. That stratification is
+a display permutation only: all 4,096 cases remain present exactly once. `/smoke [COUNT] [SEED]` executes the selected
+deterministic size contract and prints one actual input, expected contract, and actual result per encountered template
+plus every failure. It also aggregates contract levels, observed routes, and observed statuses beside pass/fail totals.
+Comparing expectations without invoking the runtime or fabricating displayed answers invalidates the smoke result.
 
-Smoke proves regression preservation for authored templates. It does not establish external task selection, source validity, held-out generalization, or benchmark accuracy.
+Smoke proves regression preservation for these project-owned templates. Reusing the reviewed heuristic generator and
+oracle does not turn smoke into the separately frozen generated-development report, and neither establishes external
+task selection, source validity, held-out generalization, or benchmark accuracy.
 
 The default `evaluate` suite and `benchmark:authored` suite are small authored integration fixtures. Their generated
 HTML must show the case count, authored/internal regime, and `benchmarkComparable: false` beside any accuracy. A
@@ -190,6 +206,10 @@ The repository also owns a separate deterministic heuristic-language development
 `eslm-generated-heuristic-development-v1`. Those rows are repeated nonce and domain-themed instantiations of the 43
 reviewed shapes, not 1,200 independent language structures. Each typed oracle is derived directly from template
 variables before the runtime executes; the generator does not ask the runtime to define its own oracle.
+
+The default receipt records 1,200 unique surface inputs, all 28 target families and six oracle levels, and 593 of the
+774 possible cells in the declared 43-technique by 18-domain grid. These are explicit diversity measures, not a claim
+that each surface is a new construction or that every technique applies meaningfully to every domain.
 
 The current definition has 15 distinct base predicate lemmas across its 18 domain records, and each domain record owns
 one predicate. Domain and predicate are therefore coupled rather than sampled as an independent factorial product. A
@@ -206,9 +226,13 @@ execute through the real local `HeuristicLanguageRuntime` route with grounding a
 The benchmark therefore observes parser, heuristic proposal, safety, arbitration, reparse, and result behavior rather
 than calling individual helpers as a substitute for end-to-end execution.
 
-Oracle kinds carry different acceptance authority. `boolean-entailment` and `interpreted-question` can require an
-executed semantic query, status, or answer. `request-construction` checks the selected request operation, ordered
-obligations, output contract, and resulting local route. `safe-abstention` protects negative controls.
+Oracle kinds carry different acceptance authority. `boolean-entailment` can require an executed semantic query,
+status, and answer. The current `interpreted-question` rows require the exact intended structural candidate to win,
+carry its required family, receive a matching accepted parse-only reparse, and execute as the query-local interpreted
+episode under the declared route and status. They do not require a complete relation-shaped query and can end
+`UNKNOWN` with `missingEntity`; their oracle level is therefore `candidate-selection`, not semantic execution.
+`request-construction` checks the selected request operation, ordered obligations, output contract, and resulting
+local route. `safe-abstention` protects negative controls.
 `statement-interpretation` and `interpretable-complex-clause` may check that a particular structural family produced a
 retained or recommended candidate and preserved its operator even when the direct runtime remains `UNPARSED`. Such a
 pass is proposal-generation and safety evidence; it is not executable interpretation or answer coverage.
@@ -223,10 +247,10 @@ and in the denominator.
 
 The top-level schema field `accuracy` is arithmetically `passed / total`, but its interpretation is a mixed
 development-contract rate over the declared oracle levels, not semantic answer accuracy. The report therefore exposes
-separate aggregates for `answer-execution`, `semantic-ir`, `query-local-decomposition`, `request-execution`,
+separate aggregates for `answer-execution`, `candidate-selection`, `query-local-decomposition`, `request-execution`,
 `proposal-only`, and `safety-abstention`. Follow-up analysis must inspect those aggregates together with status and
-route. In particular, proposal preservation can be compared separately without removing its cases from the fixed
-denominator or presenting them as executed answers.
+route. In particular, candidate selection and proposal preservation can be compared separately without removing
+their cases from the fixed denominator or presenting them as executed queries or answers.
 
 The next realism layer must separate row volume from structural diversity. Reports must publish counts of distinct
 templates, base predicates, morphology classes, and technique-by-domain cells. New suites must include template- and
@@ -325,13 +349,16 @@ Per-stage counts and a digest over the distinct canonical receipts preserve batc
 making the row unbounded; the underlying receipts remain the audit evidence. Configured arbiter identities are kept
 separate because configuration alone is not execution.
 
-### Question #6: Why is the 1,200-case heuristic suite separate from both `/smoke` and public benchmarks?
+### Question #6: Why does the generated-development report remain separate when `/smoke` reuses its shapes and oracle?
 
-Response: `/smoke` protects a broad catalog of already accepted core behavior, while the heuristic suite concentrates
-on near-CNL interpretation, safety decisions, and strategy failure diagnosis. Both are deterministic project-owned
-evidence and may guide repairs. Public and fresh benchmarks instead test an independently defined task distribution or
-held-out lifecycle. Separate artifacts preserve those claim boundaries while still making the larger heuristic suite
-part of the default development command.
+Response: `/smoke` now protects the accepted language strategies and broader core behavior together, so its default
+catalog deliberately includes 1,200 fresh instantiations of every heuristic shape. The generated-development command
+still owns a separately frozen seed, suite and behavior identity, detailed technique/domain/target aggregates,
+failure clusters, representative failures, conclusions, and publishable machine receipt. Smoke owns interactive
+regression visibility and adds 2,896 core cases; it does not publish or merge the generated report's metric. Public
+and fresh benchmarks test independently defined distributions or held-out lifecycles. Within either project-owned
+use, candidate selection names evidence that the intended structural alternative was chosen under the declared route
+and status; it is not a synonym for a complete relation-shaped query or an executed answer.
 
 ## Conclusion
 

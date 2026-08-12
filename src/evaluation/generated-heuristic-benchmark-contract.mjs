@@ -18,6 +18,10 @@ const FAILURE_STAGES = new Set([
   'execution', 'resource', 'route', 'status', 'candidate', 'strategy-family',
   'semantic-query', 'request-plan', 'safety', 'answer',
 ]);
+const ORACLE_LEVELS = new Set([
+  'answer-execution', 'candidate-selection', 'query-local-decomposition',
+  'request-execution', 'proposal-only', 'safety-abstention',
+]);
 
 function record(value, path) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -90,8 +94,9 @@ function jsonValue(value, path, depth = 0) {
 
 function validateGenerator(generator, total) {
   exactFields(generator, [
-    'format', 'seed', 'requestedCases', 'casesGenerated', 'definitionDigest',
-    'suiteDigest', 'domains', 'techniques',
+    'format', 'seed', 'requestedCases', 'casesGenerated', 'uniqueInputs', 'definitionDigest',
+    'suiteDigest', 'domains', 'techniques', 'observedTargetFamilies', 'observedOracleLevels',
+    'observedTechniqueDomainCells',
   ], 'Generated benchmark generator');
   if (generator.format !== 'eslm-generated-heuristic-benchmark-suite-v1') {
     throw new TypeError('Generated benchmark uses an unsupported generator protocol.');
@@ -99,10 +104,17 @@ function validateGenerator(generator, total) {
   boundedText(generator.seed, 'Generated benchmark seed', 128);
   count(generator.requestedCases, 'Generated requested cases');
   count(generator.casesGenerated, 'Generated cases');
+  count(generator.uniqueInputs, 'Generated unique inputs');
   count(generator.domains, 'Generated domains', 256);
   count(generator.techniques, 'Generated techniques', 256);
+  count(generator.observedTargetFamilies, 'Generated observed target families', 256);
+  count(generator.observedOracleLevels, 'Generated observed oracle levels', ORACLE_LEVELS.size);
+  count(generator.observedTechniqueDomainCells, 'Generated observed technique-domain cells', 65_536);
   if (generator.requestedCases !== total || generator.casesGenerated !== total
-      || generator.domains < 2 || generator.techniques < 2) {
+      || generator.uniqueInputs !== total || generator.domains < 2 || generator.techniques < 2
+      || generator.observedTargetFamilies < 1 || generator.observedOracleLevels < 1
+      || generator.observedTechniqueDomainCells < 1
+      || generator.observedTechniqueDomainCells > Math.min(total, generator.domains * generator.techniques)) {
     throw new TypeError('Generated benchmark denominator or structural coverage is inconsistent.');
   }
   digest(generator.definitionDigest, 'Generator definition digest');
@@ -148,6 +160,9 @@ function validateAggregateRows(rows, dimension, total) {
   for (const row of rows) {
     exactFields(row, ['key', 'total', 'passed', 'failed', 'passRate'], `${dimension} aggregate row`);
     boundedText(row.key, `${dimension} aggregate key`, 256);
+    if (dimension === 'oracleLevel' && !ORACLE_LEVELS.has(row.key)) {
+      throw new TypeError(`Generated oracle level ${row.key} is not part of the declared contract.`);
+    }
     count(row.total, `${dimension} aggregate total`);
     count(row.passed, `${dimension} aggregate passed`);
     count(row.failed, `${dimension} aggregate failed`);

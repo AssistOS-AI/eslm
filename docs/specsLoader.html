@@ -54,6 +54,10 @@
         return params.get('spec');
       }
 
+      specResourcePath(specPath) {
+        return `specs/${encodeURIComponent(specPath)}`;
+      }
+
       parseFrontmatter(markdown) {
         if (!markdown.startsWith('---\n')) {
           return { metadata: {}, body: markdown };
@@ -89,9 +93,12 @@
             throw new Error('Invalid specification path. Open a DS file from the specification matrix.');
           }
           this.currentSpecSpan.textContent = `Loading: ${this.specPath}`;
-          const response = await fetch(`specs/${this.specPath}`);
+          const response = await fetch(this.specResourcePath(this.specPath));
           if (!response.ok) {
-            throw new Error(`Specification not found: ${this.specPath}`);
+            throw new Error(
+              `Specification source is unavailable: ${this.specPath}. `
+              + 'The published site must preserve the raw docs/specs Markdown files.'
+            );
           }
 
           const markdown = await response.text();
@@ -317,6 +324,43 @@
         return escaped;
       }
 
+      tableCells(line) {
+        const source = line.trim().slice(1, -1);
+        const cells = [];
+        let cell = '';
+        for (let index = 0; index < source.length; index += 1) {
+          const character = source[index];
+          if (character === '\\' && source[index + 1] === '|') {
+            cell += '|';
+            index += 1;
+          } else if (character === '|') {
+            cells.push(cell.trim());
+            cell = '';
+          } else {
+            cell += character;
+          }
+        }
+        cells.push(cell.trim());
+        return cells;
+      }
+
+      tableCellLabel(markdown, fallback) {
+        return this.headingLabel(markdown) || fallback;
+      }
+
+      tableDetails(headers, row) {
+        const details = headers.slice(1).map((header, index) => {
+          const value = row[index + 1] ?? '';
+          return `<div><dt>${this.applyInline(header)}</dt><dd>${this.applyInline(value)}</dd></div>`;
+        });
+        for (let index = headers.length; index < row.length; index += 1) {
+          details.push(
+            `<div><dt>Additional detail</dt><dd>${this.applyInline(row[index])}</dd></div>`
+          );
+        }
+        return `<dl class="spec-table__details">${details.join('')}</dl>`;
+      }
+
       parseTable(startIndex, lines) {
         const headerLine = lines[startIndex];
         const dividerLine = lines[startIndex + 1];
@@ -327,19 +371,33 @@
           return null;
         }
 
-        const headers = headerLine.trim().slice(1, -1).split('|').map((cell) => this.applyInline(cell.trim()));
+        const headers = this.tableCells(headerLine);
         const rows = [];
         let cursor = startIndex + 2;
 
         while (cursor < lines.length && rowPattern.test(lines[cursor])) {
-          rows.push(lines[cursor].trim().slice(1, -1).split('|').map((cell) => this.applyInline(cell.trim())));
+          rows.push(this.tableCells(lines[cursor]));
           cursor += 1;
         }
 
-        const thead = `<thead><tr>${headers.map((cell) => `<th>${cell}</th>`).join('')}</tr></thead>`;
-        const tbody = rows
-          .map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join('')}</tr>`)
-          .join('');
+        const primaryHeader = headers[0] ?? 'Item';
+        const primaryLabel = this.tableCellLabel(primaryHeader, 'Item');
+        const detailsHeader = headers.length === 2 ? headers[1] : 'Details';
+        const detailsLabel = this.tableCellLabel(detailsHeader, 'Details');
+        const thead = '<thead><tr>'
+          + `<th scope="col">${this.applyInline(primaryHeader)}</th>`
+          + `<th scope="col">${this.applyInline(detailsHeader)}</th>`
+          + '</tr></thead>';
+        const tbody = rows.map((row) => {
+          const primaryValue = this.applyInline(row[0] ?? '');
+          const detailsValue = headers.length === 2
+            ? this.applyInline(row[1] ?? '')
+            : this.tableDetails(headers, row);
+          return '<tr>'
+            + `<td data-label="${this.escapeHtml(primaryLabel)}">${primaryValue}</td>`
+            + `<td data-label="${this.escapeHtml(detailsLabel)}">${detailsValue}</td>`
+            + '</tr>';
+        }).join('');
 
         return {
           html: `<div class="table-wrap"><table class="spec-table">${thead}<tbody>${tbody}</tbody></table></div>`,

@@ -196,9 +196,14 @@ separate internal suites: the unchanged five-case authored fixture and a determi
 development suite. Run them independently with `npm run benchmark:authored` and `npm run benchmark:generated`.
 The generated suite instantiates 43 reviewed template and technique shapes repeatedly across 18 domain themes and 28
 target families, with nonce vocabulary, repair-required inputs, direct controls, and meaning-changing contrasts. The
-1,200 rows provide renaming and combination breadth; they are not 1,200 independent language structures. Each typed
-oracle is derived from the generating variables and labeled as answer execution, Semantic IR, query-local
-decomposition, request execution, proposal-only preservation, or safety abstention. The report clusters the earliest
+default receipt contains 1,200 unique surface inputs and observes 593 of the 774 possible declared
+technique-by-domain cells. Those rows provide renaming and combination breadth; they are not 1,200 independent
+language structures, and domain remains coupled to predicate in the current generator. Each typed
+oracle is derived from the generating variables and labeled as answer execution, candidate selection, query-local
+decomposition, request execution, proposal-only preservation, or safety abstention. Candidate-selection rows require
+the intended structural candidate to win, carry its required family, receive a matching accepted parse-only reparse,
+and execute as the query-local interpreted episode under the declared route and status. They do not claim that the
+runtime produced a complete relation-shaped query. The report clusters the earliest
 failure and aggregates behavior by oracle level, technique, target family, domain, complexity, status, route,
 confidence, and resource use so strategy work is guided by repeated failure patterns instead of one memorable example.
 
@@ -221,8 +226,11 @@ structured tasks, source annotations, and solver conformance. See the single ful
 
 EWoK materials are used under their CC BY 4.0 license and Terms of Use for evaluation and may guide ESLM improvement. The protected rows remain in ignored local storage, are not redistributed in plaintext, and never enter benchmark-specific runtime dispatch or synthesis packets. Cite Ivanova et al., “Elements of World Knowledge (EWoK): A Cognition-Inspired Framework for Evaluating Basic World Knowledge in Language Models,” TACL 13 (2025); the documentation sources page records the complete attribution and links.
 
-Interactive `/smoke` executes the deterministic nonce/metamorphic regression catalog without Language Agent
-assistance. `/examples` pages show bounded samples from that same executable corpus. This is software regression
-evidence, not public benchmark evidence.
+Interactive `/smoke` executes a deterministic 4,096-case nonce/metamorphic catalog without Language Agent assistance
+or ordinary inability grounding: 1,200 fresh instantiations of all 43 heuristic-development shapes plus 2,896 cases
+from 26 established core templates. It reports the six heuristic oracle levels, observed routes, and statuses beside
+the ordinary pass/fail total. `/examples` shows stratified 24-case pages from that exact default corpus, so direct and
+repaired language, decomposition, requests, safety, state and relation work, preferences, and typed tasks are visible
+without scrolling a sequential block. This is software regression evidence, not public benchmark evidence.
 
 Read the [documentation](docs/index.html), the [implementation status](docs/status.html), the [research horizons](docs/research-horizons.html), the [trusted strategy contract](docs/specs/DS027-trusted-strategy-extensions-and-meta-rational-coordination.md), the [specification architecture](docs/specification-architecture.html), and the [specification matrix](docs/specs/matrix.md). The HTML pages explain the design from implementation and review viewpoints; the complete DS files remain authoritative. DS023 through DS026 turn the difficult next layers into explicit relevance, language, planning/synthesis, and grounded-evaluation research programs without presenting their hypotheses as current runtime capability.

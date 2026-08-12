@@ -77,7 +77,7 @@ function requestPlanMatches(oracle, result) {
     && (oracle.format === undefined || plan.outputContract?.format === oracle.format);
 }
 
-function evaluateCase(testCase, result, executionError) {
+export function assessGeneratedHeuristicCase(testCase, result, executionError) {
   const oracle = testCase.oracle;
   const failures = [];
   const fail = (stage, code, explanation) => failures.push(Object.freeze({ stage, code, explanation }));
@@ -104,8 +104,33 @@ function evaluateCase(testCase, result, executionError) {
       && !(oracle.candidateOptionalOnDirectSuccess && successfulDirect)) {
     fail('candidate', 'expected-candidate-not-generated', 'No retained approximation matched the structural oracle.');
   }
+  if (oracle.requireSelectedCandidate) {
+    const selected = result.approximation?.selectedCandidate;
+    if (selected?.text !== oracle.expectedCandidateText) {
+      fail('candidate', 'expected-candidate-not-selected',
+        'The selected approximation differs from the structural candidate oracle.');
+    } else {
+      if (result.episode?.interpretedText !== oracle.expectedCandidateText) {
+        fail('candidate', 'selected-candidate-not-executed',
+          'The query-local episode did not execute the selected structural candidate.');
+      }
+      const reparse = result.approximation?.reparses?.find((item) =>
+        item.candidateId === selected.candidateId && item.text === selected.text);
+      if (!reparse || reparse.status !== 'PARSED' || reparse.acceptedSemanticIr !== true) {
+        fail('candidate', 'selected-candidate-not-reparsed',
+          'The selected candidate has no matching accepted parse-only receipt.');
+      }
+      for (const family of oracle.requiredFamilies ?? []) {
+        if (!selected.supportingFamilies?.includes(family)) {
+          fail('strategy-family', 'selected-family-missing',
+            `The selected candidate is not supported by the required ${family} strategy.`);
+        }
+      }
+    }
+  }
   const families = observedFamilies(result);
   for (const family of oracle.requiredFamilies ?? []) {
+    if (oracle.requireSelectedCandidate) continue;
     if (!families.includes(family)) {
       if (!(oracle.familyOptionalOnDirectSuccess && successfulDirect)) {
         fail('strategy-family', 'required-family-not-observed', `The ${family} strategy produced no retained proposal.`);
@@ -273,7 +298,7 @@ export async function runGeneratedHeuristicBenchmark(runtime, options = {}) {
       error = caught instanceof Error ? caught.message.slice(0, 512) : 'Non-Error runtime exception.';
     }
     sampledPeakRssBytes = Math.max(sampledPeakRssBytes, process.memoryUsage().rss);
-    const assessment = evaluateCase(testCase, result, error);
+    const assessment = assessGeneratedHeuristicCase(testCase, result, error);
     passed += assessment.pass ? 1 : 0;
     increment(aggregates.domain, testCase.domain, assessment.pass);
     increment(aggregates.technique, testCase.technique, assessment.pass);
@@ -325,10 +350,16 @@ export async function runGeneratedHeuristicBenchmark(runtime, options = {}) {
       seed,
       requestedCases: size,
       casesGenerated: cases.length,
+      uniqueInputs: new Set(cases.map((item) => item.input)).size,
       definitionDigest: definition.digest,
       suiteDigest: generatedHeuristicSuiteDigest(cases, seed),
       domains: definition.domains.length,
       techniques: definition.techniques.length,
+      observedTargetFamilies: new Set(cases.map((item) => item.targetFamily)).size,
+      observedOracleLevels: new Set(cases.map((item) => item.oracle.oracleLevel)).size,
+      observedTechniqueDomainCells: new Set(
+        cases.map((item) => `${item.technique}\u0000${item.domain}`),
+      ).size,
     }),
     execution: Object.freeze({
       casesExecuted: cases.length,

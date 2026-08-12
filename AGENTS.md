@@ -113,7 +113,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
   report distinguishes rows executed during assembly from stored receipts; it is not a rerun of every catalog row.
 - Frozen benchmark receipt audit: `npm run benchmark:receipts:audit`; require every audited checkpoint to be current
   with `node scripts/audit-benchmark-receipts.mjs --require-current`.
-- Interactive 4,096-case regression: run `node src/cli.mjs`, then `/smoke`; use `/examples` for a bounded representative view.
+- Interactive 4,096-case combined regression: run `node src/cli.mjs`, then `/smoke`; use `/examples` for a stratified representative view over all heuristic oracle levels and core groups.
 - Documentation matrix/check: `npm run docs:matrix` and `npm run docs:check`
 - Full verification: `npm run check`
 

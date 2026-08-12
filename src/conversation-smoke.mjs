@@ -1,7 +1,16 @@
-export const REGRESSION_SMOKE_SEED = 'stage-a-regression-v1';
+import {
+  DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE,
+  generateHeuristicBenchmarkCases,
+  generatedHeuristicBenchmarkDefinition,
+} from './evaluation/generated-heuristic-cases.mjs';
+
+export const REGRESSION_SMOKE_SEED = 'stage-a-regression-v2';
 export const LONG_STRESS_SEED = 'stage-a-stress-v1';
 export const REGRESSION_SMOKE_CATALOG_SIZE = 4096;
 export const SMOKE_EXAMPLES_PER_PAGE = 24;
+
+const MAXIMUM_SMOKE_CASES = 100_000;
+const MAXIMUM_HEURISTIC_GENERATOR_BATCH = 20_000;
 
 function hash(value) {
   let result = 2166136261;
@@ -52,7 +61,7 @@ export function smokeExamples({ seed = REGRESSION_SMOKE_SEED, maxPerGroup = 2 } 
   return Object.freeze(selected);
 }
 
-const GENERATED_TEMPLATES = Object.freeze([
+const CORE_TEMPLATES = Object.freeze([
   {
     id: 'class-direct-question', group: 'class membership', relation: 'rename entity and class',
     sourceFamilies: ['babi', 'simpleqa'],
@@ -283,7 +292,7 @@ const GENERATED_TEMPLATES = Object.freeze([
   },
 ]);
 
-function generatedCase(index, seed) {
+function generatedCoreCase(index, seed) {
   const serial = `${index.toString(36)}${(hash(`${seed}:${index}`) % 1296).toString(36).padStart(2, '0')}`;
   const name = `Talvora${serial}`;
   const className = `marn${serial}q`;
@@ -293,37 +302,144 @@ function generatedCase(index, seed) {
   const placeC = `chamber${serial}c`;
   const object = `token${serial}`;
   const action = `glide${serial}`;
-  const template = GENERATED_TEMPLATES[index % GENERATED_TEMPLATES.length];
+  const template = CORE_TEMPLATES[index % CORE_TEMPLATES.length];
   return Object.freeze({
     id: `generated-${index + 1}`, group: template.group, templateId: template.id,
     metamorphicRelation: template.relation, kb: 'base', generated: true,
+    catalogKind: 'core-regression', contractLevel: 'core-execution',
     sourceFamilies: template.sourceFamilies,
     ...template.build({ serial, name, className, targetClass, placeA, placeB, placeC, object, action }),
   });
 }
 
+const HEURISTIC_TECHNIQUE_IDENTITIES = Object.freeze(Object.fromEntries(
+  generatedHeuristicBenchmarkDefinition().techniques.map((item) => [item.technique, item.id]),
+));
+
+function heuristicCountFor(size) {
+  if (size === REGRESSION_SMOKE_CATALOG_SIZE) return DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE;
+  return Math.min(size, Math.max(1, Math.round(
+    size * DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE / REGRESSION_SMOKE_CATALOG_SIZE,
+  )));
+}
+
+function heuristicGeneratorSeed(seed, batch) {
+  const prefix = seed.slice(0, 72);
+  return `${prefix}:smoke-heuristic:${hash(seed).toString(16)}:${batch}`;
+}
+
+function generatedHeuristicSmokeCases(size, seed) {
+  const output = [];
+  for (let offset = 0, batch = 0; offset < size; batch += 1) {
+    const count = Math.min(MAXIMUM_HEURISTIC_GENERATOR_BATCH, size - offset);
+    const generated = generateHeuristicBenchmarkCases({
+      size: count,
+      seed: heuristicGeneratorSeed(seed, batch),
+    });
+    for (const [batchIndex, item] of generated.entries()) {
+      output.push(Object.freeze({
+        ...item,
+        id: `smoke-heuristic-${String(offset + batchIndex + 1).padStart(5, '0')}`,
+        group: `heuristic ${item.oracle.oracleLevel}`,
+        templateId: HEURISTIC_TECHNIQUE_IDENTITIES[item.technique] ?? item.technique,
+        metamorphicRelation: `${item.technique}; ${item.targetFamily}`,
+        kb: 'base',
+        generated: true,
+        catalogKind: 'heuristic-language',
+        contractLevel: item.oracle.oracleLevel,
+        sourceFamilies: Object.freeze(['heuristicLanguage']),
+      }));
+    }
+    offset += count;
+  }
+  return output;
+}
+
+function interleaveCatalog(heuristic, core) {
+  const size = heuristic.length + core.length;
+  const result = [];
+  let heuristicIndex = 0;
+  let coreIndex = 0;
+  for (let index = 0; index < size; index += 1) {
+    const shouldTakeHeuristic = Math.floor((index + 1) * heuristic.length / size)
+      > Math.floor(index * heuristic.length / size);
+    if (shouldTakeHeuristic && heuristicIndex < heuristic.length) {
+      result.push(heuristic[heuristicIndex]);
+      heuristicIndex += 1;
+    } else {
+      result.push(core[coreIndex]);
+      coreIndex += 1;
+    }
+  }
+  return result;
+}
+
 export function regressionSmokeCases({
   size = REGRESSION_SMOKE_CATALOG_SIZE, seed = REGRESSION_SMOKE_SEED,
 } = {}) {
-  if (!Number.isSafeInteger(size) || size < 1 || size > 100_000) throw new Error('Smoke size must be an integer from 1 to 100000.');
+  if (!Number.isSafeInteger(size) || size < 1 || size > MAXIMUM_SMOKE_CASES) {
+    throw new Error('Smoke size must be an integer from 1 to 100000.');
+  }
+  if (typeof seed !== 'string' || seed.length < 1 || seed.length > 128) {
+    throw new Error('Smoke seed must be a string from 1 to 128 characters.');
+  }
+  const heuristicCount = heuristicCountFor(size);
+  const coreCount = size - heuristicCount;
   const offset = hash(seed) % REGRESSION_SMOKE_CATALOG_SIZE;
-  return Object.freeze(Array.from({ length: size }, (_, index) =>
-    generatedCase((offset + index) % Math.max(size, REGRESSION_SMOKE_CATALOG_SIZE), seed)));
+  const heuristic = generatedHeuristicSmokeCases(heuristicCount, seed);
+  const core = Array.from({ length: coreCount }, (_, index) =>
+    generatedCoreCase((offset + index) % Math.max(coreCount, REGRESSION_SMOKE_CATALOG_SIZE), seed));
+  return Object.freeze(interleaveCatalog(heuristic, core));
 }
 
-export function smokeCatalogSummary(size = REGRESSION_SMOKE_CATALOG_SIZE) {
-  const cases = regressionSmokeCases({ size });
-  const groups = [...new Set(GENERATED_TEMPLATES.map((template) => template.group))];
+function countBy(cases, selector) {
+  const counts = new Map();
+  for (const item of cases) {
+    const key = selector(item);
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+  }
+  return Object.fromEntries([...counts].toSorted(([left], [right]) => left.localeCompare(right)));
+}
+
+export function stratifiedSmokeCases(cases) {
+  const buckets = new Map();
+  for (const item of cases) {
+    const stratum = item.catalogKind === 'heuristic-language'
+      ? `heuristic:${item.oracle.oracleLevel}`
+      : `core:${item.group}`;
+    buckets.set(stratum, [...(buckets.get(stratum) ?? []), item]);
+  }
+  const orderedBuckets = [...buckets.entries()].toSorted(([left], [right]) => left.localeCompare(right));
+  const output = [];
+  for (let depth = 0; output.length < cases.length; depth += 1) {
+    for (const [, bucket] of orderedBuckets) {
+      if (bucket[depth]) output.push(bucket[depth]);
+    }
+  }
+  return Object.freeze(output);
+}
+
+export function summarizeSmokeCases(cases) {
+  const heuristic = cases.filter((item) => item.catalogKind === 'heuristic-language');
+  const core = cases.filter((item) => item.catalogKind === 'core-regression');
   return Object.freeze({
-    format: 'eslm-smoke-catalog-summary-v1', total: cases.length,
-    templateCount: GENERATED_TEMPLATES.length,
-    groups: Object.fromEntries(groups.map((group) => [group, cases.filter((item) => item.group === group).length])),
+    format: 'eslm-smoke-catalog-summary-v2', total: cases.length,
+    templateCount: new Set(cases.map((item) => `${item.catalogKind}:${item.templateId}`)).size,
+    heuristicTechniqueCount: new Set(heuristic.map((item) => item.technique)).size,
+    coreTemplateCount: new Set(core.map((item) => item.templateId)).size,
+    catalogKinds: countBy(cases, (item) => item.catalogKind),
+    oracleLevels: countBy(heuristic, (item) => item.oracle.oracleLevel),
+    groups: countBy(cases, (item) => item.group),
     sourceFamilies: Object.fromEntries([
       'blimp', 'babi', 'clutrr', 'entityTracking', 'ewok', 'storyCloze', 'simpleqa',
-      'logicbench', 'iibench', 'prontoqa', 'logicskills',
+      'logicbench', 'iibench', 'prontoqa', 'logicskills', 'heuristicLanguage',
     ]
       .map((family) => [family, cases.filter((item) => item.sourceFamilies.includes(family)).length])),
   });
+}
+
+export function smokeCatalogSummary(size = REGRESSION_SMOKE_CATALOG_SIZE, seed = REGRESSION_SMOKE_SEED) {
+  return summarizeSmokeCases(regressionSmokeCases({ size, seed }));
 }
 
 export function longConversationStressCases(size = 1000, seed = LONG_STRESS_SEED) {

@@ -237,9 +237,8 @@ async function chat(options) {
       continue;
     }
     if (line === '/smoke' || line.startsWith('/smoke ')) {
-      const { count, seed } = interactiveCountAndSeed(line.slice('/smoke'.length), 4096, 'smoke');
+      const { count, seed } = interactiveCountAndSeed(line.slice('/smoke'.length), 4096);
       const smokeEngine = await engineFor({
-        ...runtimeOptions,
         kb: 'quick',
         'external-language-agent': false,
         'no-external-language-agent': true,

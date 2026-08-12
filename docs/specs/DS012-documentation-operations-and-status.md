@@ -82,8 +82,12 @@ dedicated page linked from the sitemap and menu.
 The shared desktop layout may use a main canvas up to approximately 96 rem. Ordinary prose and headings use the
 available content width rather than an arbitrary inner-column or character-count limit. Prose remains left-aligned;
 it wraps only when the viewport, a word boundary, or an explicit break opportunity requires it, not at decorative
-midpoint boundaries. Wide tables and code blocks scroll inside their own containers instead of widening paragraphs;
-benchmark rows stack into labeled blocks on narrow screens. The desktop
+midpoint boundaries. Every explanatory HTML table has exactly two structural columns: a stable identity or question
+and its answer or details. When a source contract has several attributes, the second cell groups them under explicit
+labels instead of adding horizontal columns. Tables have no artificial minimum width and do not require horizontal
+page or container scrolling. Ordinary words break only at normal opportunities; long code identifiers and URLs may
+wrap to protect the viewport. On narrow screens, each two-cell row becomes a self-contained vertical card while the
+grouped detail labels remain visible. Code blocks retain their own bounded overflow behavior. The desktop
 benchmark table uses approximately 30% for benchmark identity, execution mark, concise score, tested/possible scope,
 and route coverage, and 70% for human-readable outcomes, protocol, diagnosis, and action. Technical identifiers wrap;
 source hashes remain in raw or secondary audit views.
@@ -121,9 +125,17 @@ rates, oracle-level distributions, route distributions, confidence distributions
 generated report. No page may add the two suites into one accuracy or present the generated internal regime as public,
 fresh, or official evidence. The generated top-level pass rate must be called a mixed development-contract rate
 because the report deliberately contains six oracle levels. Their separate aggregates distinguish answer execution,
-Semantic IR, query-local decomposition, request execution, proposal-only preservation, and safety abstention.
+candidate selection, query-local decomposition, request execution, proposal-only preservation, and safety abstention.
+Candidate selection must not be described as complete relational Semantic IR coverage. It binds the winning candidate
+to its required family, accepted parse-only reparse, query-local interpreted episode, route, and status, but its rows
+can still terminate `UNKNOWN` with `missingEntity` without a complete relation-shaped query.
 Proposal-only or operator-preservation success with final `UNPARSED` must never be described as executable
 interpretation coverage.
+
+The generated receipt also owns its exact diversity fields. The current checkpoint has 1,200 unique surfaces, 28
+observed target families, six oracle levels, and 593 observed cells out of the 774 possible declared
+technique-by-domain pairs. Documentation may quote those values only with the same checkpoint and must still explain
+that unique surfaces are not independent constructions and that domain is coupled to predicate.
 
 Roadmap coverage uses `docs/results/current-status.json` with named capability bands, evidence, and boundaries. It remains separate from benchmark accuracy. A check beside a benchmark means the declared probe executed; it does not mean the complete official benchmark is solved.
 
@@ -177,7 +189,15 @@ and prevents architectural aspiration from being reported as runtime behavior.
 
 Response: Its 1,200-case structural distribution, cluster diagnostics, seed, and strategy configuration answer a
 different question from the five authored integration cases. A separate artifact lets both remain part of the default
-workflow without blending denominators, claim scopes, or mutable measurements.
+workflow without blending denominators, claim scopes, or mutable measurements. The artifact also keeps candidate
+selection, executed answers, decomposition, requests, proposals, and abstentions separate so documentation cannot
+silently elevate a lower-authority contract into complete interpretation coverage.
+
+### Question #6: Why do HTML tables use only two structural columns?
+
+Response: A stable identity-to-details relation remains readable across desktop and mobile without hiding fields or
+requiring horizontal scanning. Explicit labels inside the details cell preserve the distinctions formerly expressed
+by additional columns, while the responsive card form can present the same complete content on a narrow viewport.
 
 ## Conclusion
 

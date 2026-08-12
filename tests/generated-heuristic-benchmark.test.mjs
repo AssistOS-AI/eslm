@@ -10,6 +10,8 @@ import { resolveWorkPolicy } from '../src/runtime/work-policy.mjs';
 import {
   DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE,
   GENERATED_HEURISTIC_BENCHMARK_REPORT_PROTOCOL,
+  assessGeneratedHeuristicCase,
+  assertGeneratedHeuristicBenchmarkReport,
   generateHeuristicBenchmarkCases,
   runGeneratedHeuristicBenchmark,
 } from '../src/evaluation/generated-heuristic-benchmark.mjs';
@@ -31,15 +33,77 @@ test('default generated heuristic suite has a deterministic broad structural dis
   assert.deepEqual(first, replay);
   assert.equal(new Set(first.map((item) => item.id)).size, first.length);
   assert.equal(new Set(first.map((item) => item.domain)).size, 18);
-  assert.ok(new Set(first.map((item) => item.technique)).size >= 40);
-  assert.ok(new Set(first.map((item) => item.targetFamily)).size >= 24);
+  assert.equal(new Set(first.map((item) => item.technique)).size, 43);
+  assert.equal(new Set(first.map((item) => item.targetFamily)).size, 28);
+  assert.equal(new Set(first.map((item) => `${item.technique}\u0000${item.domain}`)).size, 593);
   assert.ok(first.every((item) => item.input.length > 10 && item.input.length < 1_024));
   assert.ok(first.every((item) => item.oracle && item.structuralTags.length > 0));
   assert.ok(first.some((item) => item.structuralTags.includes('multi-family')));
   assert.ok(first.some((item) => item.structuralTags.includes('multi-operation')));
   assert.ok(first.some((item) => item.structuralTags.includes('negative-control')));
   assert.ok(new Set(first.map((item) => item.oracle.oracleLevel)).size >= 6);
+  assert.ok(first.some((item) => item.oracle.oracleLevel === 'candidate-selection'));
+  assert.ok(first.every((item) => item.oracle.oracleLevel !== 'semantic-ir'));
   assert.doesNotMatch(JSON.stringify(first), /\b(?:Abura|mura|bana)\b/u);
+});
+
+test('candidate-selection contracts require the expected candidate to win, not merely appear', () => {
+  const testCase = generateHeuristicBenchmarkCases({ size: 100, seed: 'selection-contract' })
+    .find((item) => item.oracle.oracleLevel === 'candidate-selection');
+  assert.ok(testCase);
+  const expected = testCase.oracle.expectedCandidateText;
+  const base = {
+    status: 'UNKNOWN', languageRoute: 'heuristic-cnl-approximated', answer: null,
+    approximation: {
+      selectedCandidate: {
+        text: 'Does a different subject map a different object?',
+        supportingFamilies: testCase.oracle.requiredFamilies,
+        confidenceBand: 'medium',
+      },
+      recommendedCandidate: { text: expected, supportingFamilies: testCase.oracle.requiredFamilies },
+      candidates: [
+        { text: expected, supportingFamilies: testCase.oracle.requiredFamilies },
+      ],
+      receipt: { complete: true, familyReceipts: [] },
+    },
+  };
+  const assessment = assessGeneratedHeuristicCase(testCase, base);
+  assert.equal(assessment.pass, false);
+  assert.ok(assessment.failures.some((item) => item.code === 'expected-candidate-not-selected'));
+});
+
+test('candidate-selection evidence binds the winner to its family, reparse, and executed episode', () => {
+  const testCase = generateHeuristicBenchmarkCases({ size: 100, seed: 'selection-evidence' })
+    .find((item) => item.oracle.oracleLevel === 'candidate-selection');
+  const text = testCase.oracle.expectedCandidateText;
+  const family = testCase.oracle.requiredFamilies[0];
+  const valid = {
+    status: 'UNKNOWN', languageRoute: 'heuristic-cnl-approximated', answer: null,
+    episode: { interpretedText: text },
+    approximation: {
+      selectedCandidate: {
+        candidateId: 'candidate:1', text, supportingFamilies: [family], confidenceBand: 'medium',
+      },
+      recommendedCandidate: { text, supportingFamilies: [family] },
+      candidates: [{ text, supportingFamilies: [family] }],
+      reparses: [{
+        candidateId: 'candidate:1', text, status: 'PARSED', acceptedSemanticIr: true,
+      }],
+      receipt: { complete: true, familyReceipts: [] },
+    },
+  };
+  assert.equal(assessGeneratedHeuristicCase(testCase, valid).pass, true);
+  const mutations = [
+    { ...valid, episode: { interpretedText: 'Does something else happen?' } },
+    { ...valid, approximation: { ...valid.approximation, reparses: [] } },
+    { ...valid, approximation: {
+      ...valid.approximation,
+      selectedCandidate: { ...valid.approximation.selectedCandidate, supportingFamilies: [] },
+    } },
+  ];
+  for (const mutation of mutations) {
+    assert.equal(assessGeneratedHeuristicCase(testCase, mutation).pass, false);
+  }
 });
 
 test('seed changes nonce surfaces and suite identity without changing structural coverage', () => {
@@ -63,6 +127,10 @@ test('generated runner executes the real runtime and preserves every case in agg
   assert.equal(report.evidenceRegime, 'internal-generated-development');
   assert.equal(report.benchmarkComparable, false);
   assert.equal(report.generator.casesGenerated, 64);
+  assert.equal(report.generator.uniqueInputs, 64);
+  assert.ok(report.generator.observedTargetFamilies >= 2);
+  assert.ok(report.generator.observedOracleLevels >= 2);
+  assert.ok(report.generator.observedTechniqueDomainCells >= report.generator.domains);
   assert.equal(report.execution.casesExecuted, 64);
   assert.equal(report.total, 64);
   assert.equal(report.passed + report.failed, 64);
@@ -78,6 +146,9 @@ test('generated runner executes the real runtime and preserves every case in agg
   assert.equal(report.execution.grounding, false);
   assert.equal(report.execution.externalLanguageAgent, false);
   assert.equal(Object.isFrozen(report), true);
+  const inventedOracle = structuredClone(report);
+  inventedOracle.aggregates.oracleLevel[0].key = 'semantic-ir';
+  assert.throws(() => assertGeneratedHeuristicBenchmarkReport(inventedOracle), /oracle level/u);
 });
 
 test('generated benchmark metadata cannot become runtime dispatch input', async () => {

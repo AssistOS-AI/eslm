@@ -1,6 +1,6 @@
 {
   "format": "eslm-generated-heuristic-benchmark-report-v1",
-  "createdAt": "2026-08-12T18:31:51.278Z",
+  "createdAt": "2026-08-12T18:36:34.853Z",
   "evidenceRegime": "internal-generated-development",
   "benchmarkComparable": false,
   "claimScope": "heuristic-strategy-development-and-regression-only",
@@ -37,7 +37,7 @@
         ],
         "includedExtension": ".mjs"
       },
-      "digest": "c73697f60c6bbd431a1607117d9dd2cb29cc52ef8ce3e5e829d55f4f5d0211fc",
+      "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
       "files": 172,
       "runtime": {
         "node": "v22.23.1",
@@ -45,10 +45,10 @@
         "architecture": "x64"
       }
     },
-    "wallMilliseconds": 5177.025901,
-    "startRssBytes": 82296832,
-    "endRssBytes": 151613440,
-    "sampledPeakRssBytes": 143458304
+    "wallMilliseconds": 4850.816159,
+    "startRssBytes": 82264064,
+    "endRssBytes": 138993664,
+    "sampledPeakRssBytes": 135708672
   },
   "workPolicy": {
     "format": "eslm-work-policy-v1",
