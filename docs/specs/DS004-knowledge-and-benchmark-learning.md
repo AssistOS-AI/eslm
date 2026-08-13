@@ -103,6 +103,18 @@ lexical constructions, priorities, thresholds, and independently sourced facts r
 Documented external syntax and answer normalization remain in DS017 adapters. This boundary applies uniformly to every
 benchmark and therefore does not need a new example-specific rule when the portfolio grows.
 
+### 10. Architectural discoveries require separate specifications
+
+When a failure cluster demonstrates a genuinely new stable processing-node, coordination-node, authority-gate, or
+strategy-family responsibility, promotion requires one new contiguous DS dedicated to that family before the catalog
+or runtime is changed. The DS states its input and output packets, authority, resources, algorithm or strategy
+boundary, failure vocabulary, witnesses, evaluation regime, and falsification controls. DS029 is updated in the same
+change to place the new responsibility in the exact graph. A visual label, another surface phrase for an existing
+operation, or a source-specific adapter does not justify a new DS; it remains under its existing semantic owner.
+
+This requirement prevents a benchmark loop from silently accumulating architecture in implementation files. It also
+keeps each genuinely new family independently reviewable and makes later removal, merging, or coordination explicit.
+
 ## Decisions & Questions
 
 ### Question #1: How is a repair assigned to the KB, adapter, language, or core layer?

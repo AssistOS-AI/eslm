@@ -3,7 +3,7 @@ import { strategyIdentity } from '../strategy/strategy-contract.mjs';
 import {
   RUNTIME_PROCESSING_CIRCUITS, groundedResponseEdges, groundedResponseNodes,
 } from './runtime-processing-graph.mjs';
-export const PROCESSING_GRAPH_CATALOG_PROTOCOL = 'eslm-processing-graph-catalog-v1';
+export const PROCESSING_GRAPH_CATALOG_PROTOCOL = 'eslm-processing-graph-catalog';
 const strategyRows = builtinStrategyDescriptors();
 const strategyIds = (predicate) => strategyRows.filter(predicate).map(strategyIdentity).toSorted();
 const STRATEGY_FAMILIES = Object.freeze([
@@ -28,7 +28,7 @@ const CIRCUITS = Object.freeze([
   ['circuit:research:promotion-boundary', 'circuit:research:graph-discovery', 'Research promotion boundary', 'Neutrality, transfer, and manual promotion handoff.'],
 ].map(([circuitId, parentCircuitId, label, role]) =>
   Object.freeze({ circuitId, parentCircuitId, label, role })));
-const P = (name) => `packet:${name}-v1`;
+const P = (name) => `packet:${name}`;
 const R = (name) => `resource:${name}`;
 function node(nodeId, label, circuitId, kind, stageRef, role, {
   inputs = [], outputs = [], authority = 'none', state = 'instrumented-local', owner,
@@ -76,6 +76,40 @@ const RUNTIME_NODES = [
       inputs: [P('runtime:language-assessment')], outputs: [P('runtime:direct-diagnostic')],
       authority: 'interpretation-selection', owner: 'src/language/parser.mjs',
       strategies: ['strategy:language:direct-controlled-parser@1'], resources: [R('tokens')],
+    }),
+  node('node:runtime:everyday-task-framer', 'Everyday task framer',
+    'circuit:runtime:everyday-task-path', 'process', 'runtime.request.plan',
+    'Recognizes explicit bounded operations and preserves their values, supplied text, constraints, and output shape.', {
+      inputs: [P('runtime:direct-diagnostic')], outputs: [P('runtime:everyday-task-frame')],
+      owner: 'src/language/everyday-task-framing.mjs', resources: [R('tokens'), R('graph-nodes')],
+    }),
+  node('node:runtime:everyday-deterministic-executor', 'Verified scalar and order executor',
+    'circuit:runtime:everyday-task-path', 'process', 'runtime.reason.execute',
+    'Executes declared arithmetic, percentage, unit, clock, sequence, grouping, remainder, mean, and strict-order operations with a replayable witness.', {
+      inputs: [P('runtime:everyday-task-frame')], outputs: [P('runtime:everyday-deterministic-result')],
+      owner: 'src/reasoning/everyday-deterministic-operations.mjs',
+      resources: [R('solver-nodes'), R('proof-bytes')],
+    }),
+  node('node:runtime:supplied-text-operator', 'Supplied-text operator',
+    'circuit:runtime:everyday-task-path', 'process', 'runtime.reason.execute',
+    'Classifies, extracts, corrects, or rewrites only the bounded text supplied in the request and records its supporting spans or cues.', {
+      inputs: [P('runtime:everyday-task-frame')], outputs: [P('runtime:supplied-text-result')],
+      owner: 'src/reasoning/everyday-supplied-text-operations.mjs',
+      resources: [R('tokens'), R('comparisons'), R('output-bytes')],
+    }),
+  node('node:runtime:grounded-knowledge-inspector', 'Grounded knowledge inspector',
+    'circuit:runtime:everyday-task-path', 'process', 'runtime.knowledge.retrieve',
+    'Resolves a requested entity or class against loaded declarative KB facts and realizes only the facts actually found.', {
+      inputs: [P('runtime:everyday-task-frame')], outputs: [P('runtime:knowledge-inspection-result')],
+      owner: 'src/reasoning/everyday-knowledge-inspection.mjs',
+      resources: [R('facts'), R('lookups'), R('output-bytes')],
+    }),
+  node('node:runtime:everyday-result-assembler', 'Everyday result assembler',
+    'circuit:runtime:everyday-task-path', 'process', 'runtime.result.construct',
+    'Builds a query-local runtime candidate with the exact frame, method, witness, provenance, and unresolved gap.', {
+      inputs: [P('runtime:everyday-deterministic-result'), P('runtime:knowledge-inspection-result'),
+        P('runtime:supplied-text-result')], outputs: [P('runtime:construction-candidate')],
+      owner: 'src/runtime/everyday-task-processing.mjs', resources: [R('output-bytes'), R('proof-bytes')],
     }),
   node('node:runtime:request-force-gate', 'Request force gate', 'circuit:runtime:request-session', 'authority-gate',
     'runtime.request.plan', 'Separates explicit requests from accidental assertion parses.', {
@@ -357,7 +391,15 @@ const RUNTIME_EDGES = [
   edge('edge:runtime:work-language', 'node:runtime:work-policy-gate', 'node:runtime:english-likelihood-gate', 'resource', P('runtime:resource-reservation-ledger'), 'work-valid'),
   edge('edge:runtime:language-direct', 'node:runtime:english-likelihood-gate', 'node:runtime:direct-parser-gate', 'authority', P('runtime:language-assessment'), 'likely-english-or-indeterminate'),
   edge('edge:runtime:language-rejected', 'node:runtime:english-likelihood-gate', 'node:runtime:failure-eligibility-gate', 'exception', P('runtime:inability'), 'likely-non-english'),
-  edge('edge:runtime:parser-request-force', 'node:runtime:direct-parser-gate', 'node:runtime:request-force-gate', 'data', P('runtime:direct-diagnostic'), 'direct-attempt-complete'),
+  edge('edge:runtime:parser-everyday-frame', 'node:runtime:direct-parser-gate', 'node:runtime:everyday-task-framer', 'data', P('runtime:direct-diagnostic'), 'direct-answer-not-complete'),
+  edge('edge:runtime:everyday-frame-numeric', 'node:runtime:everyday-task-framer', 'node:runtime:everyday-deterministic-executor', 'control', P('runtime:everyday-task-frame'), 'deterministic-value-or-order-operation'),
+  edge('edge:runtime:everyday-frame-text', 'node:runtime:everyday-task-framer', 'node:runtime:supplied-text-operator', 'control', P('runtime:everyday-task-frame'), 'supplied-text-operation'),
+  edge('edge:runtime:everyday-frame-knowledge', 'node:runtime:everyday-task-framer', 'node:runtime:grounded-knowledge-inspector', 'control', P('runtime:everyday-task-frame'), 'knowledge-inspection-operation'),
+  edge('edge:runtime:everyday-frame-bypass', 'node:runtime:everyday-task-framer', 'node:runtime:request-force-gate', 'control', P('runtime:direct-diagnostic'), 'no-supported-everyday-operation'),
+  edge('edge:runtime:everyday-numeric-result', 'node:runtime:everyday-deterministic-executor', 'node:runtime:everyday-result-assembler', 'data', P('runtime:everyday-deterministic-result'), 'operation-complete'),
+  edge('edge:runtime:everyday-text-result', 'node:runtime:supplied-text-operator', 'node:runtime:everyday-result-assembler', 'data', P('runtime:supplied-text-result'), 'operation-complete'),
+  edge('edge:runtime:everyday-knowledge-result', 'node:runtime:grounded-knowledge-inspector', 'node:runtime:everyday-result-assembler', 'data', P('runtime:knowledge-inspection-result'), 'inspection-complete-or-explicit-gap'),
+  edge('edge:runtime:everyday-assemble-schema', 'node:runtime:everyday-result-assembler', 'node:runtime:result-schema-gate', 'data', P('runtime:construction-candidate'), 'candidate-constructed'),
   edge('edge:runtime:request-force-plan', 'node:runtime:request-force-gate', 'node:runtime:request-plan-coordinator', 'control', P('runtime:request-force-decision'), 'explicit-request'),
   edge('edge:runtime:request-force-recovery', 'node:runtime:request-force-gate', 'node:runtime:language-proposal-coordinator', 'control', P('runtime:request-force-decision'), 'language-recovery-eligible'),
   edge('edge:runtime:request-force-direct', 'node:runtime:request-force-gate', 'node:runtime:interpretation-arbiter', 'data', P('runtime:direct-diagnostic'), 'direct-interpretation-retained'),

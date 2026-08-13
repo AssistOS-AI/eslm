@@ -1,0 +1,209 @@
+{
+  "format": "eslm-basic-everyday-eval-summary",
+  "generatedAt": "2026-08-13T11:17:30.515Z",
+  "sourceDevelopmentDisclosure": "Every source case is development-visible and may influence implementation.",
+  "cases": "eval/basic-everyday/cases.jsonl",
+  "output": "eval/basic-everyday/results/core-only.current.jsonl",
+  "resultDigest": "sha256:af83ef4cf86e1fd0521fc1b1f25ac71c15bec76e72ee738824fd3a3545020375",
+  "executableDigest": "sha256:0d041098de697aed7c36f708710f87f816dfa0119beeb7dedd7c970f3a2d12ae",
+  "caseManifestDigest": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3",
+  "profiles": {
+    "core-only": {
+      "knowledgeBases": []
+    }
+  },
+  "counts": {
+    "total": 790,
+    "pass": 410,
+    "fail": 230,
+    "review": 150,
+    "byProfile": {
+      "core-only": {
+        "total": 790,
+        "pass": 410,
+        "fail": 230,
+        "review": 150
+      }
+    },
+    "byCategory": {
+      "structured-extraction": {
+        "total": 10,
+        "pass": 0,
+        "fail": 0,
+        "review": 10
+      },
+      "numeric-sequence": {
+        "total": 30,
+        "pass": 30,
+        "fail": 0,
+        "review": 0
+      },
+      "yes-no": {
+        "total": 30,
+        "pass": 30,
+        "fail": 0,
+        "review": 0
+      },
+      "calculation": {
+        "total": 80,
+        "pass": 80,
+        "fail": 0,
+        "review": 0
+      },
+      "intent-classification": {
+        "total": 30,
+        "pass": 30,
+        "fail": 0,
+        "review": 0
+      },
+      "professional-communication": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      },
+      "translation": {
+        "total": 60,
+        "pass": 0,
+        "fail": 60,
+        "review": 0
+      },
+      "sentiment-classification": {
+        "total": 30,
+        "pass": 30,
+        "fail": 0,
+        "review": 0
+      },
+      "short-problem": {
+        "total": 45,
+        "pass": 45,
+        "fail": 0,
+        "review": 0
+      },
+      "time": {
+        "total": 15,
+        "pass": 15,
+        "fail": 0,
+        "review": 0
+      },
+      "structured-summarization": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      },
+      "text-correction": {
+        "total": 20,
+        "pass": 0,
+        "fail": 0,
+        "review": 20
+      },
+      "extraction": {
+        "total": 40,
+        "pass": 0,
+        "fail": 0,
+        "review": 40
+      },
+      "percentages": {
+        "total": 50,
+        "pass": 50,
+        "fail": 0,
+        "review": 0
+      },
+      "rewriting": {
+        "total": 30,
+        "pass": 0,
+        "fail": 0,
+        "review": 30
+      },
+      "title-generation": {
+        "total": 20,
+        "pass": 0,
+        "fail": 0,
+        "review": 20
+      },
+      "vocabulary": {
+        "total": 40,
+        "pass": 0,
+        "fail": 40,
+        "review": 0
+      },
+      "study-plan": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      },
+      "logical-ordering": {
+        "total": 40,
+        "pass": 40,
+        "fail": 0,
+        "review": 0
+      },
+      "email-rewriting": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      },
+      "applied-calculation": {
+        "total": 60,
+        "pass": 60,
+        "fail": 0,
+        "review": 0
+      },
+      "argument-critique": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      },
+      "short-creative": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      },
+      "practical-plan": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      },
+      "summarization": {
+        "total": 30,
+        "pass": 0,
+        "fail": 0,
+        "review": 30
+      },
+      "practical-advice": {
+        "total": 30,
+        "pass": 0,
+        "fail": 30,
+        "review": 0
+      },
+      "feedback-synthesis": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      },
+      "option-comparison": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      },
+      "complex-everyday-task": {
+        "total": 10,
+        "pass": 0,
+        "fail": 10,
+        "review": 0
+      }
+    },
+    "byStage": {
+      "parse": 207,
+      "grounding": 23
+    }
+  }
+}

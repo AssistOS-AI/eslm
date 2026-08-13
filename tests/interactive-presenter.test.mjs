@@ -15,7 +15,7 @@ const style = Object.freeze({
   yellow: String, status: (_status, text) => text ?? _status,
 });
 
-test('related KB records render below an explicit not-an-answer boundary', () => {
+test('related KB records stay in trace and do not overwhelm the conversational answer', () => {
   const grounding = {
     status: 'RELATED_EVIDENCE_FOUND',
     search: { complete: false, receipts: [{
@@ -27,12 +27,8 @@ test('related KB records render below an explicit not-an-answer boundary', () =>
   const output = interactiveResultText({
     status: 'UNKNOWN', answer: 'I cannot establish the requested answer.', grounding,
   }, 'Can Qorin fly?', style);
-  assert.match(output, /^Thinking · symbolic processing/mu);
-  assert.match(output, /Route: direct-symbolic; status UNKNOWN/u);
-  assert.match(output, /\nAnswer\nI cannot establish the requested answer\./u);
-  assert.match(output, /Related KB evidence — not an answer/u);
-  assert.match(output, /Qorin is a tool\. \[nonce-kb@3\]/u);
-  assert.match(output, /Search coverage is incomplete: lookup-budget/u);
+  assert.equal(output, 'I cannot establish the requested answer.');
+  assert.doesNotMatch(output, /Qorin is a tool|nonce-kb|lookup-budget/u);
 
   const trace = traceText({
     status: 'UNKNOWN', reasoning: { method: 'epistemic-abstention' }, provenance: [], grounding,
@@ -133,14 +129,23 @@ test('accepted local approximation shows selected CNL, confidence votes, and eph
   assert.match(output, /\nAnswer\nYes\./u);
 });
 
-test('a short symbolic value is realized as an English sentence in the interactive answer', () => {
+test('a short symbolic value is presented naturally without an internal processing dump', () => {
   const output = interactiveResultText({
     status: 'SOLVED', answer: 'northwest', languageRoute: 'direct-symbolic-task-adapter',
     values: ['northwest'], provenance: [], usedKbVersions: [],
     reasoning: { method: 'qualitative-spatial-relation' },
   }, 'Where is A relative to B?', style);
-  assert.match(output, /Method: qualitative-spatial-relation/u);
-  assert.match(output, /\nAnswer\nThe symbolic result is “northwest”\./u);
+  assert.equal(output, 'Northwest.');
+});
+
+test('an everyday result is presented as the answer while its method remains available to trace', () => {
+  const result = {
+    status: 'SOLVED', answer: '51', languageRoute: 'everyday-task-executed',
+    values: [51], provenance: [{ method: 'verified-scalar-operation' }], usedKbVersions: [],
+    reasoning: { method: 'verified-scalar-operation', witness: { result: 51 } },
+  };
+  assert.equal(interactiveResultText(result, 'What is 17% of 300?', style), '51');
+  assert.match(traceText(result, style), /verified-scalar-operation/u);
 });
 
 test('request synthesis separates a symbolic processing trace from the coherent answer', () => {

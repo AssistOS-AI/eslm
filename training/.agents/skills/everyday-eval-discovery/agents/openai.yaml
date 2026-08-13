@@ -1,0 +1,4 @@
+interface:
+  display_name: "Everyday Eval Discovery"
+  short_description: "Discover and diagnose grounded everyday eval cases"
+  default_prompt: "Use $everyday-eval-discovery to convert assigned conversational examples into leakage-safe ESLM evaluations and diagnose the earliest failing processing stage."

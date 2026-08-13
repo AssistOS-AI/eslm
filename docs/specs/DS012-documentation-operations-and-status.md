@@ -51,6 +51,11 @@ The stable responsibility map is:
 | DS027 | trusted strategy descriptors, static registration, stage coordination, exact selection, arbitration, resources, receipts, and compiler extension boundaries |
 | DS028 | rights-aware dataset-guided discovery of processing-node, gate, strategy, edge, and packet hypotheses |
 | DS029 | exact hierarchical processing circuits, node catalog, typed packet families, guarded topology, and resource vocabulary |
+| DS030 | bounded English everyday-request framing and typed operation obligations |
+| DS031 | verified deterministic quantity, time, sequence, grouping, mean, and strict-order operations |
+| DS032 | bounded classification, extraction, correction, and transformation over supplied text |
+| DS033 | grounded conversational inspection, listing, provenance, and natural abstention over loaded KB facts |
+| DS034 | constraint-aware multi-sentence synthesis grounded in supplied material and explicit output limits |
 
 A change updates only the DS files whose primary responsibility changes. A new benchmark normally changes the typed catalog, source receipt, adapter, tests, benchmark HTML page, and generated report, not the generic language, storage, CLI, roadmap, or documentation DS. A new reasoning method changes DS015 and the planner contract only if planner behavior also changes.
 
@@ -177,10 +182,15 @@ while ordinary horizontally distributed components retain a bounded vertical off
 a static architecture inventory table for the graph
 and links to the logical-processing chapter, where the engineering planes and exceptional paths are explained.
 
-Human-facing packet, witness, precondition, and strategy labels omit trailing protocol revision suffixes such as
-`v1` and selector versions such as `@1.0.0`. The checked-in catalog and generated projection retain those exact
-identities for validation and compatibility; the explorer does not repeat them in every card, rail, hover label, or
-information paragraph because revision metadata is not part of the conceptual reading path.
+Human-facing packet, witness, precondition, and strategy labels use the same unversioned role names as the current
+internal contracts. The explorer must not manufacture or hide a second display identity. Independently versioned KBs,
+external sources, and historical receipts may show their real release or protocol identity in the information panel
+when it affects provenance or replay, but revision metadata is not repeated in every card, rail, or hover label.
+
+Across all HTML pages, current internal protocols are explained by responsibility and content-addressed checkpoint,
+not by `v1` suffixes. A page may quote an old suffix only while explicitly describing historical evidence or a
+migration. Package, dataset, source, and external-model versions remain visible because they identify independently
+evolving inputs rather than an internal drawing convention.
 
 `evaluation.html` is the stable development-evidence entry point and links the knowledge-base, benchmark, and RL
 dataset status views. `development/benchmarks.html` is the only page that renders the complete public benchmark

@@ -264,6 +264,8 @@ test('runtime returns UNKNOWN for a parsed factoid with no provider evidence', a
   const runtime = new EslmRuntime(unparsedCore(), [empty], ['empty']);
   const result = await runtime.ask('Who forged the plorin?');
   assert.equal(result.status, 'UNKNOWN');
+  assert.equal(result.answer,
+    'I could not find admitted knowledge that answers “Who forged the plorin?” in the loaded knowledge bases.');
   assert.equal(result.reasoning.gap, 'no-provider-evidence');
   assert.equal(result.query.factoidFrame.wh, 'who');
 });

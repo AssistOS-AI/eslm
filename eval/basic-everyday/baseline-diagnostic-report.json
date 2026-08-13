@@ -1,0 +1,91 @@
+{
+  "format": "eslm-everyday-baseline-diagnostic-report",
+  "createdOn": "2026-08-13",
+  "input": {
+    "path": "BASELINE_ANALYSIS.jsonl",
+    "digest": "sha256:7db7d9d9d779d482c54366fabf92277988fb8b073d78dfb5a38c2836f3dbe958",
+    "assignmentExpectedDigest": "sha256:7db7d9d9d779d482c54366fabf92277988fb8b073d78dfb5a38c2836f3dbe958",
+    "classification": "trusted host runtime diagnostic output; not source evidence and not an evaluation-result file",
+    "inputSurface": "Original Romanian source prompts, not the converted English candidate prompts"
+  },
+  "accounting": {
+    "records": 1000,
+    "uniqueIds": 1000,
+    "idsMatchedToSource": 1000,
+    "missingSourceIds": [],
+    "unknownDiagnosticIds": []
+  },
+  "observed": {
+    "statuses": {
+      "UNPARSED": 1000
+    },
+    "recordsWithInput": 277,
+    "recordsWithQuery": 277,
+    "recordsWithUnsupportedStatements": 723,
+    "unsupportedStatementCount": 1849,
+    "renderedAnswers": 0,
+    "machineAnswers": 0,
+    "scores": 0,
+    "profiles": 0,
+    "checkpointRecords": 0
+  },
+  "earliestStageDiagnosis": {
+    "stage": "language-boundary",
+    "count": 1000,
+    "classificationType": "inference from the trusted diagnostics",
+    "rationale": "The host analyzed the original Romanian requests at an English boundary. Every row ended UNPARSED; 277 query records were UNSUPPORTED and labeled the Romanian input as English, while the remaining rows were retained as unsupported statements. This failure precedes task framing, planning, grounding, reasoning, authority, and realization.",
+    "byCandidateCategory": {
+      "applied-calculation": 60,
+      "argument-critique": 10,
+      "calculation": 80,
+      "complex-everyday-task": 10,
+      "educational-explanation": 10,
+      "email-rewriting": 10,
+      "explanation": 30,
+      "extraction": 40,
+      "factual": 150,
+      "feedback-synthesis": 10,
+      "intent-classification": 30,
+      "logical-ordering": 40,
+      "numeric-sequence": 30,
+      "option-comparison": 10,
+      "percentages": 50,
+      "practical-advice": 30,
+      "practical-plan": 10,
+      "professional-communication": 10,
+      "rewriting": 30,
+      "sentiment-classification": 30,
+      "short-creative": 10,
+      "short-problem": 45,
+      "simple-classification": 20,
+      "structured-extraction": 10,
+      "structured-summarization": 10,
+      "study-plan": 10,
+      "summarization": 30,
+      "text-correction": 20,
+      "time": 15,
+      "title-generation": 20,
+      "translation": 60,
+      "vocabulary": 40,
+      "yes-no": 30
+    }
+  },
+  "resultContractStatus": {
+    "usableAsBaselineRunEvidence": false,
+    "reason": [
+      "No result format or caseId fields",
+      "No selected profile or KB package identity/digest",
+      "No executable or documentation checkpoint digest",
+      "No rendered answer",
+      "No deterministic or semantic score"
+    ],
+    "analyzerCommand": "node skill/scripts/analyze-eval-results.mjs --cases candidate/cases.jsonl --results BASELINE_ANALYSIS.jsonl",
+    "analyzerExitCode": 1,
+    "analyzerFinding": "Rejected as non-result schema; first 100 errors printed and 5,109 additional errors reported."
+  },
+  "claims": {
+    "englishCandidateRuntimePerformance": "not measured",
+    "baselineProfileMetrics": "not available",
+    "repairOrImprovementClaim": "none"
+  }
+}

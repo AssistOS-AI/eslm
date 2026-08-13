@@ -37,7 +37,7 @@ function sorted(values) {
   return [...new Set(values)].toSorted();
 }
 
-test('the hierarchical processing graph catalogs 52 concrete nodes across three authority planes', () => {
+test('the hierarchical processing graph catalogs 57 concrete nodes across three authority planes', () => {
   const receipt = processingGraphValidationReceipt();
   assert.equal(receipt.valid, true);
   assert.equal(receipt.checks.authorityEdgesFromGates, true);
@@ -47,18 +47,18 @@ test('the hierarchical processing graph catalogs 52 concrete nodes across three 
   assert.equal(receipt.checks.strategyStatesMatchResolvedDescriptors, true);
   assert.equal(receipt.checks.ownerPathsExcludedFromCatalogIdentity, true);
   assert.deepEqual(receipt.counts, {
-    circuits: 22,
-    nodes: 52,
-    edges: 79,
-    packetTypes: 62,
-    packetContracts: 62,
+    circuits: 23,
+    nodes: 57,
+    edges: 87,
+    packetTypes: 66,
+    packetContracts: 66,
     resourceDimensions: 27,
     strategiesMapped: 79,
-    runtime: 32,
+    runtime: 37,
     compiler: 12,
     research: 8,
   });
-  assert.equal(new Set(receipt.canonicalNodeOrder).size, 52);
+  assert.equal(new Set(receipt.canonicalNodeOrder).size, 57);
   assert.deepEqual(PROCESSING_GRAPH_CATALOG.nodes.filter((item) => item.kind === 'source')
     .map((item) => item.nodeId).toSorted(), [
     'node:compiler:frozen-source-ingress',
@@ -75,22 +75,22 @@ test('the hierarchical processing graph catalogs 52 concrete nodes across three 
 
 test('inventory exposes deterministic zoom levels, states, kinds, stages, and circuit nesting', () => {
   const inventory = processingGraphInventory();
-  assert.equal(inventory.format, 'eslm-processing-graph-inventory-v1');
+  assert.equal(inventory.format, 'eslm-processing-graph-inventory');
   assert.deepEqual(inventory.implementationStates, {
     coordinated: 1,
-    'instrumented-local': 44,
+    'instrumented-local': 49,
     planned: 7,
   });
   assert.deepEqual(inventory.nodeKinds, {
     source: 3,
-    process: 12,
+    process: 17,
     coordinator: 12,
     'authority-gate': 22,
     sink: 3,
   });
   assert.deepEqual(inventory.zoomLevels.map((item) => item.depth), [0, 1, 2, 3]);
   assert.equal(inventory.circuits.find((item) =>
-    item.circuitId === 'circuit:runtime:request-cycle').nestedNodeCount, 32);
+    item.circuitId === 'circuit:runtime:request-cycle').nestedNodeCount, 37);
   assert.equal(inventory.circuits.find((item) =>
     item.circuitId === 'circuit:runtime:grounded-response-construction').nestedNodeCount, 5);
   assert.equal(inventory.circuits.find((item) =>
@@ -99,7 +99,7 @@ test('inventory exposes deterministic zoom levels, states, kinds, stages, and ci
     item.circuitId === 'circuit:research:graph-discovery').nestedNodeCount, 8);
   assert.equal(inventory.stages.length, STRATEGY_STAGES.length);
   assert.ok(inventory.stages.every((item) => item.nodeIds.length > 0));
-  assert.equal(inventory.nodes.length, 52);
+  assert.equal(inventory.nodes.length, 57);
   assert.deepEqual(inventory.nodes.map((item) => item.nodeId), inventory.canonicalNodeOrder);
 });
 
@@ -164,10 +164,10 @@ test('grounded response construction is a concrete nested circuit with typed str
   assert.equal(node(PROCESSING_GRAPH_CATALOG,
     'node:runtime:claim-admission-gate').canVote, false);
   for (const packetType of [
-    'packet:runtime:construction-work-order-v1',
-    'packet:runtime:admitted-claim-ledger-v1',
-    'packet:runtime:rhetorical-plan-v1',
-    'packet:runtime:grounded-sentence-ledger-v1',
+    'packet:runtime:construction-work-order',
+    'packet:runtime:admitted-claim-ledger',
+    'packet:runtime:rhetorical-plan',
+    'packet:runtime:grounded-sentence-ledger',
   ]) assert.ok(PROCESSING_GRAPH_CATALOG.packetTypes.includes(packetType), packetType);
 });
 
@@ -197,11 +197,11 @@ test('the packet-contract catalog exactly covers live packet identities and grap
   assertProcessingGraphPacketContractCatalog();
   const receipt = processingGraphValidationReceipt();
   const inventory = processingGraphInventory();
-  assert.equal(PROCESSING_GRAPH_PACKET_CONTRACT_CATALOG.contracts.length, 62);
+  assert.equal(PROCESSING_GRAPH_PACKET_CONTRACT_CATALOG.contracts.length, 66);
   assert.deepEqual(PROCESSING_GRAPH_PACKET_CONTRACT_CATALOG.contracts
     .map((item) => item.packetType), PROCESSING_GRAPH_CATALOG.packetTypes);
   assert.equal(receipt.packetContractFormat,
-    'eslm-processing-graph-packet-contract-catalog-v1');
+    'eslm-processing-graph-packet-contract-catalog');
   assert.equal(receipt.packetContractDigest, processingGraphPacketContractCatalogDigest());
   assert.equal(inventory.packetContractDigest, receipt.packetContractDigest);
 
@@ -223,13 +223,13 @@ test('the packet-contract catalog exactly covers live packet identities and grap
   }
 
   assert.equal(processingGraphPacketContract(
-    'packet:runtime:request-session-snapshot-v1').authorityEffect, 'rollback-only');
+    'packet:runtime:request-session-snapshot').authorityEffect, 'rollback-only');
   assert.equal(processingGraphPacketContract(
-    'packet:runtime:runtime-result-v1').privacy, 'request-private');
+    'packet:runtime:runtime-result').privacy, 'request-private');
   assert.equal(processingGraphPacketContract(
-    'packet:compiler:immutable-package-v1').privacy, 'source-controlled');
+    'packet:compiler:immutable-package').privacy, 'source-controlled');
   assert.equal(processingGraphPacketContract(
-    'packet:research:promotion-proposal-v1').authorityEffect, 'non-authoritative-proposal');
+    'packet:research:promotion-proposal').authorityEffect, 'non-authoritative-proposal');
 });
 
 test('packet contracts and high-level envelopes reject drift and unknown fields', () => {
@@ -245,39 +245,39 @@ test('packet contracts and high-level envelopes reject drift and unknown fields'
 
   const endpointDrift = mutablePacketCatalog();
   endpointDrift.contracts.find((item) =>
-    item.packetType === 'packet:runtime:bounded-request-v1').consumers = [];
+    item.packetType === 'packet:runtime:bounded-request').consumers = [];
   assert.throws(() => assertProcessingGraphPacketContractCatalog(endpointDrift),
     /producer or consumer inventory contradicts/u);
 
   const unrelatedValidationOwner = mutablePacketCatalog();
   unrelatedValidationOwner.contracts.find((item) =>
-    item.packetType === 'packet:research:source-status-v1').validationOwner =
+    item.packetType === 'packet:research:source-status').validationOwner =
       'node:runtime:result-sink';
   assert.throws(() => assertProcessingGraphPacketContractCatalog(unrelatedValidationOwner),
     /validation owner must be a declared producer or consumer endpoint/u);
 
   const nonGapConsumerOwner = mutablePacketCatalog();
   nonGapConsumerOwner.contracts.find((item) =>
-    item.packetType === 'packet:runtime:bounded-request-v1').validationOwner =
+    item.packetType === 'packet:runtime:bounded-request').validationOwner =
       'node:runtime:session-snapshot';
   assert.throws(() => assertProcessingGraphPacketContractCatalog(nonGapConsumerOwner),
     /validation owner must produce a non-gap packet/u);
 
   const gateDecisionConsumerOwner = mutablePacketCatalog();
   gateDecisionConsumerOwner.contracts.find((item) =>
-    item.packetType === 'packet:compiler:package-validation-v1').validationOwner =
+    item.packetType === 'packet:compiler:package-validation').validationOwner =
       'node:compiler:package-sink';
   assert.throws(() => assertProcessingGraphPacketContractCatalog(gateDecisionConsumerOwner),
     /validation-owner kind sink contradicts authority effect records-gate-decision/u);
 
   const sharedOwnerOnOrdinaryPacket = mutablePacketCatalog();
   sharedOwnerOnOrdinaryPacket.contracts.find((item) =>
-    item.packetType === 'packet:runtime:bounded-request-v1').validationOwner =
+    item.packetType === 'packet:runtime:bounded-request').validationOwner =
       'owner:shared:strategy-coordination';
   assert.throws(() => assertProcessingGraphPacketContractCatalog(sharedOwnerOnOrdinaryPacket),
     /unknown or packet-ineligible validation owner/u);
 
-  const contract = processingGraphPacketContract('packet:runtime:bounded-request-v1');
+  const contract = processingGraphPacketContract('packet:runtime:bounded-request');
   const validEnvelope = Object.fromEntries(contract.requiredFields.map((field) => [field, null]));
   assert.equal(assertProcessingGraphPacketEnvelope(contract.packetType, validEnvelope), validEnvelope);
   assert.throws(() => assertProcessingGraphPacketEnvelope(contract.packetType, {
@@ -288,7 +288,7 @@ test('packet contracts and high-level envelopes reject drift and unknown fields'
   delete missingRequired[contract.requiredFields[0]];
   assert.throws(() => assertProcessingGraphPacketEnvelope(contract.packetType, missingRequired),
     /missing=/u);
-  assert.throws(() => assertProcessingGraphPacketEnvelope('packet:runtime:unknown-v1', {}),
+  assert.throws(() => assertProcessingGraphPacketEnvelope('packet:runtime:unknown', {}),
     /Unknown processing-graph packet identity/u);
 });
 
@@ -346,12 +346,12 @@ test('authority and rollback edges preserve their exact gate and snapshot semant
     from: 'node:runtime:session-snapshot',
     to: 'node:runtime:session-effect-gate',
     kind: 'rollback',
-    packetType: 'packet:runtime:request-session-snapshot-v1',
+    packetType: 'packet:runtime:request-session-snapshot',
     condition: 'explicit-request-plan-selected',
   }]);
   assert.ok(node(PROCESSING_GRAPH_CATALOG,
     'node:runtime:session-effect-gate').inputPacketTypes
-    .includes('packet:runtime:request-session-snapshot-v1'));
+    .includes('packet:runtime:request-session-snapshot'));
   assert.equal(edge(PROCESSING_GRAPH_CATALOG, 'edge:runtime:snapshot-work').kind, 'data');
   assert.equal(edge(PROCESSING_GRAPH_CATALOG, 'edge:runtime:request-plan-session').kind, 'data');
 
@@ -362,7 +362,7 @@ test('authority and rollback edges preserve their exact gate and snapshot semant
 
   const unnamedRollback = mutableCatalog();
   const rollback = edge(unnamedRollback, 'edge:runtime:snapshot-session-rollback');
-  rollback.packetType = 'packet:runtime:request-plan-v1';
+  rollback.packetType = 'packet:runtime:request-plan';
   node(unnamedRollback, 'node:runtime:session-snapshot').outputPacketTypes = sorted([
     ...node(unnamedRollback, 'node:runtime:session-snapshot').outputPacketTypes,
     rollback.packetType,
@@ -377,7 +377,7 @@ test('closed validators reject unknown fields, packet mismatches, dangling strat
   assert.throws(() => assertProcessingGraphCatalog(unknownNodeField), /non-closed field set/u);
 
   const mismatchedPacket = mutableCatalog();
-  edge(mismatchedPacket, 'edge:runtime:focus-scope').packetType = 'packet:runtime:forged-v1';
+  edge(mismatchedPacket, 'edge:runtime:focus-scope').packetType = 'packet:runtime:forged';
   assert.throws(() => assertProcessingGraphCatalog(mismatchedPacket), /packet is not declared by both endpoints/u);
 
   const danglingStrategy = mutableCatalog();
@@ -403,7 +403,7 @@ test('hierarchy and processing edges are acyclic, rooted, and fully reachable in
   cycleEdge.from = 'node:runtime:result-sink';
   cycleEdge.to = 'node:runtime:english-likelihood-gate';
   cycleEdge.kind = 'exception';
-  cycleEdge.packetType = 'packet:runtime:runtime-result-v1';
+  cycleEdge.packetType = 'packet:runtime:runtime-result';
   node(graphCycle, 'node:runtime:result-schema-gate').exceptionalEdges = [];
   node(graphCycle, 'node:runtime:result-sink').exceptionalEdges = [cycleEdge.edgeId];
   const englishGate = node(graphCycle, 'node:runtime:english-likelihood-gate');
@@ -455,13 +455,13 @@ test('canonical receipts ignore registration order while topology ignores rename
 
 test('resource, correlation, coordinator, authority, and research-scale packets remain explicit', () => {
   for (const packetType of [
-    'packet:runtime:resource-reservation-ledger-v1',
-    'packet:runtime:language-vote-ledger-v1',
-    'packet:shared:coordinator-receipt-v1',
-    'packet:shared:correlation-ledger-v1',
-    'packet:research:source-status-v1',
-    'packet:research:scale-progress-receipt-v1',
-    'packet:research:promotion-proposal-v1',
+    'packet:runtime:resource-reservation-ledger',
+    'packet:runtime:language-vote-ledger',
+    'packet:shared:coordinator-receipt',
+    'packet:shared:correlation-ledger',
+    'packet:research:source-status',
+    'packet:research:scale-progress-receipt',
+    'packet:research:promotion-proposal',
   ]) assert.ok(PROCESSING_GRAPH_CATALOG.packetTypes.includes(packetType), packetType);
   assert.ok(PROCESSING_GRAPH_CATALOG.resourceDimensions.includes('resource:resource-reservations'));
   assert.ok(PROCESSING_GRAPH_CATALOG.resourceDimensions.includes('resource:hypotheses'));

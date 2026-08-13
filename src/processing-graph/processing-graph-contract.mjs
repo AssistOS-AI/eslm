@@ -14,7 +14,7 @@ import {
 } from './processing-graph-packet-contract.mjs';
 
 export const PROCESSING_GRAPH_VALIDATION_RECEIPT_PROTOCOL =
-  'eslm-processing-graph-validation-receipt-v1';
+  'eslm-processing-graph-validation-receipt';
 
 export const PROCESSING_GRAPH_NODE_KINDS = Object.freeze([
   'source', 'process', 'coordinator', 'authority-gate', 'sink',
@@ -29,7 +29,7 @@ export const PROCESSING_GRAPH_AUTHORITIES = Object.freeze([
   'package-validation', 'research-visibility', 'hypothesis-review',
 ]);
 
-const EXPECTED_COUNTS = Object.freeze({ circuits: 22, nodes: 52, edges: 79 });
+const EXPECTED_COUNTS = Object.freeze({ circuits: 23, nodes: 57, edges: 87 });
 const ROOTS = Object.freeze({
   runtime: 'node:runtime:request-ingress',
   compiler: 'node:compiler:frozen-source-ingress',
@@ -49,7 +49,7 @@ const VOTING_NODE_IDS = new Set([
   'node:runtime:document-assembly-coordinator',
 ]);
 const ROLLBACK_PACKET_TYPES = new Set([
-  'packet:runtime:request-session-snapshot-v1',
+  'packet:runtime:request-session-snapshot',
 ]);
 const IMPLEMENTATION_STATE_RANK = new Map([
   ['planned', 0],

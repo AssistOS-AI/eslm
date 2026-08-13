@@ -1,0 +1,103 @@
+{
+  "format": "eslm-everyday-candidate-validation-report",
+  "createdOn": "2026-08-13",
+  "status": "candidate-valid; runtime evaluation blocked by absent result-contract inputs",
+  "workspaceScope": "All reads and writes were confined to the assigned workspace; candidate writes are declarative data/reports under candidate/.",
+  "digestChecks": {
+    "packet": {
+      "expected": "sha256:5ff22a8637b0cf71ad9cbde217763d1511eff33dcbd8d76c6089ca91af95ee62",
+      "actual": "sha256:5ff22a8637b0cf71ad9cbde217763d1511eff33dcbd8d76c6089ca91af95ee62",
+      "match": true
+    },
+    "baselineDiagnostic": {
+      "expected": "sha256:7db7d9d9d779d482c54366fabf92277988fb8b073d78dfb5a38c2836f3dbe958",
+      "actual": "sha256:7db7d9d9d779d482c54366fabf92277988fb8b073d78dfb5a38c2836f3dbe958",
+      "match": true
+    },
+    "cases": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3"
+  },
+  "requiredCommands": [
+    {
+      "command": "node skill/scripts/validate-eval-corpus.mjs --cases candidate/cases.jsonl",
+      "exitCode": 0,
+      "valid": true,
+      "caseCount": 1000,
+      "digest": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3",
+      "counts": {
+        "pools": {
+          "source-development": 1000
+        },
+        "profiles": {
+          "core-only": 790,
+          "quick-assisted": 210,
+          "real-kb": 210
+        },
+        "scoring": {
+          "exact": 535,
+          "semantic": 465
+        },
+        "categories": {
+          "applied-calculation": 60,
+          "argument-critique": 10,
+          "calculation": 80,
+          "complex-everyday-task": 10,
+          "educational-explanation": 10,
+          "email-rewriting": 10,
+          "explanation": 30,
+          "extraction": 40,
+          "factual": 150,
+          "feedback-synthesis": 10,
+          "intent-classification": 30,
+          "logical-ordering": 40,
+          "numeric-sequence": 30,
+          "option-comparison": 10,
+          "percentages": 50,
+          "practical-advice": 30,
+          "practical-plan": 10,
+          "professional-communication": 10,
+          "rewriting": 30,
+          "sentiment-classification": 30,
+          "short-creative": 10,
+          "short-problem": 45,
+          "simple-classification": 20,
+          "structured-extraction": 10,
+          "structured-summarization": 10,
+          "study-plan": 10,
+          "summarization": 30,
+          "text-correction": 20,
+          "time": 15,
+          "title-generation": 20,
+          "translation": 60,
+          "vocabulary": 40,
+          "yes-no": 30
+        }
+      }
+    },
+    {
+      "command": "node skill/scripts/analyze-eval-results.mjs --cases candidate/cases.jsonl --results BASELINE_ANALYSIS.jsonl",
+      "exitCode": 1,
+      "valid": false,
+      "expectedOutcome": "The supplied file is diagnostic output, not an eslm-basic-everyday-eval-result JSONL file.",
+      "reportedErrors": "First 100 errors plus 5,109 additional errors. No conforming run artifact was fabricated."
+    }
+  ],
+  "independentAudits": {
+    "sourceToCandidateIdCoverage": {
+      "sourceIds": 1000,
+      "candidateSourceIds": 1000,
+      "exactSetMatch": true
+    },
+    "sourceIdentityPreservation": true,
+    "uniqueCandidateIds": true,
+    "uniqueSourceLocators": true,
+    "candidateReferenceWithinMetadataWordRange": true,
+    "romanianDiacriticMarkersInCaseFile": false,
+    "declarativeOnly": "JSON and JSONL artifacts; no executable expressions in candidate data."
+  },
+  "runEvidenceBlockers": [
+    "Current executable and documentation checkpoint digests were not supplied.",
+    "Selected QUICK/real-KB package identities and digests were not supplied.",
+    "No conforming baseline or current result JSONL was supplied."
+  ],
+  "performanceClaimsAllowed": false
+}

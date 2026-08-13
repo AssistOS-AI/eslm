@@ -43,6 +43,14 @@ Use named functions for reusable algorithms and small pure functions for transfo
 
 Do not suppress errors. Catch only to add context, implement a specified fallback, or translate a boundary error into a structured result. Avoid files above 500 lines; split by cohesive behavior. Files above 800 lines require an explicit rationale in the affected specification. Keep source lines within 120 characters when clarity permits. Large declarative records may exceed this only when line splitting harms deterministic review.
 
+Internal format, receipt, packet, policy, node, and strategy names follow the single-current-revision rule in DS000.
+New code must not add numeric protocol suffixes such as `-v1`, schema labels whose only value is `1`, or selector
+suffixes such as `@1`. Validators remain closed and content-addressed even though their role-bearing format names are
+unversioned. A coordinated shape change updates all current producers and consumers in one change. Exact versions are
+retained only for independently evolving KB packages, external sources and datasets, external model revisions,
+dependency constraints, and immutable historical evidence. Tests must distinguish these boundary versions from
+artificial internal revision counters.
+
 ### Runtime and data safety
 
 The deployed runtime closure and declarative KB content must not use `eval`, `Function`, `node:vm`, child processes, networking, secret-bearing environment access, corpus-selected dynamic imports, or import-time I/O. Corpus strings remain inert data. A restricted declarative rule is parsed into a validated AST and interpreted by a registered trusted method; it never contains source code.

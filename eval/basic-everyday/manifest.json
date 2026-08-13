@@ -1,0 +1,455 @@
+{
+  "format": "eslm-basic-everyday-eval-manifest",
+  "targetNamespace": "everyday-eval",
+  "createdOn": "2026-08-13",
+  "converter": {
+    "identity": "Codex isolated candidate conversion",
+    "skill": "everyday-eval-discovery",
+    "skillDigest": "sha256:393d7ce5471855b70a492518b680c8e5898e34d576f3ad9376beff16a3ce2911",
+    "evaluationContractDigest": "sha256:76a3e49ab9df7316350a9fce5f5c486d54c8f764bccad6258bfc1a773ea033a1"
+  },
+  "source": {
+    "assignedPath": "original_specs/llm_everyday_benchmark_ro_v1/dataset.jsonl",
+    "assignedSourceDigest": "sha256:00ec335631f575f43d5f14ea0ab960d83e1a3d66895eca469014e2d8b1c259ad",
+    "assignedPacketDigest": "sha256:5ff22a8637b0cf71ad9cbde217763d1511eff33dcbd8d76c6089ca91af95ee62",
+    "assignmentExpectedPacketDigest": "sha256:5ff22a8637b0cf71ad9cbde217763d1511eff33dcbd8d76c6089ca91af95ee62",
+    "collection": "llm_everyday_benchmark_ro_v1",
+    "collectionDigest": "sha256:83f02922602f00fd1676dc45a4a67641315f4c450052abb2ff034a8681263382",
+    "contentDigest": "sha256:526a531818783052d78dbd953e26b76afffefe2baa7f223d7a67c6e52986a35a",
+    "evidenceContainer": "An immutable training packet copied the assigned source records for isolated conversion; packet and source digests are both retained.",
+    "mediaType": "application/jsonl",
+    "split": "train",
+    "leakagePolicy": "agent-visible",
+    "assignedEvidenceContainerFileCount": 1,
+    "embeddedCollectionFileCount": 1,
+    "distinctSourceFileIdentities": 100,
+    "caseCount": 1000
+  },
+  "accounting": {
+    "sourceCases": 1000,
+    "converted": 1000,
+    "rejected": 0,
+    "blocked": 0,
+    "silentOmissions": 0,
+    "rejectedCases": [],
+    "blockedCases": []
+  },
+  "inventory": {
+    "recordTypes": {
+      "benchmarkCase": 1000
+    },
+    "sourceCategories": {
+      "calcul": 80,
+      "calcul_aplicat": 60,
+      "clasificare_intenție": 30,
+      "clasificare_sentiment": 30,
+      "clasificare_simplă": 20,
+      "comparare_opțiuni": 10,
+      "comunicare_profesională": 10,
+      "corectare_text": 20,
+      "creativ_scurt": 10,
+      "critică_argument": 10,
+      "da_nu": 30,
+      "explicație": 30,
+      "explicație_educațională": 10,
+      "extracție": 40,
+      "extracție_structurată": 10,
+      "factual": 150,
+      "generare_titlu": 20,
+      "ordine_logică": 40,
+      "plan_practic": 10,
+      "plan_învățare": 10,
+      "problemă_scurtă": 45,
+      "procente": 50,
+      "rescriere": 30,
+      "rescriere_email": 10,
+      "sfat_practic": 30,
+      "sinteză_feedback": 10,
+      "sumarizare": 30,
+      "sumarizare_structurată": 10,
+      "task_complex_cotidian": 10,
+      "timp": 15,
+      "traducere": 60,
+      "vocabular": 40,
+      "șir_numeric": 30
+    },
+    "sourceScoringModes": {
+      "exact": 535,
+      "semantic": 465
+    },
+    "sourceDifficulties": {
+      "easy": 900,
+      "medium": 90,
+      "medium-hard": 10
+    },
+    "sourceLengthClasses": {
+      "long": 10,
+      "medium": 90,
+      "short": 900
+    },
+    "duplicateIds": [],
+    "duplicateLocators": [],
+    "duplicateTexts": [],
+    "duplicateRecordDigests": [],
+    "surfaceAnomalies": [
+      {
+        "sourceId": "RO-002-04",
+        "locator": "dataset.jsonl:14",
+        "kinds": [
+          "Romanian singular/plural mismatch"
+        ]
+      },
+      {
+        "sourceId": "RO-005-07",
+        "locator": "dataset.jsonl:47",
+        "kinds": [
+          "nonstandard country inflection/name spelling"
+        ]
+      },
+      {
+        "sourceId": "RO-011-09",
+        "locator": "dataset.jsonl:109",
+        "kinds": [
+          "floating-point representation artifact retained as source-equivalent numeric text"
+        ]
+      },
+      {
+        "sourceId": "RO-020-07",
+        "locator": "dataset.jsonl:197",
+        "kinds": [
+          "Romanian singular/plural mismatch"
+        ]
+      },
+      {
+        "sourceId": "RO-021-10",
+        "locator": "dataset.jsonl:210",
+        "kinds": [
+          "Romanian singular/plural mismatch"
+        ]
+      },
+      {
+        "sourceId": "RO-022-07",
+        "locator": "dataset.jsonl:217",
+        "kinds": [
+          "nonstandard country inflection/name spelling"
+        ]
+      },
+      {
+        "sourceId": "RO-031-05",
+        "locator": "dataset.jsonl:305",
+        "kinds": [
+          "Romanian singular/plural mismatch"
+        ]
+      },
+      {
+        "sourceId": "RO-035-08",
+        "locator": "dataset.jsonl:348",
+        "kinds": [
+          "Romanian singular/plural mismatch"
+        ]
+      },
+      {
+        "sourceId": "RO-068-06",
+        "locator": "dataset.jsonl:676",
+        "kinds": [
+          "Romanian singular/plural mismatch"
+        ]
+      },
+      {
+        "sourceId": "RO-068-09",
+        "locator": "dataset.jsonl:679",
+        "kinds": [
+          "Romanian singular/plural mismatch"
+        ]
+      }
+    ],
+    "semanticContractAdvisories": [
+      {
+        "sourceId": "RO-005-06",
+        "locator": "dataset.jsonl:46",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-018-03",
+        "locator": "dataset.jsonl:173",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-020-06",
+        "locator": "dataset.jsonl:196",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-023-10",
+        "locator": "dataset.jsonl:230",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-024-05",
+        "locator": "dataset.jsonl:235",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-025-07",
+        "locator": "dataset.jsonl:247",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-033-02",
+        "locator": "dataset.jsonl:322",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-036-04",
+        "locator": "dataset.jsonl:354",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-049-06",
+        "locator": "dataset.jsonl:486",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-053-02",
+        "locator": "dataset.jsonl:522",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-055-10",
+        "locator": "dataset.jsonl:550",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-062-02",
+        "locator": "dataset.jsonl:612",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-065-10",
+        "locator": "dataset.jsonl:650",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-074-06",
+        "locator": "dataset.jsonl:736",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-075-06",
+        "locator": "dataset.jsonl:746",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-080-05",
+        "locator": "dataset.jsonl:795",
+        "category": "rescriere_email",
+        "referenceWordCount": 56,
+        "promptMinimumWords": 90,
+        "promptMaximumWords": 140,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-081-05",
+        "locator": "dataset.jsonl:805",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-083-06",
+        "locator": "dataset.jsonl:826",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-085-05",
+        "locator": "dataset.jsonl:845",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      },
+      {
+        "sourceId": "RO-086-02",
+        "locator": "dataset.jsonl:852",
+        "category": "comparare_opțiuni",
+        "referenceWordCount": 102,
+        "promptMinimumWords": 120,
+        "promptMaximumWords": 220,
+        "assessment": "advisory: semantic reference is shorter than the prompt minimum; case remains reviewable by concepts and instruction-fit rubric"
+      }
+    ]
+  },
+  "candidate": {
+    "casesPath": "candidate/cases.jsonl",
+    "casesDigest": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3",
+    "caseCount": 1000,
+    "pools": {
+      "source-development": 1000
+    },
+    "categories": {
+      "applied-calculation": 60,
+      "argument-critique": 10,
+      "calculation": 80,
+      "complex-everyday-task": 10,
+      "educational-explanation": 10,
+      "email-rewriting": 10,
+      "explanation": 30,
+      "extraction": 40,
+      "factual": 150,
+      "feedback-synthesis": 10,
+      "intent-classification": 30,
+      "logical-ordering": 40,
+      "numeric-sequence": 30,
+      "option-comparison": 10,
+      "percentages": 50,
+      "practical-advice": 30,
+      "practical-plan": 10,
+      "professional-communication": 10,
+      "rewriting": 30,
+      "sentiment-classification": 30,
+      "short-creative": 10,
+      "short-problem": 45,
+      "simple-classification": 20,
+      "structured-extraction": 10,
+      "structured-summarization": 10,
+      "study-plan": 10,
+      "summarization": 30,
+      "text-correction": 20,
+      "time": 15,
+      "title-generation": 20,
+      "translation": 60,
+      "vocabulary": 40,
+      "yes-no": 30
+    },
+    "scoringModes": {
+      "exact": 535,
+      "semantic": 465
+    },
+    "profileAssignments": {
+      "core-only": 790,
+      "quick-assisted": 210,
+      "real-kb": 210
+    },
+    "conversionMethods": {
+      "manual-reviewed": 300,
+      "template-assisted": 700
+    },
+    "casesWithConversionNotes": 351,
+    "structuralControls": 0,
+    "structuralControlsReason": "No parser, planner, reasoning, KB, realization, or product repair is proposed or accepted by this isolated conversion assignment.",
+    "expectedResultRecordsAcrossDeclaredProfiles": 1210
+  },
+  "profileDefinitions": {
+    "quick-assisted": {
+      "intent": "QUICK plus only host-declared packages",
+      "caseAssignments": 210,
+      "packageDigests": "not supplied; host run required"
+    },
+    "real-kb": {
+      "intent": "No QUICK; host-declared source-derived packages",
+      "caseAssignments": 210,
+      "packageDigests": "not supplied; host run required"
+    },
+    "core-only": {
+      "intent": "No domain KB; supplied-content and deterministic generic operations",
+      "caseAssignments": 790,
+      "packageDigests": []
+    }
+  },
+  "scoringContract": {
+    "exact": {
+      "unicodeNormalization": "NFC",
+      "outerWhitespace": true,
+      "caseAndTerminalPunctuation": "only where the case constraint permits",
+      "neverNormalizedAway": [
+        "numbers",
+        "polarity",
+        "entities",
+        "units",
+        "list members",
+        "ordering",
+        "requested schema"
+      ]
+    },
+    "semantic": {
+      "dimensionMinimums": {
+        "correctness": 1,
+        "completeness": 1,
+        "grounding": 1,
+        "instructionFit": 1,
+        "naturalness": 1
+      },
+      "forbiddenClaimsAllowed": false,
+      "openFormRequiresSemanticReview": true,
+      "unestablishedJudgments": "review, never pass"
+    },
+    "sourceDevelopmentDisclosure": "All assigned rows are development-visible and influenced conversion. No performance claim may describe them as unseen or held out."
+  }
+}

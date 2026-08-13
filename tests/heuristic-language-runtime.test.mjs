@@ -170,7 +170,7 @@ test('report intent plans KB retrieval and shapes a cited partial document', asy
   assert.match(result.answer, /^# Penguin/mu);
   assert.match(result.answer, /Penguin is a bird and can swim\. \[1\]\[2\]/u);
   assert.match(result.answer, /## Sources/u);
-  assert.deepEqual(result.usedKbVersions, [{ kbId: 'quick', version: '1.0.0' }]);
+  assert.deepEqual(result.usedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
   assert.ok(result.provenance.every((item) =>
     item.method === 'grounded-symbolic-realization' && item.sourceClaim === true));
   assert.equal(result.synthesis.claimMode, 'grounded-symbolic-generation');

@@ -18,6 +18,7 @@ import { evaluate } from './evaluation.mjs';
 import { readBatch } from './io.mjs';
 import { buildKnowledgeBases } from './kb-training.mjs';
 import { compileKnowledgeBase } from './kb/compiler.mjs';
+import { inspectKnowledgePackage } from './kb/inspection.mjs';
 import {
   KB_CATALOG, KB_CATALOG_PATH, loadKnowledgeBase, registerKnowledgeBase,
   registeredKnowledgeBases, summarizeKnowledgeBase, unregisterKnowledgeBase,
@@ -349,6 +350,46 @@ async function knowledgeBase(args, options) {
     }
     entries.push(...await publicKbStatuses());
     printJson(entries);
+    return;
+  }
+  if (action === 'search') {
+    const pattern = args.slice(1).join(' ').trim();
+    if (!pattern) throw new Error('kb search requires a word or wildcard pattern.');
+    const ids = await selectedRuntimeKbIds(options.kb ?? 'all');
+    const registered = new Map((await registeredKnowledgeBases()).map((entry) => [entry.kbId, entry]));
+    const results = [];
+    for (const id of ids) {
+      const manifestPath = KB_CATALOG[id]?.model ?? PUBLIC_KB_CATALOG[id]?.model;
+      const resolvedManifest = manifestPath
+        ? resolve(PROJECT_ROOT, manifestPath)
+        : resolve(dirname(KB_CATALOG_PATH), registered.get(id).manifestPath);
+      results.push(await inspectKnowledgePackage({
+        kbId: id,
+        manifestPath: resolvedManifest,
+        pattern,
+        limit: options.limit,
+        maximumBytes: options['max-bytes'],
+      }));
+    }
+    printJson(results);
+    return;
+  }
+  if (action === 'records') {
+    const id = args[1];
+    if (!id || args.length > 2) throw new Error('kb records accepts exactly one KB ID.');
+    await selectedRuntimeKbIds(id);
+    const registered = new Map((await registeredKnowledgeBases()).map((entry) => [entry.kbId, entry]));
+    const manifestPath = KB_CATALOG[id]?.model ?? PUBLIC_KB_CATALOG[id]?.model;
+    const resolvedManifest = manifestPath
+      ? resolve(PROJECT_ROOT, manifestPath)
+      : resolve(dirname(KB_CATALOG_PATH), registered.get(id).manifestPath);
+    printJson(await inspectKnowledgePackage({
+      kbId: id,
+      manifestPath: resolvedManifest,
+      pattern: options.match ?? '*',
+      limit: options.limit,
+      maximumBytes: options['max-bytes'],
+    }));
     return;
   }
   if (action === 'compile') {

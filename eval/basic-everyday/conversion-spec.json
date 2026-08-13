@@ -1,0 +1,30 @@
+{
+  "format": "eslm-everyday-conversion-spec",
+  "purpose": "Declarative English conversion choices for the assigned packet; this file contains no executable expressions.",
+  "sourcePacketSha256": "sha256:5ff22a8637b0cf71ad9cbde217763d1511eff33dcbd8d76c6089ca91af95ee62",
+  "sourceCollectionSha256": "sha256:83f02922602f00fd1676dc45a4a67641315f4c450052abb2ff034a8681263382",
+  "poolPolicy": {
+    "assignedCases": "source-development",
+    "structuralControls": "not authored because this assignment converts evidence and makes no generic repair"
+  },
+  "profilePolicy": {
+    "quick-assisted+real-kb": [
+      "factual",
+      "simple-classification",
+      "explanation",
+      "educational-explanation"
+    ],
+    "core-only": "Tasks solvable from supplied content, language operations, or deterministic generic operations"
+  },
+  "translationTaskAdaptation": {
+    "policy": "Represent every bilingual pair as Romanian-to-English so the reference answer is English.",
+    "romanianInput": "Retained as task data but transliterated to ASCII because the required validator rejects Romanian diacritics in prompts.",
+    "originalEnglishToRomanianRows": "Direction is reversed using the source reference as input and the source English sentence as answer.",
+    "disclosure": "Each affected case carries a material conversion note; no row is described as a direct translation."
+  },
+  "normalizationPolicy": {
+    "numberFormatting": "Semantic values are preserved; English thousands separators and singular/plural agreement may be normalized.",
+    "properNames": "Standard English exonyms are used where conventional.",
+    "sourceDigests": "Every exact source-record digest and locator is preserved unchanged."
+  }
+}

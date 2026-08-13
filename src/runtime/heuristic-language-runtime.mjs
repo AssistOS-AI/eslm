@@ -15,6 +15,7 @@ import {
 import {
   selectedStrategyIdentities,
 } from './work-policy.mjs';
+import { processEverydayTask } from './everyday-task-processing.mjs';
 
 function approximationOptions(workPolicy) {
   const work = workPolicy.effective.limits;
@@ -85,6 +86,8 @@ export class HeuristicLanguageRuntime {
 
   async ask(text, context = {}, executionOptions = {}) {
     const direct = await this.runtime.ask(text, context, { ...executionOptions, grounding: false });
+    const everyday = processEverydayTask({ text, direct, model: this.model });
+    if (everyday) return everyday;
     const request = await processHeuristicRequest({
       text,
       direct,

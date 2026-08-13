@@ -5,6 +5,11 @@ task, runs a bounded method, and returns semantic values plus a reviewable witne
 it abstains explicitly. If a selected knowledge base contains possibly useful material, the result may also include a
 separate related-evidence bundle. Related evidence is never presented as proof.
 
+The research repository maintains one current internal system revision. Nodes, packets, strategies, schemas, and
+results migrate together and are identified by their role plus content-addressed executable checkpoint, not by
+artificial `v1` suffixes. Versions remain where they identify independently evolving KB packages, external source or
+dataset releases, model revisions, dependencies, or immutable historical evidence.
+
 There are three deliberately separate boundaries:
 
 - **Deployment:** trusted dependency-free Node.js plus inert JSON/JSONL. No network, LLM, child process, `eval`, or
@@ -65,6 +70,8 @@ node src/cli.mjs ask "QUESTION" --strategy-select \
   'runtime.evidence.assess=strategy:retrieval:focus-term-cooccurrence@1,strategy:retrieval:typed-answer-bridge@1'
 node src/cli.mjs run --input tests/fixtures/questions.txt --output /tmp/eslm-answers.jsonl
 node src/cli.mjs kb list
+node src/cli.mjs kb search '*penguin*' --kb quick
+node src/cli.mjs kb records quick --limit 25
 node src/cli.mjs benchmark status
 node src/cli.mjs research graph status
 npm run research:graph:oasst1:preflight
@@ -173,13 +180,15 @@ Canonical records have allowlisted types, stable identifiers, explicit reference
 
 ## Agent-guided training
 
-The repository owns five self-contained skills under `training/.agents/skills/`:
+The repository owns seven self-contained skills under `training/.agents/skills/`:
 
 - `document-to-kb-builder` extracts supported canonical records from assigned documents.
 - `benchmark-guided-symbolic-learner` clusters development-visible failures and proposes general changes without answer memorization.
 - `core-change-guardian` challenges generic-core changes for leakage, unsoundness, hidden policy, and regressions.
 - `kb-compiler-quality-auditor` independently checks candidate and package integrity.
 - `rl-dataset-graph-discovery` freezes and projects rights-cleared task-feedback or trajectory sources, runs bounded structural discovery, validates phased scale admission, and consolidates graph hypotheses without learning answers or executable policy.
+- `everyday-eval-discovery` converts assigned conversational examples into traceable English development evaluations, separates QUICK-assisted from real-KB and core-only evidence, diagnoses the earliest failed processing stage, and requires structural controls for every repair.
+- `review-processing-graph-views` compares every explorer view with current catalog semantics, executable owners, implementation states, navigation, line meaning, equal-spacing geometry, and desktop/mobile browser evidence.
 
 Prepare and inspect a workspace without launching Coding Agent:
 

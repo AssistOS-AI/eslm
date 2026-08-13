@@ -127,13 +127,13 @@ function strategyExplanation(view) {
 }
 
 const EXTERNAL_PACKET_ACTIONS = Object.freeze({
-  'packet:runtime:bounded-request-v1': 'A human CLI operator or a software library client submits one bounded request. Request ingress introduces that request into the runtime plane without assigning semantic or answer authority.',
-  'packet:runtime:runtime-result-v1': 'After result construction, schema validation, and session-commit checks, Runtime result sink returns the closed runtime result to the human CLI operator or software library client that owns the request interaction.',
-  'packet:compiler:frozen-source-v1': 'A source-acquisition process or frozen-file store supplies bytes whose identity, rights, and decoder metadata are already frozen. Frozen source ingress accepts that immutable packet before decoding or extraction begins.',
-  'packet:compiler:immutable-package-v1': 'After record validation, explicit promotion, compilation, and byte-equivalence checks, Immutable package sink hands the validated declarative package to the package catalog and immutable storage.',
-  'packet:research:episode-batch-v1': 'The authorized dataset adapter supplies inert, training-visible episodes. Research actions remain evidence and are never executed as runtime policy.',
-  'packet:research:source-status-v1': 'The source-status packet records rights, visibility, split, identity, and coverage state for the authorized research projection.',
-  'packet:research:promotion-proposal-v1': 'Promotion proposal sink presents a non-executable component or strategy hypothesis, together with scale and omission receipts, to a human reviewer. The reviewer may reject it or begin a separate promotion change; nothing enters the runtime catalog automatically.',
+  'packet:runtime:bounded-request': 'A human CLI operator or a software library client submits one bounded request. Request ingress introduces that request into the runtime plane without assigning semantic or answer authority.',
+  'packet:runtime:runtime-result': 'After result construction, schema validation, and session-commit checks, Runtime result sink returns the closed runtime result to the human CLI operator or software library client that owns the request interaction.',
+  'packet:compiler:frozen-source': 'A source-acquisition process or frozen-file store supplies bytes whose identity, rights, and decoder metadata are already frozen. Frozen source ingress accepts that immutable packet before decoding or extraction begins.',
+  'packet:compiler:immutable-package': 'After record validation, explicit promotion, compilation, and byte-equivalence checks, Immutable package sink hands the validated declarative package to the package catalog and immutable storage.',
+  'packet:research:episode-batch': 'The authorized dataset adapter supplies inert, training-visible episodes. Research actions remain evidence and are never executed as runtime policy.',
+  'packet:research:source-status': 'The source-status packet records rights, visibility, split, identity, and coverage state for the authorized research projection.',
+  'packet:research:promotion-proposal': 'Promotion proposal sink presents a non-executable component or strategy hypothesis, together with scale and omission receipts, to a human reviewer. The reviewer may reject it or begin a separate promotion change; nothing enters the runtime catalog automatically.',
 });
 
 export function explainBoundaryPort(port, view) {

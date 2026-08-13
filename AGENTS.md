@@ -26,7 +26,9 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 18. For dataset-guided discovery of processing nodes, authority gates, strategies, edges, or protocol fields, read `docs/specs/DS028-dataset-guided-processing-graph-discovery-research.md` completely and preserve its rights, split, inert-data, contamination, and promotion boundaries.
 19. For exact hierarchical circuit, node, edge, packet, authority, implementation-state, or resource-vocabulary changes, read `docs/specs/DS029-hierarchical-processing-circuits-and-packet-contracts.md` completely. Keep descriptive catalog state distinct from execution receipts and DS028 research hypotheses.
 20. Before acquiring, projecting, scaling, or consolidating a task-feedback, preference, trajectory, process-reward, or reinforcement-learning dataset, read `training/.agents/skills/rl-dataset-graph-discovery/SKILL.md` completely and run its source, cycle, bundle, log, and large-source admission validators as applicable.
-21. Before changing or approving processing-graph explorer catalogs, views, explanations, navigation, legends, or layout, read `training/.agents/skills/review-processing-graph-views/SKILL.md` completely and audit semantic owners plus every reachable desktop and mobile view.
+21. Before converting conversational examples into Basic Eval cases, diagnosing everyday-language result failures, or claiming improvement on that suite, read `training/.agents/skills/everyday-eval-discovery/SKILL.md` completely and run its corpus and result validators.
+22. Before changing or approving processing-graph explorer catalogs, views, explanations, navigation, legends, or layout, read `training/.agents/skills/review-processing-graph-views/SKILL.md` completely and audit semantic owners plus every reachable desktop and mobile view.
+23. For the implemented everyday-operation path, read DS030 through DS034 according to the affected responsibility: request framing, deterministic quantity/order execution, supplied-text operations, grounded conversational knowledge inspection, or constraint-aware supplied-material synthesis.
 
 # Current Skill Catalog
 
@@ -40,6 +42,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - `core-change-guardian`: challenges generic-core proposals for domain leakage, unsoundness, hidden policy, and regressions.
 - `kb-compiler-quality-auditor`: checks package structure, hashes, safety constraints, provenance, and deterministic compilation.
 - `rl-dataset-graph-discovery`: freezes and projects rights-cleared task-feedback or trajectory datasets, runs bounded multi-method structural discovery, consolidates node/strategy/gate/edge/packet hypotheses, and audits phased large-source admission without learning answers or runtime policy.
+- `everyday-eval-discovery`: converts assigned conversational examples into traceable English development cases, validates QUICK, real-KB, and core-only profiles, diagnoses the earliest failed processing stage, and requires leakage-resistant structural controls before product changes.
 - `review-processing-graph-views`: audits every explorer view against catalog identities, executable owners, implementation states, explanations, navigation, line semantics, equal-spacing geometry, and desktop/mobile browser evidence.
 
 # Repository Rules
@@ -65,6 +68,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Test and hidden benchmark splits must never be exposed to a synthesis subprocess. Development-visible failures may guide changes only through clustered, generalizable evidence.
 - Dataset-guided processing-graph research follows DS028. Rights-cleared training projections may propose nodes, gates, strategies, edges, or protocol fields, but source trajectories, actions, rewards, model responses, and clusters remain inert evidence and never become executable policy, KB truth, benchmark leakage, or default runtime behavior.
 - DS029 owns the exact descriptive circuit, node, edge, packet, authority, implementation-state, and resource vocabulary. Catalog inclusion is not execution evidence; DS028 hypotheses do not alter this vocabulary until an explicit reviewed promotion changes the contract and implementation together.
+- When evaluation reveals a genuinely new processing-node, coordination-node, authority-gate, or strategy-family responsibility, create one separate contiguous DS for that family before promoting it into the catalog or runtime. Extending an already specified operation family does not create a decorative DS; the owning DS and tests change instead.
 - A processing-graph discovery cycle is always `eslm-rl-dataset-discovery-plan-v2` →
   `eslm-processing-graph-research-analysis-v6` → explicit
   `eslm-processing-graph-consolidation-review-v1` → `eslm-rl-dataset-discovery-cycle-v3`. The plan is frozen before

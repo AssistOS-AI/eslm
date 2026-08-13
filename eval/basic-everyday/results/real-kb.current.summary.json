@@ -1,0 +1,61 @@
+{
+  "format": "eslm-basic-everyday-eval-summary",
+  "generatedAt": "2026-08-13T11:17:55.030Z",
+  "sourceDevelopmentDisclosure": "Every source case is development-visible and may influence implementation.",
+  "cases": "eval/basic-everyday/cases.jsonl",
+  "output": "eval/basic-everyday/results/real-kb.current.jsonl",
+  "resultDigest": "sha256:e944ef44fc8bd90c3f7589fd0f760adcb94e36f696b457eefe1d84ba375f2860",
+  "executableDigest": "sha256:0d041098de697aed7c36f708710f87f816dfa0119beeb7dedd7c970f3a2d12ae",
+  "caseManifestDigest": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3",
+  "profiles": {
+    "real-kb": {
+      "knowledgeBases": "oewn-2025,geonames-2026,conceptnet-5.7.0-en,world-relations-1.0"
+    }
+  },
+  "counts": {
+    "total": 210,
+    "pass": 44,
+    "fail": 157,
+    "review": 9,
+    "byProfile": {
+      "real-kb": {
+        "total": 210,
+        "pass": 44,
+        "fail": 157,
+        "review": 9
+      }
+    },
+    "byCategory": {
+      "factual": {
+        "total": 150,
+        "pass": 44,
+        "fail": 106,
+        "review": 0
+      },
+      "explanation": {
+        "total": 30,
+        "pass": 0,
+        "fail": 30,
+        "review": 0
+      },
+      "simple-classification": {
+        "total": 20,
+        "pass": 0,
+        "fail": 20,
+        "review": 0
+      },
+      "educational-explanation": {
+        "total": 10,
+        "pass": 0,
+        "fail": 1,
+        "review": 9
+      }
+    },
+    "byStage": {
+      "grounding": 94,
+      "reasoning": 4,
+      "parse": 58,
+      "task-frame": 1
+    }
+  }
+}

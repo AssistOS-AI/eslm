@@ -86,13 +86,16 @@ node src/cli.mjs benchmark generated --cases 1200 \
 
 <h2>Knowledge-package operations</h2>
 <pre><code>node src/cli.mjs kb list
+node src/cli.mjs kb records quick --limit 25
+node src/cli.mjs kb records quick --match '*penguin*'
+node src/cli.mjs kb search '*capital*' --kb quick,geonames-2026 --limit 20
 node src/cli.mjs kb register /absolute/path/to/package/manifest.json
 node src/cli.mjs kb unregister my-kb
 node src/cli.mjs kb compile --input candidate/records.jsonl --output /tmp/my-kb-package \
   --id my-kb --version 0.1.0 --namespace my-kb
 npm run kb:build
 npm run kb:validate</code></pre>
-<p><code>kb list</code> describes repository-managed and explicitly registered entries and their current package state. <code>kb compile</code> repeats the host canonical validator, sorts accepted records, writes inert JSON shards, and emits a hashed manifest; compilation does not register or promote the result. Registration opens and validates the manifest before storing a relative catalog reference; unregistration removes only the catalog entry and never deletes package data. Building recompiles repository-managed KBs from canonical records or frozen source archives. Validation opens manifests, checks package invariants, and performs provider checks. Build commands are trusted host operations; they never execute source or candidate text.</p>
+<p><code>kb list</code> describes repository-managed and explicitly registered entries and their current package state. <code>kb records</code> returns a bounded prefix of the exact stored entries, while <code>kb search</code> accepts ordinary text or <code>*</code>/<code>?</code> wildcards and may search one package, a comma-separated selection, or <code>all</code>. Each result says whether the result limit or byte budget stopped inspection and reports the package, shard, entry key, checksum-validated work, and bounded record or preview. Inspection is read-only and never interprets a record as executable code. <code>kb compile</code> repeats the host canonical validator, sorts accepted records, writes inert JSON shards, and emits a hashed manifest; compilation does not register or promote the result. Registration opens and validates the manifest before storing a relative catalog reference; unregistration removes only the catalog entry and never deletes package data. Building recompiles repository-managed KBs from canonical records or frozen source archives. Validation opens manifests, checks package invariants, and performs provider checks. Build commands are trusted host operations; they never execute source or candidate text.</p>
 <p>The package inventory changes as sources pass their gates, so this page does not maintain a duplicate count or list. <code>kb list</code> is the executable inventory and <code>kb show ID</code> exposes one package's capabilities, source role, limitations, identity, and validation state without loading all shards. The <a href="knowledge/knowledge-bases.html">knowledge-package chapter</a> explains the stable package roles and safety boundary.</p>
 
 <h2>Training operations</h2>

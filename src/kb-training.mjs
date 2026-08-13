@@ -11,7 +11,7 @@ export async function buildKnowledgeBase(id) {
     outputDirectory: join(PROJECT_ROOT, 'training/KBs', id, 'package'),
     packageMetadata: {
       kbId: id,
-      kbVersion: '1.0.0',
+      kbVersion: entry.version ?? '1.0.0',
       namespace: id,
       languages: ['en'],
       domains: [entry.domain],

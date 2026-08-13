@@ -3,13 +3,13 @@
   "format": "eslm-kb-package-v1",
   "schemaVersion": "1",
   "kbId": "quick",
-  "kbVersion": "1.0.0",
+  "kbVersion": "1.1.0",
   "namespace": "quick",
   "languages": [
     "en"
   ],
   "domains": [
-    "development-fixture"
+    "small inspectable classification, capability, deduction, and conversational knowledge examples"
   ],
   "dependencies": [],
   "capabilities": [
@@ -23,20 +23,20 @@
   "canonicalSource": {
     "path": "../canonical/records.jsonl",
     "file": "records.jsonl",
-    "checksum": "sha256:de8cb946c10399428f53803c23f7073b47949b5e64a6e228b03faf4d9331e424",
-    "recordCount": 14
+    "checksum": "sha256:111a9f171d07791a6ce67a5802be5b34c5bc743b9482aff2681a47e3fc19433a",
+    "recordCount": 24
   },
   "compiler": {
     "version": "eslm-kb-compiler-v1",
-    "configurationHash": "sha256:1d1d6bd5b051ae7f7f809f7ee0a4538702cc687aeb567e71bcb7cb18f2e9c533"
+    "configurationHash": "sha256:e22437a34016d669727545ed19c3ae1f5dbe8195cc188e34306f33cff2beee6b"
   },
   "counts": {
-    "assertion": 2,
+    "assertion": 6,
     "context": 1,
-    "lexeme": 2,
+    "lexeme": 4,
     "provenance": 1,
     "rule": 3,
-    "term": 5
+    "term": 9
   },
   "shardDirectoryRef": "shards.json"
 }

@@ -37,7 +37,7 @@ test('unknown answers remain unsupported while related QUICK records are separat
   assert.deepEqual(result.values, []);
   assert.deepEqual(result.provenance, []);
   assert.deepEqual(result.usedKbVersions, []);
-  assert.deepEqual(result.selectedKbVersions, [{ kbId: 'quick', version: '1.0.0' }]);
+  assert.deepEqual(result.selectedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
   assert.equal(result.grounding.answerSupported, false);
   assert.equal(result.grounding.status, 'RELATED_EVIDENCE_FOUND');
   assert.ok(result.grounding.entries.some((item) => item.statement === 'Penguin can swim.'));
@@ -47,7 +47,7 @@ test('unknown answers remain unsupported while related QUICK records are separat
 test('a solved answer has contributor versions and does not run failure grounding', async () => {
   const result = await (await quickRuntime()).ask('Can Penguin swim?');
   assert.equal(result.status, 'SOLVED');
-  assert.deepEqual(result.usedKbVersions, [{ kbId: 'quick', version: '1.0.0' }]);
+  assert.deepEqual(result.usedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
   assert.equal(result.grounding, undefined);
 });
 
@@ -79,7 +79,7 @@ test('duplicate semantic facts retain every contributing KB identity', async () 
   const model = mergeModels(await createCoreModel(), [quick, second]);
   const result = new EslmEngine(model).ask('Can Penguin swim?');
   assert.deepEqual(result.usedKbVersions, [
-    { kbId: 'quick', version: '1.0.0' },
+    { kbId: 'quick', version: '1.1.0' },
     { kbId: 'second-source', version: '2' },
   ]);
   assert.deepEqual(result.provenance[0].kbSources, result.usedKbVersions);
@@ -136,13 +136,13 @@ test('unparsed input retrieves by original surface and includes previously commi
   assert.ok(result.grounding.entries.some((item) =>
     item.kbId === 'session' && item.statement === 'Zara is a pilot.'));
   assert.ok(result.grounding.search.receipts.some((item) => item.kbId === 'session'));
-  assert.deepEqual(result.consultedKbVersions, [{ kbId: 'quick', version: '1.0.0' }]);
+  assert.deepEqual(result.consultedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
 });
 
 test('QUICK grounding consultation is recorded for unparsed input without claiming answer contribution', async () => {
   const result = await (await quickRuntime()).ask('Write a short report about Penguin.');
   assert.equal(result.status, 'UNPARSED');
-  assert.deepEqual(result.consultedKbVersions, [{ kbId: 'quick', version: '1.0.0' }]);
+  assert.deepEqual(result.consultedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
   assert.deepEqual(result.usedKbVersions, []);
   assert.ok(result.grounding.entries.some((item) => item.statement === 'Penguin can swim.'));
 });
@@ -556,9 +556,9 @@ test('a grounding provider failure preserves the primary result and reports inco
 test('invalid provider entries cannot erase valid related evidence or imply complete search', async () => {
   const runtime = await quickRuntime();
   runtime.core.retrieveRelatedEvidence = async () => ({
-    entries: [{ ...entry('quick', 'valid-related', 4), kbVersion: '1.0.0' }, { unbounded: true }],
+    entries: [{ ...entry('quick', 'valid-related', 4), kbVersion: '1.1.0' }, { unbounded: true }],
     receipt: {
-      kbId: 'quick', kbVersion: '1.0.0', status: 'matches-found',
+      kbId: 'quick', kbVersion: '1.1.0', status: 'matches-found',
       coverage: 'exact-test-posting', complete: true, candidatesConsidered: 2,
       truncationReasons: [],
     },
@@ -678,10 +678,10 @@ test('a valid oversized provider response is visibly truncated rather than misla
   const runtime = await quickRuntime();
   runtime.core.retrieveRelatedEvidence = async () => ({
     entries: Array.from({ length: 33 }, (_, index) => ({
-      ...entry('quick', `related-${index}`, 40 - index), kbVersion: '1.0.0',
+      ...entry('quick', `related-${index}`, 40 - index), kbVersion: '1.1.0',
     })),
     receipt: {
-      kbId: 'quick', kbVersion: '1.0.0', status: 'matches-found',
+      kbId: 'quick', kbVersion: '1.1.0', status: 'matches-found',
       coverage: 'bounded-test-posting', complete: true, candidatesConsidered: 33,
       truncationReasons: [],
     },
@@ -702,7 +702,7 @@ test('receipt overflow always reserves an aggregate incomplete receipt', async (
     entries: [],
     receipts: Array.from({ length: 20 }, () => ({
       kbId: 'quick',
-      kbVersion: '1.0.0',
+      kbVersion: '1.1.0',
       status: 'no-match',
       coverage: 'exact-empty-test-index',
       complete: true,

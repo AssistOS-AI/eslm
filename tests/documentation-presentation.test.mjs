@@ -60,8 +60,10 @@ test('shared navigation is balanced by reader role and covers every substantive 
       'reasoning/reasoning-narrative-and-compatibility.html',
     ]),
     Development: Object.freeze([
-      'operations/training.html', 'research/processing-graph-research.html', 'evaluation.html',
-      'operations/metamorphic-testing.html', 'operations/exceptions-issues.html',
+      'evaluation.html', 'development/knowledge-bases.html', 'development/benchmarks.html',
+      'development/rl-datasets.html', 'operations/training.html',
+      'research/processing-graph-research.html', 'operations/metamorphic-testing.html',
+      'operations/exceptions-issues.html',
     ]),
     Reference: Object.freeze([
       'operations/cli.html', 'reference/sources.html', 'reference/specification-architecture.html',
@@ -75,7 +77,7 @@ test('shared navigation is balanced by reader role and covers every substantive 
   for (const [, label, submenu] of groups) {
     const links = [...submenu.matchAll(/href="([^"]+)"/gu)].map((match) => match[1]);
     assert.deepEqual(links, expectedGroups[label], label);
-    assert.ok(links.length >= 4 && links.length <= 6, `${label} is not balanced`);
+    assert.ok(links.length >= 4 && links.length <= 8, `${label} is not balanced`);
   }
   assert.doesNotMatch(header, /Foundations/u);
   for (const [label, links] of Object.entries(expectedGroups)) {
@@ -83,7 +85,7 @@ test('shared navigation is balanced by reader role and covers every substantive 
       const page = await readProjectFile(`docs/${link}`);
       assert.match(
         page,
-        new RegExp(`<p class="breadcrumb">[^\\n]* / ${label} /`, 'u'),
+        new RegExp(`<p class="breadcrumb">[^\\n]* / (?:<a[^>]*>)?${label}(?:<\\/a>)? /`, 'u'),
         `${link} breadcrumb must match its ${label} navigation group`,
       );
     }
@@ -390,7 +392,7 @@ test('specification viewer preserves document structure and orientation aids', a
 test('GitHub Pages publication preserves every loader-addressable DS source', async () => {
   const publication = await validatePublishedSpecificationSources();
   assert.equal(publication.noJekyll, true);
-  assert.equal(publication.sources, 30);
+  assert.equal(publication.sources, 34);
   for (const target of publication.targets) {
     const rawUrl = new URL(
       `specs/${encodeURIComponent(target)}`,

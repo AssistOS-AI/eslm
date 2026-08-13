@@ -1,5 +1,5 @@
 export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION_PROTOCOL =
-  'eslm-homepage-processing-graph-projection-v2';
+  'eslm-homepage-processing-graph-projection';
 
 const PROCESSING_NODE_KINDS = Object.freeze([
   'source',
@@ -10,25 +10,25 @@ const PROCESSING_NODE_KINDS = Object.freeze([
 ]);
 
 const EXTERNAL_PACKET_NEIGHBOURS = Object.freeze({
-  'packet:runtime:bounded-request-v1': Object.freeze({
+  'packet:runtime:bounded-request': Object.freeze({
     label: 'CLI operator or library client', kind: 'external-actor-system',
   }),
-  'packet:runtime:runtime-result-v1': Object.freeze({
+  'packet:runtime:runtime-result': Object.freeze({
     label: 'CLI operator or library client', kind: 'external-actor-system',
   }),
-  'packet:compiler:frozen-source-v1': Object.freeze({
+  'packet:compiler:frozen-source': Object.freeze({
     label: 'Source acquisition and frozen-file store', kind: 'external-system',
   }),
-  'packet:compiler:immutable-package-v1': Object.freeze({
+  'packet:compiler:immutable-package': Object.freeze({
     label: 'Package catalog and immutable storage', kind: 'external-system',
   }),
-  'packet:research:episode-batch-v1': Object.freeze({
+  'packet:research:episode-batch': Object.freeze({
     label: 'Authorized dataset projection', kind: 'external-system',
   }),
-  'packet:research:source-status-v1': Object.freeze({
+  'packet:research:source-status': Object.freeze({
     label: 'Authorized dataset projection', kind: 'external-system',
   }),
-  'packet:research:promotion-proposal-v1': Object.freeze({
+  'packet:research:promotion-proposal': Object.freeze({
     label: 'Human review and promotion decision', kind: 'external-actor',
   }),
 });

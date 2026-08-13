@@ -62,6 +62,25 @@ The system is designed to approach a useful subset of the functional behavior as
 
 The central research hypothesis is that a substantial region of language understanding, general knowledge and reasoning can be represented as reusable executable mechanisms plus declarative knowledge, and that a coding agent can enlarge this region by turning benchmark failures into carefully tested improvements. The purpose of the architecture is not to assume that this hypothesis is true in every domain. The purpose is to make the boundary measurable.
 
+### Current revision and durable identity
+
+ESLM research maintains one current internal system revision. Processing nodes, packet shapes, strategy identities,
+runtime results, work policies, schemas, and evaluation receipts use role-bearing names without artificial `v1`,
+`v2`, or selector `@1` suffixes. When one of these internal black boxes changes, its owning DS, implementation,
+catalog, tests, HTML explanation, and current generated evidence migrate together. The repository does not keep several
+internal protocol revisions alive or build compatibility dispatch among them during this research phase.
+
+Reproducibility comes from content digests, source-tree and behavior-checkpoint identities, exact configuration, and
+frozen receipts rather than a manually incremented suffix. A shape change remains explicit in its DS and validator;
+removing the suffix does not permit accepting unknown fields or silently reinterpreting stored data.
+
+Version identity remains meaningful at independently evolving boundaries: immutable KB packages and overlays,
+externally published datasets and source releases, external model revisions, dependency ranges, and historical
+artifacts that already record an older protocol. Those identifiers are evidence about another data product or a past
+execution, not a reason to version every internal node and handoff. Current code writes only the current unversioned
+internal form; historical receipts remain readable through audit or migration tooling and never become current merely
+because their old schema still parses.
+
 ### 2. Existing architectural assumption
 
 Reusable executable behavior already belongs in `src`. This includes the CNL parser, semantic composition, inference engines, search algorithms, planners, confidence propagation, contradiction handling, provenance processing and the runtime interfaces needed by all KBs.
@@ -184,6 +203,13 @@ Response: Strategies divide trusted generic mechanisms by typed responsibility a
 votes, and failures visible. They do not widen executable authority: every deployable executor is still statically
 registered repository code, while external facts and configuration remain inert. The architecture therefore improves
 research locality and inspection without turning KBs or externally supplied components into programs.
+
+### Question #5: Why does the research system keep one current internal revision?
+
+Response: The nodes and strategies are rebuilt and validated together as one executable symbolic system. Maintaining
+parallel `v1` and `v2` identities for every internal packet would add compatibility state without independent users or
+packages that require it. Content-addressed checkpoints retain exact reproducibility, while KBs, external sources, and
+historical receipts keep version identity where independent evolution and migration are real.
 
 ## Conclusion
 

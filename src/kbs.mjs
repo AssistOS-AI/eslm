@@ -12,11 +12,12 @@ export const KB_CATALOG = Object.freeze({
   quick: Object.freeze({
     id: 'quick',
     title: 'QUICK reviewed development fixture',
-    domain: 'small inspectable classification, capability, and deduction examples',
+    domain: 'small inspectable classification, capability, deduction, and conversational knowledge examples',
     source: 'training/KBs/quick/canonical/records.jsonl',
     model: 'training/KBs/quick/package/manifest.json',
     documentation: 'knowledge/knowledge-bases.html',
     role: 'development-fixture',
+    version: '1.1.0',
     benchmarkEligible: false,
   }),
   'babi-v1.2-language': Object.freeze({

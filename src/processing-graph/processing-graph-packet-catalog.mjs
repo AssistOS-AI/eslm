@@ -3,9 +3,9 @@ import {
 } from './processing-graph-catalog.mjs';
 
 export const PROCESSING_GRAPH_PACKET_CONTRACT_CATALOG_PROTOCOL =
-  'eslm-processing-graph-packet-contract-catalog-v1';
+  'eslm-processing-graph-packet-contract-catalog';
 
-const P = (name) => `packet:${name}-v1`;
+const P = (name) => `packet:${name}`;
 const R = (name) => `resource:${name}`;
 const DEFAULTS = Object.freeze({
   runtime: Object.freeze({
@@ -154,6 +154,29 @@ const PACKET_SEMANTICS = [
   packet('runtime:evidence-frontier', ['records', 'searchReceipts', 'scopeDigest', 'provenance'],
     ['conflicts', 'coverageGaps'], 'No bounded evidence record was retrieved.',
     ['lookups', 'postings', 'evidence-items'], { provenance: 'required' }),
+  packet('runtime:everyday-task-frame',
+    ['operation', 'inputs', 'outputContract', 'sourceTextDigest'],
+    ['constraints', 'suppliedTextSpans'], 'No supported explicit everyday operation was framed.',
+    ['tokens', 'graph-nodes'], { validationOwner: 'node:runtime:everyday-task-framer' }),
+  packet('runtime:everyday-deterministic-result',
+    ['operation', 'status', 'answer', 'values', 'witness', 'method'],
+    ['gap'], 'No verified scalar, quantity, time, sequence, or strict-order operation produced a result.',
+    ['comparisons', 'solver-nodes', 'proof-bytes', 'output-bytes'], {
+      validationOwner: 'node:runtime:everyday-deterministic-executor',
+    }),
+  packet('runtime:knowledge-inspection-result',
+    ['operation', 'status', 'answer', 'values', 'witness', 'method'],
+    ['provenance', 'usedKbVersions', 'consultedKbVersions', 'gap'],
+    'No loaded declarative fact supported the requested entity or class description.',
+    ['facts', 'lookups', 'comparisons', 'proof-bytes', 'output-bytes'], {
+      provenance: 'conditional', validationOwner: 'node:runtime:grounded-knowledge-inspector',
+    }),
+  packet('runtime:supplied-text-result',
+    ['operation', 'status', 'answer', 'values', 'witness', 'method'],
+    ['gap'], 'No bounded classification, extraction, correction, or transformation was completed over the supplied text.',
+    ['tokens', 'comparisons', 'proof-bytes', 'output-bytes'], {
+      validationOwner: 'node:runtime:supplied-text-operator',
+    }),
   packet('runtime:failure-eligibility', ['decision', 'inability', 'budgetReservation'],
     ['reason'], 'No inability was eligible for related-evidence work.', ['resource-reservations'], {
       authorityEffect: 'records-gate-decision',

@@ -28,8 +28,8 @@ const IDENTIFIER = /^[a-z0-9]+(?::[a-z0-9][a-z0-9-]*)+(?:@\d+)?$/u;
 const SEMANTIC_FIELD = /^[a-z][A-Za-z0-9]*$/u;
 const SHARED_VALIDATION_OWNER_PACKET_TYPES = new Map([
   ['owner:shared:strategy-coordination', new Set([
-    'packet:shared:coordinator-receipt-v1',
-    'packet:shared:correlation-ledger-v1',
+    'packet:shared:coordinator-receipt',
+    'packet:shared:correlation-ledger',
   ])],
 ]);
 const VALIDATION_OWNER_KINDS_BY_AUTHORITY_EFFECT = new Map([

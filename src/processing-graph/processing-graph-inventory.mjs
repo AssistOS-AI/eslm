@@ -6,7 +6,7 @@ import {
   PROCESSING_GRAPH_NODE_KINDS, processingGraphValidationReceipt,
 } from './processing-graph-contract.mjs';
 
-export const PROCESSING_GRAPH_INVENTORY_PROTOCOL = 'eslm-processing-graph-inventory-v1';
+export const PROCESSING_GRAPH_INVENTORY_PROTOCOL = 'eslm-processing-graph-inventory';
 
 function hierarchyDepth(circuitId, circuits, memo = new Map()) {
   if (memo.has(circuitId)) return memo.get(circuitId);

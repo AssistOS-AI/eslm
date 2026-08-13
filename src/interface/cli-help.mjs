@@ -21,6 +21,8 @@ Usage:
   eslm corpus probe --corpus oewn-2025 --archive FILE
   eslm kb list
   eslm kb show ID
+  eslm kb records ID [--match WILDCARD] [--limit 25]
+  eslm kb search WORD|WILDCARD [--kb ID|all] [--limit 25]
   eslm kb register MANIFEST
   eslm kb unregister ID
   eslm kb compile --input RECORDS --output DIRECTORY --id ID --version VERSION --namespace ID

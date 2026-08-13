@@ -71,9 +71,9 @@
     "bytes": 23780925
   },
   "profile": {
-    "elapsedMilliseconds": 1262.863715,
-    "recordsPerSecond": 85139.03655866778,
-    "rssDeltaBytes": 295931904,
-    "heapUsedDeltaBytes": 205848192
+    "elapsedMilliseconds": 1305.392358,
+    "recordsPerSecond": 82365.27457900133,
+    "rssDeltaBytes": 292732928,
+    "heapUsedDeltaBytes": 205815800
   }
 }

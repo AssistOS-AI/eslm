@@ -52,6 +52,14 @@ function strategyIdentityForMethod(methodId) {
     : undefined;
 }
 
+function factoidGapAnswer(frame) {
+  if (frame?.subjectSurface && frame?.relationSurface) {
+    return `I could not find an admitted ${frame.relationSurface} for ${frame.subjectSurface} in the loaded knowledge bases.`;
+  }
+  const question = frame?.sourceText ?? 'this question';
+  return `I could not find admitted knowledge that answers “${question}” in the loaded knowledge bases.`;
+}
+
 export class EslmRuntime {
   constructor(core, providers = [], selected = [], memoryPlan, workPolicy) {
     this.core = core;
@@ -212,7 +220,7 @@ export class EslmRuntime {
       } : {}),
       ...(factoidWithoutEvidence ? {
         status: 'UNKNOWN',
-        answer: 'I understand this as a factoid question, but the loaded knowledge bases provide no answer.',
+        answer: factoidGapAnswer(factoidRoute.frame),
         values: [], provenance: [],
         query: { ...result.query, factoidFrame: factoidRoute.frame, routedProviders: [] },
         taskFrame: {

@@ -18,6 +18,12 @@ A compiled knowledge base is an immutable, versioned data product whose logical 
 
 A package is identified by `kbId`, semantic `kbVersion`, `schemaVersion`, canonical namespace, canonical-record digest, compiler identity, compiler-configuration digest, and complete shard inventory. Two packages with the same user-facing alias but different immutable identities remain distinct. Registration resolves aliases before loading and never mutates a published version.
 
+KB package versions are an intentional exception to DS000's single-current internal revision. A package is an
+independently published data product that may coexist with another package release, satisfy dependency ranges, or be
+superseded through an overlay without rewriting runtime code. Internal runtime packets and strategy selectors do not
+gain numeric revisions merely because they consume a versioned KB. Their execution checkpoint records the exact
+selected package identity and content digest.
+
 The package contains inert data only. JavaScript, shell fragments, corpus-selected imports, callbacks, and arbitrary
 expressions are prohibited. A declarative rule or policy may be projected for execution only when its semantics names
 an interpreter already registered in trusted `src`; otherwise it remains validated inert canonical data or is rejected

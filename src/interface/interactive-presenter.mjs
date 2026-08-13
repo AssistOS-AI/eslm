@@ -192,8 +192,11 @@ function coherentInteractiveAnswer(value) {
   if (surface.includes('\n') || /^(?:#|[-*]\s|\|)/u.test(surface) || /[.!?][”’"']?$/u.test(surface)) {
     return surface;
   }
-  if (surface.split(/\s+/u).length <= 4) return `The symbolic result is “${surface}”.`;
-  return `${surface}.`;
+  if (/^[+-]?\d+(?:\.\d+)?(?:\s+[A-Z]{3}|\s+\p{L}+s?)?$|^\d{2}:\d{2}$/u.test(surface)) {
+    return surface;
+  }
+  const sentence = `${surface[0].toLocaleUpperCase('en-US')}${surface.slice(1)}`;
+  return `${sentence}.`;
 }
 
 function processingAnswer(style, details, answer) {
@@ -204,30 +207,9 @@ function processingAnswer(style, details, answer) {
 }
 
 export function interactiveResultText(result, original, style) {
-  const appendGrounding = (primary) => {
-    if (!result.grounding) return primary;
-    const bundle = result.grounding;
-    const lines = [primary, '', style.bold('Related KB evidence — not an answer')];
-    if (bundle.focus?.terms?.length) {
-      lines.push(style.dim(`  Search focus: ${bundle.focus.terms.join(', ')}.`));
-    }
-    if (bundle.entries.length === 0) {
-      lines.push(bundle.search.complete
-        ? '  The bounded search found no related records.'
-        : '  The bounded search was incomplete and found no related records.');
-    } else {
-      for (const [index, entry] of bundle.entries.entries()) {
-        const source = `${entry.kbId}${entry.kbVersion ? `@${entry.kbVersion}` : ''}`;
-        lines.push(`  ${index + 1}. ${entry.statement} [${source}]`);
-      }
-    }
-    if (!bundle.search.complete) {
-      const reasons = [...new Set(bundle.search.receipts.flatMap((receipt) => receipt.truncationReasons))];
-      lines.push(style.yellow(`  Search coverage is incomplete${reasons.length ? `: ${reasons.join(', ')}` : '.'}`));
-    }
-    lines.push(style.dim('  These records may help a person or downstream model reformulate the question; they do not support the primary answer.'));
-    return lines.join('\n');
-  };
+  // Related grounding is diagnostic context, not an answer. It remains available through /trace rather than
+  // overwhelming the normal conversational response with unrelated records and package revisions.
+  const appendGrounding = (primary) => primary;
   if (result.languageRoute === 'english-language-gate-rejected') {
     const assessment = result.languageAssessment;
     const confidence = Number.isFinite(assessment?.confidence)
@@ -290,6 +272,9 @@ export function interactiveResultText(result, original, style) {
       `Agent activity: ${activity}; symbolic status ${result.status}.`,
     ], result.answer));
   }
+  if (result.languageRoute === 'everyday-task-executed') {
+    return coherentInteractiveAnswer(result.answer);
+  }
   const details = [
     `Route: ${result.languageRoute ?? 'direct-symbolic'}; status ${result.status}.`,
     `Method: ${result.reasoning?.method ?? result.plan?.methodId ?? 'bounded symbolic execution'}.`,
@@ -314,6 +299,7 @@ export function interactiveResultText(result, original, style) {
       ?? result.normalization.validation?.errors?.join('; ')
       ?? `the second symbolic parse returned ${result.normalization.reparseStatus ?? 'an unsupported result'}`}`);
   }
+  if (!result.normalization?.attempted) return coherentInteractiveAnswer(result.answer);
   return appendGrounding(processingAnswer(style, details, result.answer));
 }
 

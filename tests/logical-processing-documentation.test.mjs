@@ -65,10 +65,10 @@ test('logical architecture separates four planes and distinguishes coordination 
   assert.match(page, /Concurrent execution and greater resource spend add no confidence/u);
   assert.match(page, /validated evidence from independent correlation groups contributes separate support/u);
   for (const protocol of [
-    'eslm-processing-graph-catalog-v1',
-    'eslm-processing-graph-packet-contract-catalog-v1',
-    'eslm-processing-graph-inventory-v1',
-    'eslm-processing-graph-validation-receipt-v1',
+    'eslm-processing-graph-catalog',
+    'eslm-processing-graph-packet-contract-catalog',
+    'eslm-processing-graph-inventory',
+    'eslm-processing-graph-validation-receipt',
   ]) assert.match(page, new RegExp(protocol, 'u'));
   assert.match(page, /processingGraphInventory\(\)/u);
   assert.match(page, /processingGraphValidationReceipt\(\)/u);
@@ -93,29 +93,29 @@ test('logical architecture stays synchronized with the validated processing-grap
   const page = await projectFile('docs/architecture/logical-processing-architecture.html');
   const inventory = processingGraphInventory();
   const validation = processingGraphValidationReceipt();
-  assert.equal(inventory.format, 'eslm-processing-graph-inventory-v1');
-  assert.equal(validation.format, 'eslm-processing-graph-validation-receipt-v1');
+  assert.equal(inventory.format, 'eslm-processing-graph-inventory');
+  assert.equal(validation.format, 'eslm-processing-graph-validation-receipt');
   assert.equal(validation.valid, true);
   assert.deepEqual(validation.counts, {
-    circuits: 22,
-    nodes: 52,
-    edges: 79,
-    packetTypes: 62,
-    packetContracts: 62,
+    circuits: 23,
+    nodes: 57,
+    edges: 87,
+    packetTypes: 66,
+    packetContracts: 66,
     resourceDimensions: 27,
     strategiesMapped: 79,
-    runtime: 32,
+    runtime: 37,
     compiler: 12,
     research: 8,
   });
   assert.deepEqual(inventory.implementationStates, {
     coordinated: 1,
-    'instrumented-local': 44,
+    'instrumented-local': 49,
     planned: 7,
   });
   assert.deepEqual(inventory.nodeKinds, {
     source: 3,
-    process: 12,
+    process: 17,
     coordinator: 12,
     'authority-gate': 22,
     sink: 3,
@@ -201,7 +201,7 @@ test('homepage processing graph exposes one catalog-derived semantic depth at a 
   );
   assert.equal(projected.format, HOMEPAGE_PROCESSING_GRAPH_PROJECTION_PROTOCOL);
   assert.deepEqual(HOMEPAGE_PROCESSING_GRAPH_PROJECTION, projected);
-  assert.ok(projected.packetTypes.some((packetType) => /-v\d+$/u.test(packetType)));
+  assert.ok(projected.packetTypes.every((packetType) => !/-v\d+$/u.test(packetType)));
   assert.ok(projected.packetTypes.every((packetType) =>
     !/\bv\d+(?:\.\d+)*\b/iu.test(plainTypeLabel(packetType))));
 
@@ -214,7 +214,7 @@ test('homepage processing graph exposes one catalog-derived semantic depth at a 
     strategyCount: BUILTIN_STRATEGY_CATALOG.strategies.length,
     kindCounts: {
       source: 3,
-      process: 12,
+      process: 17,
       coordinator: 12,
       'authority-gate': 22,
       sink: 3,

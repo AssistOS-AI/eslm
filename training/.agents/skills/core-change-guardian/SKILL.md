@@ -27,4 +27,8 @@ Language changes must increase direct-symbolic coverage on fresh examples while 
 
 ## Decision and handoff
 
-Accept only when the change is genuinely generic, simpler and more accurate than repeated KB workarounds, proportionate to its regression surface, reproducible, and free of critical regression. Record the method descriptor, tests, compatibility version, and deterministic KB migration or continued compatibility. Defer when semantics or evidence remain incomplete.
+Accept only when the change is genuinely generic, simpler and more accurate than repeated KB workarounds,
+proportionate to its regression surface, reproducible, and free of critical regression. Record the method descriptor,
+tests, content-addressed executable checkpoint, and deterministic KB migration or continued package compatibility.
+Do not introduce an internal protocol revision counter for a coordinated current-system change. Defer when semantics or
+evidence remain incomplete.

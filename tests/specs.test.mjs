@@ -32,7 +32,9 @@ test('repository-owned training skills are self-contained and catalogued', async
     'benchmark-guided-symbolic-learner',
     'core-change-guardian',
     'document-to-kb-builder',
+    'everyday-eval-discovery',
     'kb-compiler-quality-auditor',
+    'review-processing-graph-views',
     'rl-dataset-graph-discovery',
   ]);
   for (const skill of skills) {
