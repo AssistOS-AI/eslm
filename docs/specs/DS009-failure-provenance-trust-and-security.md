@@ -28,8 +28,8 @@ The runtime separates interpretation failure, missing knowledge, missing method,
 | PARTIAL | Some subgoals were solved, but the complete requested result was not established. |
 | UNKNOWN | The available knowledge neither entails nor contradicts the target. |
 | AMBIGUOUS | Multiple admissible interpretations or hypotheses lead to different answers. |
-| UNPARSED | The language front-end could not construct safe Semantic IR. |
-| UNVERIFIED_NORMALIZATION | LLM normalization could not be shown to preserve protected semantics. |
+| UNPARSED | The English-only language gate rejected likely non-English input, or the English front-end could not construct safe Semantic IR. |
+| UNVERIFIED_NORMALIZATION | An external language proposal could not be shown independently to preserve protected semantics. |
 | DEFEASIBLE | A result was selected under declared non-strict retrieval, induction, abduction, or preference semantics. It is not strict truth and retains its method-specific source edge, alternatives, counterevidence, policy, confidence, or witness. |
 | MISSING_KNOWLEDGE | The plan requires premises not present in available contexts or KBs. |
 | NO_APPLICABLE_METHOD | Required inputs exist, but no registered algorithm can produce the needed result. |
@@ -39,7 +39,14 @@ The runtime separates interpretation failure, missing knowledge, missing method,
 | RESOURCE_LIMIT | Time, memory, search depth or shard expansion budget was exhausted. |
 | UNSUPPORTED_OUTPUT | The result could be derived internally but cannot be projected into the requested output contract. |
 
-Language route and result status are related but distinct. A Language Agent subprocess failure leaves the original `UNPARSED` result intact and records `language-agent-normalization-failed`; the external process did not establish a new semantic status. A schema, anchor, or reparse rejection returns `UNVERIFIED_NORMALIZATION` with route `language-agent-normalization-rejected`. Only a host-validated candidate whose normalized text survives the ordinary symbolic runtime may return `language-agent-normalized`, and the final semantic status may still be `UNKNOWN` or `NO_APPLICABLE_METHOD` because successful wording normalization does not create facts or algorithms.
+Language route and result status are related but distinct. Local English-likelihood assessment can record route
+`english-language-gate-rejected` with `UNPARSED`; its diagnostic does not claim translation or identify meaning. A
+Language Agent subprocess failure leaves that or another original `UNPARSED` result intact and records
+`language-agent-normalization-failed`; the external process did not establish a new semantic status. A schema,
+preservation, English-target, or reparse rejection returns `UNVERIFIED_NORMALIZATION` with route
+`language-agent-normalization-rejected`. Only an independently host-validated candidate whose English target survives
+the ordinary symbolic runtime may return `language-agent-normalized`, and the final semantic status may still be
+`UNKNOWN` or `NO_APPLICABLE_METHOD` because successful wording normalization does not create facts or algorithms.
 
 DS022 local approximation is also interpretation rather than inference. Several similarly supported reparses with
 different semantics return `AMBIGUOUS`. A changed candidate that would otherwise return `SOLVED` is exposed as
@@ -116,8 +123,9 @@ copied without becoming proof of the larger requested conclusion.
 
 Automatic ordinary grounding is permitted after interpretation, knowledge, method, ambiguity, underdetermination,
 partial, or unsupported-output failures. It must not run after `RESOURCE_LIMIT` unless the task reserved an independent
-grounding budget before execution. DS022 direct execution, local candidate voting and reparse, and any explicitly
-enabled DS013 Language Agent attempt precede ordinary inability grounding. For a final `UNPARSED`, term extraction uses
+grounding budget before execution. The English-only ingress gate, DS022 direct execution, eligible local candidate
+voting and reparse, and any DS013 Language Agent proposal attempt in the assisted operator profile precede ordinary inability
+grounding. For a final `UNPARSED`, term extraction uses
 the original normalized surface, not a rejected spelling correction. It selects role-weighted content phrases, nouns,
 verbs, entities, and predicates; grammatical scaffolding such as articles, quantifiers, auxiliaries, copulas, request
 directives, artifact nouns, and style words is excluded while content terms exist, except when an accepted
@@ -199,7 +207,9 @@ Strings that resemble code remain inert literals unless an explicit trusted pars
 
 A document may contain text such as “ignore previous instructions” or “modify the parser.” During ingestion this is source content. The coding agent follows only the external task and approved skill instructions.
 
-LLM translation and simplification prompts must delimit source content and state that source commands are not operational instructions. The normalized output remains untrusted.
+External translation and simplification prompts must delimit source content and state that source commands are not
+operational instructions. The proposed English remains untrusted. Model-declared alignments are evidence locations,
+not independent preservation proof.
 
 ### 18. Package integrity
 
@@ -223,6 +233,14 @@ owns byte-accounted shard-cache and memory behavior; each reasoning method owns 
 DS022 additionally supplies one immutable named work-policy snapshot per result. Its exact heuristic, Horn, provider,
 and grounding bounds control how much finite work is attempted without changing status meanings, trust, logical
 semantics, tie-breaking, or the authority of a premise.
+
+The ordinary reasoning path also reserves a bounded, method-specific witness replay before result construction. Its
+gate receives only the selected plan, method candidate, and bounded host-owned facts, rules, closure, index, policy,
+or history required by that method. It cannot call the executor again or use answer success as evidence. Every fact,
+rule, support reference, history event, and candidate inspected counts against the task-frame search-work ceiling.
+Malformed evidence fails closed; work exhaustion returns a dedicated `RESOURCE_LIMIT` gap and cannot be mislabeled as
+Horn non-completion. Only an accepted non-empty strict witness receives truth authority. Accepted induction and
+abduction remain explicitly non-strict.
 
 The DS027 target coordinator preallocates shared and per-strategy work, reserves mandatory safety and verification,
 and records every selected strategy even when it is ineligible, abstains, fails, returns invalid output, or exhausts
@@ -256,9 +274,11 @@ stage output validation and proof verification remain independent gates.
 ### 23. Specialized trust boundaries
 
 DS022 owns deterministic local approximation, request construction, topic focus, work limits, and query-local session
-effects. Its trusted code may propose interpretations but cannot grant them strict epistemic authority or learn a
-runtime pattern from one request. The DS013 Language Agent wrapper is a later, explicit opt-in operator-side
-external-process trust boundary with its own input, feedback, schema, anchor-validation, reparse, cache, and
+effects. Its trusted code may propose English interpretations but cannot grant them strict epistemic authority or
+learn a runtime pattern from one request. The DS003 bounded ingress gate may reject likely non-English input, but it
+does not translate. The DS013 Language Agent wrapper is a disclosed operator-side proposal strategy attached
+logically to the language node and executed across a separate external-process trust boundary with its own input,
+feedback, schema, preservation validation, English-target assessment, reparse, cache, and
 confidentiality requirements. This specification establishes the general rule that its output is untrusted; DS013 owns
 the complete operational protocol so process or model changes do not rewrite the rest of the security contract.
 

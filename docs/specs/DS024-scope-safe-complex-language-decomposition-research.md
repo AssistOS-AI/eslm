@@ -25,10 +25,12 @@ candidate through the ordinary runtime. It handles a reviewed set of agreement, 
 request-envelope, and clause patterns. It declines unsafe structures and preserves close semantic alternatives as
 ambiguity.
 
-The research target is broader English and multilingual operator-side normalization with a typed clause graph,
-explicit scope and reference alternatives, and mechanically testable equivalence obligations. Statistical language
-models may be studied offline as proposal generators, but the deployable inference closure remains deterministic and
-every promoted transformation remains inspectable.
+The research target is broader English with a typed clause graph, explicit scope and reference alternatives, and
+mechanically testable equivalence obligations. The local runtime remains English-only; its bounded language-likelihood
+gate can reject likely non-English input but cannot translate it. Source-language-specific preservation profiles for
+the optional external translation-proposal strategy are a separate research surface. Statistical language models may
+be studied offline as proposal generators, but the deployable inference closure remains deterministic and every
+promoted English transformation remains inspectable.
 
 ### 2. Clause and scope graph
 
@@ -64,7 +66,8 @@ controls:
 9. pronouns, descriptions, discourse focus, and cross-sentence coreference;
 10. questions embedded in requests, multiple questions, and mixed statement-command episodes;
 11. spelling, word boundaries, inflection, and invented predicate forms;
-12. multilingual translation alignments for protected operators and reviewed lexical content.
+12. independent source-language preservation profiles for optional external translation proposals, including
+    protected operators, open-class lexical equivalence, and explicit refusal outside reviewed coverage.
 
 A family is not “supported” merely because one surface can be rewritten. Its contract defines licensed structures,
 meaning-changing neighbors, interaction with every protected operator, and what remains ambiguous.

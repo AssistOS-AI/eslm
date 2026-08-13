@@ -1,0 +1,104 @@
+{
+  "format": "eslm-rl-dataset-source-manifest-v2",
+  "sourceId": "gsm8k",
+  "revision": "3101c7d5072418e28b9008a6636bde82a006892c",
+  "owner": "OpenAI",
+  "officialUrl": "https://github.com/openai/grade-school-math",
+  "paperUrl": "https://arxiv.org/abs/2110.14168",
+  "citation": "Cobbe et al. Training Verifiers to Solve Math Word Problems.",
+  "registryState": "pilot-approved",
+  "independenceGroup": "openai-gsm8k-collection",
+  "acquisition": {
+    "method": "pinned-https-download",
+    "authorizedUrl": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/train_socratic.jsonl",
+    "accessTerms": "Public repository component distributed under the repository MIT license.",
+    "cachePolicy": "Immutable source bytes stay in the ignored content-addressed training cache.",
+    "credentialPolicy": "No credential, token, cookie, or signed URL is required or retained."
+  },
+  "identity": {
+    "sha256": "sha256:153d86551187cfd64ef7afb59bfd0ef75cea3ae9388e7ad31e43920b6dd77872",
+    "bytes": 5401739,
+    "mediaType": "application/jsonl"
+  },
+  "identityFileId": "gsm8k-train-socratic",
+  "deliveredFiles": [
+    {
+      "fileId": "gsm8k-train-socratic",
+      "role": "training-source-component",
+      "path": "gsm8k-3101c7d5/train_socratic.jsonl",
+      "sourceUrl": "https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/train_socratic.jsonl",
+      "sha256": "sha256:153d86551187cfd64ef7afb59bfd0ef75cea3ae9388e7ad31e43920b6dd77872",
+      "bytes": 5401739,
+      "mediaType": "application/jsonl"
+    }
+  ],
+  "components": [
+    {
+      "componentId": "train-socratic",
+      "kind": "socratic-reasoning-trajectories",
+      "licenseId": "mit",
+      "licenseUrl": "https://github.com/openai/grade-school-math/blob/3101c7d5072418e28b9008a6636bde82a006892c/LICENSE",
+      "rightsState": "approved",
+      "allowedUses": ["processing-graph-discovery"],
+      "redistribution": "metadata-only",
+      "identityFileId": "gsm8k-train-socratic",
+      "supportingFileIds": [],
+      "splits": [
+        { "name": "train-socratic", "visibility": "training-visible", "rows": 7473 }
+      ],
+      "projection": {
+        "projectionId": "gsm8k-socratic-task-structure-v1",
+        "membershipDigest": "sha256:27246fd7dafc5435483507e187db97179f496c6f92114a0392b9b3974de21476",
+          "contentMembershipDigest": "sha256:d4b9e14c42063b8ff1831fb1de4f69e4ae2ea270110732cace339f74ae57ec62",
+        "shardCount": 1,
+        "shardFormat": "jsonl",
+        "allowedFields": ["answer-structure", "question"],
+        "excludedFields": ["numeric-answer", "solution-text", "source-row-index"],
+        "privacyReview": "passed",
+        "safetyReview": "passed"
+      },
+      "identity": {
+        "sha256": "sha256:153d86551187cfd64ef7afb59bfd0ef75cea3ae9388e7ad31e43920b6dd77872",
+        "bytes": 5401739,
+        "rows": 7473,
+        "mediaType": "application/jsonl"
+      }
+    }
+  ],
+  "rightsReview": {
+    "reviewId": "review:gsm8k-3101c7d5-local-research",
+    "reviewAuthority": "repository-policy-review",
+    "reviewedRevision": "3101c7d5072418e28b9008a6636bde82a006892c",
+    "evidenceFileIds": [
+      "gsm8k-train-socratic"
+    ],
+    "evidenceUrls": [
+      "https://github.com/openai/grade-school-math/tree/3101c7d5072418e28b9008a6636bde82a006892c",
+      "https://github.com/openai/grade-school-math/blob/3101c7d5072418e28b9008a6636bde82a006892c/LICENSE"
+    ],
+    "decision": "admit-declared-projection",
+    "limitations": [
+      "Only train_socratic is admitted; test and test_socratic remain unavailable to discovery.",
+      "Numeric answers and solution text are excluded from generic discovery features.",
+      "The generated Socratic wording is task-structure evidence and never a proof."
+    ]
+  },
+  "extractionInventory": {
+    "selectedComponentIds": [
+      "train-socratic"
+    ],
+    "excludedComponentKinds": [
+      "example-model-solutions",
+      "test-socratic",
+      "test-standard",
+      "train-standard"
+    ],
+    "retainedRawSource": true,
+    "projectionLossRecorded": true
+  },
+  "removalObligations": [
+    "purge-raw-cache-on-rights-withdrawal",
+    "reassess-derived-hypotheses",
+    "preserve-test-split-isolation"
+  ]
+}

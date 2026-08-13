@@ -1,5 +1,7 @@
 import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
 
+const narrowFlow = window.matchMedia('(max-width: 700px)').matches;
+
 function nodeId(fragment) {
   return fragment.trim().replace(/^\|[^|]*\|\s*/u, '').match(/^([A-Za-z][A-Za-z0-9_-]*)/u)?.[1] ?? null;
 }
@@ -30,15 +32,36 @@ function addTopologyRoles(source) {
   return roleLines.length > 0 ? `${source.trimEnd()}\n${roleLines.join('\n')}\n` : source;
 }
 
+function initialFlowLayout(source) {
+  if (!narrowFlow) {
+    return { source, direction: 'source' };
+  }
+  const reflowed = source.replace(
+    /^(\s*(?:flowchart|graph)\s+)(?:LR|RL)\b/mu,
+    '$1TB',
+  );
+  return {
+    source: reflowed,
+    direction: reflowed === source ? 'fallback' : 'TB',
+  };
+}
+
 for (const diagram of document.querySelectorAll('pre.mermaid')) {
-  diagram.textContent = addTopologyRoles(diagram.textContent);
+  const layout = initialFlowLayout(diagram.textContent);
+  diagram.dataset.responsiveFlow = layout.direction;
+  diagram.textContent = addTopologyRoles(layout.source);
 }
 
 mermaid.initialize({
   startOnLoad: true,
   theme: 'neutral',
   securityLevel: 'strict',
-  flowchart: { nodeSpacing: 42, rankSpacing: 64, curve: 'linear', useMaxWidth: true },
+  flowchart: {
+    nodeSpacing: narrowFlow ? 28 : 42,
+    rankSpacing: narrowFlow ? 36 : 64,
+    curve: 'linear',
+    useMaxWidth: true,
+  },
   themeVariables: {
     fontFamily: 'system-ui, sans-serif',
     fontSize: '16px',

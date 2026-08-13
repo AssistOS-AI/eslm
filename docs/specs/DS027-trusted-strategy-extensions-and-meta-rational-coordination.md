@@ -16,10 +16,10 @@ to improve one place without editing an opaque central procedure, and product co
 subset of alternatives without giving external data executable authority. This specification defines that extension
 architecture.
 
-The word **plugin** is informal in this contract. A deployable ESLM strategy is not a downloaded package, a dynamically
-imported module, a callback stored in JSON, or code supplied by a KB. It is trusted repository code that is statically
-registered by the host, described by a versioned typed descriptor, invoked only by a deterministic coordinator, and
-bounded by an explicit profile. Declarative KBs, corpora, configuration values, and agent output remain inert data.
+A deployable ESLM strategy is one statically trusted implementation of a typed processing node. It is not a downloaded
+package, a dynamically imported module, a callback stored in JSON, or code supplied by a KB. The host registers it
+before processing begins, a versioned descriptor declares its boundary, and a deterministic coordinator invokes it
+under an explicit finite profile. Declarative KBs, corpora, configuration values, and agent output remain inert data.
 
 The architecture is **meta-rational** because it makes the choice among alternative strategies an explicit bounded
 computation with evidence, costs, abstentions, and receipts. Meta-rational does not mean that a vote can establish
@@ -37,12 +37,22 @@ meaning inside a stage: DS003 and DS022 own language semantics, DS008 owns task 
 owns reasoning-method semantics, DS009 owns statuses and epistemic authority, DS014 owns document knowledge, and
 DS019 through DS021 own physical compilation, routing, and memory.
 
-A **strategy** is one bounded implementation of a typed operation at one registered stage. A **strategy family** is a
+A **processing node** is one typed operation in the directed runtime or compiler graph. It owns a stable input and
+output envelope, semantic responsibility, resource boundary, failure contract, and receipt. A **strategy** is one
+bounded implementation of a selectable processing node at one registered stage. A **strategy family** is a
 review category such as predicate morphology, clause decomposition, active-KB frequency, safe Horn deduction, or
-manual-table extraction. A **stage** is a typed coordinator boundary. A **candidate** is a proposed interpretation,
-plan, evidence item, record, or result whose authority depends on its stage. A **vote** is inspectable preference or
-support for one candidate under one declared confidence semantics. An **arbiter** combines eligible outputs according
-to one versioned stage policy. A **verifier** checks a semantic claim or witness independently from its presentation.
+manual-table extraction. A **stage** is a typed boundary containing one or more nodes. A **coordination node** schedules
+eligible strategies and combines candidate proposals under one versioned arbitration policy. A **candidate** is a
+proposed interpretation, plan, evidence item, record, or presentation whose authority depends on its stage. A
+**vote** is inspectable preference or support for one candidate under one declared confidence semantics. An
+**authority gate** validates syntax, types, safety, schema, or a method witness and fails closed; it does not participate
+in numeric arbitration. A **verifier** is the authority gate for a semantic claim or witness.
+
+Only coordination nodes vote. A language proposal coordinator, request-plan coordinator, evidence-ranking
+coordinator, or method-planning coordinator may compare typed candidates. A parser, safety gate, reasoning executor,
+proof verifier, result validator, or package compiler is not a ballot. Reasoning executors return method results and
+witnesses; after verification, an epistemic merge may combine agreeing evidence or preserve conflict, but it cannot
+replace witness acceptance with confidence totals.
 
 A strategy never calls another strategy directly. It may use small cohesive helpers that are part of its own reviewed
 implementation, but every cross-strategy dependency and every cross-stage transition passes through the coordinator's
@@ -63,9 +73,15 @@ cross-stage strategy subsystem:
 - the 24 DS022 approximation families are statically registered executors and run through `StrategyRegistry` and the
   shared synchronous stage coordinator; their outputs still enter the established proposal lattice and
   candidate-voting arbiter rather than a complete cross-stage ledger;
-- request analysis, grounding focus, relevance estimation, reasoning selection, and result construction have exact
-  strategy gates in `eslm-work-policy-v1`, but most remain `instrumented-local`: their existing bounded owner modules
-  execute the work and emit local receipts rather than delegating execution to the common coordinator;
+- request analysis, grounding focus, relevance estimation, reasoning selection, and grounded result construction have
+  exact strategy gates in `eslm-work-policy-v1`, but most remain `instrumented-local`: their existing bounded owner
+  modules execute the work and emit local receipts rather than delegating execution to the common coordinator. Result
+  construction is no longer one opaque responsibility: DS029 names a non-voting work coordinator, claim-admission
+  gate, rhetorical-plan process, sentence-realization coordinator, and document-assembly coordinator;
+- the ordinary English reasoning route now crosses closed `runtime.method.plan`, `runtime.reason.execute`, and
+  `runtime.result.verify` owner envelopes. The verifier independently replays method-specific evidence under finite
+  work and fails closed. These are real non-selectable `instrumented-local` seams, not shared-coordinator execution or
+  a complete cross-stage ledger;
 - `eslm-work-policy-v1` exposes exact shared limits and validates non-empty exact built-in allowlists by stage. It does
   not yet expose per-strategy resource dimensions, minima, maxima, weights, dependencies, or a unified pipeline
   execution receipt. Named presets are inventory views; exact allowlists are the execution control;
@@ -84,18 +100,27 @@ otherwise the normal interpretation-recovery eligibility decision follows. This 
 committing source material as assertions. Migration into the common coordinator must preserve that observable safety
 property and represent the request-force diagnostic as a typed stage transition rather than hiding it in an executor.
 
-### 3. Canonical stage graph and dataflow
+### 3. Canonical processing graph and dataflow
 
-The coordinator owns stage order. A strategy receives one immutable typed envelope and declared host services; it
+DS029 owns the exact nested-circuit, node, edge, packet, resource, and implementation-state catalog. This section owns
+the shared strategy-coordination behavior inside eligible coordination nodes; it does not independently define another
+topology. A catalogued `instrumented-local` or `planned` node is not evidence that the shared coordinator executes it.
+
+The coordinator owns graph order. A strategy receives one immutable typed envelope and declared host services; it
 returns one validated result envelope. It cannot mutate the input, global registry, session, KB catalog, work policy,
 or another strategy's output. The coordinator appends accepted outputs, refusals, and resource use to a stage ledger
 and makes only the arbitrated stage result visible to the next stage.
+
+The runtime and compiler graphs are directed and acyclic for one request or build. Conditional edges may bypass
+ineligible recovery or grounding nodes, and a bounded candidate may return to the direct parser through an explicit
+reparse edge, but that edge creates a new immutable attempt rather than mutating an earlier node. Repeated search
+inside a reasoning method is internal bounded algorithm state, not a control-flow cycle among processing nodes.
 
 The runtime v1 stage catalog is ordered as follows:
 
 | Stage ID | Typed input | Typed output and boundary |
 |---|---|---|
-| `runtime.language.interpret` | bounded text, prior session snapshot, language policy | direct or proposed Semantic IR alternatives with source-span alignments; the direct parser remains the first authority barrier, while local alternatives may be inspected after `UNPARSED`, `UNKNOWN`, `SOLVED`, or `PARTIAL` and selected without answer evidence; a direct success is superseded only by different accepted Semantic IR |
+| `runtime.language.interpret` | bounded text, prior session snapshot, English-only language policy | bounded English-likelihood assessment plus direct or proposed Semantic IR alternatives with source-span alignments; likely non-English input is rejected locally rather than repaired as English; the direct English parser remains a non-voting authority barrier, while local alternatives may be inspected after eligible statuses and selected without answer evidence; a direct success is superseded only by different accepted Semantic IR |
 | `runtime.request.plan` | bounded instruction/material map plus the direct diagnostic | task frame, ordered obligation alternatives, and output contracts; explicit request force may preempt an accidental direct assertion parse and restores the incoming session snapshot |
 | `runtime.knowledge.focus` | task frame or obligation plan | typed entity, predicate, role, phrase, and metalinguistic focus candidates |
 | `runtime.knowledge.retrieve` | focus, exact package scope, routing and work policy | bounded evidence frontier plus per-source search receipts |
@@ -104,11 +129,21 @@ The runtime v1 stage catalog is ordered as follows:
 | `runtime.reason.execute` | one selected typed plan and its admitted evidence | semantic values or hypotheses, proof or method witness, resource use, and method-local gaps |
 | `runtime.result.verify` | semantic values, original typed inputs, witnesses, and epistemic policy | independently accepted claims, rejected claims, conflicts, and verification gaps |
 | `runtime.failure.ground` | an eligible inability result, typed focus, and an independently available grounding budget | the DS009 non-answer grounding bundle; this conditional stage never changes proof status |
-| `runtime.result.construct` | verified claims or inability, request output contract, provenance, and optional grounding | validated `eslm-runtime-result-v1` content and presentation receipt |
+| `runtime.result.construct` | verified claims or inability, request output contract, provenance, and optional grounding | a construction work order; non-voting admitted/rejected claim ledger; rhetorical section plan; evidence-aligned sentence ledger; document candidate; and independently validated `eslm-runtime-result-v1` content. Sentence strategies are source summary, lexical definition, typed fact, and defeasible relation. Assembly strategies are claim fusion, comparison bridge, explicit coverage gap, prose, sectioned document, outline, and table. Presentation confidence never adds factual authority. |
 
-The explicit DS013 Language Agent remains outside this registry. When enabled, it is an operator wrapper between
-exhausted local interpretation and the later runtime stages, and every accepted proposal returns through the same
-direct parser. It receives neither the strategy ledger nor retrieval and reasoning evidence.
+The DS013 Language Agent is logically one operator-side proposal strategy at `runtime.language.interpret`, with the
+route-specific identities `strategy:language:external-translation-proposal@1` and
+`strategy:language:external-simplification-proposal@1`. Translation is requested after the English-only gate rejects
+likely non-English input; conservative English simplification is requested only after local English recovery remains
+`UNPARSED`. Both identities name the proposal's role and receipt rather than two answer-capable executors. The external
+executor remains outside the deployable deterministic registry and runtime closure because it is an operator
+subprocess, but it does not form an unnamed stage between nodes. The general CLI composes this operator route by
+default and the explicit local override removes it; library and deployed profiles remain agent-free. Every candidate
+returns through the same non-voting English parser and semantic gate. Neither identity receives the stage ledger nor
+retrieval, reasoning, KB, proof, answer, or desired-value evidence, and neither has a vote or answer authority.
+Model-declared alignments cannot verify their own open-class translation; acceptance requires an independent reviewed
+source-language preservation profile, otherwise the proposal is rejected as `UNVERIFIED_NORMALIZATION` even when its
+English target parses.
 
 The compiler v1 stage catalog is separate because construction-time authority and resource regimes differ:
 
@@ -230,9 +265,19 @@ For each stage, the coordinator performs these steps in order:
 9. validate the selected stage output before advancing exactly one stage edge.
 
 Registration order, JavaScript object insertion order, provider order, KB order, callback completion timing, and
-filesystem order cannot affect this schedule. The v1 deployable coordinator executes the canonical schedule
-sequentially. A future parallel implementation is conforming only when its semantic stage output and canonical
-receipt equal the sequential reference after timing-only fields are removed.
+filesystem order cannot affect this schedule. The v1 coordinator exposes two deliberately different execution APIs.
+`runStrategyStage` snapshots the input and context, freezes one canonical allocation per selected identity, starts
+every independent strategy with nonzero allocation before awaiting the stage barrier, and then serializes validated
+results in canonical identity order. A rejection or invalid output is contained in that strategy's result while the
+other started strategies continue. Zero-allocation entries return `resource-limit` without invoking their executor.
+Its receipt has no timing or completion-order fields, so completion timing cannot become a semantic input.
+
+`runStrategyStageSync` remains the sequential reference and executes the same canonical allocations one identity at
+a time. The current deployed local-language path uses this synchronous API for all 24 approximation families and
+therefore remains sequential until an explicit migration changes that owner. The asynchronous API is conforming only
+because its semantic stage output and complete canonical receipt are byte-stable under completion-order inversion.
+V1 still has no executable dependency graph; strategies that require ordered dependencies must wait for the v2
+depth scheduler rather than relying on callback timing.
 
 Stage barriers are explicit. The current local wrapper admits bounded interpretation proposals for direct `UNPARSED`,
 `UNKNOWN`, `SOLVED`, and `PARTIAL`. A permissive parser can turn a repairable surface into a wrong unsupported frame or
@@ -264,6 +309,11 @@ The sum of reservations and allocations cannot exceed the stage or execution cei
 expanded by a profile. Unused quota is reported. It may move only to a later stage when the profile declares a
 deterministic carry-forward rule; it cannot be granted opportunistically to a strategy that happened to execute first.
 This prevents latency, callback order, or cache warmth from becoming semantic selection policy.
+
+The implemented v1 invocation-slot plan is narrower but follows the same invariant: it creates and freezes every
+per-strategy `{reserved}` budget in canonical identity order before either execution API invokes a strategy. The
+asynchronous API shares no mutable remainder among running strategies. The synchronous API consumes the same frozen
+plan, so neither mode can reward an executor for finishing first.
 
 Budget exhaustion yields a result and receipt. An optional strategy may exhaust its quota while alternatives
 continue, but the stage ledger becomes incomplete. Exhaustion of a mandatory gate or the shared stage budget fails the
@@ -321,9 +371,9 @@ omitted strategy identities, and the reason. A human inventory may condense the 
 authority. A registry inventory separately shows registered, selected, applicable, executed, declined, failed, and
 budget-truncated strategies per stage.
 
-### 10. Meta-rational arbitration
+### 10. Meta-rational arbitration at coordination nodes
 
-Arbitration is a trusted stage operation with its own versioned policy. It receives only validated strategy results
+Arbitration is a trusted coordination-node operation with its own versioned policy. It receives only validated strategy results
 from one stage and cannot inspect expected answers, benchmark identity, source rows, or downstream success. Safety and
 type gates run before numeric arbitration and act as vetoes, not weak negative votes.
 
@@ -337,6 +387,11 @@ coordinator scaffold and nonce tests. The coordinated language families defer ac
 the DS022 proposal lattice and candidate voter, so their stage receipt must be read as executor accounting rather than
 as the chosen final interpretation.
 
+Concurrency is not corroboration. Starting two executors together, reserving more work, or consuming more work never
+raises candidate confidence. Support comes only from the typed evidence carried by validated results, with dependent
+or copied techniques collapsed by `correlationGroup`; genuinely independent correlation groups may contribute
+separate support only under the declared stage confidence semantics.
+
 The complete v2 arbiters are stage-specific. Their frozen policies may combine declared profile weights, support,
 opposition, semantic-risk penalties, coverage, and abstentions, but each must publish the exact equation, threshold,
 winning margin, correlation policy, and ambiguity rule before it becomes an execution authority. A tie or insufficient
@@ -349,7 +404,8 @@ Different stages may require different arbiters, but each follows the same invar
 - focus and relevance arbitration rank retrieval work and never authorize a premise;
 - evidence aggregation preserves contradictions, contexts, provenance, and epistemic strength;
 - method planning compares applicability and declared cost, while DS015 retains the semantics of each executor;
-- reasoning results are merged only through an epistemically defined policy and independently checked witnesses;
+- reasoning executors return results and witnesses rather than confidence votes; verified results are merged only
+  through an epistemically defined policy after independent witness checks;
 - construction arbitration may choose format and coverage but cannot add an unsupported factual claim.
 
 An arbiter may itself be replaceable for research only as a statically registered trusted implementation with a
@@ -487,6 +543,9 @@ Every registry and coordinator implementation requires tests for descriptor reje
 dependencies, dependency cycles, stage mismatch, unknown configuration, disabled executors, invalid output, bounded
 exception diagnostics, mandatory-gate failure, and exact profile replay. Registration-order, strategy-order,
 provider-order, KB-order, and completion-order permutations must produce equal semantic outputs and canonical receipts.
+For the asynchronous v1 API, a closed test barrier must observe every funded independent executor as started before
+any executor is released. Reversing the release and completion order must produce an identical receipt, while the
+test's out-of-band completion trace proves that the two schedules actually differed. Receipts contain no timing fields.
 
 Voting tests include duplicate correlated strategies, one adversarial overconfident strategy, unanimous abstention,
 support/opposition ties, a safety veto, small-margin ambiguity, independent corroboration, and receipt truncation.
@@ -507,7 +566,7 @@ reconstruct the stage decision from the receipt.
 The deterministic generated heuristic development benchmark is the default broad diagnostic for the coordinated
 language stage. Its 1,200-case default run instantiates 43 reviewed shapes across 18 domains with nonce variation; this
 gives wide repeated execution but not 1,200 independent constructions. The default receipt records 1,200 unique
-surface inputs, 28 observed target families, six oracle levels, and 593 of the 774 possible declared
+surface inputs, 28 observed target families, eight oracle levels, and 593 of the 774 possible declared
 technique-by-domain cells; those are diversity measures, not proof of independent structures or domain semantics. It
 freezes the generator, suite, behavior, work-policy, and strategy-catalog identity and aggregates outcomes by
 generating technique, domain, intended target
@@ -516,8 +575,14 @@ analysis; they are not executor inputs. A promotion claim still requires an expl
 under the same suite identity, because merely listing a
 strategy in the batch configuration does not prove that it executed or contributed on each case.
 
-The report's six oracle levels span answer execution, candidate selection, query-local decomposition, request
-execution, safe abstention, and proposal/operator preservation. Candidate selection requires the exact intended
+The report's eight oracle levels span `answer-execution`, `semantic-query-execution`, `candidate-selection`,
+`query-local-decomposition`, `request-execution`, `request-planning`, `safety-abstention`, and `proposal-only`
+operator preservation. Semantic-query execution requires the complete expected relation-shaped query to execute even
+when absent knowledge leaves the final status `UNKNOWN`; it is therefore stronger than selecting a structurally useful
+candidate. Request planning requires the ordered obligations and honest missing-source gaps without requiring a
+constructed artifact; both levels validate the intent, artifact kind, and format of every ordered obligation. Request
+execution additionally requires the construction route and composite response shape. Candidate
+selection requires the exact intended
 structural candidate to win, carry its required family, receive a matching accepted parse-only reparse, and execute as
 the query-local interpreted episode under the declared route and status. It does not establish a complete
 relation-shaped query and can terminate `UNKNOWN` with `missingEntity`. Their aggregates keep those evidence levels
@@ -551,11 +616,12 @@ not completion of the strategy system.
 
 ## Decisions & Questions
 
-### Question #1: Why are these extensions called strategies rather than ordinary runtime plugins?
+### Question #1: Why is the primary abstraction a processing node with strategies?
 
-Response: “Plugin” commonly implies discovery and loading of external code. That would violate ESLM's strongest
-security and reproducibility boundary. A strategy provides the desired modular research surface while remaining
-statically imported, reviewed, typed, bounded, and visible in one canonical registry.
+Response: A processing node names the stable architectural responsibility and protocol; a strategy names one reviewed
+implementation of that responsibility. This keeps the dataflow intelligible while allowing controlled alternatives,
+ablation, and research. Every strategy remains statically imported, reviewed, typed, bounded, and visible in one
+canonical registry, so external data never acquires executable authority.
 
 ### Question #2: Why may strategies vote if voting cannot establish truth?
 
@@ -563,6 +629,9 @@ Response: Several language, retrieval, and planning techniques provide partial e
 worth executing. Combining independent evidence can improve selection and calibration. Truth has a different contract:
 a registered method must derive a claim under declared semantics and a verifier must accept its witness. Keeping the
 two layers distinct permits useful meta-reasoning without replacing proof with popularity.
+
+Voting occurs only at coordination nodes whose declared output is a candidate choice or ranking. A reasoning executor
+does not cast a truth vote, and a safety or proof gate cannot be outvoted.
 
 ### Question #3: Why does the coordinator allocate resources before executing strategies?
 
@@ -607,8 +676,9 @@ prove that a full relational Semantic IR or answer was produced.
 
 ## Conclusion
 
-ESLM's extension architecture is a visible graph of trusted, typed, bounded strategies rather than a set of hidden
-callbacks. Researchers can improve one semantic problem, compare alternatives, allocate finite work, and inspect the
-vote that selected a candidate. Product profiles can choose an exact ensemble. Declarative knowledge and source data
-remain non-executable, confidence remains distinct from truth, and every stage transition remains reproducible from a
-canonical schedule and receipt.
+ESLM's logical architecture is a visible directed graph of typed, bounded processing nodes rather than a set of hidden
+callbacks. Researchers can improve one node through a reviewed strategy, compare alternatives where coordination is
+meaningful, allocate finite work, and inspect the decision that selected a candidate. Product profiles can choose an
+exact ensemble. Authority gates remain non-voting, declarative knowledge and source data remain non-executable,
+confidence remains distinct from truth, and every stage transition remains reproducible from a canonical schedule and
+receipt.

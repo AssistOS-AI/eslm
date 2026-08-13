@@ -53,6 +53,12 @@ function register(registry, strategy, execute) {
   return registry.register(strategy, execute, VALIDATORS);
 }
 
+function deferred() {
+  let resolve;
+  const promise = new Promise((resolvePromise) => { resolve = resolvePromise; });
+  return Object.freeze({ promise, resolve });
+}
+
 test('trusted strategy registration is typed, immutable, unique, and canonically ordered', () => {
   const later = descriptor('strategy:test:zeta');
   const earlier = descriptor('strategy:test:alpha');
@@ -147,6 +153,99 @@ test('stage execution obeys an explicit allowlist, shares finite work, and recor
   assert.equal(receipt.complete, false);
   assert.deepEqual(receipt.arbitration.selected.output, { text: 'vexa' });
 });
+
+test('asynchronous coordination launches every funded strategy before awaiting and serializes canonically',
+  async () => {
+    const helix = descriptor('strategy:nonce:concurrent-helix', {
+      correlationGroup: 'correlation:nonce:helix-evidence',
+    });
+    const quartz = descriptor('strategy:nonce:concurrent-quartz', {
+      correlationGroup: 'correlation:nonce:quartz-evidence',
+    });
+    const identities = [strategyIdentity(helix), strategyIdentity(quartz)];
+    const output = Object.freeze({ predicate: 'zorps', subject: 'nexa', object: 'vori' });
+
+    async function controlledRun(completionOrder) {
+      const gates = new Map(identities.map((identity) => [identity, deferred()]));
+      const budgets = [];
+      const started = [];
+      const completed = [];
+      const execute = (strategy, confidence) => async (_input, context) => {
+        const identity = strategyIdentity(strategy);
+        started.push(identity);
+        budgets.push(context.budget);
+        assert.equal(Object.isFrozen(context.budget), true);
+        assert.throws(() => { context.budget.reserved = 9; }, TypeError);
+        await gates.get(identity).promise;
+        completed.push(identity);
+        return createStrategyRunResult(strategy, {
+          status: 'completed', output, confidence,
+          work: { reserved: context.budget.reserved, consumed: 1 },
+        });
+      };
+      const registry = register(register(new StrategyRegistry(), quartz, execute(quartz, 0.63)),
+        helix, execute(helix, 0.77)).seal();
+      const pendingReceipt = runStrategyStage({
+        registry, stage: helix.stage, input: { token: 'nonce-input-47' }, maximumWork: 2,
+      });
+      const startedBeforeRelease = [...started];
+      for (const identity of completionOrder) gates.get(identity).resolve();
+      const receipt = await pendingReceipt;
+      return { budgets, completed, receipt, startedBeforeRelease };
+    }
+
+    const reverse = await controlledRun([identities[1], identities[0]]);
+    const forward = await controlledRun(identities);
+    assert.deepEqual(reverse.startedBeforeRelease, identities);
+    assert.deepEqual(forward.startedBeforeRelease, identities);
+    assert.notStrictEqual(reverse.budgets[0], reverse.budgets[1]);
+    assert.deepEqual(reverse.budgets, [{ reserved: 1 }, { reserved: 1 }]);
+    assert.deepEqual(reverse.completed, [identities[1], identities[0]]);
+    assert.deepEqual(forward.completed, identities);
+    assert.deepEqual(reverse.receipt, forward.receipt);
+    assert.deepEqual(reverse.receipt.results.map(
+      (result) => `${result.strategyId}@${result.strategyVersion}`,
+    ), identities);
+    assert.deepEqual(reverse.receipt.results.map((result) => result.work.reserved), [1, 1]);
+    assert.equal(reverse.receipt.arbitration.selected.support, 1.4);
+    assert.deepEqual(reverse.receipt.arbitration.selected.correlationGroups, [
+      'correlation:nonce:helix-evidence', 'correlation:nonce:quartz-evidence',
+    ]);
+    assert.doesNotMatch(JSON.stringify(reverse.receipt),
+      /elapsed|duration|startedAt|completedAt|timestamp/iu);
+  });
+
+test('asynchronous coordination contains a rejected branch and never launches zero-allocation work',
+  async () => {
+    const broken = descriptor('strategy:nonce:async-a-broken');
+    const survivor = descriptor('strategy:nonce:async-b-survivor');
+    const unallocated = descriptor('strategy:nonce:async-c-unallocated');
+    const started = [];
+    const registry = register(register(register(new StrategyRegistry(), unallocated, (...args) => {
+      started.push(strategyIdentity(unallocated));
+      return executor(unallocated, { predicate: 'must-not-run' }, 1)(...args);
+    }), survivor, async (...args) => {
+      started.push(strategyIdentity(survivor));
+      await Promise.resolve();
+      return executor(survivor, { predicate: 'glims', nonce: 'survivor-83' }, 0.7)(...args);
+    }), broken, async () => {
+      started.push(strategyIdentity(broken));
+      await Promise.resolve();
+      throw new Error('nonce branch failure');
+    }).seal();
+    const receipt = await runStrategyStage({
+      registry, stage: broken.stage, input: { token: 'renamed-19' }, maximumWork: 2,
+    });
+    assert.deepEqual(started.toSorted(), [
+      strategyIdentity(broken), strategyIdentity(survivor),
+    ]);
+    assert.deepEqual(receipt.results.map((result) => result.status), [
+      'failed', 'completed', 'resource-limit',
+    ]);
+    assert.deepEqual(receipt.arbitration.selected.output,
+      { predicate: 'glims', nonce: 'survivor-83' });
+    assert.equal(receipt.complete, false);
+  });
 
 test('meta-rational voting aggregates independent support but never promotes relevance into truth', async () => {
   const alpha = descriptor('strategy:test:alpha', { stage: 'runtime.evidence.assess',
@@ -248,6 +347,9 @@ test('the built-in inventory exposes language, request, focus, retrieval, reason
     .implementationState, 'planned');
   assert.equal(descriptors.find((item) => item.strategyId === 'strategy:core:preferred-entailment')
     .implementationState, 'planned');
+  assert.equal(descriptors.find((item) =>
+    item.strategyId === 'strategy:verification:declared-witness-contract')
+    .implementationState, 'instrumented-local');
 });
 
 test('inventory views never masquerade as execution selection and planned entries stay disabled', () => {
@@ -256,7 +358,7 @@ test('inventory views never masquerade as execution selection and planned entrie
   }));
   assert.equal(inventory.inventoryView, 'language');
   assert.ok(inventory.visible < inventory.catalogued);
-  assert.equal(inventory.executionEnabled, 60);
+  assert.equal(inventory.executionEnabled, 66);
   assert.ok(inventory.executionEnabled
     < inventory.coordinated + inventory.instrumentedLocal);
   assert.equal(inventory.strategies.some((row) => row.implementationState === 'planned'

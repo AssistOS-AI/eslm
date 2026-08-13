@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Grounded failure — ESLM Documentation</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="partials-loader.js" defer></script>
+</head>
+<body>
+<div data-include="partials/header.html"></div>
+<main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Language / Grounded failure</p>
+<h1>Useful related knowledge with preserved answer authority</h1>
+<p class="lead">ESLM preserves utility after an inability result by searching selected knowledge sources for bounded, provenance-bearing records related to the request. The primary status remains authoritative, while the separate <code>grounding</code> bundle supplies reviewable retrieval material for a person or a separately evaluated downstream model.</p>
+
+<h2>Two outputs with different authority</h2>
+<p>An answer exists only when a registered symbolic method satisfies the requested output contract. Related evidence needs a weaker condition: an entry may match an accepted entity or predicate, or it may have bounded lexical overlap with the visible request. That weaker match is useful for recovery but cannot justify a truth claim.</p>
+<p>Within the bounded candidate frontier, ranking combines semantic identity, exact content phrases, distinct query-role coverage, multi-term co-occurrence, a typed subject/predicate/object answer bridge, and capped active-KB occurrence evidence. The frequency vote is logarithmic and subordinate to semantic coverage. Every contribution is returned in a relevance receipt, while the bundle remains explicitly non-answer evidence.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Question for the consumer</th><th>Primary result and <code>grounding</code> boundary</th></tr></thead>
+<tbody>
+<tr><td>What does it claim?</td><td><dl class="table-details"><div><dt>Primary result</dt><dd><code>status</code>, <code>answer</code>, and <code>values</code> state what the symbolic execution established or failed to establish.</dd></div><div><dt>Grounding bundle</dt><dd>Entries are related records only. <code>answerSupported</code> is always <code>false</code>.</dd></div></dl></td></tr>
+<tr><td>What is its evidence?</td><td><dl class="table-details"><div><dt>Primary result</dt><dd><code>provenance</code> names premises and method evidence used by the answer.</dd></div><div><dt>Grounding bundle</dt><dd>Each entry has its own provenance, semantic value, epistemic status, relevance reasons, and optional derivation witness.</dd></div></dl></td></tr>
+<tr><td>Which KBs contributed?</td><td><dl class="table-details"><div><dt>Primary result</dt><dd><code>usedKbVersions</code> contains only primary-answer contributors. Selection and consultation are reported separately.</dd></div><div><dt>Grounding bundle</dt><dd>Each entry and search receipt names the source KB and version. Returning an entry does not add that KB to <code>usedKbVersions</code>.</dd></div></dl></td></tr>
+<tr><td>May it change the result?</td><td><dl class="table-details"><div><dt>Primary result</dt><dd>A registered method may produce a new primary result in a later, explicit execution.</dd></div><div><dt>Grounding bundle</dt><dd>No. Grounding cannot change the status to <code>SOLVED</code>, fill <code>values</code>, extend answer provenance, or append text to the machine answer.</dd></div></dl></td></tr>
+</tbody>
+</table></div>
+<p>This separation is the central invariant. A user interface may display both objects together, but labels and data structures must make their different authority unmistakable.</p>
+
+<h2>When automatic grounding runs</h2>
+<p>The current <code>EslmRuntime.ask</code> path considers grounding only after one of these primary statuses:</p>
+<ul>
+  <li><code>UNPARSED</code>, when safe Semantic IR could not be built;</li>
+  <li><code>UNKNOWN</code> or <code>MISSING_KNOWLEDGE</code>, when the answer lacks sufficient premises;</li>
+  <li><code>NO_APPLICABLE_METHOD</code>, when the required transformation is unavailable;</li>
+  <li><code>PARTIAL</code> or <code>UNSUPPORTED_OUTPUT</code>, when execution did not satisfy the complete output contract;</li>
+  <li><code>AMBIGUOUS</code>, <code>UNDERDETERMINED</code>, or <code>INCONSISTENT_CONTEXT</code>, when several interpretations, solutions, or conflicting premises remain.</li>
+</ul>
+<p><code>SOLVED</code> and <code>DEFEASIBLE</code> results do not launch failure grounding. Neither do specialized outcomes that are not in the trigger set. A permitted status also does not guarantee a bundle: if no selected source exposes a grounding receipt, the runtime returns the primary result alone.</p>
+<p><strong>The current implementation never launches grounding after <code>RESOURCE_LIMIT</code>.</strong> Primary execution has already exhausted declared authority, and an automatic second search could worsen overload or hide the real failure. The target contract permits a later product to reserve a separate grounding budget before execution, but the present runtime does not implement that reserved post-limit route.</p>
+<p>Automatic grounding is currently attached to text requests through <code>EslmRuntime.ask</code>. A direct typed call through <code>executeTask</code> does not automatically enter this fallback. This is an implementation boundary, not a claim that typed failures never need related evidence.</p>
+
+<h2>How the bounded search works</h2>
+<ol>
+  <li>The runtime creates one <code>eslm-grounding-request-v1</code> from the visible request and the accepted query fields, when any exist.</li>
+  <li>It ranks accepted entity and predicate identities, exact content phrases, nouns, and verbs, then adds conservative morphological variants. Function and operator words, request scaffolding, and style qualifiers are excluded while content terms exist. An unsuccessful spelling correction does not become accepted semantics.</li>
+  <li>The loaded canonical model uses prebuilt subject, predicate, object, value, and alias postings. The session builds a bounded temporary direct-fact projection for this failure; it does not rebuild the immutable base closure or index. Selected public providers use their reviewed exact indexes. A provider without the required interface returns an incomplete receipt instead of being treated as an empty authoritative source.</li>
+  <li>Entries are validated, deduplicated, and ranked by explicit semantic identity and visible overlap reasons. Stable tie-breaking and cross-KB round-robin selection keep provider order from deciding the returned set.</li>
+  <li>The runtime returns at most the bundle limit, currently eight entries in the ordinary path, plus a receipt for each scheduled search surface. A reserved aggregate receipt accounts for sources omitted by global source, lookup, candidate, byte, or receipt budgets, so omission can never look like a complete empty search.</li>
+</ol>
+<p>For “All mura et bana,” <code>all</code> is a protected quantifier rather than a KB topic. The content-bearing classes and probable predicate slot receive the search budget. A quoted definition request such as “What does ‘all’ mean?” is the explicit exception because it makes the function word itself the topic. Term-selection receipts record each role, inclusion score, exclusion reason, variant, omission, and completion state.</p>
+<p>The fallback does not scan every fact, closure record, source event, or shard. Posting expansion, term selection, lookups, values per lookup, entry payload, provenance, structural depth, and final output are bounded independently. A short result list is therefore not evidence that the whole knowledge collection was searched.</p>
+
+<h2>Reading the bundle and its receipts</h2>
+<p>The bundle protocol is <code>eslm-grounding-bundle-v1</code>. Its top-level <code>triggerStatus</code> records the primary failure, <code>queryText</code> records the bounded visible request, and <code>interpretation</code> repeats the non-proof warning. Each entry contains a KB identity, record identity, short statement, typed semantic value, epistemic status, provenance, contributing KB versions, relevance score and reasons, and a witness when the entry was derived.</p>
+<p>Each receipt reports one search surface: KB and version, access-path coverage, provider status, candidates considered, whether that search completed, and any truncation or provider failure. Consumers must evaluate receipts, term selection, and output limits separately.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Bundle field</th><th>Exact interpretation</th></tr></thead>
+<tbody>
+<tr><td><code>status: RELATED_EVIDENCE_FOUND</code></td><td>At least one entry was returned. The search may still be incomplete; inspect <code>search.complete</code>.</td></tr>
+<tr><td><code>status: NO_RELATED_EVIDENCE</code></td><td>No entry was returned and every receipt plus term selection completed. This is bounded absence under the declared search, not a universal proof that no relevant knowledge exists.</td></tr>
+<tr><td><code>status: SEARCH_INCOMPLETE</code></td><td>No entry was returned, but term selection, a provider, or a bounded posting search did not complete. Absence is inconclusive.</td></tr>
+<tr><td><code>search.complete</code></td><td>At least one receipt exists, every receipt is complete, and term selection completed.</td></tr>
+<tr><td><code>limits.outputTruncated</code></td><td>More validated, ranked entries existed than the output limit allowed. This can be <code>true</code> even when the underlying bounded searches completed.</td></tr>
+</tbody>
+</table></div>
+<p>A bundle that contains entries and has an incomplete receipt still uses <code>RELATED_EVIDENCE_FOUND</code>; its <code>search.complete</code> value remains <code>false</code>. Evidence presence and search completeness answer different questions.</p>
+
+<h2>A concrete result</h2>
+<p>With the tutorial <code>quick</code> KB loaded, <code>Can Penguin fly?</code> is understood but unsupported. The primary result remains <code>UNKNOWN</code> with no values, no answer provenance, and no used KB version. Related facts about the same entity can still be useful. This abridged JSON view omits unrelated result fields and some receipt and entry detail:</p>
+<pre><code>{
+  "status": "UNKNOWN",
+  "answer": "I understand the question, but I do not have evidence for a yes or no answer.",
+  "values": [],
+  "provenance": [],
+  "usedKbVersions": [],
+  "grounding": {
+    "format": "eslm-grounding-bundle-v1",
+    "status": "RELATED_EVIDENCE_FOUND",
+    "triggerStatus": "UNKNOWN",
+    "answerSupported": false,
+    "search": {
+      "complete": true,
+      "termSelectionComplete": true,
+      "receipts": [{
+        "kbId": "quick",
+        "kbVersion": "1.0.0",
+        "status": "matches-found",
+        "complete": true,
+        "truncationReasons": []
+      }]
+    },
+    "entries": [{
+      "kbId": "quick",
+      "kbVersion": "1.0.0",
+      "recordId": "fact:quick:penguin-swim",
+      "statement": "Penguin can swim.",
+      "epistemicStatus": "asserted",
+      "provenance": ["prov:quick:authored-v1"]
+    }]
+  }
+}</code></pre>
+<p>The entry supports the statement that Penguin can swim. It does not support either “Penguin can fly” or “Penguin cannot fly.” A consumer that turns this record into a flying answer has crossed the authority boundary.</p>
+<p>The same principle applies after a parse failure. For example, a session may accept <code>Zara is a pilot.</code> and then fail to parse <code>Write a report about Zara.</code>. Grounding can return the session fact to help a person reformulate the request, while the primary status remains <code>UNPARSED</code>.</p>
+
+<h2>Using the bundle with a downstream language model</h2>
+<p>ESLM keeps downstream answer writing as a separate assisted-generation route. An external product may provide the visible question and structured bundle to a model under an explicit contract that preserves the primary status and <code>answerSupported: false</code>, requires citations to returned record identifiers, discloses incomplete search, and measures unsupported claims independently.</p>
+<p>The downstream model remains distinct from the operator Language Agent proposal strategy. For likely non-English input, that strategy receives only the gate rejection and original request; for unsupported English it receives only the still-unparsed request and bounded parser feedback after local recovery. It never receives grounding entries, KB search results, answer values, or proof state. This prevents a translation or simplification helper from becoming an undeclared question-answering model.</p>
+<p>A safe downstream consumer follows this order:</p>
+<ol>
+  <li>Read the primary status, answer, values, and provenance first.</li>
+  <li>Treat every grounding entry as a possibly useful source claim, not as a conclusion.</li>
+  <li>Check <code>search.complete</code>, every receipt, and <code>outputTruncated</code> before making an absence claim.</li>
+  <li>Cite the KB version, record ID, and provenance for every statement derived from an entry.</li>
+  <li>Label generated prose as downstream formulation and never replace the original ESLM result in logs or evaluation.</li>
+</ol>
+
+<h2>Retrieval risks and safeguards</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Incorrect behavior</th><th>Reason and required behavior</th></tr></thead>
+<tbody>
+<tr><td>Copying a related statement into <code>answer</code></td><td><dl class="table-details"><div><dt>Why it is wrong</dt><dd>Lexical or identity relevance is weaker than entailment.</dd></div><div><dt>Required behavior</dt><dd>Keep it in <code>grounding.entries</code> with <code>answerSupported: false</code>.</dd></div></dl></td></tr>
+<tr><td>Adding a grounding KB to <code>usedKbVersions</code></td><td><dl class="table-details"><div><dt>Why it is wrong</dt><dd>That field means the KB contributed to the primary witness.</dd></div><div><dt>Required behavior</dt><dd>Keep source identity on the entry and receipt unless a later registered method actually uses it.</dd></div></dl></td></tr>
+<tr><td>Reporting “nothing is known” after an incomplete empty search</td><td><dl class="table-details"><div><dt>Why it is wrong</dt><dd>A failed provider, truncated posting, or incomplete term selection cannot prove absence.</dd></div><div><dt>Required behavior</dt><dd>Return <code>SEARCH_INCOMPLETE</code> and expose the receipt reason.</dd></div></dl></td></tr>
+<tr><td>Discarding receipts because entries were found</td><td><dl class="table-details"><div><dt>Why it is wrong</dt><dd>Useful evidence can coexist with incomplete coverage.</dd></div><div><dt>Required behavior</dt><dd>Retain every receipt and show the completeness warning.</dd></div></dl></td></tr>
+<tr><td>Launching grounding after <code>RESOURCE_LIMIT</code></td><td><dl class="table-details"><div><dt>Why it is wrong</dt><dd>Unreserved work hides and may worsen resource exhaustion.</dd></div><div><dt>Required behavior</dt><dd>Return the primary resource failure unchanged.</dd></div></dl></td></tr>
+<tr><td>Letting provider order choose the result</td><td><dl class="table-details"><div><dt>Why it is wrong</dt><dd>Registration or load order is not a relevance or truth policy.</dd></div><div><dt>Required behavior</dt><dd>Use deterministic ranking, stable ties, and bounded cross-KB diversity.</dd></div></dl></td></tr>
+<tr><td>Giving grounding to the normalizer</td><td><dl class="table-details"><div><dt>Why it is wrong</dt><dd>It would let a language-only external process see knowledge and proof state.</dd></div><div><dt>Required behavior</dt><dd>Keep normalization and downstream formulation as separate, explicitly evaluated routes.</dd></div></dl></td></tr>
+<tr><td>Returning a derived record without its support</td><td><dl class="table-details"><div><dt>Why it is wrong</dt><dd>The statement cannot be independently reviewed.</dd></div><div><dt>Required behavior</dt><dd>Include its rule, supporting records, derivation depth, and source provenance in the witness.</dd></div></dl></td></tr>
+</tbody>
+</table></div>
+
+<h2>Current boundary and verification</h2>
+<p>The implemented foundation searches exact postings in the loaded canonical model and session overlay plus bounded provider-specific grounding indexes. The next retrieval gates cover book-scale spans, additional canonical record kinds, semantic similarity, wider cross-KB proof frontiers, and separately evaluated downstream realization. Lexical overlap can retrieve distractors and can miss a semantically related record whose vocabulary differs; entries therefore remain non-authoritative and receipts expose the searched scope.</p>
+<p>Focused tests verify an unknown result with separate related evidence, no grounding after a solved answer, correct contributor-only KB accounting, original-surface retrieval after <code>UNPARSED</code>, role-weighted noun and verb focus, ordinary exclusion and metalinguistic inclusion of function words, session evidence, conservative morphology, provider-order invariance, cross-KB diversity, entry bounds, complete versus incomplete empty searches, interactive labeling, separate trace receipts, and the prohibition on automatic retrieval after <code>RESOURCE_LIMIT</code>.</p>
+<p>The normative owners are <a href="specsLoader.html?spec=DS009-failure-provenance-trust-and-security.md">DS009 for answer and grounding authority</a>, <a href="specsLoader.html?spec=DS020-catalog-discovery-and-query-routing.md">DS020 for bounded retrieval and receipts</a>, <a href="specsLoader.html?spec=DS021-memory-budgets-and-shard-caches.md">DS021 for resource budgets</a>, <a href="specsLoader.html?spec=DS022-heuristic-language-approximation-and-work-policy.md">DS022 for topic focus and work policy</a>, <a href="specsLoader.html?spec=DS007-cli-session-and-training-operations.md">DS007 for CLI presentation</a>, and <a href="specsLoader.html?spec=DS010-evaluation-benchmarks-and-comparison.md">DS010 for the independent product and downstream-model benchmark</a>.</p>
+</main>
+<div data-include="partials/footer.html"></div>
+</body>
+</html>

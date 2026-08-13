@@ -6,6 +6,7 @@ import { HeuristicLanguageRuntime } from '../src/runtime/heuristic-language-runt
 import { LanguageAgentAssistedRuntime } from '../src/runtime/language-agent-assisted-runtime.mjs';
 import { EslmRuntime } from '../src/runtime/runtime.mjs';
 import { createCoreModel } from '../src/runtime/core-model.mjs';
+import { RESULT_REALIZATION_STRATEGIES } from '../src/runtime/grounded-response-realization.mjs';
 import { resolveWorkPolicy } from '../src/runtime/work-policy.mjs';
 
 async function quickRuntime(profile = 'balanced') {
@@ -148,6 +149,8 @@ test('a structurally different apposition interpretation prevents strict flatten
   assert.deepEqual(result.approximation.selectedCandidate.supportingFamilies, [
     'apposition-expansion',
   ]);
+  assert.equal(result.episode.transaction, 'heuristic-query-local');
+  assert.equal(result.approximation.ephemeralPremises.committed, false);
   assert.deepEqual(result.learned, []);
   assert.deepEqual(result.context.session.facts, []);
   const followUp = await runtime.ask('Is Tavra a qerin?', result.context);
@@ -159,14 +162,21 @@ test('report intent plans KB retrieval and shapes a cited partial document', asy
   assert.equal(result.status, 'PARTIAL');
   assert.equal(result.languageRoute, 'heuristic-request-synthesis');
   assert.equal(result.requestPlanning.status, 'PLANNED');
+  assert.equal(result.episode.transaction, 'heuristic-request-query-local');
+  assert.deepEqual(result.context.session.facts, []);
+  assert.deepEqual(result.context.session.rules, []);
   assert.equal(result.requestPlanning.selectedPlan.outputContract.artifact, 'report');
   assert.equal(result.requestPlanning.selectedPlan.outputContract.length, 'brief');
-  assert.match(result.answer, /# Report: Penguin/u);
-  assert.match(result.answer, /Penguin is a bird\. \[quick@1\.0\.0; fact:quick:penguin-bird\]/u);
-  assert.match(result.answer, /Penguin can swim\. \[quick@1\.0\.0; fact:quick:penguin-swim\]/u);
+  assert.match(result.answer, /^# Penguin/mu);
+  assert.match(result.answer, /Penguin is a bird and can swim\. \[1\]\[2\]/u);
+  assert.match(result.answer, /## Sources/u);
   assert.deepEqual(result.usedKbVersions, [{ kbId: 'quick', version: '1.0.0' }]);
   assert.ok(result.provenance.every((item) =>
-    item.method === 'extractive-request-synthesis' && item.sourceClaim === true));
+    item.method === 'grounded-symbolic-realization' && item.sourceClaim === true));
+  assert.equal(result.synthesis.claimMode, 'grounded-symbolic-generation');
+  assert.ok(result.synthesis.realization.strategyTrace.includes(
+    RESULT_REALIZATION_STRATEGIES.claimFusion,
+  ));
   assert.equal(result.synthesis.answerAuthority, 'related-evidence-is-not-entailment');
   assert.equal(result.grounding.focus.strategy, 'semantic-role-phrase-morphology-v3');
   assert.equal(result.grounding.focus.source, 'typed-request-plan');
@@ -177,9 +187,16 @@ test('report intent plans KB retrieval and shapes a cited partial document', asy
     ['write', 'short', 'report'].includes(term)));
 });
 
-test('result-construction allowlists use each operation intent instead of a generic fallback', async () => {
+test('result-construction allowlists gate concrete rhetorical, sentence, and assembly strategies', async () => {
+  const summaryStrategies = [
+    RESULT_REALIZATION_STRATEGIES.rhetoricalPlanner,
+    RESULT_REALIZATION_STRATEGIES.coverageGap,
+    RESULT_REALIZATION_STRATEGIES.proseAssembly,
+    RESULT_REALIZATION_STRATEGIES.typedFact,
+    RESULT_REALIZATION_STRATEGIES.claimFusion,
+  ];
   const summaryOnly = await quickRuntime(exactStrategyPolicy('runtime.result.construct', [
-    'strategy:result:extractive-summary@1',
+    ...summaryStrategies,
   ]));
   const summary = await summaryOnly.ask('Summarize Penguin.');
   assert.equal(summary.status, 'PARTIAL');
@@ -197,25 +214,50 @@ test('result-construction allowlists use each operation intent instead of a gene
   assert.match(summaryTable.answer, /result-construction strategy was not selected/u);
 
   const summaryAndTable = await quickRuntime(exactStrategyPolicy('runtime.result.construct', [
-    'strategy:result:extractive-summary@1', 'strategy:result:table@1',
+    RESULT_REALIZATION_STRATEGIES.rhetoricalPlanner,
+    RESULT_REALIZATION_STRATEGIES.coverageGap,
+    RESULT_REALIZATION_STRATEGIES.tableAssembly,
+    RESULT_REALIZATION_STRATEGIES.sourceSentence,
+    RESULT_REALIZATION_STRATEGIES.typedFact,
+    RESULT_REALIZATION_STRATEGIES.claimFusion,
   ]));
   const shaped = await summaryAndTable.ask(
     'Summarize "Penguins are birds." as a table.', {}, { grounding: false },
   );
   assert.equal(shaped.status, 'PARTIAL');
-  assert.match(shaped.answer, /\| Topic \| Retrieved KB statement \| Source \|/u);
+  assert.match(shaped.answer, /\| Supported statement \| Evidence \|/u);
 });
 
-test('a source-only summary excludes marker topics while retaining relevant KB evidence', async () => {
+test('a source-only summary excludes marker topics and keeps the supplied source separate from KBs', async () => {
   const result = await (await quickRuntime()).ask(
     'Summarize this text: Penguins swim in cold seas.',
   );
   assert.equal(result.status, 'PARTIAL');
   assert.equal(result.languageRoute, 'heuristic-request-synthesis');
   assert.deepEqual(result.requestPlanning.selectedPlan.topics, []);
-  assert.match(result.answer, /Penguin can swim\. \[quick@1\.0\.0/u);
+  assert.equal(result.answer, 'Penguins swim in cold seas.');
+  assert.equal(result.synthesis.realization.coverage.evidenceRealized, 0);
+  assert.equal(result.synthesis.realization.coverage.suppliedSentencesRealized, 1);
   assert.ok(!result.requestPlanning.receipt.topicSelection.items.some((topic) =>
     ['this', 'text', 'following', 'passage', 'content'].includes(topic.normalized)));
+});
+
+test('explicit request force preempts an accidental direct assertion without committing it', async () => {
+  const runtime = await quickRuntime();
+  const input = 'Summarize this text: Nira is a zoral.';
+  const direct = await runtime.askDirect(input, {}, { grounding: false });
+  assert.equal(direct.status, 'SOLVED');
+  assert.equal(direct.learned.length, 1);
+  assert.equal(direct.context.session.facts.length, 1);
+
+  const result = await runtime.ask(input, {}, { grounding: false });
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'heuristic-request-synthesis');
+  assert.equal(result.episode.transaction, 'heuristic-request-query-local');
+  assert.deepEqual(result.learned, []);
+  assert.deepEqual(result.context.session.facts, []);
+  assert.deepEqual(result.context.session.rules, []);
+  assert.match(result.answer, /Nira is a zoral\./u);
 });
 
 test('planned retrieval remains local when ordinary failure grounding is deferred for an optional agent', async () => {
@@ -342,19 +384,36 @@ test('candidate selection compiles semantic IR locally and executes providers on
   const model = await createCoreModel();
   const core = new EslmEngine(model, { workPolicy: policy });
   let providerCalls = 0;
+  let providerCallsDuringInspection = 0;
+  let inspecting = false;
   const provider = {
     manifest: { id: 'provider:nonce', kbId: 'nonce', kbVersion: '1' },
     memorySnapshot: () => ({ mode: 'eager' }),
-    ask: () => { providerCalls += 1; return undefined; },
+    ask: () => {
+      providerCalls += 1;
+      if (inspecting) providerCallsDuringInspection += 1;
+      return undefined;
+    },
   };
-  const runtime = new HeuristicLanguageRuntime(new EslmRuntime(
+  const base = new EslmRuntime(
     core, [provider], ['nonce'], undefined, policy,
-  ));
+  );
+  const inspectLanguage = base.inspectLanguage.bind(base);
+  base.inspectLanguage = (...args) => {
+    inspecting = true;
+    try {
+      return inspectLanguage(...args);
+    } finally {
+      inspecting = false;
+    }
+  };
+  const runtime = new HeuristicLanguageRuntime(base);
   const result = await runtime.ask(
     'Abura is an mura. All mura et bana. Is Abura eating bana?', {}, { grounding: false },
   );
   assert.equal(result.status, 'DEFEASIBLE');
   assert.equal(providerCalls, 2);
+  assert.equal(providerCallsDuringInspection, 0);
   assert.ok(result.approximation.reparses.length > 2);
   assert.ok(result.approximation.reparses.every((receipt) =>
     !receipt.semanticSignature.includes('values')));

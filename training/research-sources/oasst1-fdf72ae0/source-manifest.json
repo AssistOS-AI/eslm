@@ -1,0 +1,139 @@
+{
+  "format": "eslm-rl-dataset-source-manifest-v2",
+  "sourceId": "oasst1",
+  "revision": "fdf72ae0827c1cda404aff25b6603abec9e3399b",
+  "owner": "OpenAssistant Contributors",
+  "officialUrl": "https://huggingface.co/datasets/OpenAssistant/oasst1",
+  "paperUrl": "https://arxiv.org/abs/2304.07327",
+  "citation": "Kopf et al. OpenAssistant Conversations: Democratizing Large Language Model Alignment.",
+  "registryState": "pilot-approved",
+  "independenceGroup": "openassistant-oasst1-collection",
+  "acquisition": {
+    "method": "pinned-https-download",
+    "authorizedUrl": "https://huggingface.co/datasets/OpenAssistant/oasst1/resolve/fdf72ae0827c1cda404aff25b6603abec9e3399b/2023-04-12_oasst_ready.trees.jsonl.gz",
+    "accessTerms": "Public dataset revision declared Apache-2.0 by its official dataset card and cached license.",
+    "cachePolicy": "Immutable source, split authority, and projected shards stay in the ignored content-addressed training cache.",
+    "credentialPolicy": "No credential, token, cookie, or signed URL is required or retained."
+  },
+  "identity": {
+    "sha256": "sha256:2a9a8fd343e9b28e04a895a669d3253f82d93e9c174d440199ae19d5fafbdff7",
+    "bytes": 34145252,
+    "mediaType": "application/gzip"
+  },
+  "identityFileId": "oasst1-ready-trees",
+  "deliveredFiles": [
+    {
+      "fileId": "oasst1-ready-trees",
+      "role": "source-component",
+      "path": "oasst1-fdf72ae0/2023-04-12_oasst_ready.trees.jsonl.gz",
+      "sourceUrl": "https://huggingface.co/datasets/OpenAssistant/oasst1/resolve/fdf72ae0827c1cda404aff25b6603abec9e3399b/2023-04-12_oasst_ready.trees.jsonl.gz",
+      "sha256": "sha256:2a9a8fd343e9b28e04a895a669d3253f82d93e9c174d440199ae19d5fafbdff7",
+      "bytes": 34145252,
+      "mediaType": "application/gzip"
+    },
+    {
+      "fileId": "oasst1-validation-split",
+      "role": "split-authority",
+      "path": "oasst1-fdf72ae0/validation-00000-of-00001-134b8fd0c89408b6.parquet",
+      "sourceUrl": "https://huggingface.co/datasets/OpenAssistant/oasst1/resolve/fdf72ae0827c1cda404aff25b6603abec9e3399b/data/validation-00000-of-00001-134b8fd0c89408b6.parquet",
+      "sha256": "sha256:24002597bb13a7edd42d92f773762f25e285f72c31a70449393d0ded1dc7b416",
+      "bytes": 2080179,
+      "mediaType": "application/parquet"
+    },
+    {
+      "fileId": "oasst1-license",
+      "role": "rights-evidence",
+      "path": "oasst1-fdf72ae0/LICENSE",
+      "sourceUrl": "https://huggingface.co/datasets/OpenAssistant/oasst1/resolve/fdf72ae0827c1cda404aff25b6603abec9e3399b/LICENSE",
+      "sha256": "sha256:c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "bytes": 11357,
+      "mediaType": "text/plain"
+    },
+    {
+      "fileId": "oasst1-dataset-card",
+      "role": "source-metadata",
+      "path": "oasst1-fdf72ae0/README.md",
+      "sourceUrl": "https://huggingface.co/datasets/OpenAssistant/oasst1/resolve/fdf72ae0827c1cda404aff25b6603abec9e3399b/README.md",
+      "sha256": "sha256:68483ac2fcc2f3f7779f453352363827678070ef35b6d746ccb2ca6958540fff",
+      "bytes": 10168,
+      "mediaType": "text/markdown"
+    }
+  ],
+  "components": [
+    {
+      "componentId": "ready-conversation-trees",
+      "kind": "reviewed-conversation-trees",
+      "licenseId": "apache-2.0",
+      "licenseUrl": "https://huggingface.co/datasets/OpenAssistant/oasst1/blob/fdf72ae0827c1cda404aff25b6603abec9e3399b/LICENSE",
+      "rightsState": "approved",
+      "allowedUses": ["processing-graph-discovery"],
+      "redistribution": "metadata-only",
+      "identityFileId": "oasst1-ready-trees",
+      "supportingFileIds": [
+        "oasst1-validation-split"
+      ],
+      "splits": [
+        { "name": "training", "visibility": "training-visible", "rows": 9846 },
+        { "name": "validation", "visibility": "development-visible", "rows": 518 }
+      ],
+      "projection": {
+        "projectionId": "oasst1-ready-english-structural-trees-v1",
+        "membershipDigest": "sha256:ffb914e544f774123d323db4921031963c316f4fb7689696c5f94784291580b5",
+          "contentMembershipDigest": "sha256:990121179c410e6ac769f4cf1e0517143e67fb008b7379ba4a59e285b392bb3d",
+        "shardCount": 16,
+        "shardFormat": "jsonl",
+        "allowedFields": ["labels", "language", "reply-edges", "review-state", "roles"],
+        "excludedFields": ["message-identifiers", "message-text", "non-english-trees", "source-user-identifiers", "unreviewed-or-pii-bearing-trees", "validation-trees"],
+        "privacyReview": "passed",
+        "safetyReview": "passed"
+      },
+      "identity": {
+        "sha256": "sha256:2a9a8fd343e9b28e04a895a669d3253f82d93e9c174d440199ae19d5fafbdff7",
+        "bytes": 34145252,
+        "rows": 10364,
+        "mediaType": "application/gzip"
+      }
+    }
+  ],
+  "rightsReview": {
+    "reviewId": "review:oasst1-fdf72ae0-local-research",
+    "reviewAuthority": "repository-policy-review",
+    "reviewedRevision": "fdf72ae0827c1cda404aff25b6603abec9e3399b",
+    "evidenceFileIds": [
+      "oasst1-dataset-card",
+      "oasst1-license",
+      "oasst1-ready-trees",
+      "oasst1-validation-split"
+    ],
+    "evidenceUrls": [
+      "https://huggingface.co/datasets/OpenAssistant/oasst1/tree/fdf72ae0827c1cda404aff25b6603abec9e3399b",
+      "https://huggingface.co/datasets/OpenAssistant/oasst1/blob/fdf72ae0827c1cda404aff25b6603abec9e3399b/LICENSE"
+    ],
+    "decision": "admit-declared-projection",
+    "limitations": [
+      "Only training trees that pass the declared English, review, deletion, synthetic, and PII gates are admitted.",
+      "All 518 validation trees remain development-visible and contribute zero discovery episodes.",
+      "Message text and source identities are excluded from retained research episodes."
+    ]
+  },
+  "extractionInventory": {
+    "selectedComponentIds": [
+      "ready-conversation-trees"
+    ],
+    "excludedComponentKinds": [
+      "all-messages",
+      "all-trees",
+      "prompt-messages",
+      "ready-messages",
+      "spam-messages",
+      "validation-trees"
+    ],
+    "retainedRawSource": true,
+    "projectionLossRecorded": true
+  },
+  "removalObligations": [
+    "purge-raw-and-projected-cache-on-rights-withdrawal",
+    "reassess-derived-hypotheses",
+    "retain-only-legally-permitted-aggregate-provenance"
+  ]
+}

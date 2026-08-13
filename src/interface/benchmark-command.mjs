@@ -12,6 +12,10 @@ import {
   runGeneratedHeuristicBenchmark,
 } from '../evaluation/generated-heuristic-benchmark.mjs';
 import {
+  GENERATED_HEURISTIC_MULTI_SEED_AUDIT_SEEDS,
+  runGeneratedHeuristicMultiSeedAudit,
+} from '../evaluation/generated-heuristic-multi-seed-audit.mjs';
+import {
   executePublicBenchmarkRows,
 } from '../evaluation/public-benchmark-probes.mjs';
 import { runPublicBenchmarkProbes } from '../evaluation/public-benchmark-report.mjs';
@@ -21,6 +25,7 @@ import {
 } from '../evaluation/benchmark-research-catalog.mjs';
 import { benchmarkBehaviorIdentity } from '../evaluation/benchmark-execution-identity.mjs';
 import { PROJECT_ROOT, resolveProjectPath } from '../paths.mjs';
+import { withLanguageAgentNormalization } from './cli-runtime-policy.mjs';
 
 export function selectedBenchmarkIds(value) {
   const legacyAliases = {
@@ -91,13 +96,11 @@ function engineConfiguration(id, options) {
     storyCloze: options.kb ?? 'world-relations-1.0,atomic-2020,conceptnet-5.7.0-en',
     simpleqa: options.kb ?? 'quick,oewn-2025,atomic-2020,geonames-2026,conceptnet-5.7.0-en',
   };
-  return {
+  return withLanguageAgentNormalization({
     ...options,
     kb: kbByBenchmark[id],
     'memory-mb': options['memory-mb'] ?? 256,
-    'external-language-agent': false,
-    'no-external-language-agent': true,
-  };
+  }, false);
 }
 
 export async function executeLegacyRowsSequentially(
@@ -237,9 +240,7 @@ async function generated(options, engineFor) {
     ? DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE : Number(options.cases);
   const seed = options.seed === undefined ? GENERATED_HEURISTIC_BENCHMARK_SEED : String(options.seed);
   if (options.publish) assertCanonicalGeneratedPublish(options, size, seed);
-  const runtimeOptions = {
-    ...options, 'external-language-agent': false, 'no-external-language-agent': true,
-  };
+  const runtimeOptions = withLanguageAgentNormalization(options, false);
   const report = await runGeneratedHeuristicBenchmark(await engineFor(runtimeOptions), {
     size, seed, replayCommand: generatedReplayCommand(runtimeOptions, size, seed),
   });
@@ -249,6 +250,87 @@ async function generated(options, engineFor) {
     await publishGeneratedHeuristicBenchmark();
   }
   return report;
+}
+
+function generatedAuditSeeds(value) {
+  if (value === undefined) return [...GENERATED_HEURISTIC_MULTI_SEED_AUDIT_SEEDS];
+  const seeds = String(value).split(',').map((seed) => seed.trim());
+  if (seeds.some((seed) => !seed)) {
+    throw new Error('--seeds requires a comma-separated list of non-empty seed names.');
+  }
+  return seeds;
+}
+
+function generatedSeedAuditReplayCommand(options, size, seeds) {
+  const tokens = [
+    'node', 'src/cli.mjs', 'benchmark', 'generated-seed-audit', '--cases', String(size),
+    '--seeds', shellArgument(seeds.join(',')),
+  ];
+  if (options.kb) tokens.push('--kb', shellArgument(options.kb));
+  for (const [key, value] of Object.entries(options).toSorted(([left], [right]) => left.localeCompare(right))) {
+    if (!GENERATED_RUNTIME_OPTION.test(key) || ['profile'].includes(key) && !enabled(value)) continue;
+    if (['kb', 'cases', 'seed', 'seeds'].includes(key) || value === undefined || value === false) continue;
+    tokens.push(`--${key}`);
+    if (value !== true) tokens.push(shellArgument(value));
+  }
+  tokens.push('--no-external-language-agent');
+  return tokens.join(' ');
+}
+
+function assertCanonicalGeneratedSeedAuditPublish(options, size, seeds) {
+  const expectedSeeds = GENERATED_HEURISTIC_MULTI_SEED_AUDIT_SEEDS;
+  if (size !== DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE
+      || stableSeedList(seeds) !== stableSeedList(expectedSeeds)
+      || options.kb !== 'quick') {
+    throw new Error(
+      'Publishing the generated multi-seed audit requires the default five seeds, '
+        + '1,200 cases per seed, and --kb quick.',
+    );
+  }
+  const nonCanonical = Object.keys(options).filter((key) =>
+    GENERATED_RUNTIME_OPTION.test(key)
+      && !(['work-profile', 'work'].includes(key) && options[key] === 'balanced')
+      && !(key === 'strategy-preset' && options[key] === 'all'));
+  if (nonCanonical.length > 0) {
+    throw new Error(
+      `Publishing the generated multi-seed audit rejects runtime overrides: ${nonCanonical.toSorted().join(', ')}.`,
+    );
+  }
+}
+
+function stableSeedList(seeds) {
+  return JSON.stringify(seeds);
+}
+
+async function generatedSeedAudit(options, engineFor) {
+  if (enabled(options['external-language-agent'])) {
+    throw new Error('The generated multi-seed audit is an offline local-strategy track.');
+  }
+  if (options.seed !== undefined) {
+    throw new Error('The generated multi-seed audit uses --seeds, not --seed.');
+  }
+  const size = options.cases === undefined
+    ? DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE : Number(options.cases);
+  const seeds = generatedAuditSeeds(options.seeds);
+  if (options.publish) assertCanonicalGeneratedSeedAuditPublish(options, size, seeds);
+  const runtimeOptions = withLanguageAgentNormalization(options, false);
+  const audit = await runGeneratedHeuristicMultiSeedAudit(
+    async () => engineFor(runtimeOptions),
+    {
+      size,
+      seeds,
+      replayCommand: generatedSeedAuditReplayCommand(runtimeOptions, size, seeds),
+      seedReplayCommands: seeds.map((seed) => ({
+        seed,
+        replayCommand: generatedReplayCommand(runtimeOptions, size, seed),
+      })),
+    },
+  );
+  if (options.publish) {
+    const path = resolve(PROJECT_ROOT, 'docs/results/latest-generated-heuristic-seed-audit.json');
+    await writeFile(path, `${JSON.stringify(audit, null, 2)}\n`, 'utf8');
+  }
+  return audit;
 }
 
 export async function benchmarkCommand(args, options, services) {
@@ -265,6 +347,10 @@ export async function benchmarkCommand(args, options, services) {
   }
   if (action === 'probe') { printJson(await probe(options, engineFor)); return; }
   if (action === 'generated') { printJson(await generated(options, engineFor)); return; }
+  if (action === 'generated-seed-audit') {
+    printJson(await generatedSeedAudit(options, engineFor));
+    return;
+  }
   if (action === 'run') {
     if (!options.suite) throw new Error('benchmark run requires --suite.');
     const suite = await resolveProjectPath(options.suite);

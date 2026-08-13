@@ -3,7 +3,7 @@ id: DS022
 title: Heuristic Language Approximation, Query Focus, and Work Policy
 status: accepted
 owner: language-runtime
-summary: Defines deterministic local recovery from unsupported wording, confidence-bearing candidate voting, topic selection for related-KB retrieval, bounded work profiles, and the final opt-in Language Agent escalation.
+summary: Defines the English-only deterministic recovery layer, confidence-bearing candidate voting, topic selection for related-KB retrieval, bounded work profiles, and its boundary with the operator Language Agent proposal strategy.
 ---
 
 # DS022 Heuristic Language Approximation, Query Focus, and Work Policy
@@ -43,20 +43,27 @@ route order or allow a language strategy to consult answer evidence.
 
 For ordinary text, recovery follows this order:
 
-1. Execute the original input through the direct symbolic route with ordinary inability grounding deferred.
-2. Independently run the bounded request-force planner. An explicit supported artifact request preempts an accidental
+1. Assess English likelihood through a bounded deterministic gate. `likely-non-english` does not enter the English
+   repair ensemble. `likely-english` and `indeterminate` continue; unfamiliar names and nonce predicates alone do not
+   establish likely non-English text.
+2. For continuing input, execute the original text through the direct symbolic route with ordinary inability grounding
+   deferred.
+3. Independently run the bounded request-force planner. An explicit supported artifact request preempts an accidental
    direct assertion parse, discards tentative direct episode changes, and continues query-locally through its planned
    retrieval and construction route.
-3. When no request plan applies and the direct status is `UNPARSED`, `UNKNOWN`, `SOLVED`, or `PARTIAL`, generate bounded
+4. When no request plan applies and the direct status is `UNPARSED`, `UNKNOWN`, `SOLVED`, or `PARTIAL`, generate bounded
    local heuristic candidates. Candidate generation still requires visible structural evidence.
-4. Inspect the direct input and eligible candidates through parse-only Semantic IR. For direct `SOLVED` or `PARTIAL`,
+5. Inspect the direct input and eligible candidates through parse-only Semantic IR. For direct `SOLVED` or `PARTIAL`,
    proceed only when at least one accepted candidate has a different semantic signature; equal IR preserves the direct
    result. A normal missing-knowledge `UNKNOWN` with no accepted structural alternative also remains unchanged.
-5. Execute at most one selected candidate through the same symbolic runtime without granting it persistent session
-   effects. Any changed interpretation is explicitly attributed and query-local.
-6. If the final local result remains `UNPARSED` and the operator explicitly enabled a Language Agent, run the DS013
-   episode. An unrepaired `UNKNOWN` does not authorize external normalization.
-7. After the final answer or inability status is known, attach DS009 ordinary related-KB grounding when that status
+6. Execute at most one selected candidate from the caller's incoming session snapshot through the same symbolic
+   runtime without granting it persistent session effects. Any changed interpretation is explicitly attributed and
+   query-local for every eligible direct status.
+7. At the operator CLI boundary, DS013 may request one external language proposal. A likely-non-English rejection may
+   request translation without attempting English repair. A final unsupported English or indeterminate input may
+   request simplification. The general CLI enables this wrapper by default; `--no-external-language-agent` or
+   `/normalize off` selects the fully local profile. An unrepaired `UNKNOWN` does not authorize an external proposal.
+8. After the final answer or inability status is known, attach DS009 ordinary related-KB grounding when that status
    permits it.
 
 Ordinary inability grounding is deliberately last. Planned retrieval for an explicit artifact request is a typed
@@ -339,21 +346,26 @@ operation plan owns its topics, output contract, confidence, select node, and sh
 on the preceding shaped result, and a final aggregate node combines multiple shaped artifacts. The operation and
 subrequest lists are finite; omissions caused by their budgets make the planning receipt incomplete.
 
-The current synthesis route is deliberately extractive. It may select sentences from user-supplied source material
-and statements from a DS009 grounding bundle, deduplicate them, group them by topic, identify relation labels that are
-explicitly shared across comparison topics, and render cited paragraphs, sections, bullets, outlines, or tables. It
-executes every accepted operation plan in discourse order rather than shaping the whole request from only the first
-intent. Each operation receives only its declared topics and output contract, emits an ordered
-`operationArtifacts` receipt with its selected source excerpts, KB records, comparison witness, and coverage gaps,
-and, once at least one obligation has material for synthesis, retains a visible gap section for every other obligation
-that found no match. A request with no supplied or selected material still yields no fabricated draft. A final
-aggregate section identifies the ordered operation artifacts without inventing a factual bridge between them.
+The current synthesis route performs **grounded symbolic generation**. It does not copy a bag of retrieved statements
+into an answer. The nested DS029 construction circuit first freezes one work order, then a non-voting claim-admission
+gate accepts or rejects each candidate. A rhetorical planner assigns admitted claims to ordered sections. Four
+sentence strategies realize supplied source sentences, lexical definitions, typed facts, or explicitly causal
+defeasible relations. Seven discourse and format strategies fuse compatible claims, state comparisons and coverage
+gaps, and assemble prose, sectioned documents, outlines, or tables. The final result contract deterministically
+reproduces the realization and rejects any sentence, citation, section, or strategy trace that cannot be rebuilt from
+the closed plan and admitted evidence.
 
-The route returns `PARTIAL`, retains the order-preserving union of every operation's selected KB records as answer
-provenance and `usedKbVersions`, and always states that the artifact is a bounded extractive draft. It also states
-incomplete search, omitted records, missing causal support, and other gaps. It does not paraphrase a new claim, invent
-a causal bridge, or present related evidence as deductive proof. More generative composition requires a separately
-specified claim verifier.
+Every accepted operation still owns its topics and output contract and executes in discourse order. Its
+`operationArtifacts` entry records selected source excerpts, KB records, comparison witness, and coverage gaps. Once
+at least one obligation has admissible material, missing obligations remain visible as limits. A request with no
+supplied or admitted material yields no fabricated document.
+
+The route returns `PARTIAL` because wording and organization do not prove complete topic coverage. It retains the
+order-preserving union of KB records that actually support realized sentences as answer provenance and
+`usedKbVersions`. Related but rejected records remain visible only in the internal construction ledger. The circuit may
+create new English wording and a useful document shape; it may not invent a factual bridge, silently strengthen a
+defeasible relation, or present relevance as deductive proof. Construction confidence measures coverage of admitted
+claims, not truth or proof confidence.
 
 The pattern catalog is versioned declarative policy. New patterns are promoted through reviewed code/data changes,
 renamed and contrastive tests, confidence calibration, and release review. Runtime observations may produce a
@@ -392,13 +404,24 @@ therefore part of execution identity. Work profiles continue to mean finite effo
 and semantic frontier are equal and complete, a larger work profile cannot select a different truth or interpretation
 merely because it has a different name.
 
-### 13. Language Agent escalation and disclosure
+### 13. Language Agent proposal boundary and disclosure
 
-Language Agent normalization is disabled by default. Operators enable it explicitly with
-`--external-language-agent` or interactive `/normalize on`. The local heuristic route remains active in either mode
-and always runs before external assistance after a direct `UNPARSED`. The local-only route may also inspect a direct
-`UNKNOWN` for structurally licensed alternatives, but an `UNKNOWN` that remains after that attempt never triggers the
-Language Agent.
+The deployable runtime and direct library remain agent-free. The general operator CLI composes the DS013 wrapper by
+default and discloses that policy at startup; `--no-external-language-agent` or interactive `/normalize off` selects
+the fully local profile. `--external-language-agent` and `/normalize on` explicitly restate the assisted policy. The
+English-likelihood gate remains local in either mode and never translates. When it reports likely non-English, the
+assisted wrapper may request a translation proposal before the English-only repair ensemble. For likely-English or
+indeterminate input, the local heuristic route always runs before an external simplification proposal after direct
+`UNPARSED`. The local route may also inspect direct `UNKNOWN` for a structurally licensed alternative, but an
+`UNKNOWN` that remains after that attempt never triggers the Language Agent.
+
+The Language Agent is one proposal strategy attached logically to `runtime.language.interpret`; its external executor
+remains outside the deployable registry and has no vote, KB access, proof access, answer context, or answer authority.
+Its target must pass the same non-voting English parser and semantic gate. Translation additionally requires an
+independent reviewed source-language preservation profile for open-class equivalence. Language-neutral anchors,
+English-target likelihood, reparsing, and model-declared alignments are necessary checks but do not by themselves
+verify a novel cross-language equivalence; without that independent profile the route returns
+`UNVERIFIED_NORMALIZATION`.
 
 Immediately before a real external invocation, interactive output displays a restrained progress message such as
 `Thinking: interpreting with the configured Language Agent…`. One-shot structured commands may place that progress on
@@ -428,8 +451,9 @@ inputs. Every positive case has a meaning-changing control for negation, quantif
 argument order, modality, or predicate identity.
 
 Tests verify deterministic replay, vote accounting, confidence monotonicity, candidate and receipt limits, session
-rollback, no KB access during approximation, no Language Agent call by default, notification before a real external
-call, grounding exclusion of function words, explicit metalinguistic inclusion, work-profile expansion, and equal
+rollback, no Language Agent access from the deployable runtime, likely-non-English rejection without local repair,
+the CLI's disclosed assisted default and explicit local override, notification before a real external call, grounding
+exclusion of function words, explicit metalinguistic inclusion, work-profile expansion, and equal
 answers across profiles that complete. The core guardian's forbidden-dispatch audit must find no benchmark, record,
 hash, expected answer, or motivating-example constant in executable conditions.
 
@@ -440,11 +464,15 @@ substitution, and transposition spelling inputs. Controls also prove that a well
 overwritten merely because another question predicate is edit-near. These tests protect a generic structural rule,
 not a vocabulary allowlist.
 
-Route tests additionally prove that explicit request force preempts an accidental direct assertion parse without
+Route tests additionally prove that any `UNPARSED` episode, including one with valid tentative assertions followed by
+an unsupported final question, rolls back every tentative entity, fact, rule, and history event; the bounded
+English-likelihood assessment cannot translate or reject an unknown nonce vocabulary merely for being unfamiliar;
+explicit request force preempts an accidental direct assertion parse without
 committing its learned items; a repaired `UNKNOWN` is chosen from parse-only Semantic IR rather than downstream answer
 success; a normal missing-knowledge `UNKNOWN` remains unchanged; equal candidate and direct IR preserve direct
-`SOLVED` or `PARTIAL`; a structurally licensed different IR is query-local and explicitly qualified; and only a final
-`UNPARSED`, never another parsed status, can reach the opt-in Language Agent wrapper.
+`SOLVED` or `PARTIAL`; a structurally licensed different IR is query-local and explicitly qualified; likely
+non-English input can reach only the external translation-proposal route or local rejection; and only a final English
+`UNPARSED`, never another parsed status, can reach external simplification.
 
 The default heuristic development benchmark complements focused tests with 1,200 deterministic runtime episodes. Its
 43 reviewed template shapes are repeatedly instantiated with nonce vocabulary across 18 declared domains and 28
@@ -459,8 +487,12 @@ The default receipt measures 1,200 unique surface inputs and 593 observed cells 
 43-technique by 18-domain pairs. That makes duplicate surfaces and empty grid regions visible. It does not turn nonce
 renaming into structural novelty, and it does not remove the current domain-to-predicate coupling.
 
-The typed oracle level determines what one pass means. `answer-execution`, `candidate-selection`,
-`query-local-decomposition`, `request-execution`, `proposal-only`, and `safety-abstention` are aggregated separately.
+The typed oracle level determines what one pass means. `answer-execution`, `semantic-query-execution`,
+`candidate-selection`, `query-local-decomposition`, `request-execution`, `request-planning`, `proposal-only`, and
+`safety-abstention` are aggregated separately. Semantic-query execution requires the complete expected relation-shaped
+query even when missing knowledge leaves the result `UNKNOWN`. Request planning requires the ordered obligation and
+an honest missing-source gap; both request oracle levels validate every ordered obligation's intent, artifact kind,
+and requested format. Request execution additionally requires the construction path and composite response shape.
 The candidate-selection level requires the exact intended structural candidate to win, carry its required family,
 receive a matching accepted parse-only reparse, and execute as the query-local interpreted episode under the declared
 route and status. It does not require a complete relation-shaped query and can pass with `UNKNOWN` and `missingEntity`;
@@ -482,11 +514,19 @@ never learns from the report or changes its own strategy catalog.
 
 The current release implements the pure approximation ensemble in `src/language/heuristic-cnl-*.mjs`, the versioned
 request pattern, force, structure, and planning modules in `src/language/heuristic-request-*.mjs`, runtime
-coordination in `src/runtime/heuristic-language-runtime.mjs`, extractive document construction in
-`heuristic-request-synthesis.mjs`, and exact profiles in `work-policy.mjs`. `EslmRuntime.ask(...,
+coordination in `src/runtime/heuristic-language-runtime.mjs`, grounded symbolic document construction in
+`heuristic-request-synthesis.mjs` and `grounded-response-realization.mjs`, exact reproduction in
+`result-realization-contract.mjs`, and exact profiles in `work-policy.mjs`. `EslmRuntime.ask(...,
 { grounding: false })` defers grounding and `attachGrounding(result)` attaches it once the final language route is
-known. The CLI composes the heuristic wrapper in every ordinary profile and adds the DS013 wrapper only after explicit
-opt-in.
+known. The general CLI composes the DS013 wrapper around the heuristic runtime by default; the explicit local override
+omits it. Canonical local evaluation and benchmark commands construct the agent-free profile explicitly.
+
+The implemented English gate wraps the heuristic runtime rather than entering its 24-family vote. Its closed
+`eslm-english-likelihood-v1` receipt inspects at most 64 KiB of encoded UTF-8 and 1,024 tokens and records one of three
+classifications. On `likely-non-english`, it returns `UNPARSED` with route `english-language-gate-rejected`, an
+unchanged session snapshot, no plan, approximation, grounding, values, provenance, or consulted KB, and one explicit
+translation gap. English and indeterminate input continues into the existing local processing nodes with the receipt
+attached.
 
 The wrapper evaluates request planning before it accepts an ordinary direct result as final. A planned request uses a
 snapshot of the caller's incoming session and marks its episode `heuristic-request-query-local`. When no request plan
@@ -543,11 +583,13 @@ they migrate; cataloging or gating a local owner is not the same as shared-coord
 
 ## Decisions & Questions
 
-### Question #1: Why does local approximation run before the Language Agent?
+### Question #1: Why does local approximation run before external English simplification?
 
 Response: Spelling, morphology, auxiliary reconstruction, and controlled clause reduction are bounded deterministic
 operations whose evidence can be inspected. Running them first improves offline coverage, reduces disclosure and cost,
-and turns recurrent patterns into testable language capability instead of permanent service dependence.
+and turns recurrent patterns into testable language capability instead of permanent service dependence. This order
+does not apply to input already rejected as likely non-English: pretending to repair it as English would be the unsafe
+operation, so the local route rejects it and the assisted CLI may request a separately attributed translation proposal.
 
 ### Question #2: Why is a solved interpreted query normally `DEFEASIBLE`?
 
@@ -590,8 +632,8 @@ request-force gate separates a visible instruction from a mention before intent 
 
 Response: `Summarize A; compare A with B; then outline the evidence` describes three obligations whose outputs and
 dependencies differ. An unordered set loses which topic and output contract belongs to which operation. Ordered plans,
-operation-specific select/shape nodes, operation-by-operation extractive artifacts, and a final aggregate node make
-that composition executable and reviewable without silently dropping later obligations.
+operation-specific selection, a non-voting claim gate, rhetorical and sentence ledgers, and a final document assembly
+node make that composition executable and reviewable without silently dropping later obligations.
 
 ### Question #9: Why migrate heuristic families into separate strategies?
 
@@ -619,7 +661,9 @@ silently becoming a morphological decision.
 
 ## Conclusion
 
-ESLM recovers from near-CNL wording through a deterministic, confidence-bearing ensemble before it considers an
-external Language Agent. The same policy gives KB grounding a linguistically meaningful topic focus and gives
+ESLM recovers from near-CNL English wording through a deterministic, confidence-bearing ensemble before it considers
+external simplification. A separate bounded ingress gate rejects likely non-English input without pretending to
+translate; the operator Language Agent can only propose English across the disclosed external boundary. The same
+policy gives KB grounding a linguistically meaningful topic focus and gives
 operators explicit control over bounded work. Every approximation remains inspectable, non-persistent, and
 epistemically distinct from the proof that may follow it.

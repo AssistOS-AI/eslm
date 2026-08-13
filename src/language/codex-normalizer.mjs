@@ -53,8 +53,8 @@ function normalizationPrompt(text, route, repairErrors = [], previousCandidate) 
     'Provide one exact-substring alignment for every protected source anchor, including each name, number, '
       + 'option, quotation, interrogative, operator, comparison, and directed relation occurrence.',
     'Use lexical-content alignments for translated non-function content that is not preserved literally. '
-      + 'Every alignment source and target must be copied as an exact contiguous substring; never use ellipses '
-      + 'inside alignment fields.',
+      + 'These alignments are untrusted review evidence, not host proof of lexical equivalence. Every alignment '
+      + 'source and target must be copied as an exact contiguous substring; never use ellipses inside them.',
     'Do not answer the question, choose an option, infer a fact, remove a distractor, add knowledge, '
       + 'explain your work, or invoke any tool.',
     ...(boundedRepairErrors.length > 0 ? [
@@ -141,7 +141,16 @@ export class CodexLanguageNormalizer {
         diagnostic: `Normalization input exceeds ${MAX_NORMALIZATION_INPUT_CHARACTERS} characters.`,
       });
     }
-    const route = classifyNormalizationOperation(input);
+    const assessedRoute = classifyNormalizationOperation(input, episode.languageAssessment);
+    const requestedOperation = episode.operation ?? assessedRoute.operation;
+    if (!['translation', 'simplification'].includes(requestedOperation)) {
+      return Object.freeze({ status: 'failed', diagnostic: 'Normalization operation is unsupported.' });
+    }
+    const route = Object.freeze({
+      ...assessedRoute,
+      operation: requestedOperation,
+      confidence: episode.operation ? 'high' : assessedRoute.confidence,
+    });
     const key = normalizationCacheKey(input, {
       model: this.model,
       requestedOperation: route.operation,

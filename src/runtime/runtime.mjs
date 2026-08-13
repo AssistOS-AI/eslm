@@ -20,6 +20,7 @@ import {
   contributingEvidenceProviders, kbIdentity, resultProviderIds, scoreWithProviderContributions,
   uniqueKbVersions,
 } from './provider-coordination.mjs';
+import { runOptionalProviderQuery } from './provider-query-lifecycle.mjs';
 import {
   assertRuntimeResultContract, assertRuntimeTextResultContract, normalizeRuntimeStatus,
 } from './result-contract.mjs';
@@ -366,50 +367,35 @@ export class EslmRuntime {
         }, identity);
         continue;
       }
-      let queryStarted = false;
-      try {
-        provider.beginQuery?.();
-        queryStarted = true;
-        const providerRequest = limitGroundingRequestLookups(
-          request, lookupBudgets[lookupBudgetIndex],
-        );
-        lookupBudgetIndex += 1;
-        const result = await provider.retrieveGrounding(providerRequest);
-        appendGroundingResult(groundingResults, result, identity);
-      } catch (error) {
+      const providerRequest = limitGroundingRequestLookups(
+        request, lookupBudgets[lookupBudgetIndex],
+      );
+      lookupBudgetIndex += 1;
+      const transaction = await runOptionalProviderQuery(
+        provider,
+        'retrieveGrounding',
+        () => provider.retrieveGrounding(providerRequest),
+      );
+      if (transaction.diagnostics.length === 0) {
+        appendGroundingResult(groundingResults, transaction.value, identity);
+      } else {
+        const cleanupFailed = transaction.diagnostics.some((item) => item.stage === 'endQuery');
         appendGroundingResult(groundingResults, {
           entries: [],
           receipt: {
             kbId: identity.kbId,
             kbVersion: identity.version,
             status: 'provider-error',
-            coverage: 'grounding-search-failed',
+            coverage: cleanupFailed
+              ? 'grounding-provider-cleanup-failed'
+              : 'grounding-search-failed',
             complete: false,
             candidatesConsidered: 0,
             truncationReasons: ['provider-error'],
-            diagnostic: String(error?.message ?? error).slice(0, 240),
+            diagnostic: transaction.diagnostics
+              .map((item) => item.diagnostic).join('; ').slice(0, 240),
           },
         }, identity);
-      } finally {
-        if (queryStarted) {
-          try {
-            provider.endQuery?.();
-          } catch (error) {
-            appendGroundingResult(groundingResults, {
-              entries: [],
-              receipt: {
-                kbId: identity.kbId,
-                kbVersion: identity.version,
-                status: 'provider-error',
-                coverage: 'grounding-provider-cleanup-failed',
-                complete: false,
-                candidatesConsidered: 0,
-                truncationReasons: ['provider-error'],
-                diagnostic: String(error?.message ?? error).slice(0, 240),
-              },
-            }, identity);
-          }
-        }
       }
     }
     const skippedProviders = orderedProviders.slice(scheduledProviders);

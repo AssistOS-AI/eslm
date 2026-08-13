@@ -1,8 +1,6 @@
 import { grammarScore, normalizeInput } from '../language/normalization.mjs';
 import { parseQuestion } from '../language/parser.mjs';
-import {
-  abduceExplanations, answerQuery, deriveClosure, deriveInductiveFacts, indexFacts,
-} from '../reasoning/datalog.mjs';
+import { deriveClosure, indexFacts } from '../reasoning/datalog.mjs';
 import { realize } from '../language/realizer.mjs';
 import {
   compileSessionEpisode, emptySessionContext, inspectSessionEpisode, modelWithSession,
@@ -11,8 +9,7 @@ import {
 } from '../language/session.mjs';
 import { ExecutionProfiler } from '../profiling.mjs';
 import { CapabilityRegistry, CORE_METHOD_DESCRIPTORS } from '../reasoning/capability-registry.mjs';
-import { capabilityGap, createPlan, taskFrameFromQuery } from '../reasoning/planner.mjs';
-import { answerTemporalPredecessor } from '../reasoning/temporal-state.mjs';
+import { capabilityGap, taskFrameFromQuery } from '../reasoning/planner.mjs';
 import { executeContainerStateTask } from '../reasoning/container-state.mjs';
 import { selectNarrativeContinuation } from '../reasoning/continuation-selection.mjs';
 import { executeTypedRelationTask } from '../reasoning/relation-algebra.mjs';
@@ -26,6 +23,12 @@ import { induceFiniteConjunctiveRule } from '../reasoning/finite-conjunctive-rul
 import { executeEpisodicWorldTask } from '../reasoning/episodic-world.mjs';
 import { createModelGroundingIndex } from '../reasoning/grounding-model-retrieval.mjs';
 import { retrieveCoreRelatedEvidence } from './core-grounding.mjs';
+import {
+  executeOrdinaryMethod, ORDINARY_REASONING_PROTOCOLS, planOrdinaryMethod, verifyOrdinaryMethodResult,
+} from './ordinary-reasoning-processing-nodes.mjs';
+import {
+  ordinaryAnswerResponse, ordinaryClosureResourceResponse, ordinaryVerificationResourceResponse,
+} from './ordinary-reasoning-response.mjs';
 import {
   assertRuntimeResultContract, assertRuntimeTextResultContract, directCoreMemorySnapshot, normalizeRuntimeStatus,
 } from './result-contract.mjs';
@@ -227,6 +230,7 @@ export class EslmEngine {
       'language.parse-question', () => parseQuestion(normalized, activeModel, context),
     );
     if (query.status) {
+      const rejectedQuestion = query.status === 'UNSUPPORTED';
       return complete({
         status: query.status,
         answer: query.status === 'AMBIGUOUS'
@@ -239,10 +243,15 @@ export class EslmEngine {
         input: normalized,
         query,
         provenance: [],
-        learned: episode.learned,
-        learnedRules: episode.learnedRules,
-        context: { ...context, session: episode.session },
-        episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
+        learned: rejectedQuestion ? [] : episode.learned,
+        learnedRules: rejectedQuestion ? [] : episode.learnedRules,
+        context: rejectedQuestion ? context : { ...context, session: episode.session },
+        episode: {
+          original: text,
+          segments: episode.segments,
+          unsupportedStatements: episode.unsupportedStatements,
+          ...(rejectedQuestion ? { transaction: 'rolled-back' } : {}),
+        },
       });
     }
     if (query.intent === 'system-identity') {
@@ -296,7 +305,12 @@ export class EslmEngine {
       contextStack: ['context:runtime:baseline', ...(hasSessionOverlay ? ['context:session:current'] : [])],
       searchNodes: this.workPolicy.effective.limits.maximumHornJoinAttempts,
     });
-    const plan = createPlan(taskFrame, this.capabilities);
+    const planning = planOrdinaryMethod({
+      format: ORDINARY_REASONING_PROTOCOLS.planningInput,
+      taskFrame,
+      registry: this.capabilities,
+    });
+    const { plan } = planning;
     if (plan.status === 'NO_APPLICABLE_METHOD') {
       return complete({
         status: 'NO_APPLICABLE_METHOD',
@@ -312,143 +326,43 @@ export class EslmEngine {
       ), {
         directFacts: activeModel.facts.length, rules: activeModel.rules.length,
       }) : this.closure;
-    const activeFacts = activeClosure.facts;
     if (hasSessionOverlay) {
-      profiler.annotate('reasoning.session-closure', { closureFacts: activeFacts.length });
+      profiler.annotate('reasoning.session-closure', { closureFacts: activeClosure.facts.length });
     }
-    if (query.reasoning === 'abduction') {
-      if (!activeClosure.complete) return complete(this.#closureResourceResponse({
-        text, context, episode, normalized, query, taskFrame, plan, closure: activeClosure,
-      }));
-      const hypotheses = profiler.measureSync('reasoning.abduction', () => abduceExplanations(
-        query, activeFacts, activeModel.rules, activeModel.reasoning?.abduction?.maxHypotheses,
-      ), { facts: activeFacts.length, rules: activeModel.rules.length });
-      const result = {
-        values: hypotheses.map((hypothesis) => hypothesis.id),
-        evidence: hypotheses,
-        hypotheses,
-      };
-      return complete(this.#response({
-        text, context, episode, activeModel, normalized, query, result, taskFrame, plan,
-        status: hypotheses.length > 0 ? 'ABDUCTIVE' : 'UNKNOWN',
-        reasoning: { method: 'abduction', candidateCount: hypotheses.length },
-      }, profiler));
-    }
-    if (query.reasoning === 'temporal-predecessor') {
-      const result = profiler.measureSync('reasoning.temporal-predecessor', () =>
-        answerTemporalPredecessor(query, episode.session.history), {
-        historyEvents: episode.session.history?.length ?? 0,
-      });
-      return complete(this.#response({
-        text, context, episode, activeModel, normalized, query, result, taskFrame, plan,
-        status: result.values.length > 0 ? 'ANSWERED' : 'UNKNOWN',
-        reasoning: { method: 'temporal-state-predecessor', witness: result.witness },
-      }, profiler));
-    }
-    const inducedFacts = query.reasoning === 'induction'
-      ? activeClosure.complete
-        ? profiler.measureSync('reasoning.induction', () => deriveInductiveFacts(activeModel, activeFacts), {
-        facts: activeFacts.length,
-        }) : []
-      : [];
-    if (query.reasoning === 'induction' && !activeClosure.complete) {
-      return complete(this.#closureResourceResponse({
-        text, context, episode, normalized, query, taskFrame, plan, closure: activeClosure,
-      }));
-    }
-    const activeIndex = inducedFacts.length > 0
-      ? profiler.measureSync('retrieval.query-index', () => indexFacts([...activeFacts, ...inducedFacts]), {
-        facts: activeFacts.length + inducedFacts.length,
-      })
-      : hasSessionOverlay
-        ? profiler.measureSync('retrieval.query-index', () => indexFacts(activeFacts), { facts: activeFacts.length })
-        : this.index;
-    const result = profiler.measureSync('retrieval.answer', () => answerQuery(query, activeIndex));
-    profiler.annotate('retrieval.answer', { values: result.values.length, evidence: result.evidence.length });
-    const inferred = result.evidence.find((fact) => fact.reasoning === 'induction');
-    const derived = result.evidence.filter((fact) => fact.reasoning === 'deduction');
-    if (result.values.length === 0 && !activeClosure.complete) {
-      return complete(this.#closureResourceResponse({
-        text, context, episode, normalized, query, taskFrame, plan, closure: activeClosure,
-      }));
-    }
-    return complete(this.#response({
-      text, context, episode, activeModel, normalized, query, result, taskFrame, plan,
-      status: result.values.length === 0 ? 'UNKNOWN' : inferred ? 'INDUCTIVE' : 'ANSWERED',
-      reasoning: inferred ? {
-        method: 'induction', confidence: inferred.confidence, ...inferred.induction,
-      } : {
-        method: derived.length > 0 ? 'deduction' : 'retrieval',
-        depth: Math.max(0, ...derived.map((fact) => fact.depth ?? 0)),
-      },
-    }, profiler));
-  }
-
-  #closureResourceResponse({ text, context, episode, normalized, query, taskFrame, plan, closure }) {
-    return {
-      status: 'RESOURCE_LIMIT',
-      answer: 'I could not establish an answer because bounded Horn deduction did not reach its fixed point.',
-      input: normalized,
-      query,
-      taskFrame,
-      plan: { methodId: plan?.methodId, steps: plan?.steps },
-      values: [],
-      provenance: [],
-      reasoning: {
-        method: 'deduction', complete: false, rounds: closure.rounds,
-        joinAttempts: closure.joinAttempts, frontierSize: closure.frontierSize,
-      },
-      learned: episode.learned,
-      learnedRules: episode.learnedRules,
-      context: { ...context, session: episode.session },
-      episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
-      unresolvedSubgoals: [{ operation: 'safe-horn-deduction', diagnostic: closure.diagnostic }],
+    const executionInput = {
+      format: ORDINARY_REASONING_PROTOCOLS.executionInput,
+      planning,
+      activeModel,
+      activeClosure,
+      baseIndex: this.index,
+      hasSessionOverlay,
+      sessionHistory: episode.session.history ?? [],
     };
-  }
-
-  #response({
-    text, context, episode, activeModel, normalized, query, result, status, reasoning, taskFrame, plan,
-  }, profiler) {
-    const evidence = result.evidence.map((fact) => ({
-      fact: fact.id,
-      kbId: fact.kbId,
-      kbVersion: fact.kbVersion,
-      kbSources: fact.kbSources ?? (fact.kbId ? [{
-        kbId: fact.kbId,
-        ...(fact.kbVersion ? { version: fact.kbVersion } : {}),
-      }] : []),
-      source: fact.provenance ?? (fact.ruleSource ? [fact.ruleSource] : []),
-      rule: fact.rule,
-      support: fact.support,
-      observation: fact.observation,
-      hypotheses: fact.hypotheses,
-      confidence: fact.confidence ?? fact.score,
-      method: fact.reasoning,
-    }));
-    return {
-      status,
-      answer: profiler.measureSync(
-        'language.realize', () => realize(query, result, activeModel, normalized.language),
-      ),
-      input: normalized,
-      query,
-      taskFrame,
-      plan: { methodId: plan?.methodId, steps: plan?.steps },
-      values: result.values,
-      provenance: evidence,
-      reasoning,
-      hypotheses: result.hypotheses,
-      learned: episode.learned,
-      learnedRules: episode.learnedRules,
-      context: {
-        ...context,
-        session: episode.session,
-        lastEntity: query.subject
-          ?? (activeModel.entities.some((entity) => entity.id === query.object) ? query.object : undefined)
-          ?? context.lastEntity,
-      },
-      episode: { original: text, segments: episode.segments, unsupportedStatements: episode.unsupportedStatements },
-    };
+    const execution = executeOrdinaryMethod(executionInput, {
+      measureSync: (name, execute, metadata) => profiler.measureSync(name, execute, metadata),
+      annotate: (name, metadata) => profiler.annotate(name, metadata),
+    });
+    const verified = verifyOrdinaryMethodResult({
+      ...executionInput,
+      format: ORDINARY_REASONING_PROTOCOLS.verificationInput,
+      execution,
+    });
+    if (verified.status === 'RESOURCE_LIMIT') {
+      return complete(verified.accepted === false
+        ? ordinaryVerificationResourceResponse({
+          text, context, episode, normalized, query, taskFrame, plan, verified,
+        })
+        : ordinaryClosureResourceResponse({
+          text, context, episode, normalized, query, taskFrame, plan, closure: activeClosure,
+        }));
+    }
+    return complete(ordinaryAnswerResponse({
+      text, context, episode, activeModel, normalized, query, result: verified.result, taskFrame, plan,
+      status: verified.status,
+      reasoning: verified.reasoning,
+    }, () => profiler.measureSync(
+      'language.realize', () => realize(query, verified.result, activeModel, normalized.language),
+    )));
   }
 
   #profiled(response, profiler) {

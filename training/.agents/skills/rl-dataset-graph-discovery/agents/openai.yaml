@@ -1,0 +1,4 @@
+interface:
+  display_name: "RL Dataset Graph Discovery"
+  short_description: "Audit RL datasets and discover ESLM processing circuits"
+  default_prompt: "Use $rl-dataset-graph-discovery to freeze, project, analyze, and audit a task-feedback dataset for source-neutral processing-node hypotheses."

@@ -1,9 +1,9 @@
 export const DEFAULT_CODEX_NORMALIZATION_MODEL = 'gpt-5.3-codex-spark';
 export const LANGUAGE_AGENT_NORMALIZATION_PROTOCOL = 'eslm-language-agent-normalization-v2';
-export const LANGUAGE_AGENT_NORMALIZATION_POLICY = 'language-agent-language-only-v4';
+export const LANGUAGE_AGENT_NORMALIZATION_POLICY = 'language-agent-language-only-v5';
 export const CODEX_NORMALIZATION_PROTOCOL = LANGUAGE_AGENT_NORMALIZATION_PROTOCOL;
 export const CODEX_NORMALIZATION_POLICY = LANGUAGE_AGENT_NORMALIZATION_POLICY;
-export const CODEX_NORMALIZATION_VALIDATOR = 'protected-semantic-anchors-v4';
+export const CODEX_NORMALIZATION_VALIDATOR = 'protected-semantic-anchors-v5';
 
 export const MAX_NORMALIZATION_INPUT_CHARACTERS = 12_000;
 export const MAX_NORMALIZATION_OUTPUT_CHARACTERS = 24_000;

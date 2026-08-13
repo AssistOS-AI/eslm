@@ -1,6 +1,6 @@
 # Scope
 
-This repository develops an Executable Symbolic Language Model (ESLM): a deterministic symbolic runtime, a declarative knowledge-package format, and an offline toolchain that compiles evidence into reviewable data. Training-time coding agents may analyze prepared training evidence and propose declarative records. The deployed runtime never calls an LLM or agent and never executes knowledge-base content as source code. The general CLI is entirely local by default: it attempts direct symbolic execution, evaluates bounded explicit request force, compares any structurally licensed DS022 interpretation through parse-only Semantic IR, and finally attaches related-KB grounding when the result permits it. An operator may explicitly enable the separate DS013 Language Agent wrapper with `--external-language-agent` or interactive `/normalize on`; it may translate or conservatively simplify only after the local language routes remain `UNPARSED`. A Language Agent may be a general coding agent or a translation-focused model; the currently supported adapter invokes Codex. The wrapper is not part of deployed symbolic inference, and every accepted proposal returns through the unchanged direct parser and reasoner.
+This repository develops an Executable Symbolic Language Model (ESLM): a deterministic symbolic runtime, a declarative knowledge-package format, and an offline toolchain that compiles evidence into reviewable data. Training-time coding agents may analyze prepared training evidence and propose declarative records. The deployed runtime never calls an LLM or agent and never executes knowledge-base content as source code. Its language boundary is English-only: a bounded heuristic likelihood gate may reject likely non-English input, but it never translates or claims to understand it. The general CLI composes the separate DS013 Language Agent wrapper by default and discloses that external boundary. The wrapper may propose translation for a likely-non-English rejection or conservative English simplification after local English routes remain `UNPARSED`; `--no-external-language-agent` or interactive `/normalize off` selects the fully local profile. A Language Agent may be a general coding agent or a translation-focused model; the currently supported adapter invokes Codex. It is one untrusted proposal strategy at the language-interpretation node, not part of deployed symbolic inference, and every candidate returns through the unchanged non-voting English parser and semantic gate. It has no answer, KB, proof, or result authority.
 
 `docs/specs/` is the sole current design authority. `original_specs/` is preserved research input and must not be consulted again after a specification-consolidation task has completed. `.agents/skills/` contains imported project-maintenance skills and must not be edited during ESLM product work. `training/.agents/skills/` contains repository-owned, self-contained training and audit skills.
 
@@ -23,6 +23,9 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 15. For a reasoning-method change, read `docs/specs/DS015-reasoning-method-semantics.md` completely.
 16. For source acquisition or benchmark adaptation, read DS016 and DS017 completely.
 17. Before compiling or routing a new large corpus, read DS018 through DS021 completely and satisfy their source gate, streaming compiler, exact routing, and cache requirements.
+18. For dataset-guided discovery of processing nodes, authority gates, strategies, edges, or protocol fields, read `docs/specs/DS028-dataset-guided-processing-graph-discovery-research.md` completely and preserve its rights, split, inert-data, contamination, and promotion boundaries.
+19. For exact hierarchical circuit, node, edge, packet, authority, implementation-state, or resource-vocabulary changes, read `docs/specs/DS029-hierarchical-processing-circuits-and-packet-contracts.md` completely. Keep descriptive catalog state distinct from execution receipts and DS028 research hypotheses.
+20. Before acquiring, projecting, scaling, or consolidating a task-feedback, preference, trajectory, process-reward, or reinforcement-learning dataset, read `training/.agents/skills/rl-dataset-graph-discovery/SKILL.md` completely and run its source, cycle, bundle, log, and large-source admission validators as applicable.
 
 # Current Skill Catalog
 
@@ -35,6 +38,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - `benchmark-guided-symbolic-learner`: classifies development-visible failure clusters and proposes gated KB, method, or generic-core changes without answer memorization.
 - `core-change-guardian`: challenges generic-core proposals for domain leakage, unsoundness, hidden policy, and regressions.
 - `kb-compiler-quality-auditor`: checks package structure, hashes, safety constraints, provenance, and deterministic compilation.
+- `rl-dataset-graph-discovery`: freezes and projects rights-cleared task-feedback or trajectory datasets, runs bounded multi-method structural discovery, consolidates node/strategy/gate/edge/packet hypotheses, and audits phased large-source admission without learning answers or runtime policy.
 
 # Repository Rules
 
@@ -47,7 +51,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - HTML documentation explains the same contract from implementation, review, operational, and failure-analysis viewpoints. It must not be a compressed substitute for the DS files.
 - Diagrams must be small, legible, and accompanied by prose that explains nodes, edges, boundaries, and exceptional paths. Prefer a left-to-right two-dimensional flow with three to five primary nodes; replace dense trees and branch fans with prose or several focused diagrams.
 - Keep the documentation home-page KB and benchmark inventories synchronized with package validation, catalog metadata, adapter state, and actually published post-reset results. Never present catalog inclusion as benchmark execution.
-- The deployable runtime closure under `src/runtime/engine.mjs`, `src/runtime/runtime.mjs`, deterministic DS022 language modules, and their transitive inference dependencies must not access networks, invoke an LLM or agent, start child processes, execute corpus strings, use `eval`, or dynamically import corpus-provided paths. Only the explicitly enabled DS013 operator wrapper may invoke a configured language-only Language Agent subprocess, and runtime core modules must not import it.
+- The deployable runtime closure under `src/runtime/engine.mjs`, `src/runtime/runtime.mjs`, deterministic DS022 language modules, and their transitive inference dependencies must not access networks, invoke an LLM or agent, start child processes, execute corpus strings, use `eval`, or dynamically import corpus-provided paths. Only the separately disclosed DS013 operator wrapper may invoke a configured language-only Language Agent subprocess, and runtime core modules must not import it.
 - Knowledge bases are declarative data under `training/KBs/<id>/canonical/` and `training/KBs/<id>/package/`. KB payloads must not be JavaScript modules. Only trusted runtime/compiler code is executable.
 - Treat all training, document, corpus, and benchmark input as untrusted. Validate schemas, freeze source and packet hashes, separate train/development/test visibility, and compile only allowlisted record and package shapes.
 - Resource budgets govern streaming, sharding, cache retention, and bounded execution. They must never delete or silently discard valid source examples or facts. Semantic projections must retain the complete frozen source and report valid rows outside the current language, relation, license, or quality profile as explicit coverage gaps.
@@ -57,16 +61,30 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Never repair a benchmark with branches on benchmark names, dataset IDs, record IDs, source rows, hashes, expected answers, or entity and relation constants copied from examples. Core branches operate on semantic types, relations, task-frame operations, capability preconditions, and validated policy metadata. Every benchmark-guided core change requires renamed entities and predicates, nonce values, changed ordering, and negative or metamorphic controls. Source vocabulary, thresholds, answer domains, and conventions belong in provenance-bearing KB records or adapter metadata.
 - Training may invoke Coding Agent only as an isolated subprocess through the training runner and a copied self-contained skill. Agent output is an untrusted candidate until schema, compiler, audit, regression, evaluation, and promotion gates pass locally.
 - Test and hidden benchmark splits must never be exposed to a synthesis subprocess. Development-visible failures may guide changes only through clustered, generalizable evidence.
+- Dataset-guided processing-graph research follows DS028. Rights-cleared training projections may propose nodes, gates, strategies, edges, or protocol fields, but source trajectories, actions, rewards, model responses, and clusters remain inert evidence and never become executable policy, KB truth, benchmark leakage, or default runtime behavior.
+- DS029 owns the exact descriptive circuit, node, edge, packet, authority, implementation-state, and resource vocabulary. Catalog inclusion is not execution evidence; DS028 hypotheses do not alter this vocabulary until an explicit reviewed promotion changes the contract and implementation together.
+- A processing-graph discovery cycle is always `eslm-rl-dataset-discovery-plan-v2` →
+  `eslm-processing-graph-research-analysis-v6` → explicit
+  `eslm-processing-graph-consolidation-review-v1` → `eslm-rl-dataset-discovery-cycle-v3`. The plan is frozen before
+  observation, the analysis contains machine evidence, the review maps real machine hypotheses under DS028/DS029, and
+  the cycle accounts for every machine hypothesis. None has answer, runtime, proof, catalog, or promotion authority.
+- Research status must distinguish reviewed, cached, projected, analyzed, and consolidated state from implemented or
+  promoted behavior. It must also distinguish a current identity chain from historical, superseded, blocked, or
+  withdrawn evidence. Mutable scale-run counts and receipt digests belong in validated artifacts and status output,
+  not hand-maintained HTML.
 - Keep caches and downloaded immutable sources under `training/.cache/`. Do not commit transient agent workspaces, candidates, or a global executable generated model.
 - Changes to behavior, interfaces, package schemas, evaluation, measured results, or claims require synchronized DS files, detailed HTML documentation, and tests.
 
 # Runtime Defaults
 
 - Stage A provides deterministic English controlled-language parsing, explicit task frames, capability-aware plans, direct retrieval, safe Horn deduction, provenance, structured gaps, and declarative KB packages.
-- The general CLI is offline by default. It runs the direct route first. A bounded explicit request plan may preempt an accidental direct assertion parse while restoring the incoming session snapshot. Otherwise `UNPARSED` and `UNKNOWN` results enter the DS022 heuristic CNL ensemble; `SOLVED` and `PARTIAL` may also admit a structurally licensed candidate when its parse-only Semantic IR differs from the direct interpretation. Identical Semantic IR preserves the direct route, and every changed candidate interpretation remains query-local. A strict answer reached through a changed interpretation is reported as `DEFEASIBLE`; extractive request construction is `PARTIAL`. Role-focused related-KB grounding is attached only after the final local status is known.
-- Language Agent normalization is disabled by default. `--external-language-agent` or interactive `/normalize on` enables it only after direct and local heuristic language recovery remain `UNPARSED`; `--no-external-language-agent` explicitly restates the local profile. One assisted episode permits at most three language proposals and may return only parser-form feedback, never answers, KB evidence, grounding, or proof state. Every accepted proposal is reparsed by the direct symbolic runtime.
+- The general CLI composes a disclosed external Language Agent proposal wrapper by default; the deployed/library runtime stays offline. A bounded English-likelihood gate first rejects likely non-English input locally without translating it. Likely-English and indeterminate input run the direct route, bounded request planning, and eligible DS022 approximation. Every changed interpretation remains query-local and a strict answer through it is reported as `DEFEASIBLE`; grounded symbolic request construction is `PARTIAL`. Role-focused related-KB grounding is attached only after the final route is known.
+- `--no-external-language-agent` or interactive `/normalize off` selects the fully local CLI profile; `--external-language-agent` and `/normalize on` explicitly restate the assisted default. A likely-non-English rejection may request translation, while English simplification is eligible only after local recovery remains `UNPARSED`. One assisted episode permits at most three language proposals and may return only parser-form feedback, never answers, KB evidence, grounding, or proof state. Every candidate is assessed as English and reparsed by the direct symbolic runtime. Translation remains `UNVERIFIED_NORMALIZATION` unless an independent reviewed language profile establishes open-class preservation; model-declared alignments are not self-validating.
+- Immediately before a real external Language Agent call, interactive, one-shot `ask`, and batch `run` emit exactly
+  one subtle activity line. `ask` and `run` write it to standard error so JSON or JSONL standard output remains valid.
+  Direct execution, the fully local profile, and cache hits emit no invocation line.
 - `balanced` is the default `eslm-work-policy-v1` profile. `quick`, `deep`, and `exhaustive-bounded` select other finite limits for heuristic candidates and reparses, Horn work, provider fan-out, and grounding retrieval. CLI startup flags and interactive `/work PROFILE` may change these budgets without changing logic, trust, selected KB identities, or session facts.
-- All 24 deterministic language-approximation families execute through the sealed DS027 registry and stage coordinator. Exact strategy allowlists can gate language approximation, request planning, query focus, relevance features, reasoning methods, and result construction. `--strategy-preset` and `/strategies PRESET` are inventory views only; they never change execution. Retrieval execution, failure grounding, method planning, and verification remain non-selectable until their catalog entries are integrated with the common coordinator.
+- All 24 deterministic language-approximation families execute through the sealed DS027 registry and stage coordinator. Exact strategy allowlists can gate language approximation, request planning, query focus, relevance features, reasoning methods, and result construction. `--strategy-preset` and `/strategies PRESET` are inventory views only; they never change execution. Ordinary method planning, execution, and witness verification already cross closed bounded owner envelopes; retrieval, failure grounding, method planning, and verification remain non-selectable until their catalog entries are integrated with the common coordinator.
 - The core starts without domain knowledge. `quick` is the small deterministic smoke-test KB. `oewn-2025` and `atomic-2020` are source-derived, query-directed JSON packages loaded within explicit memory policy. `babi-v1.2-language` is a small source-derived package that declares a property domain and an explicitly defeasible induction policy without embedding evaluation answers.
 - Results use `eslm-runtime-result-v1`. Every text result exposes protocol, status, answer, session and episode state,
   language route, selected, consulted, and answer-contributing KB versions, unresolved subgoals, and memory policy.
@@ -74,9 +92,10 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
   may be absent after an early `UNPARSED`. Eligible inability results may also expose an
   `eslm-grounding-bundle-v1`: bounded related records and per-source search receipts with
   `answerSupported: false`. Ordinary inability grounding is never copied into the primary answer, values,
-  provenance, or `usedKbVersions`. The separate `heuristic-request-synthesis` route may select and cite relevant
-  source claims to build a `PARTIAL` extractive artifact; only those selected records enter its answer provenance and
-  `usedKbVersions`, and they are presented as source material rather than deductive proof.
+  provenance, or `usedKbVersions`. The separate `heuristic-request-synthesis` route runs the nested grounded-response
+  circuit: claim admission, rhetorical planning, sentence realization, document assembly, and schema validation. It
+  may generate coherent English wording only from admitted supplied or KB claims. Only records realized into cited
+  sentences enter answer provenance and `usedKbVersions`; fluency and construction confidence are not deductive proof.
 - Training packets use train-visible records only. A Coding Agent subprocess receives one packet and one copied skill inside an isolated workspace; it cannot mutate the host repository.
 - Promotion is explicit. Candidate records do not become runtime knowledge merely because an agent generated them.
 
@@ -92,7 +111,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Small declarative KB: `node src/cli.mjs ask "Can Penguin swim?" --kb quick`
 - Source-derived KBs: `node src/cli.mjs ask "Define dog" --kb oewn-2025` and `node src/cli.mjs ask "Why might apologize?" --kb atomic-2020`
 - Local heuristic approximation: `node src/cli.mjs ask "Abura is an mura. All mura et bana. Is Abura eating bana?"`
-- Explicit Language Agent normalization: `node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick --external-language-agent`
+- Disclosed Language Agent proposal route: `node src/cli.mjs ask "Could Penguin perhaps be categorized as a bird?" --kb quick --external-language-agent`
 - Deeper bounded work: `node src/cli.mjs ask "QUESTION" --kb all --work-profile deep`; interactive inspection and changes use `/work` and `/work PROFILE`
 - Strategy inventory: add `--strategy-preset language|retrieval|reasoning|construction`; interactive inspection uses `/strategies` and `/strategies PRESET`. These commands only filter the inventory view.
 - Exact strategy execution: add `--strategy-select 'STAGE=ID[,ID];STAGE=ID'`; interactive selection uses `/strategy STAGE=IDS` and `/strategy clear`. Language and focus selections must retain their mandatory safety identities.
@@ -100,6 +119,10 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Isolated Coding Agent dry run: `node src/cli.mjs train run --packet /tmp/eslm-packet.json --output /tmp/eslm-agent --skill document-to-kb-builder --dry-run`
 - Dataset status: `node src/cli.mjs dataset status --dataset babi-15-en-10k-v1.2`
 - Corpus status: `node src/cli.mjs corpus status`
+- Processing-graph research receipt status: `node src/cli.mjs research graph status`. This validates published receipts and does not rerun analysis.
+- Bounded processing-graph research: `npm run research:graph:pilot` and `npm run research:graph:scale`.
+- Explicit research publication: `npm run research:graph:pilot:publish` and `npm run research:graph:scale:publish`. Publication replaces named research receipts but grants no runtime, catalog, answer, or promotion authority.
+- Seal reviewed research consolidation: `node scripts/seal-processing-graph-discovery-cycle.mjs PLAN ANALYSIS REVIEW OUTPUT`. Sealing does not rerun analysis or promote the result.
 - Runtime profiling: `node src/cli.mjs ask "QUESTION" --profile`
 - Tests: `npm test`
 - Evaluation: `npm run evaluate`
@@ -108,6 +131,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Authored fixture only: `npm run benchmark:authored`
 - Generated heuristic development only: `npm run benchmark:generated`; direct CLI replay uses
   `node src/cli.mjs benchmark generated --publish`, with optional `--cases` and `--seed` overrides.
+- Generated five-seed stability receipt: `npm run benchmark:generated:seed-audit`.
 - Public benchmark cache status: `node src/cli.mjs benchmark status`
 - External-agent-free public portfolio assembly and live development rows: `npm run benchmark:public-probe`. The generated
   report distinguishes rows executed during assembly from stored receipts; it is not a rerun of every catalog row.
@@ -115,6 +139,10 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
   with `node scripts/audit-benchmark-receipts.mjs --require-current`.
 - Interactive 4,096-case combined regression: run `node src/cli.mjs`, then `/smoke`; use `/examples` for a stratified representative view over all heuristic oracle levels and core groups.
 - Documentation matrix/check: `npm run docs:matrix` and `npm run docs:check`
+- Internal release evidence: `docs:check` requires authored evaluation, authored benchmark, fixed generated heuristic,
+  and generated five-seed JSON receipts from the current content-addressed executable checkpoint; it also requires
+  published authored and fixed-generated HTML to match their JSON exactly. Regenerate reports explicitly before the
+  check; documentation validation never runs benchmarks itself.
 - Full verification: `npm run check`
 
 # Key Paths
@@ -122,8 +150,10 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - CLI and orchestration entry points: `src/`
 - Interactive presentation and operator diagnostics: `src/interface/`
 - Deterministic CNL approximation, decomposition, voting, and request planning: `src/language/heuristic-*.mjs`
-- Heuristic language coordination, extractive request synthesis, and work policy: `src/runtime/heuristic-*.mjs` and `src/runtime/work-policy.mjs`
+- Heuristic language coordination, grounded response realization, and work policy: `src/runtime/heuristic-*.mjs`, `src/runtime/grounded-response-realization.mjs`, and `src/runtime/work-policy.mjs`
 - Trusted strategy descriptors, sealed registration, deterministic coordination, voting, and inventory: `src/strategy/`
+- Exact hierarchical circuit, node, edge, packet, resource, and validation catalog: `src/processing-graph/`
+- Inert source projections, bounded processing-graph research, and published-receipt status validation: `src/research/`
 - Deterministic generated heuristic benchmark and aggregate failure analysis: `src/evaluation/generated-heuristic-benchmark.mjs`
 - Declarative KB schema, compiler, loader, catalog, and projection: `src/kb/`
 - Capability registry, planning, and inference: `src/reasoning/`
@@ -138,5 +168,9 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Heuristic language, query-focus, request-planning, and work-policy contracts: `docs/specs/DS022-heuristic-language-approximation-and-work-policy.md`
 - Long-horizon research contracts: `docs/specs/DS023-statistical-symbolic-relevance-and-answer-bridge-research.md` through `docs/specs/DS026-grounded-interaction-and-product-evaluation-research.md`
 - Trusted strategy extension and meta-rational coordination contract: `docs/specs/DS027-trusted-strategy-extensions-and-meta-rational-coordination.md`
+- Dataset-guided processing-graph discovery research: `docs/specs/DS028-dataset-guided-processing-graph-discovery-research.md`
+- Hierarchical processing-circuit catalog and packet contracts: `docs/specs/DS029-hierarchical-processing-circuits-and-packet-contracts.md`
+- Processing-graph discovery ledger: `processing_graph_discoveries.md`
+- RL/task-feedback dataset discovery skill: `training/.agents/skills/rl-dataset-graph-discovery/`
 - Source, adapter, corpus, routing, and cache gates: `docs/specs/DS016-source-identity-license-and-access.md` through `docs/specs/DS021-memory-budgets-and-shard-caches.md`
 - Archived research source, never current authority: `original_specs/`

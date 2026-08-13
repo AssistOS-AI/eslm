@@ -90,7 +90,7 @@ export function interactiveExamples(style, seed, page = 1) {
   return `${style.bold('What this evidence means')}
 Seed: ${style.blue(seed)} — reuse it with /examples or /smoke.
 Page: ${style.green(`${page} of ${pageCount}`)} — ${generated.length} stratified cases shown, display positions ${start + 1}–${start + generated.length} of ${all.length}. Use ${style.blue(`/examples ${page === pageCount ? 1 : page + 1} ${seed}`)} for the next page.
-Current executable evidence: ${style.green('1,200 heuristic-language cases plus 2,896 core regressions')} covering all 43 DS022 technique shapes and six oracle levels alongside 26 direct, state, relation, preference, and typed-task templates.
+Current executable evidence: ${style.green('1,200 heuristic-language cases plus 2,896 core regressions')} covering all 43 DS022 technique shapes and eight contract levels alongside 26 direct, state, relation, preference, and typed-task templates.
 WordNet and ATOMIC checks are source-exposed integration evidence, ${style.yellow('not public benchmark scores')}.
 The ${style.blue('benchmark probe --benchmark all')} report includes every registered public and research row. A single-ID probe returns only that benchmark. Each row distinguishes current execution from stored receipt assembly and current from stale frozen dependencies; generated examples never substitute for those receipts.
 
@@ -211,15 +211,35 @@ export function interactiveResultText(result, original, style) {
     lines.push(style.dim('  These records may help a person or downstream model reformulate the question; they do not support the primary answer.'));
     return lines.join('\n');
   };
+  if (result.languageRoute === 'english-language-gate-rejected') {
+    const assessment = result.languageAssessment;
+    const confidence = Number.isFinite(assessment?.confidence)
+      ? ` Confidence ${assessment.confidence.toFixed(3)} at threshold ${assessment.threshold.toFixed(3)}.`
+      : '';
+    return `${style.status(result.status, `[${result.status}]`)} ${style.yellow('English language check did not accept this input.')}
+  ${assessment?.diagnostic ?? 'The input is likely not English.'}${confidence}
+  Translate the request to English, or leave the Language Agent enabled to request an auditable translation proposal.
+  No parser, heuristic interpretation, KB lookup, or session update ran.`;
+  }
   if (result.languageRoute === 'heuristic-request-synthesis') {
     const plan = result.requestPlanning.selectedPlan;
     const operations = plan.operations.join(' → ');
-    return `${style.blue('Local request plan accepted')} — confidence ${plan.confidence.toFixed(3)} (${plan.confidenceBand})
-  Intent: ${operations}; ${plan.subrequests.length} bounded subrequests.
-  Output: ${plan.outputContract.length} ${plan.outputContract.artifact}, ${plan.outputContract.format}.
-  Evidence policy: cited extraction with explicit coverage gaps; related KB records are not upgraded to proof.
+    const realization = result.synthesis?.realization;
+    const realized = realization?.coverage?.evidenceRealized ?? 0;
+    const rejected = realization?.coverage?.evidenceRejected ?? 0;
+    const strategyNames = (realization?.strategyTrace ?? []).map((identity) =>
+      identity.replace(/^strategy:result:/u, '').replace(/@\d+$/u, '')).join(' → ');
+    const muted = style.gray ?? style.dim;
+    const processing = `${style.bold('Thinking · symbolic processing')}
+  Request plan coordinator: ${operations}; ${plan.subrequests.length} bounded subrequests; confidence ${plan.confidence.toFixed(3)} (${plan.confidenceBand}).
+  Output contract: ${plan.outputContract.length} ${plan.outputContract.artifact}, ${plan.outputContract.format}.
+  Evidence admission: ${realized} KB claim(s) realized; ${rejected} related claim(s) withheld from the answer.
+  Construction circuit: ${strategyNames || 'no realization strategy receipt'}.
+  Construction confidence: ${Number(realization?.confidence ?? 0).toFixed(3)}; status ${result.status}.
+  Authority boundary: citations support wording; relevance alone does not become proof.`;
+    return `${muted(processing)}
 
-${style.status(result.status, `[${result.status}]`)}
+${style.bold('Answer')}
 ${result.answer}`;
   }
   if (result.languageRoute === 'heuristic-cnl-approximated') {

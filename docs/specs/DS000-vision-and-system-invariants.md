@@ -24,23 +24,31 @@ benchmark result are three different kinds of claim.
 
 For a new programmer, the system can be read in this order:
 
-1. **Input:** DS003 defines direct controlled-language meaning; DS022 defines the default deterministic recovery,
-   request-intent planning, query focus, and bounded work policy; DS013 defines the later, explicit opt-in
-   operator-only Language Agent loop.
+1. **Input:** DS003 defines the English-only local language gate and direct controlled-language meaning; DS022 defines
+   deterministic English recovery, request-intent planning, query focus, and bounded work policy; DS013 defines the
+   disclosed operator-only Language Agent proposal strategy attached to the same logical interpretation
+   node.
 2. **Knowledge:** DS005 defines inert canonical records; DS006, DS019, DS020, and DS021 define packages, physical
    compilation, retrieval, and memory.
-3. **Execution:** DS008 and DS015 define task frames, method selection, and the methods themselves. DS027 defines the
+3. **Execution:** DS008 and DS015 define task frames, method selection, and the methods themselves. DS029 defines the
+   hierarchical processing circuits, node identities, typed packets, guarded edges, and resource vocabulary. DS027 defines the
    common trusted-strategy control plane through which alternative implementations are selected, bounded, scheduled,
    audited, and eventually unified.
 4. **Output and failure:** DS009 defines statuses, provenance, and the strict separation between an answer and merely
    related evidence.
 5. **Evidence:** DS010 and DS017 define what benchmark and comparison claims mean.
+6. **Research expansion:** DS023 through DS026 define layer-specific research programs; DS028 defines how
+   rights-cleared training-visible task evidence may propose processing-graph changes without becoming runtime policy,
+   knowledge, or benchmark truth.
 
 At the present checkpoint, direct controlled-language parsing, deterministic confidence-bearing local approximation,
 bounded request-intent planning and extractive `PARTIAL` construction, session overlays, indexed lookup, positive
 safe-Horn deduction, several bounded finite task methods, declarative packages, selected public-source providers,
-structured results, and named work profiles are executable. The separate Language Agent wrapper is executable only as
-an operator-enabled final language-recovery route. Capability-aware dispatch, general language, trust and conflict
+structured results, and named work profiles are executable. The local language boundary is English-only: a bounded
+heuristic assessment can identify likely non-English input for rejection, but it never translates. The separate
+Language Agent wrapper is executable only as the operator-side proposal route composed by the general CLI; its English
+candidate is untrusted, and the explicit local override omits it.
+Capability-aware dispatch, broader English, trust and conflict
 policy, large-corpus routing, document ingestion, and general multi-step planning cover only documented subsets or
 remain target contracts. The existence of a DS section does not prove its implementation.
 
@@ -67,9 +75,10 @@ This separation is the primary architectural invariant. It prevents each dataset
 | Generic execution belongs in `src` | Algorithms and reusable language mechanisms are implemented once and tested globally. |
 | KBs contain no arbitrary executable code | KBs are declarative and schema-validated. Rules are restricted data interpreted by trusted core operators. |
 | Every accepted assertion has provenance | Facts, lexical mappings and learned rules identify their source, extraction path and version. |
-| Every LLM output is untrusted | Translation or simplification must be reparsed and validated before use. |
-| Direct symbolic parsing is attempted first | English input is not sent to the LLM merely because it appears complex. |
-| Local approximation precedes external assistance | Deterministic DS022 candidates are voted, safety-checked, and selected through parse-only Semantic IR after direct `UNPARSED` or `UNKNOWN`. A structurally licensed candidate may also challenge direct `SOLVED` or `PARTIAL` only when its Semantic IR differs from the direct interpretation; equal IR preserves the direct route. Only a final local `UNPARSED` may reach an explicitly enabled Language Agent. |
+| Every LLM output is untrusted | Translation or simplification is only a proposal. The target must pass the same non-voting English parser and semantic gates, and translation is not accepted on model-declared equivalence alone. |
+| Local language acceptance is English-only | A bounded heuristic English-likelihood assessment may reject or flag likely non-English input. It does not identify meaning, translate text, or make a language-support claim; indeterminate input may continue to the English parser under the ordinary fail-closed contract. |
+| Direct symbolic parsing is the semantic authority | Likely-English or indeterminate input is offered to the English parser; complex English is not sent externally merely because it appears difficult. |
+| English approximation precedes external English simplification | Deterministic DS022 candidates are voted, safety-checked, and selected through parse-only Semantic IR after direct `UNPARSED` or `UNKNOWN`. A structurally licensed candidate may also challenge direct `SOLVED` or `PARTIAL` only when its Semantic IR differs from the direct interpretation; equal IR preserves the direct route. Likely non-English input is not repaired as if it were misspelled English. The general CLI's disclosed external strategy may instead propose translation; terminal unsupported English may receive a simplification proposal. The explicit local override disables both. |
 | Explicit requests outrank accidental assertion parses | A bounded request-force plan may preempt an ordinary direct parse, but it restores the incoming session snapshot and cannot retain tentative assertions parsed from the instruction text. |
 | Guessed episode premises do not persist | Facts and rules accepted only through a changed heuristic interpretation are query-local and cannot enter the returned session. |
 | No routing decision may create silent false negatives | Approximate relevance signals may rank shards, but safe exclusion requires exact or conservative evidence. |
@@ -89,18 +98,33 @@ benchmark, agent response, package, or cache state to acquire executable authori
 DS004 exclusively defines benchmark-guided learning and promotion. DS006 defines package registration and immutable
 identity. DS020 defines query-directed routing. DS009 defines the distinction among interpretation, knowledge, method,
 conflict, and resource failures. DS022 defines deterministic local language recovery, explicit request construction,
-role-focused grounding terms, and exact work profiles. DS013 defines the later opt-in Language Agent profile. Those
+role-focused grounding terms, and exact work profiles. DS013 defines the operator Language Agent proposal profile. Those
 specifications carry the operational algorithms, receipts, and exceptional paths; this specification requires that
 their composition preserve the system identity and invariants above.
 
 DS027 defines the target high-level stage graph for that composition. Its registry is a control plane over trusted
 generic mechanisms, not a second knowledge or package system. Until every named extension point has migrated through
 that registry, the present local coordinators remain honestly identified as partial implementation foundations rather
-than being described as a completed plugin architecture.
+than being described as a completed processing-graph architecture.
+
+DS028 defines a separate research path over inert, rights-cleared task and trajectory projections. It may produce
+typed node, gate, strategy, edge, or protocol hypotheses, but source actions, rewards, model outputs, clusters, and
+agent proposals cannot enter the runtime graph or default profile without ordinary implementation, falsification,
+security, and explicit promotion gates.
+
+DS029 defines the exact catalog against which those hypotheses are consolidated. Its nested runtime, compiler, and
+research circuits, typed packets, guarded edges, resource dimensions, and implementation states are an inspectable
+architecture ledger. Catalog presence does not establish execution, and a confidence-bearing coordinator cannot
+replace a non-voting authority gate.
 
 ### 5. Research data produced by the architecture
 
 The system must retain the history necessary to study executable learning. Each substantial benchmark failure should be linked to the parse, selected KB records, attempted methods, result, diagnosis, patch and post-patch measurements. This creates a dataset of program repair and knowledge acquisition rather than merely a final score.
+
+External task datasets used to study that history remain a different evidence class. DS028 requires frozen component
+rights, split isolation, inert research episodes, contamination checks, source-neutral hypotheses, cross-source
+transfer, and explicit promotion. Frequency in external evidence cannot authorize a fact, proof, gate result, or
+executable policy.
 
 The most important longitudinal measurements are end-to-end answer accuracy, attempt coverage, selective accuracy,
 direct raw-language coverage, task-adapter coverage, proof validity, structurally held-out generalization, regression
@@ -139,8 +163,9 @@ Response: The artifact does more than store facts: it compiles supported languag
 ### Question #2: May an agent or LLM hold authority in deployed inference?
 
 Response: No. The deployed runtime and every symbolic inference method remain offline and agent-free. DS004 owns the
-separate training-agent authority and DS013 owns the separate operator normalization authority; neither can execute
-inference, access runtime proof state, or bypass host parsing and validation.
+separate training-agent authority and DS013 owns an operator-side proposal strategy with no semantic or answer
+authority; neither can execute inference, access runtime proof state, or bypass the English parser, preservation, and
+result-validation gates owned by the host.
 
 ### Question #3: Which authority wins when an older experiment conflicts with this vision?
 
@@ -151,7 +176,7 @@ Response: This specification and the consolidated DS set take priority. Earlier 
 Response: Strategies divide trusted generic mechanisms by typed responsibility and make their selection, resources,
 votes, and failures visible. They do not widen executable authority: every deployable executor is still statically
 registered repository code, while external facts and configuration remain inert. The architecture therefore improves
-research locality and inspection without turning KBs or downloaded plugins into programs.
+research locality and inspection without turning KBs or externally supplied components into programs.
 
 ## Conclusion
 

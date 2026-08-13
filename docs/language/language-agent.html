@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head>
+  <base href="../"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Language Agent — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head>
+<body><div data-include="partials/header.html"></div><main><p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Language / Language Agent</p>
+<h1>External Language Agent: untrusted English proposals</h1>
+<p class="lead">The Language Agent is one proposal strategy at the language-interpretation node. It may propose English translation for input rejected locally as likely non-English, or conservative simplification after unsupported English exhausts local recovery. Host-owned gates keep it strictly linguistic: answers, facts, proof state, option selection, and symbolic reasoning remain inside their authoritative components. The deployed runtime stays English-only and independent of the service.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  I[Bounded utterance] --> D[English-only gate]
+  D -->|proposal eligible| L[Language Agent strategy]
+  L --> V[Host validation and reparse]
+  V --> R[Symbolic result]</pre><figcaption>External proposals return through the same English authority gate.</figcaption></figure><p class="diagram-explanation">The local gate returns a bounded English-likelihood assessment and never translates. A likely-non-English rejection may request translation directly; likely-English or indeterminate input receives direct parsing and local recovery before external simplification. Every proposed target must pass English assessment, preservation checks, and a fresh direct parse. The external strategy receives no KB, answer, proof, or result state.</p>
+
+<h2>Product-neutral role and current adapter</h2>
+<p><em>Language Agent</em> names the contract. It may be implemented by a small translation-focused service trained to emit ESLM controlled English, or by a general coding agent configured without tools. The repository currently supports a Codex CLI adapter and requests the exact local model slug <code>gpt-5.3-codex-spark</code> at low reasoning effort. This exact slug is intentional: model substitution changes behavior, cost, availability, and cache identity.</p>
+<p>A successful local invocation proves only that the installed Codex version, current account, and service routing accepted the slug at that time. It is not a portable dependency claim. Missing authentication, unavailable model routing, timeout, or nonzero exit returns an attributed Language Agent failure while preserving the original <code>UNPARSED</code> result. The fully local CLI profile remains buildable and testable without the service; tests exercise the external contract through stub executables.</p>
+
+<h2>Operator profile and deployment boundary</h2>
+<p><code>EslmRuntime</code> is deterministic, dependency-free, offline, English-only, and has no child-process path. The general CLI composes <code>LanguageAgentAssistedRuntime</code> by default and discloses that external boundary. <code>--no-external-language-agent</code> or <code>/normalize off</code> selects the fully local profile. Tests, public direct probes, regression smoke, confidential input, and deployed-style reproduction use that local override.</p>
+
+<h2>Trigger and bounded feedback loop</h2>
+<p>The wrapper receives a translation request when the bounded local assessment returns <code>likely-non-english</code>; it does not first run English spelling or morphology repair. For <code>likely-english</code> and <code>indeterminate</code>, the direct parser and local heuristic ensemble run first, and only terminal <code>UNPARSED</code> may request simplification. <code>UNKNOWN</code>, <code>AMBIGUOUS</code>, <code>NO_APPLICABLE_METHOD</code>, <code>RESOURCE_LIMIT</code>, or a wrong answer does not trigger it. Those statuses indicate knowledge, interpretation, method, or resource issues that a language proposal must not hide.</p>
+<p>An episode has at most three proposal slots. A schema- or anchor-invalid proposal may receive bounded host validation categories. A surface-valid proposal that reparses to <code>UNPARSED</code> may receive the previous controlled-English text and only the fact that ESLM still did not support its form. No retry receives an answer, expected value, KB result, provider evidence, proof, selected option, benchmark identity, or correctness signal. Once a proposal reaches any parsed semantic status, the Language Agent loop ends.</p>
+
+<h2>Codex subprocess isolation</h2>
+<p>The adapter creates a fresh empty operating-system temporary directory, writes a host-owned JSON Schema, and starts <code>codex exec</code> ephemerally. The invocation requests no approval, a read-only sandbox, ignored user configuration and repository rules, no shell tool, no browser tool, the exact model, low reasoning, and schema-constrained final output. Only a bounded environment allowlist needed for the executable and existing authentication is inherited.</p>
+<p>The source utterance is embedded as JSON and explicitly marked untrusted. Commands inside it are data. Input is capped at 12,000 characters. Standard output and standard error are captured separately up to 2 MiB each and hashed in the receipt. A timeout or process-stream overflow sends <code>SIGTERM</code>; after 250 ms the host sends <code>SIGKILL</code>, then uses one final bounded 250 ms settlement window. The response JSON is rejected before parsing if its file metadata exceeds 1 MiB. The temporary directory is removed after the bounded read. The Language Agent has no repository, KB, network-tool, or promotion authority.</p>
+
+<h2>Response and protected anchors</h2>
+<p>The response protocol <code>eslm-language-agent-normalization-v2</code> permits exactly five fields: protocol, operation, source language, normalized English, and source-to-target alignments. Operation is <code>translation</code> or <code>simplification</code>. Explanations, answers, confidence, retrieved facts, tool calls, Markdown fences, executable fields, and additional properties are rejected.</p>
+<p>The host independently extracts language-neutral anchors such as numbers, answer markers, quotations, likely names, and question force. For English simplification it also checks reviewed English operators, relation direction, quantifiers, and exact open-class and function-word multisets. Every protected source occurrence needs one exact-substring alignment to one unused compatible target occurrence. Model-declared alignments locate claims; they cannot validate the model's own equivalence.</p>
+<p>Translation adds two necessary gates: the target must be assessed as English and must reparse through the direct symbolic frontend. Neither proves open-class source-to-target equivalence. Acceptance requires a separate, independently reviewed and versioned source-language preservation profile. Without one, fluent translation remains <code>UNVERIFIED_NORMALIZATION</code>. The protocol-neutral <code>sourceLanguage</code> tag records the proposal's declaration but grants no semantic authority.</p>
+<p>This validation is deliberately conservative. Long-distance scope, implicit negation, lexicalized modality, unreviewed idioms, presupposition, coreference, and relations outside a reviewed profile may remain undetected. When preservation cannot be established, the host exposes the gap instead of trusting fluency.</p>
+
+<h2>Cache and evidence attribution</h2>
+<p>The ignored adapter cache key covers original-input digest, requested operation, exact model, reasoning effort, prompt policy, response protocol, validator version, and normalization policy. Cache files over 4 MiB are rejected from metadata before parsing, and oversized serialized entries are not written. A cache hit is schema-checked, anchor-validated, and reparsed under the current runtime. It counts as assisted language because the text originated from the external adapter, even when the current run makes zero external calls.</p>
+<p>Structured output separates normalization candidates, proposal count, external invocations, cache hit, adapter and model, original text, transformed English, validation, reparse status, and final symbolic result. The public direct report uses zero Language Agent calls by construction. An assisted benchmark is a separately frozen experiment.</p>
+
+<h2>Implementation boundaries</h2>
+<p>The implementation map is intentionally secondary. The language-assessment module emits <code>eslm-english-likelihood-v1</code>; the gate coordinator owns the local rejection route; the Language Agent facade coordinates proposals and receipts; separate contract, validation, and bounded I/O components protect the external boundary. None is imported by the deployed runtime. Machine accounting names the strategy identity, <code>runtime.language.interpret</code> stage, <code>untrusted-language-form-candidate</code> role, and <code>answerAuthority: none</code>.</p>
+
+<h2>Operator commands</h2>
+<pre><code>node src/cli.mjs ask "Could Penguin perhaps be categorized as a bird?" --kb quick
+node src/cli.mjs ask "Could Penguin perhaps be categorized as a bird?" --kb quick --no-external-language-agent
+node src/cli.mjs ask "Please determine whether Penguin is a bird." --no-normalization-cache
+node src/cli.mjs --external-language-agent --language-agent-model gpt-5.3-codex-spark
+
+/normalize
+/normalize on
+/normalize off</code></pre>
+<p>The complete normative protocol is <a href="specsLoader.html?spec=DS013-language-agent-assisted-language-normalization.md">DS013</a>. Direct parsing and Semantic IR remain in <a href="specsLoader.html?spec=DS003-symbolic-language-frontend-and-cnl.md">DS003</a>.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

@@ -3,8 +3,9 @@ import {
   stringArray,
 } from './result-payload-shapes.mjs';
 import { assertGroundingEntry } from './result-grounding-entry-contract.mjs';
+import { assertGroundedResponseRealization } from './result-realization-contract.mjs';
 
-const SYNTHESIS_PROTOCOL = 'eslm-heuristic-request-synthesis-v1';
+const SYNTHESIS_PROTOCOL = 'eslm-heuristic-request-synthesis-v2';
 
 function synthesisSelection(selection, path, selectedIdentities) {
   const value = record(selection, path);
@@ -137,9 +138,9 @@ export function assertSynthesisExtension(value, result) {
     throw new TypeError(`Runtime result synthesis must use ${SYNTHESIS_PROTOCOL} with PARTIAL status.`);
   }
   string(synthesis.answer, 'Runtime result synthesis.answer', 262_144);
-  if (synthesis.claimMode !== 'extractive-source-and-related-kb-draft'
+  if (synthesis.claimMode !== 'grounded-symbolic-generation'
     || synthesis.answerAuthority !== 'related-evidence-is-not-entailment') {
-    throw new TypeError('Runtime result synthesis must preserve extractive non-entailment authority.');
+    throw new TypeError('Runtime result synthesis must preserve grounded non-entailment authority.');
   }
   record(synthesis.plan, 'Runtime result synthesis.plan');
   const selectedIdentities = new Map();
@@ -191,6 +192,7 @@ export function assertSynthesisExtension(value, result) {
       !== JSON.stringify(synthesis.operationArtifacts[0].sourceSummary)) {
     throw new TypeError('Single-operation synthesis source summary must match its operation artifact.');
   }
+  assertGroundedResponseRealization(synthesis.realization, synthesis);
   boundedJson(synthesis, 'Runtime result synthesis', 1_048_576);
   return synthesis;
 }

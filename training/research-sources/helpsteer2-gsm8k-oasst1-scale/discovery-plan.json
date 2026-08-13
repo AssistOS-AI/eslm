@@ -1,0 +1,150 @@
+{
+  "format": "eslm-rl-dataset-discovery-plan-v2",
+  "planId": "plan:processing-graph:003-three-source-transfer",
+  "cycleId": "cycle:processing-graph:003-three-source-transfer",
+  "state": "approved",
+  "question": "Which source-neutral processing responsibilities recur across response ratings, explicit solution steps, and multi-turn conversation trajectories under a bounded transfer sample?",
+  "nullHypothesis": "Any recurring motif is explained by the current graph or by shared projection structure and does not justify a new node, gate, strategy, edge, packet field, or nested circuit.",
+  "sourceRevisions": [
+    "gsm8k@3101c7d5072418e28b9008a6636bde82a006892c",
+    "helpsteer2@990b2711a36180dd19d9c94b8627844866f8982a",
+    "oasst1@fdf72ae0827c1cda404aff25b6603abec9e3399b"
+  ],
+  "projectionDigests": [
+    "sha256:091b9409be5f8de95ece02f0ea6ff14d51955818adcfa231d4612e859c36e6c0",
+    "sha256:27246fd7dafc5435483507e187db97179f496c6f92114a0392b9b3974de21476",
+    "sha256:ffb914e544f774123d323db4921031963c316f4fb7689696c5f94784291580b5"
+  ],
+  "sourceScopes": [
+    {
+      "sourceRevision": "helpsteer2@990b2711a36180dd19d9c94b8627844866f8982a",
+      "componentId": "train-ratings",
+      "projectionId": "helpsteer2-structural-feedback-v1",
+      "projectionDigest": "sha256:091b9409be5f8de95ece02f0ea6ff14d51955818adcfa231d4612e859c36e6c0",
+      "contentMembershipDigest": "sha256:24dd8fcdb1bc048ef73e1710512c5af6b330bfb22dbfca56c442ddf7520f3da7",
+      "splits": [
+        {
+          "name": "train",
+          "visibility": "training-visible",
+          "rowsDeclared": 20324,
+          "rowsAdmitted": 10161
+        }
+      ]
+    },
+    {
+      "sourceRevision": "gsm8k@3101c7d5072418e28b9008a6636bde82a006892c",
+      "componentId": "train-socratic",
+      "projectionId": "gsm8k-socratic-task-structure-v1",
+      "projectionDigest": "sha256:27246fd7dafc5435483507e187db97179f496c6f92114a0392b9b3974de21476",
+      "contentMembershipDigest": "sha256:d4b9e14c42063b8ff1831fb1de4f69e4ae2ea270110732cace339f74ae57ec62",
+      "splits": [
+        {
+          "name": "train-socratic",
+          "visibility": "training-visible",
+          "rowsDeclared": 7473,
+          "rowsAdmitted": 7473
+        }
+      ]
+    },
+    {
+      "sourceRevision": "oasst1@fdf72ae0827c1cda404aff25b6603abec9e3399b",
+      "componentId": "ready-conversation-trees",
+      "projectionId": "oasst1-ready-english-structural-trees-v1",
+      "projectionDigest": "sha256:ffb914e544f774123d323db4921031963c316f4fb7689696c5f94784291580b5",
+      "contentMembershipDigest": "sha256:990121179c410e6ac769f4cf1e0517143e67fb008b7379ba4a59e285b392bb3d",
+      "splits": [
+        {
+          "name": "training",
+          "visibility": "training-visible",
+          "rowsDeclared": 9846,
+          "rowsAdmitted": 2220
+        },
+        {
+          "name": "validation",
+          "visibility": "development-visible",
+          "rowsDeclared": 518,
+          "rowsAdmitted": 0
+        }
+      ]
+    }
+  ],
+  "baselineGraphDigest": "sha256:5534952eb6b2ab83d5c8ae3d0e15eda4dd69745a75f0e2abbea81f9ff5bf0348",
+  "analysisIdentity": {
+    "analysisId": "three-source-processing-graph-analysis",
+    "version": "1.0.0",
+    "seed": "eslm-processing-graph-scale-v1",
+    "inputMode": "iterable-or-async-iterable",
+    "selectionMethod": "bounded-min-hash-v1"
+  },
+  "strategyIdentities": [
+    "bounded-subcircuit-motif-v1",
+    "cross-source-recurrence-v1",
+    "earliest-error-v1",
+    "metamorphic-recurrence-v1",
+    "partial-order-motif-v1",
+    "phase-change-point-v1",
+    "preference-axis-v1",
+    "task-frame-induction-v1",
+    "typed-operation-responsibility-v1"
+  ],
+  "workPolicy": {
+    "format": "eslm-processing-graph-research-work-policy-v1",
+    "progressionStage": "scale",
+    "limits": {
+      "maxRowsScanned": 19854,
+      "maxEpisodes": 8192,
+      "maxInputBytes": 268435456,
+      "maxTokens": 67108864,
+      "maxActions": 400000,
+      "maxDependencies": 400000,
+      "maxVotes": 16384,
+      "maxHypotheses": 2048,
+      "maxEvidenceDigestsPerVote": 14
+    },
+    "techniqueBudgets": {
+      "bounded-subcircuit-motif-v1": {
+        "maxEvents": 400000,
+        "maxProposals": 8192
+      },
+      "cross-source-recurrence-v1": {
+        "maxEvents": 400000,
+        "maxProposals": 8192
+      },
+      "earliest-error-v1": {
+        "maxEvents": 400000,
+        "maxProposals": 8192
+      },
+      "metamorphic-recurrence-v1": {
+        "maxEvents": 400000,
+        "maxProposals": 8192
+      },
+      "partial-order-motif-v1": {
+        "maxEvents": 400000,
+        "maxProposals": 8192
+      },
+      "phase-change-point-v1": {
+        "maxEvents": 400000,
+        "maxProposals": 8192
+      },
+      "preference-axis-v1": {
+        "maxEvents": 400000,
+        "maxProposals": 8192
+      },
+      "task-frame-induction-v1": {
+        "maxEvents": 400000,
+        "maxProposals": 8192
+      },
+      "typed-operation-responsibility-v1": {
+        "maxEvents": 400000,
+        "maxProposals": 8192
+      }
+    }
+  },
+  "authority": {
+    "analysisAdmission": "reviewed-training-projections-only",
+    "answer": "none",
+    "runtime": "none",
+    "proof": "none",
+    "promotion": "none"
+  }
+}

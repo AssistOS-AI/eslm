@@ -1,6 +1,7 @@
 import {
   HEURISTIC_CNL_LIMIT_CEILINGS, HEURISTIC_CNL_PROTOCOL,
 } from '../language/heuristic-cnl-contract.mjs';
+import { assertEnglishLikelihoodReceipt } from '../language/english-likelihood.mjs';
 import { builtinStrategyDescriptors } from '../strategy/builtin-strategy-catalog.mjs';
 import { strategyIdentity } from '../strategy/strategy-contract.mjs';
 import {
@@ -31,6 +32,10 @@ const APPROXIMATION_STATUSES = new Set([
 const NORMALIZATION_STATUSES = new Set([
   'accepted', 'failed', 'proposal-limit-exhausted', 'rejected', 'reparse-rejected',
 ]);
+const NORMALIZATION_PROPOSAL_STRATEGIES = Object.freeze({
+  translation: 'strategy:language:external-translation-proposal@1',
+  simplification: 'strategy:language:external-simplification-proposal@1',
+});
 const LANGUAGE_STRATEGY_IDENTITIES = Object.freeze(builtinStrategyDescriptors('runtime.language.interpret')
   .filter((descriptor) => descriptor.implementationState === 'coordinated')
   .map(strategyIdentity).toSorted());
@@ -292,6 +297,13 @@ function normalizationExtension(value, result) {
     && !['translation', 'simplification'].includes(normalization.requestedOperation)) {
     throw new TypeError('Runtime result normalization.requestedOperation is unsupported.');
   }
+  if (!normalization.requestedOperation
+    || normalization.strategyIdentity !== NORMALIZATION_PROPOSAL_STRATEGIES[normalization.requestedOperation]
+    || normalization.stage !== 'runtime.language.interpret'
+    || normalization.proposalRole !== 'untrusted-language-form-candidate'
+    || normalization.answerAuthority !== 'none') {
+    throw new TypeError('Attempted normalization requires exact host-owned proposal-strategy accounting.');
+  }
   const receipts = array(normalization.receipts ?? [], 'Runtime result normalization.receipts', 3);
   receipts.forEach((receipt, index) => normalizationReceipt(
     receipt, `Runtime result normalization.receipts[${index}]`,
@@ -399,6 +411,9 @@ export function assertRuntimePayloadContracts(result) {
   boundedJson(result.unresolvedSubgoals, 'Runtime result unresolvedSubgoals', MAX_RESULT_ARRAY_BYTES);
 
   if (result.approximation !== undefined) approximationExtension(result.approximation, result);
+  if (result.languageAssessment !== undefined) {
+    assertEnglishLikelihoodReceipt(result.languageAssessment);
+  }
   if (result.requestPlanning !== undefined) assertRequestPlanningExtension(result.requestPlanning);
   if (result.synthesis !== undefined) assertSynthesisExtension(result.synthesis, result);
   if (result.normalization !== undefined) normalizationExtension(result.normalization, result);

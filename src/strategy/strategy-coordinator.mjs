@@ -9,7 +9,9 @@ function selectedSet(policy, stage) {
 }
 
 function canonicalAllocations(entries, maximumWork) {
-  return entries.map((_, index) => index < maximumWork ? 1 : 0);
+  return Object.freeze(entries.map((_, index) => Object.freeze({
+    reserved: index < maximumWork ? 1 : 0,
+  })));
 }
 
 function confidenceOf(result) {
@@ -140,27 +142,26 @@ export async function runStrategyStage({
   const selected = selectedSet(policy, stage);
   const entries = registry.entries(stage, selected);
   const allocations = canonicalAllocations(entries, maximumWork);
-  const results = [];
-  for (const [index, entry] of entries.entries()) {
+  const pendingResults = entries.map((entry, index) => {
     const identity = strategyIdentity(entry.descriptor);
-    const reserved = allocations[index];
+    const budget = allocations[index];
+    const reserved = budget.reserved;
     if (reserved === 0) {
-      results.push(createStrategyRunResult(entry.descriptor, {
+      return createStrategyRunResult(entry.descriptor, {
         status: 'resource-limit', reason: 'The canonical shared allocation assigned no work.',
         work: { reserved: 0, consumed: 0 },
-      }));
-      continue;
+      });
     }
-    let result;
-    try {
-      result = await registry.execute(identity, immutableInput, Object.freeze({
-        ...immutableContext, stage, strategyIdentity: identity, budget: Object.freeze({ reserved }),
-      }));
-    } catch (error) {
-      result = failedResult(entry, reserved, containedFailureStatus(error), boundedFailureMessage(error));
-    }
-    results.push(assertReservation(entry, result, reserved));
-  }
+    return registry.execute(identity, immutableInput, Object.freeze({
+      ...immutableContext, stage, strategyIdentity: identity, budget,
+    })).then(
+      (result) => assertReservation(entry, result, reserved),
+      (error) => failedResult(
+        entry, reserved, containedFailureStatus(error), boundedFailureMessage(error),
+      ),
+    );
+  });
+  const results = await Promise.all(pendingResults);
   return stageReceipt(stage, maximumWork, entries, results, authority);
 }
 
@@ -178,7 +179,8 @@ export function runStrategyStageSync({
   const entries = registry.entries(stage, selectedSet(policy, stage));
   const allocations = canonicalAllocations(entries, maximumWork);
   const results = entries.map((entry, index) => {
-    const reserved = allocations[index];
+    const budget = allocations[index];
+    const reserved = budget.reserved;
     if (reserved === 0) {
       return failedResult(entry, 0, 'resource-limit', 'The canonical shared allocation assigned no work.');
     }
@@ -186,7 +188,7 @@ export function runStrategyStageSync({
     try {
       result = registry.executeSync(strategyIdentity(entry.descriptor), immutableInput, Object.freeze({
         ...immutableContext, stage, strategyIdentity: strategyIdentity(entry.descriptor),
-        budget: Object.freeze({ reserved }),
+        budget,
       }));
     } catch (error) {
       result = failedResult(entry, reserved, containedFailureStatus(error), boundedFailureMessage(error));

@@ -18,7 +18,10 @@ This specification is the coding-style authority for the repository. It applies 
 
 All project runtime, training orchestration, evaluation, benchmark adaptation, KB compilation, and documentation tooling must use Node.js 22 or newer and ECMAScript modules stored as `.mjs`. The project must not add Python, PyTorch, native add-ons, transpilers, bundlers, or runtime packages. Node built-ins are preferred. A future dependency requires a specification change covering operational need, deterministic behavior, security, license, and offline installation.
 
-Persistent source, comments, diagnostics, specifications, agent skills, and documentation must be written in English. Test inputs and knowledge records may use any explicitly supported language.
+Persistent source, comments, diagnostics, specifications, agent skills, and documentation must be written in English.
+The deployed and local operator language boundary is English-only. Product fixtures use English except when they test
+likely-non-English rejection or the separately attributed external translation-proposal boundary. Source metadata may
+record a source document's declared language, but that metadata does not extend the runtime language contract.
 
 ### Repository layout
 
@@ -49,13 +52,14 @@ normalization subprocess protocol. DS004 and DS007 own training authority and it
 requires runtime core modules to remain outside both subprocess dependency closures.
 
 DS002 owns the executable-versus-declarative placement test, DS015 owns generic-method generality, DS027 owns static
-trusted strategy registration and extension boundaries, and DS017 owns
-adapter and oracle isolation. Source review must enforce those contracts: runtime control flow may consume declared
-semantic types and validated policy metadata, but not external record identity or expected output.
+trusted strategy registration and extension boundaries, DS017 owns adapter and oracle isolation, and DS028 owns inert
+dataset-guided processing-graph research. Source review must enforce those contracts: runtime control flow may consume
+declared semantic types and validated policy metadata, but not external record identity, expected output, trajectory
+action, source reward, discovered cluster, or dataset-proposed executor.
 
 ### Tests and fixtures
 
-Use `node:test` with strict assertions. Name tests after observable contracts. Organize unit tests by the source boundary they protect and add integration tests for CLI, canonical-to-compiled equivalence, lazy-versus-exhaustive loading, planner traces, honest failure, skill portability, agent invocation construction, normalization invocation and host rejection, dataset isolation, benchmark oracle isolation, renamed and nonce generalization, deterministic multi-thousand regression smoke, and documentation synchronization.
+Use `node:test` with strict assertions. Name tests after observable contracts. Organize unit tests by the source boundary they protect and add integration tests for CLI, canonical-to-compiled equivalence, lazy-versus-exhaustive loading, planner traces, honest failure, skill portability, bounded English-likelihood assessment and likely-non-English rejection, agent invocation construction, translation and simplification proposal rejection, dataset isolation, benchmark oracle isolation, renamed and nonce generalization, deterministic multi-thousand regression smoke, and documentation synchronization.
 
 Strategy tests additionally cover descriptor and profile validation, registration-order independence, typed boundary
 rejection, canonical schedules, correlated-vote deduplication, ambiguity, mandatory safety vetoes, deterministic

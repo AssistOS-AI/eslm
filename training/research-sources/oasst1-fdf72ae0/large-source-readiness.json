@@ -1,0 +1,51 @@
+{
+  "format": "eslm-rl-large-source-readiness-v1",
+  "sourceRevision": "oasst1@fdf72ae0827c1cda404aff25b6603abec9e3399b",
+  "componentId": "ready-conversation-trees",
+  "projectionId": "oasst1-ready-english-structural-trees-v1",
+  "sourceManifestDigest": "sha256:0c7d515d622284621114493f082e3fa9954d0dc6aa48dfa0ec9b83d3c6e4203e",
+  "pilotProjectionDigest": "sha256:ffb914e544f774123d323db4921031963c316f4fb7689696c5f94784291580b5",
+  "discoveryPlanArtifactDigest": "sha256:b311c4b79651f81f894472b4a58242a8edd192d47cd3804382d6edd608a0256a",
+  "discoveryPlanContentDigest": "sha256:251788acf5d2217d88d5569120ad7a2d652158c9b21028c8ad95335eb75b20e4",
+  "sourceAdmissionReceiptDigest": "sha256:b6ce46f2934851b7eb76fd75b25bec5ac2192d4ab3e4f13d9de411682de176bc",
+  "pilot": {
+    "rowsAvailable": 2220,
+    "rowsVisited": 2220,
+    "strataAvailable": 16,
+    "strataVisited": 16,
+    "projectionLossRate": 0.774528,
+    "complete": true
+  },
+  "streaming": {
+    "deterministicReplay": true,
+    "shardEquivalence": true,
+    "inputStreamResumeTested": true,
+    "peakBytes": 388251648,
+    "maximumPeakBytes": 536870912
+  },
+  "rights": {
+    "state": "approved",
+    "removalPlanTested": true
+  },
+  "contamination": {
+    "lineageFrozen": true,
+    "protectedIsolationVerified": true,
+    "knownOverlaps": []
+  },
+  "scalePlan": {
+    "stage": "large-corpus",
+    "shards": 16,
+    "maximumRows": 9846,
+    "maximumBytes": 34145252,
+    "maximumPeakBytes": 536870912,
+    "checkpointEveryShards": 4,
+    "stopConditions": [
+      "identity-or-membership-drift",
+      "peak-memory-budget-exceeded",
+      "projection-loss-drift",
+      "rights-or-contamination-gate-closes"
+    ]
+  },
+  "decision": "admit",
+  "preflightReceiptDigest": "sha256:bcd366b36b4e186f256b7af4ff923be2502cfa2df61cbfbd5e8be1bcdf80bf7b"
+}

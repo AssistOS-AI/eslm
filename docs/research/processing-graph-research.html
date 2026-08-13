@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <base href="../">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dataset-guided processing-graph research — ESLM Documentation</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="partials-loader.js" defer></script>
+  <script type="module" src="assets/mermaid-loader.mjs"></script>
+</head>
+<body>
+<div data-include="partials/header.html"></div>
+<main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Development / Processing-graph research</p>
+<h1>Discovering better processing graphs from rights-cleared task evidence</h1>
+<p class="lead">ESLM uses a guarded research lane to turn rights-cleared, training-visible task evidence into falsifiable processing-graph hypotheses. Sources are frozen, projected, analyzed, and consolidated through separate contracts. Datasets provide evidence for architecture review; they never become executable control, hidden benchmark knowledge, runtime facts, proof, or answer authority.</p>
+
+<div class="callout"><p><strong>Current foundation:</strong> the HelpSteer2 + GSM8K pilot has a complete plan-v1, analysis-v5, human review, and cycle-v3 chain. OASST1 is frozen with separate official training and validation membership; 16 validated structural shards admit 2,220 training trees and zero validation trees. The approved combined plan admits 19,854 training-visible episodes and independently bounds analysis selection. Current source-local and combined execution state, work, omissions, and receipt identities come from the validated <a href="results/latest-processing-graph-source-status.json">research status artifact</a>. Historical or superseded receipts remain visible but never impersonate the current chain. No research artifact has changed the 48-node catalog or runtime behavior.</p></div>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  R[RL and task feedback] --> E[Inert research episodes]
+  B[Reasoning task benchmarks] --> E
+  E --> C[Discovery coordinator]
+  C --> G{{Contract and transfer gate}}
+  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
+  classDef coordinate fill:#efe8f7,stroke:#674786,color:#352345,font-weight:bold
+  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
+  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
+  class R,B source
+  class E process
+  class C coordinate
+  class G gate</pre><figcaption>Two evidence lanes propose architecture through one guarded boundary.</figcaption></figure>
+<p class="diagram-explanation">RL and task-feedback sources contribute preferences, quality axes, typed actions, state changes, retries, and outcomes. Reasoning and task benchmarks contribute task definitions, decompositions, dependencies, intermediate steps, failures, and witnesses only when their exact training projection is rights-cleared. A project-owned reader converts either lane into the same inert episode envelope. Independent discovery strategies may rank comparable graph hypotheses, but contract and protected-transfer gates decide whether a hypothesis may proceed. Reward, frequency, a model response, and a benchmark answer have no architectural or runtime authority.</p>
+
+<h2>The exact plan, analysis, review, and cycle boundary</h2>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  P[Approved plan] --> A[Machine analysis]
+  A --> R[Reviewed consolidation]
+  R --> C[Sealed cycle]
+  C --> G{{Promotion authority gate}}
+  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
+  classDef coordinate fill:#efe8f7,stroke:#674786,color:#352345,font-weight:bold
+  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
+  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
+  class P source
+  class A,C process
+  class R coordinate
+  class G gate</pre><figcaption>Research consolidation precedes promotion.</figcaption></figure>
+<p class="diagram-explanation"><code>eslm-rl-dataset-discovery-plan-v1</code> freezes the structural question, null hypothesis, source and projection membership, baseline graph, techniques, and work policy before observation. Only the plan admits reviewed training projections. <code>eslm-processing-graph-research-analysis-v5</code> records deterministic machine work with exact registry membership and an evidence ledger. <code>eslm-processing-graph-consolidation-review-v1</code> is the explicit DS028/DS029 maintainer mapping of real machine hypotheses. <code>eslm-rl-dataset-discovery-cycle-v3</code> binds the plan and analysis, carries that review, and accounts for every machine hypothesis as reviewed or unreviewed. No artifact creates a catalog identity. Even a complete cycle stops before implementation and promotion.</p>
+<div class="table-wrap"><table class="table--compact-key"><thead><tr><th>Progress state</th><th>Current evidence and next gate</th></tr></thead><tbody>
+<tr><td>Implemented protocol foundation</td><td>Closed source/component manifest v2, split and rights admission, inert episode validation, source-neutral structural features, nine deterministic discovery techniques, correlation-aware machine hypotheses, analysis-v5 lineage, explicit review input, and cycle-v3 sealing.</td></tr>
+<tr><td>Frozen descriptive graph</td><td>The current baseline is 48 nodes in 21 circuits, 73 edges, 58 packet types with 58 closed packet contracts, 27 resource dimensions, and 73 mapped strategies. Catalog, topology, and packet-contract digests are <code>sha256:5534952eb6b2ab83d5c8ae3d0e15eda4dd69745a75f0e2abbea81f9ff5bf0348</code>, <code>sha256:818bf942f5ba39797b0114e417936e2eadeed2e585842c5d23e3930cb513fd08</code>, and <code>sha256:1c6dba91b6ed603db1153708bedaabdba72db15eaa9d5ce835c52bd863d52609</code>.</td></tr>
+<tr><td>Current small-pilot cycle</td><td>HelpSteer2 training ratings project to 10,161 prompt groups and GSM8K Socratic training projects to 7,473 episodes. Analysis-v5 visited all 17,634 admitted episodes, 69,467 typed actions, and 41,670 dependencies. Human review consolidated 14 machine hypotheses into four source-neutral decisions; cycle-v3 is complete and grants no runtime or promotion authority.</td></tr>
+<tr><td>Current OASST1 source and projection</td><td>The pinned source freezes 10,364 trees and 88,838 messages: 9,846 training trees and 518 validation trees. The reviewed English, non-synthetic, non-deleted, zero-PII training projection admits 2,220 trees representing 22,373 messages into 16 validated shards. The 518 validation trees and their 4,401 messages are named and hashed but admit zero research episodes.</td></tr>
+<tr><td>Source-local analysis and cycle</td><td>A current result requires the approved OASST1 plan, content-bound preflight and readiness, analysis-v5, explicit review, and cycle-v3 to agree with the live split, projection, scientific implementation, and graph. Read its visited work, events, votes, hypotheses, completeness, and digests from status. A predecessor-protocol receipt remains historical or superseded evidence only.</td></tr>
+<tr><td>Approved combined plan</td><td>HelpSteer2, GSM8K, and OASST1 contribute 19,854 admitted training-visible episodes. The independent combined plan caps deterministic selection at 8,192 and must preserve any unvisited frontier. Final work and consolidation belong to the generated analysis-v5 and cycle-v3 artifacts, not this page.</td></tr>
+<tr><td>Research workflow</td><td>The repository-owned <code>rl-dataset-graph-discovery</code> skill defines the source freeze, scale gates, correlation-aware hypothesis cycle, consolidation, replay, and handoff discipline. It is maintenance tooling, not a runtime executor; its presence alone is not execution evidence, while the linked machine receipts are.</td></tr>
+<tr><td>Current versus historical</td><td><code>Current</code> requires the complete live identity chain. <code>Historical</code> preserves what one frozen execution measured. <code>Superseded</code>, <code>blocked</code>, or <code>withdrawn</code> explains why that evidence cannot support the present source or graph claim. None of these terms means implemented or promoted.</td></tr>
+<tr><td>Pending now</td><td>Complete and validate the current source-local and bounded cross-source chains, then run ablation and independent protected transfer for retained candidates. A complete research cycle still requires a separate implementation and promotion review.</td></tr>
+<tr><td>Gated next</td><td>Any additional source or larger execution stage requires a source-specific DS016–DS021 gate, deterministic stratified probe, scope map, bounded-memory compiler profile, exact routing, cache policy, prior-stage receipt, and explicit approval.</td></tr>
+<tr><td>Not authorized</td><td>Protected evaluation material, unresolved-rights sources, source actions or code, automatic graph placement, runtime registration, KB truth, answer authority, or default-profile promotion.</td></tr>
+</tbody></table></div>
+<p>Machine-readable evidence is published under stable names: <a href="results/latest-processing-graph-pilot.json">two-source pilot analysis</a>, <a href="results/latest-processing-graph-source-status.json">live-governance and historical-status projection</a>, <a href="results/latest-oasst1-processing-graph-research.json">source-local OASST1 analysis</a>, and <a href="results/latest-processing-graph-research.json">bounded three-source analysis</a>. A stable filename is not a currentness guarantee. Validate protocol, lineage, plan binding, baseline, implementation identity, completeness, and cycle before citing a run; publication does not promote its hypotheses.</p>
+
+<h2>Five authority lanes prevent accidental promotion</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Lane</th><th>Data, authority, and permitted transition</th></tr></thead>
+<tbody>
+<tr><td>Immutable source registry</td><td><dl class="table-details"><div><dt>Contains</dt><dd>Official origin, exact revision, component digests, license and access terms, citation, redistribution rules, removal duties, and split inventory.</dd></div><div><dt>Authority</dt><dd>Freezes what may be acquired and retained; source-provided loaders and actions remain inert.</dd></div><div><dt>Transition</dt><dd>Only an explicitly rights-cleared component may enter a research projection.</dd></div></dl></td></tr>
+<tr><td>Analysis and training projection</td><td><dl class="table-details"><div><dt>Contains</dt><dd>Training-visible request, state, observations, typed actions, state deltas, outcomes, feedback, provenance, safety tags, and projection losses.</dd></div><div><dt>Authority</dt><dd>Supports clustering and hypothesis formation, not runtime truth.</dd></div><div><dt>Transition</dt><dd>Emits candidate design evidence through a closed research receipt.</dd></div></dl></td></tr>
+<tr><td>Benchmark and test visibility</td><td><dl class="table-details"><div><dt>Contains</dt><dd>Development, regression, fresh, shadow, gated, and test pools under distinct memberships.</dd></div><div><dt>Authority</dt><dd>Measures a frozen candidate; protected labels and rows cannot guide it.</dd></div><div><dt>Transition</dt><dd>Only aggregate protected evidence may enter a promotion review.</dd></div></dl></td></tr>
+<tr><td>Knowledge extraction</td><td><dl class="table-details"><div><dt>Contains</dt><dd>Separately authorized source propositions and provenance candidates.</dd></div><div><dt>Authority</dt><dd>Uses the ordinary record, compiler, source, routing, and package gates.</dd></div><div><dt>Transition</dt><dd>No task instruction, model answer, reward, or tool call becomes a fact by default.</dd></div></dl></td></tr>
+<tr><td>Generic-core proposal</td><td><dl class="table-details"><div><dt>Contains</dt><dd>One typed node, gate, strategy, edge, or data-field hypothesis with placement and failure contracts.</dd></div><div><dt>Authority</dt><dd>None until implementation and independent promotion gates pass.</dd></div><div><dt>Transition</dt><dd>A successful review creates a statically registered non-default candidate, never an automatic default.</dd></div></dl></td></tr>
+</tbody></table></div>
+
+<h2>The inert research episode</h2>
+<p><code>eslm-research-episode-v1</code> is a closed analysis envelope, not an executable trajectory. It preserves enough structure to compare tasks while keeping upstream identifiers, commands, scripts, expected test answers, and environment code outside generic execution.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Episode field group</th><th>Meaning and safety boundary</th></tr></thead>
+<tbody>
+<tr><td>Source and rights</td><td>Immutable source, component, revision, split, license, projection, and provenance identities. Episode IDs support joins and duplicate checks but never become semantic features.</td></tr>
+<tr><td>Request and state</td><td>The visible request, initial symbolic state, ordered observations, constraints, and declared capabilities. Missing state remains explicitly unobserved rather than being converted to an empty world.</td></tr>
+<tr><td>Actions and dependencies</td><td>Typed action candidates, argument roles, selected kind, partial-order dependencies, and observed state deltas. Arguments are inert data; no command, import, website action, or tool call is replayed.</td></tr>
+<tr><td>Outcomes and feedback</td><td>Intermediate and final outcomes, candidates, ratings, disagreement, and typed factual, procedural, safety, completeness, or style feedback. A reward is source evidence, not ESLM confidence or truth.</td></tr>
+<tr><td>Truth, safety, and loss</td><td>Epistemic state, truth status, privacy and safety tags, redactions, omitted components, ambiguous mappings, and every projection loss. Model rationales remain claims, never proofs.</td></tr>
+<tr><td>Work receipt</td><td>Exact byte, row, token, graph, comparison, cluster, candidate, omission, and completeness accounting. An exhausted run retains its unvisited frontier and cannot claim a motif is absent.</td></tr>
+</tbody></table></div>
+
+<h2>Four synthetic structural episode sketches</h2>
+<p>These sketches are category-level reconstructions written for architecture review. They contain no source quotation, source row or message identifier, answer, or redistributable source payload. Their packet and action names expose the structural signal that the analyzer can retain. “Motivated” below means that a measured aggregate pattern supports a research hypothesis or identifies an existing catalog seam to challenge; it never means that one synthetic example proves, implements, or promotes that element.</p>
+<div class="table-wrap"><table class="table--compact-key"><thead><tr><th>Synthetic category</th><th>Packet sequence and hypothesis connection</th></tr></thead><tbody>
+<tr><td>Preference ranking</td><td><dl class="table-details"><div><dt>Episode sketch</dt><dd>Two or more <code>construct-output</code> actions produce an inert <code>candidate-set</code>; reviewed feedback contributes separate <code>quality-axis:safety</code>, <code>quality-axis:helpfulness</code>, or other typed axes, including disagreement.</dd></div><div><dt>Research packets</dt><dd><code>packet:research:projected-episode-batch-v1 → packet:research:structural-feature-batch-v1 → packet:research:hypothesis-batch-v1</code>.</dd></div><div><dt>Review consequence</dt><dd>The small-pilot review merged quality-axis machine candidates into a non-authoritative strategy-family proposal under <code>node:runtime:result-construction-coordinator</code>. The separate <code>node:runtime:result-schema-gate</code> remains non-voting and can reject a preferred but invalid result.</dd></div></dl></td></tr>
+<tr><td>Socratic decomposition and witness gap</td><td><dl class="table-details"><div><dt>Episode sketch</dt><dd><code>decompose-task → reason-step* → construct-output → terminate</code>, with explicit partial-order dependencies and an outcome that says no witness is available. Excluded solution and answer material cannot be reconstructed from the sketch.</dd></div><div><dt>Research packets</dt><dd><code>packet:research:projected-episode-batch-v1 → packet:research:structural-feature-batch-v1 → packet:research:hypothesis-batch-v1</code>, carrying only typed action, dependency, phase, and omission features.</dd></div><div><dt>Review consequence</dt><dd>The small-pilot review merged typed task-frame coordination into the existing <code>node:runtime:request-plan-coordinator</code> and retained typed action dependencies only as a packet-field hypothesis. The sequence still must cross <code>node:runtime:witness-verification-gate</code>; ordered reasoning steps are not a verified witness.</dd></div></dl></td></tr>
+<tr><td>Conversation continuation and repair dependency</td><td><dl class="table-details"><div><dt>Episode sketch</dt><dd><code>parse-request → construct-output → parse-request → construct-output</code>, where every child depends on its preceding parent and content is absent. The second interpretation may request continuation or repair; structure alone does not decide which.</dd></div><div><dt>Research packets</dt><dd><code>packet:research:projected-episode-batch-v1 → packet:research:structural-feature-batch-v1 → packet:research:hypothesis-batch-v1</code>, with branch order and typed dependencies but no message text.</dd></div><div><dt>Review consequence</dt><dd>The source-neutral possibilities are a typed phase-transition edge and an explicit dependency field, not an automatic conversation solver. A later current source-local cycle must decide its own machine candidates; neither <code>node:runtime:language-proposal-coordinator</code> nor <code>node:runtime:parse-only-reparse-gate</code> is claimed to have been discovered from source rows.</dd></div></dl></td></tr>
+<tr><td>Failure and rollback control</td><td><dl class="table-details"><div><dt>Falsification sketch</dt><dd><code>request-session-snapshot → task-frame → inability → failure-eligibility → construction-candidate → result-validation-failure</code>, followed by an explicit query-local rollback or non-commit decision.</dd></div><div><dt>Runtime packets under review</dt><dd><code>packet:runtime:request-session-snapshot-v1 → packet:runtime:inability-v1 → packet:runtime:failure-eligibility-v1 → packet:runtime:construction-candidate-v1 → packet:runtime:result-validation-failure-v1</code>.</dd></div><div><dt>Gate conclusion</dt><dd>This synthetic negative control challenges <code>node:runtime:failure-eligibility-gate</code>, <code>node:runtime:result-schema-gate</code>, and <code>node:runtime:session-commit-gate</code>. A new rollback gate is justified only if a bound analysis-v5 and cycle-v3 show that these existing contracts are insufficient; the sketch itself proves nothing.</dd></div></dl></td></tr>
+</tbody></table></div>
+
+<h2>Bulk clustering through several discovery methods</h2>
+<p>Bulk analysis streams projected shards into bounded structural summaries with deterministic partitions, spill and merge order, cluster membership, and incomplete-frontier accounting. Discovery techniques are intentionally plural. They vote only over comparable design candidates at a coordination node. Correlated variants share one evidence group, and a frequent pattern still has no gate authority.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Technique family</th><th>What it can reveal and how it is challenged</th></tr></thead>
+<tbody>
+<tr><td>Task-frame induction</td><td>Groups ordered operations, artifact shapes, constraints, dependencies, answer domains, and capabilities. It must survive paraphrase, nonce vocabulary, changed domain, and secondary obligations.</td></tr>
+<tr><td>Trajectory and phase motifs</td><td>Compares typed actions, observations, retries, backtracking, state deltas, termination, and recurring transitions among interpretation, planning, evidence, execution, verification, repair, and construction.</td></tr>
+<tr><td>Partial-order and graph mining</td><td>Finds dependency motifs and recurring subgraphs that survive harmless action reordering. A motif fails when it relies on a source-specific tool name or fixed argument value.</td></tr>
+<tr><td>Earliest-error and change points</td><td>Locates the first divergent obligation, unavailable capability, invalid transition, rejected witness, or output-shape failure. It tests whether a proposed gate is placed before the effect it must control.</td></tr>
+<tr><td>Preference and disagreement</td><td>Separates factual, procedural, safety, completeness, and style judgments instead of compressing them into one reward. Preference never substitutes for proof or source authority.</td></tr>
+<tr><td>Counterfactual and metamorphic analysis</td><td>Changes one constraint, precondition, argument, observation, outcome, ordering, or name and predicts which node output should change. Meaning-changing contrasts expose attractive but unsound clusters.</td></tr>
+<tr><td>Cross-source recurrence</td><td>Requires the same typed responsibility to recur across independently collected and licensed sources. Another split of the same inherited dataset is not independent transfer.</td></tr>
+</tbody></table></div>
+
+<h2>What a graph hypothesis must say</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Hypothesis</th><th>Required engineering contract</th></tr></thead>
+<tbody>
+<tr><td>Processing node</td><td>A stable typed responsibility, input and output envelopes, authority, side effects, failure vocabulary, rollback, resource dimensions, and evidence that an existing node cannot own it coherently.</td></tr>
+<tr><td>Coordination node</td><td>A stable processing responsibility that preallocates finite work to alternative strategies and compares typed candidates. It must explain why the existing coordinators cannot own the comparison and gains no gate, proof, answer, or promotion authority from votes.</td></tr>
+<tr><td>Authority gate</td><td>The invariant, authoritative evidence, accept/reject/gap outcomes, and exact point before an answer-authorizing or irreversible effect. It never participates in confidence voting.</td></tr>
+<tr><td>Strategy</td><td>An alternative implementation of an existing selectable node, with preconditions, confidence kind, witness, abstention, failure, finite work, and correlation group.</td></tr>
+<tr><td>Edge</td><td>A typed normal or exceptional transition carrying data, authority, rollback, control, or resource state. The producer and consumer must agree on one named envelope.</td></tr>
+<tr><td>Protocol field</td><td>A named datum with one producer, validated meaning, consumers, privacy, lifecycle, and an explicit meaning when absent.</td></tr>
+<tr><td>Nested circuit</td><td>A stable inspectable subgraph behind one named packet boundary. It cannot hide an executor, merge authority planes, or bypass the node and gate contracts inside it.</td></tr>
+</tbody></table></div>
+<p>Placement follows data dependencies and authority. A proposal identifies the earliest point where its inputs exist and the latest point before the effect it controls. A source-specific rename, hidden solver, decorative wrapper, or mixture of interpretation, retrieval, proof, and presentation is rejected before implementation.</p>
+
+<h2>Thirteen promotion stages</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Stage group</th><th>Required evidence</th></tr></thead>
+<tbody>
+<tr><td>1–3 · source</td><td>Freeze revision, component rights, access, citation, and split visibility; run a deterministic stratified probe; audit privacy, projection loss, inertness, and exact source accounting.</td></tr>
+<tr><td>4–6 · hypothesis</td><td>Freeze the baseline graph and execution receipts; run several independent discovery techniques; map each candidate to one node, gate, strategy, edge, or protocol-field type and precise graph placement.</td></tr>
+<tr><td>7–9 · implementation</td><td>Review input, output, authority, failure, rollback, and resources; build the smallest deterministic non-default implementation; add renamed, nonce, metamorphic, meaning-changing, safety, and budget controls.</td></tr>
+<tr><td>10–12 · falsification</td><td>Run feature and technique ablations, earliest-failure comparison, protected cross-source transfer, security, core-change, provenance, witness, resource, and documentation audits.</td></tr>
+<tr><td>13 · decision</td><td>Explicitly promote, reject, or retain the candidate as experimental. Promotion pins exact descriptor, implementation, policy, arbiter, evidence receipt, compatibility boundary, and retirement conditions.</td></tr>
+</tbody></table></div>
+
+<h2>Reviewed candidate portfolio</h2>
+<p>The following access and license review was checked against official upstream pages on 12 August 2026. The first rows distinguish pilot-analyzed evidence from a large source that is acquired and projected; they do not infer a current analysis from cache or shard presence. Every other row is a reviewed portfolio boundary, not an acquisition, projection, implementation, or benchmark claim.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Portfolio state</th><th>Sources and exact use boundary</th></tr></thead>
+<tbody>
+<tr><td>Small sources pilot-analyzed</td><td><a href="https://huggingface.co/datasets/nvidia/HelpSteer2">HelpSteer2</a> train: pinned CC BY 4.0 English ratings and disagreements. <a href="https://github.com/openai/grade-school-math">GSM8K</a> <code>train_socratic</code>: pinned upstream MIT training rows. Their two-source pilot is complete over 17,634 projected episodes. The same projections participate in the bounded three-source analysis; validation and test remain outside discovery.</td></tr>
+<tr><td>Large source acquired and projected</td><td><a href="https://huggingface.co/datasets/OpenAssistant/oasst1">OASST1</a>: pinned Apache-2.0 ready conversation trees. Complete source inventory separates 9,846 training trees from 518 validation trees. The reviewed English, non-synthetic, non-deleted, zero-PII training projection materializes 2,220 trees in 16 deterministic shards; validation admits zero episodes. Source-local analysis and consolidation become current only when plan-v1, preflight/readiness, analysis-v5, human review, and cycle-v3 all validate against that membership.</td></tr>
+<tr><td>Reviewed, not acquired</td><td><a href="https://github.com/allenai/natural-instructions">Super-NaturalInstructions</a> task definitions and metadata only: repository-level Apache-2.0, with instance rows excluded until every component license is reviewed and a separate source gate approves acquisition.</td></tr>
+<tr><td>Next candidates</td><td><a href="https://github.com/openai/prm800k">PRM800K</a>: MIT declaration, but embedded MATH lineage must be frozen separately. <a href="https://github.com/openai/summarize-from-feedback">Summarize from Feedback</a>: modified MIT feedback artifact only; upstream Reddit and CNN/DailyMail content excluded. <a href="https://github.com/OSU-NLP-Group/Mind2Web">Mind2Web</a>: CC BY 4.0 training task/action metadata only; web snapshots and third-party content need separate authority. A pinned <a href="https://github.com/sierra-research/tau2-bench">tau2-bench</a> revision: MIT train/development metadata only, with no environment or action execution.</td></tr>
+<tr><td>Protected evaluation</td><td><a href="https://github.com/StonyBrookNLP/appworld">AppWorld</a> protected encrypted material remains evaluation-only under its exact license and contamination terms. <a href="https://huggingface.co/datasets/gaia-benchmark/GAIA">GAIA</a> is access-gated and restricts crawlable resharing; validation and test material remain protected evaluation evidence.</td></tr>
+<tr><td>Rights review</td><td>LMSYS conversation releases, WebGPT, and SHP remain outside acquisition and analysis until component licensing, embedded-content rights, privacy, split use, and redistribution boundaries are resolved.</td></tr>
+</tbody></table></div>
+
+<h2>Budgets, contamination, and falsification</h2>
+<p>Research budgets independently bound source and decompressed bytes, files, rows, tokens, fields, graph nodes and edges, comparisons, clusters, motif size, hypotheses, agent packets, elapsed work, and retained cache bytes. Preallocation gives independent methods a fair opportunity. Resource exhaustion emits an incomplete frontier, never a false absence.</p>
+<p>Grouped splits isolate source lineage, task family, template, document, website, action graph, answer structure, and inherited upstream component. Renaming, argument permutation, irrelevant evidence, safe reordering, meaning-preserving transformation, and meaning-changing contrast test whether a proposal is generic. A hypothesis is falsified when its gain disappears after identifier removal, depends on one vocabulary or source order, duplicates an existing responsibility, weakens a gate, exceeds finite work, or fails independent transfer.</p>
+<p>Every analysis receipt records source and projection digests, rights and visibility, method identities, correlation groups, feature schema, budgets, cluster support and opposition, omissions, graph placement, contamination checks, ablation, protected-pool state, and reviewer decision. Protected rows are never copied into public receipts.</p>
+
+<h2>A multi-year path to broader symbolic task handling</h2>
+<p>The current foundation has built the registry, inert episode schema, feature boundary, deterministic discovery ensemble, exact analysis lineage, one complete two-source pilot chain, a sharded train-only OASST1 projection, and approved source-local and combined plans. The next acceptance gate is a current plan-v1 → analysis-v5 → human review → cycle-v3 chain for each scale scope, followed by ablation and independent protected transfer for any retained candidate. The task-structure phase compares frame, sequence, graph, change-point, earliest-error, disagreement, metamorphic, and cross-source methods. The processing-graph phase may implement a small number of non-default candidates only after those gates, then must prove their value with ablation and transfer. Later phases study long multi-obligation requests, stateful interaction, capability planning, verification, repair, and claim-shaped construction.</p>
+<p>The target is increasingly broad task handling associated with language-model systems while retaining deterministic replay, typed inability, provenance, finite resources, and non-voting authority gates. Progress is reported per layer and per promoted capability. It is never summarized as a percentage of general intelligence.</p>
+
+<p>Read <a href="architecture/logical-processing-architecture.html">Logical processing architecture</a> for the graph vocabulary, <a href="architecture/strategy-architecture.html">Processing-node strategies</a> for selection and coordination, <a href="research/research-horizons.html">Research horizons</a> for adjacent programs, <a href="specsLoader.html?spec=DS028-dataset-guided-processing-graph-discovery-research.md">DS028</a> for the complete research authority contract, and <a href="specsLoader.html?spec=DS029-hierarchical-processing-circuits-and-packet-contracts.md">DS029</a> for the exact catalog hierarchy and packet contract.</p>
+</main>
+<div data-include="partials/footer.html"></div>
+</body>
+</html>

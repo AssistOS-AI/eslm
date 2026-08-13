@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en"><head>
+  <base href="../"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Symbolic document KBs — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head>
+<body><div data-include="partials/header.html"></div><main><p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / System / Symbolic document KBs</p>
+<h1>Compiling books, manuals, and technical documentation into reasoning knowledge</h1>
+<p class="lead">A document KB preserves the frozen edition and its addressable structure, then represents definitions, claims, rules, events, procedures, quantities, exceptions, and time as typed records. Retrieval selects symbolic evidence; registered methods derive an answer and cite every contributing source span. The acceptance target is symbolic retrieval-augmented reasoning with replayable derivations, distinct from passage retrieval followed by free-form generation.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  D[Frozen edition and spans] --> K[Canonical document KB]
+  K --> I[Exact indexes and shards]
+  Q[Typed question] --> P[Proof-directed retrieval]
+  I --> P
+  P --> A[Derivation and citations]</pre><figcaption>Document evidence becomes cited reasoning.</figcaption></figure><p class="diagram-explanation">The original edition remains the evidential authority. Compiled records and indexes are reproducible views. A query expands through rule and relation dependencies and returns a proof whose leaves resolve to exact document spans.</p>
+
+<h2>Implementation status</h2>
+<p>The repository implements the canonical record validator, generic small-package compiler, several query-directed public providers, exact source provenance, proof-bearing methods, and bounded caches. The next document-ingestion gate adds general PDF, EPUB, HTML-book, and manual compilers. The data shapes and algorithms below are the DS014 target, grounded in the mechanisms that already exist and the explicit acceptance work named here.</p>
+<p>DS027 divides that ingestion gate into a separate compiler-side processing graph: source decode, structural segmentation, knowledge extraction, identity resolution, canonical standardization, record validation, and physical package compilation. A manual, ontology, lexical resource, event graph, or table can use a reviewed source-specific strategy without acquiring a private runtime. Extraction confidence prioritizes candidate review; frozen-span provenance, canonical validation, contradiction checks, and explicit promotion retain authority. Current trusted source tools, validators, packages, and repository skills are the working foundation; the common compiler coordinator remains an integration gate. The complete implemented-versus-target map is in <a href="architecture/strategy-architecture.html">Processing-node strategies</a>.</p>
+
+<h2>Source and structural address space</h2>
+<p>The source manifest freezes title, author or publisher, edition, language, acquisition record, license, bytes, digest, media type, and decoder version. Decoding produces a hierarchy rather than anonymous chunks:</p>
+<pre><code>source:manual-v3
+  chapter:4
+    section:4.2
+      paragraph:3  bytes 4120..4398
+      warning:4    bytes 4399..4510
+      table:2
+        row:7 / column:limit
+    section:4.3 supersedes section:4.2 for revision >= 3</code></pre>
+<p>Each span has a stable structural address, byte or character interval in the decoded edition, normalized-content digest, parent, order, and source-layout type. Lists retain item boundaries; tables retain row and column headers; definitions retain heading scope; warnings retain the procedure or section they govern; quotations identify speaker and quoted source. Overlapping extraction windows may help an agent, but they never replace the canonical span address.</p>
+
+<h2>Records produced from a technical sentence</h2>
+<p>Consider: “During maintenance mode, Valve V7 must remain closed while the coolant pump is disabled.” A correct extraction cannot flatten this into one timeless Boolean. It creates or reuses the valve, pump, maintenance-mode, closed-state, and disabled-state terms; creates a context or condition for maintenance mode; records the modal requirement; and links the two state conditions through a rule or constraint whose provenance points to the sentence.</p>
+<pre><code>{
+  "recordType": "rule",
+  "recordId": "rule:manual-v3:maintenance-v7",
+  "kbNamespace": "manual.v3",
+  "schemaVersion": "1",
+  "semantics": "constraint",
+  "variables": [],
+  "when": [
+    {"predicate": "term:manual:Mode", "arguments": ["term:manual:maintenance"]},
+    {"predicate": "term:manual:PumpState", "arguments": ["term:manual:coolant-pump", "term:state:disabled"]}
+  ],
+  "then": [
+    {"predicate": "term:manual:RequiredState", "arguments": ["term:manual:valve-v7", "term:state:closed"]}
+  ],
+  "contextRef": "context:manual-v3:requirements",
+  "provenanceRefs": ["prov:manual-v3:4.2:p3"]
+}</code></pre>
+<p>The exact final schema may use an event or constraint record depending on the reviewed semantics. What matters is that modality, condition, argument identity, context, and source address remain explicit. The parser may not convert <em>must</em> into an observed state or treat an example as a universal requirement.</p>
+
+<h2>Definitions, procedures, and code</h2>
+<p>A definition connects a source term or abbreviation to a typed concept in a scope. Later uses resolve through that lexical and structural scope, while ambiguous senses remain alternatives. A procedure is represented as ordered or partially ordered steps, each with preconditions, action event, effects, failure conditions, recovery, and provenance. A cross-reference such as “repeat step 4” points to the stable step identity.</p>
+<p>Code blocks, shell commands, formulas, and examples remain inert source data. A formula may be parsed into a supported declarative AST after validation; a code sample is never executed during ingestion or runtime. Instructions inside a document do not become agent instructions.</p>
+
+<h2>Identity and coreference</h2>
+<p>String equality is insufficient. “controller,” “main controller,” and “MCU-1” may denote one device in a section, while the same words may denote a class or a replacement device elsewhere. The compiler proposes links from definition scope, aliases, type compatibility, document hierarchy, discourse recency, and explicit cross-reference. A reviewed global equivalence creates an alignment record. Otherwise mentions retain source-local identities and alternative links.</p>
+<p>Pronouns and omitted arguments are stored as candidate reference sets with evidence. A query may branch across candidates. If branches yield different answers and no rule selects one, the result is <code>AMBIGUOUS</code>. The compiler cannot silently merge identities merely to make a benchmark question answerable.</p>
+
+<h2>Three temporal axes</h2>
+<p>Event time states when an event occurred. Valid time states when a rule or state applies. Transaction or source time states when the document edition published the claim. These axes support questions such as “what requirement applied before revision 3?” without rewriting history.</p>
+<pre><code>eventTime:       maintenance window 2026-08-10 02:00..04:00
+validTime:       procedure revision valid 2026-07-01..2026-09-30
+transactionTime: manual v3 published 2026-06-15</code></pre>
+<p>Events connect stable participants through roles and create or terminate state intervals. Supersession records relate editions and clauses. The planned temporal index supports interval starts and ends, qualitative relations, edition precedence, and partially ordered events. The current core supports only discrete predecessor history, so interval questions must initially return a capability gap. Allen's <a href="https://doi.org/10.1145/182.358434">interval-relation framework</a> is the formal reference for the planned qualitative layer.</p>
+
+<h2>Exact indexes for document reasoning</h2>
+<p>The physical package needs lexical surface-to-term postings, source mention postings, predicate and argument indexes, relation adjacency, rule-head and body dependencies, event participant and role indexes, temporal interval indexes, procedure-step indexes, hierarchy descendants and ancestors, and provenance record-to-span and span-to-record mappings. Each posting names canonical IDs and remains version-qualified.</p>
+<p>Document hierarchy is not only a citation aid. A section heading can scope a definition, a warning can govern later steps, a table header can supply an omitted argument, and a revision note can supersede an earlier rule. Structural relations are therefore queryable evidence.</p>
+
+<h2>Proof-directed retrieval algorithm</h2>
+<ol>
+<li>The frontend builds a task frame with concept candidates, requested predicate, bound arguments, output type, context, and temporal constraints.</li>
+<li>The catalog resolves exact term and predicate directories and loads only candidate lexical and assertion blocks.</li>
+<li>Backward rule-dependency lookup finds rules whose heads can satisfy the goal. Each rule body becomes a typed subgoal.</li>
+<li>Relation, event, temporal, or procedure methods request adjacency or interval blocks for their current frontier.</li>
+<li>The reasoner executes the registered method and emits a proof, transition trace, relation path, preferred-model witness, or guarded hypothesis.</li>
+<li>Unresolved subgoals trigger another exact routing expansion. A budget stop returns the frontier as <code>RESOURCE_LIMIT</code>.</li>
+<li>Every proof leaf resolves through provenance to the frozen edition and exact span. The realizer distinguishes quotation from generated explanation.</li>
+</ol>
+<p>This is symbolic RAG because retrieval augments a reasoning process with external knowledge. Lewis et al.'s <a href="https://arxiv.org/abs/2005.11401">Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</a> is the standard neural RAG reference. ESLM differs in what retrieval returns and who produces the answer: typed records feed deterministic methods, not a sequence generator. Approximate similarity may rank recall candidates, but exact indexes and exhaustive widening preserve no-false-negative reasoning claims.</p>
+
+<h2>A multi-section derivation</h2>
+<p>Suppose section 2 defines valve V7 as part of coolant loop L1. Section 4 states that L1 is isolated during maintenance mode. Section 7 requires active coolant flow before calibration procedure C can start. The answer “C cannot start during maintenance mode” does not need to occur verbatim. A proof can join <code>PartOf(V7,L1)</code>, <code>Isolated(L1,maintenance)</code>, and <code>Requires(C,ActiveFlow(L1))</code> with an explicit incompatibility rule. The result cites all three spans and the rule source. If the incompatibility rule is absent, the system returns a missing relation rather than inventing engineering knowledge from lexical proximity.</p>
+
+<h2>Strict, defeasible, and plausible answers</h2>
+<p>A strict answer has a valid rule proof. A default answer names the preferred-model policy and exceptions. An abductive answer names the hypothesized premises and alternatives. A ranked plausible answer exposes signed support, conflict, and margin. “Plausible” never means merely fluent or similar to a retrieved paragraph.</p>
+
+<h2>Build and acceptance pipeline</h2>
+<p>The future host freezes the source, decodes spans, prepares a train-visible packet, computes the current parser and reasoning diagnostics, and may run the isolated Document-to-KB Builder. Candidate output remains untrusted. The host validates schema, references, rule safety, temporal fields, source alignment, and contradictions; compiles streaming shards; validates package hashes; compares canonical and compiled queries; compares eager and lazy execution; and tests held-out questions not exposed to extraction.</p>
+<p>Coverage reports decoded spans, attempted spans, accepted records, unresolved spans, invalid candidates, identity ambiguities, temporal gaps, and provenance coverage. Extraction count is not factual accuracy. A general document-KB claim requires a complete small distributable demonstration with definitions, procedures, revisions, cross-section questions, proofs, and citations.</p>
+
+<p>The normative contract is <a href="specsLoader.html?spec=DS014-symbolic-document-knowledge-bases-and-reasoning-retrieval.md">DS014</a>; storage and scale requirements are in <a href="knowledge/kb-storage-and-indexing.html">KB storage and indexing</a> and DS018–DS021.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

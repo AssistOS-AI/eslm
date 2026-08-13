@@ -1,0 +1,72 @@
+{
+  "format": "eslm-processing-graph-large-source-readiness-gate-v1",
+  "readiness": {
+    "format": "eslm-rl-large-source-readiness-v1",
+    "sourceRevision": "oasst1@fdf72ae0827c1cda404aff25b6603abec9e3399b",
+    "componentId": "ready-conversation-trees",
+    "projectionId": "oasst1-ready-english-structural-trees-v1",
+    "sourceManifestDigest": "sha256:2e895bb69716113d6f3434c59ed12a1e95d284b326ad2933a3b66a7750a059a4",
+    "pilotProjectionDigest": "sha256:ffb914e544f774123d323db4921031963c316f4fb7689696c5f94784291580b5",
+    "discoveryPlanArtifactDigest": "sha256:144717440b21fbacfd0dfed4aa23eb7c6c1007b4fe8f9c35826d25c6c3b3f756",
+    "discoveryPlanContentDigest": "sha256:fc24c739f5c057dd2c7b40847d1588e423a501945b9bb7c29927a9a83a4fb4cb",
+    "sourceAdmissionReceiptDigest": "sha256:f8ad180f1ff199a53bced63dede83cf5dcd5dd66bd36d23ffd087ebdf391f3ad",
+    "pilot": {
+      "rowsAvailable": 2220,
+      "rowsVisited": 2220,
+      "strataAvailable": 16,
+      "strataVisited": 16,
+      "projectionLossRate": 0.774528,
+      "complete": true
+    },
+    "streaming": {
+      "deterministicReplay": true,
+      "shardEquivalence": true,
+      "inputStreamResumeTested": true,
+      "peakBytes": 384512000,
+      "maximumPeakBytes": 536870912
+    },
+    "rights": {
+      "state": "approved",
+      "removalPlanTested": true
+    },
+    "contamination": {
+      "lineageFrozen": true,
+      "protectedIsolationVerified": true,
+      "knownOverlaps": []
+    },
+    "scalePlan": {
+      "stage": "large-corpus",
+      "shards": 16,
+      "maximumRows": 9846,
+      "maximumBytes": 34145252,
+      "maximumPeakBytes": 536870912,
+      "checkpointEveryShards": 4,
+      "stopConditions": [
+        "identity-or-membership-drift",
+        "peak-memory-budget-exceeded",
+        "projection-loss-drift",
+        "rights-or-contamination-gate-closes"
+      ]
+    },
+    "decision": "admit",
+    "preflightReceiptDigest": "sha256:3cbc89921d18327f43a0397fa7435ecf5de8f09e074ce2954810867edffaa056"
+  },
+  "bindings": {
+    "sourceManifestDigest": "sha256:2e895bb69716113d6f3434c59ed12a1e95d284b326ad2933a3b66a7750a059a4",
+    "discoveryPlanArtifactDigest": "sha256:144717440b21fbacfd0dfed4aa23eb7c6c1007b4fe8f9c35826d25c6c3b3f756",
+    "discoveryPlanContentDigest": "sha256:fc24c739f5c057dd2c7b40847d1588e423a501945b9bb7c29927a9a83a4fb4cb",
+    "sourceAdmissionReceiptDigest": "sha256:f8ad180f1ff199a53bced63dede83cf5dcd5dd66bd36d23ffd087ebdf391f3ad",
+    "preflightReceiptDigest": "sha256:3cbc89921d18327f43a0397fa7435ecf5de8f09e074ce2954810867edffaa056",
+    "baselineGraphDigest": "sha256:5534952eb6b2ab83d5c8ae3d0e15eda4dd69745a75f0e2abbea81f9ff5bf0348"
+  },
+  "decision": "admit",
+  "failures": [],
+  "authority": {
+    "executionAdmission": "exact-frozen-projection-only",
+    "answer": "none",
+    "runtime": "none",
+    "proof": "none",
+    "promotion": "none"
+  },
+  "receiptDigest": "sha256:633cc69d955fcd1da4c6d4c75bc1165f1917cdae7cd6137fe362b19071a3add3"
+}

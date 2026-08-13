@@ -20,6 +20,16 @@ Documentation is part of the executable research contract, but different artifac
 
 No layer may summarize away assumptions, algorithms, representations, invariants, failure states, measurement regimes, or falsification criteria. Repetition is justified only when a different viewpoint helps a reviewer; copied normative clauses instead reference their owning DS.
 
+Published human-facing HTML uses a shallow topical layout. `docs/index.html` is the home page;
+`docs/evaluation.html`, `docs/status.html`, and `docs/specsLoader.html` are stable operational entry points;
+`docs/development/` contains the three generated-evidence status views; and `docs/results/` contains generated
+artifacts. Substantive chapters live one level below the root in `architecture/`, `language/`, `knowledge/`,
+`reasoning/`, `research/`, `operations/`, `reference/`, and `benchmarks/`. A topical page declares
+`<base href="../">`, so shared navigation, assets, the specification loader, result artifacts, and canonical links
+all resolve from the documentation root. Repository-authored links target the topical canonical URL. The root may
+retain only a small, explicitly marked compatibility redirect for a previously established section landing URL;
+redirect stubs are not navigation targets, chapters, or alternate documentation authorities.
+
 ### Orthogonal DS ownership
 
 The stable responsibility map is:
@@ -32,13 +42,15 @@ The stable responsibility map is:
 | DS007–DS008 | operator interfaces, sessions, task planning, traces, and results |
 | DS009–DS010 | trust and failure semantics, then measurement and comparison |
 | DS011–DS012 | roadmap acceptance, documentation, generated status, and repository operations |
-| DS013–DS014 | external Language Agent normalization and document-derived symbolic KBs |
+| DS013–DS014 | external Language Agent proposals and document-derived symbolic KBs |
 | DS015 | registered reasoning method semantics |
 | DS016–DS017 | source authority and benchmark adapter/oracle lifecycle |
 | DS018–DS021 | corpus gate, streaming compilation, exact routing, and cache/memory behavior |
 | DS022 | deterministic language approximation, request-intent planning and construction, grounding focus, and named work policy |
 | DS023–DS026 | statistical symbolic relevance, complex-language decomposition research, multi-obligation verified synthesis, and grounded product evaluation |
 | DS027 | trusted strategy descriptors, static registration, stage coordination, exact selection, arbitration, resources, receipts, and compiler extension boundaries |
+| DS028 | rights-aware dataset-guided discovery of processing-node, gate, strategy, edge, and packet hypotheses |
+| DS029 | exact hierarchical processing circuits, node catalog, typed packet families, guarded topology, and resource vocabulary |
 
 A change updates only the DS files whose primary responsibility changes. A new benchmark normally changes the typed catalog, source receipt, adapter, tests, benchmark HTML page, and generated report, not the generic language, storage, CLI, roadmap, or documentation DS. A new reasoning method changes DS015 and the planner contract only if planner behavior also changes.
 
@@ -54,6 +66,19 @@ change a generic contract.
 ### HTML technical writing
 
 HTML pages are substantial technical chapters. Every behavioral claim is verified against source, tests, schemas, or generated evidence. An algorithm explanation names its input representation, state, transition or inference rule, termination condition, complexity or bound, witness, failure statuses, and known incompleteness. Storage pages show real manifest, record, shard, index, routing, and cache shapes. Benchmark pages explain what the task tests, exactly which cases ran, which scorer was used, and why a result failed.
+
+Architecture documentation separates four views of the same system: logical request and dataflow, named data and
+protocols, execution and resources, and implementation and normative reference. A chapter states which view it owns
+and delegates lower or higher detail to the appropriate page. Stable prose names processing nodes, strategies,
+authority gates, typed envelopes, and receipts before it names modules. A processing node is the architectural
+responsibility; a strategy is one reviewed implementation of a selectable node; only coordination nodes vote over
+typed candidates. Parser, schema, safety, proof, result, and package authority gates are never described as ballots.
+
+Repository paths and source filenames do not substitute for architectural explanations. When they are useful, they
+appear in a dedicated implementation/reference section, an operator command block, a physical package-layout
+section, or another page whose explicit purpose is reference. Main narrative explains the conceptual owner and
+protocol. Product architecture avoids terminology that implies external code discovery; documentation instead uses
+processing node, strategy, trusted adapter, or authority gate according to the actual role.
 
 Academic background links to primary papers, books, standards, and clearly identified secondary references such as Wikipedia. References establish theoretical context; they do not substitute for describing ESLM's actual algorithm or imply equivalence to a broader formalism.
 
@@ -74,10 +99,14 @@ through the ordinary path, and only its receipts establish that fact.
 ### Navigation and page layout
 
 The site uses one shared header navigation and breadcrumbs. The home page is a short “start here” view: project
-identity and actual boundary, a compact evidence warning and link to the current report, and a two-dimensional sitemap.
-`evaluation.html` is the only page that renders the complete public benchmark dashboard. `status.html` shows capability
-and roadmap state, links to the evidence report, and does not embed a second dashboard. Other material receives a
-dedicated page linked from the sitemap and menu.
+identity and actual boundary, one visually dominant three-to-five-node request-processing graph, layered prose naming
+the envelopes exchanged at each boundary, a compact evidence warning and link to the current report, and a
+two-dimensional sitemap. It does not substitute an architecture inventory table for the graph; the graph links to the
+logical-processing architecture where the four engineering planes and exceptional paths are explained.
+`evaluation.html` is the stable development-evidence entry point and links the knowledge-base, benchmark, and RL
+dataset status views. `development/benchmarks.html` is the only page that renders the complete public benchmark
+dashboard. `status.html` shows capability and roadmap state, links to the evidence report, and does not embed a
+second dashboard. Other material receives a dedicated topical page linked from the sitemap and menu.
 
 The shared desktop layout may use a main canvas up to approximately 96 rem. Ordinary prose and headings use the
 available content width rather than an arbitrary inner-column or character-count limit. Prose remains left-aligned;
@@ -100,7 +129,10 @@ larger labels for acceptance-critical nodes. The shared visual grammar uses thre
 trusted process, and result or acceptance outcome—plus at most one exceptional/gap style when a diagram needs it. A
 short centered caption names the relationship shown; explanatory detail follows in ordinary left-aligned paragraphs,
 not in a long centered caption. That prose explains every node, edge, trust boundary, exceptional path, and limit.
-Dense graphs are split into several focused diagrams or replaced with prose and tables.
+Dense graphs are split into several focused diagrams or replaced with prose and tables. The home-page graph is an
+orientation device rather than a complete inventory: its explanation names the request, Semantic IR and task frame,
+evidence frontier and method result, witness, and runtime-result envelopes, then delegates protocol details to the
+logical-processing architecture.
 
 ### Generated status and empirical values
 
@@ -124,20 +156,59 @@ failures. Documentation may state the stable default denominator and generator c
 rates, oracle-level distributions, route distributions, confidence distributions, and cluster sizes come from the
 generated report. No page may add the two suites into one accuracy or present the generated internal regime as public,
 fresh, or official evidence. The generated top-level pass rate must be called a mixed development-contract rate
-because the report deliberately contains six oracle levels. Their separate aggregates distinguish answer execution,
-candidate selection, query-local decomposition, request execution, proposal-only preservation, and safety abstention.
+because the report deliberately contains eight oracle levels. Their separate aggregates distinguish answer execution,
+semantic-query execution, candidate selection, query-local decomposition, request execution, request planning,
+proposal-only preservation, and safety abstention.
 Candidate selection must not be described as complete relational Semantic IR coverage. It binds the winning candidate
 to its required family, accepted parse-only reparse, query-local interpreted episode, route, and status, but its rows
 can still terminate `UNKNOWN` with `missingEntity` without a complete relation-shaped query.
 Proposal-only or operator-preservation success with final `UNPARSED` must never be described as executable
 interpretation coverage.
 
+All published internal result families use the DS010 content-addressed behavior identity. Authored evaluation and
+benchmark JSON use their closed v3 report formats and the shared v2 internal-regression protocol. The fixed generated
+report retains the identity in its execution envelope; the multi-seed JSON retains it in both its shared identity and
+every validated run. `docs:check` requires all four JSON receipts, validates their versioned schemas, and compares the
+complete identity—including content digest, source scope, file count, and execution runtime—with the current `src`
+plus `package.json` checkpoint. Agreement between stored receipts is not enough: each must match the current
+checkpoint independently.
+
+Generated HTML is a deterministic view, not a second editable claim source. Documentation validation renders the
+authored and fixed generated pages again from their validated JSON and requires byte-for-byte equality with the
+published HTML. The multi-seed audit remains JSON-only and is linked from the technical evaluation pages. Missing,
+malformed, stale, or mismatched artifacts fail the release gate; `docs:check` never repairs them or executes a costly
+benchmark implicitly.
+
 The generated receipt also owns its exact diversity fields. The current checkpoint has 1,200 unique surfaces, 28
-observed target families, six oracle levels, and 593 observed cells out of the 774 possible declared
+observed target families, eight oracle levels, and 593 observed cells out of the 774 possible declared
 technique-by-domain pairs. Documentation may quote those values only with the same checkpoint and must still explain
 that unique surfaces are not independent constructions and that domain is coupled to predicate.
 
 Roadmap coverage uses `docs/results/current-status.json` with named capability bands, evidence, and boundaries. It remains separate from benchmark accuracy. A check beside a benchmark means the declared probe executed; it does not mean the complete official benchmark is solved.
+
+Processing-graph research documentation preserves four protocol layers in order: approved
+`eslm-rl-dataset-discovery-plan-v1`, machine `eslm-processing-graph-research-analysis-v5`, explicit
+`eslm-processing-graph-consolidation-review-v1`, and sealed `eslm-rl-dataset-discovery-cycle-v3`. A page must not
+call the plan an execution, the analysis a human decision, the review an authority grant, or the cycle a promotion.
+The plan may admit only reviewed training projections to analysis; the cycle has research-consolidation scope only.
+Every layer explicitly denies answer, runtime, proof, and promotion authority.
+Cycle-v3 pages and receipts reproduce each analysis split rather than publishing only an aggregate: declared rows stay
+visible, while availability, visitation, selection, and analysis remain zero for every development-visible or
+protected split.
+
+Research pages distinguish source lifecycle and evidence currentness. `reviewed` means rights and metadata were
+examined; `acquired` means the authorized immutable source payload was obtained and reconciled; `cached` means those
+exact bytes are locally present under the declared retention policy; `projected` means a validated training-visible
+structural projection exists; `analyzed` means one named receipt visited a declared frontier; and `consolidated` means
+a cycle accounts for machine hypotheses. `current` additionally means the source, projection, plan, scientific implementation, baseline
+graph, analysis, review, and cycle identities satisfy live governance. `historical` preserves what an older frozen run
+measured, while `superseded`, `blocked`, and `withdrawn` explain why that run cannot support a current claim. None of
+these states means implemented, coordinated, selected, executed by the runtime, or promoted.
+
+Stable HTML may state frozen source/projection membership and a validated catalog identity. Mutable analysis work,
+events, votes, hypothesis totals, omissions, peak memory, receipt digests, and source-local or combined completion
+come from the validated research artifacts and status projection. Until a current artifact chain is published, HTML
+describes the required gate and links the generated status rather than copying a historical result as current.
 
 ### Repository-owned skills
 
@@ -153,11 +224,14 @@ source-KB checks, scale profiling, spec-matrix generation, documentation validat
 `npm run check`. Commands that acquire network data remain explicit and are never hidden inside inference or
 verification.
 
-Documentation verification checks required pages, shared navigation, local links, assets, diagram constraints when a
+Documentation verification recursively checks required root entries and topical pages, shared navigation, local links
+resolved through each page's declared HTML base, assets, compatibility-redirect targets, diagram constraints when a
 diagram is actually used, DS structure, contiguous numbering, and specs-loader targets. A page is not required to add
 a decorative diagram. Behavioral tests check generated report schemas, report-owned diagnoses, receipt currentness,
 that every registered reasoning method is documented, and that the generated heuristic report keeps its fixed
-denominator, non-comparable evidence label, identity envelope, aggregate dimensions, and bounded failure sample.
+denominator, non-comparable evidence label, identity envelope, aggregate dimensions, and bounded failure sample. They
+also check the authored report protocols, the shared behavior-identity validator, the required multi-seed receipt, and
+deterministic JSON-to-HTML correspondence.
 
 ### Synchronization rule
 
@@ -176,8 +250,8 @@ Response: It is useful when it answers a different reviewer question, such as al
 ### Question #3: Why is the full benchmark dashboard rendered on only one page?
 
 Response: A single generated view prevents three pages from competing as the empirical authority and reduces visual
-noise. Home and status still link to the same raw report, while evaluation explains its fields and limitations in the
-appropriate context.
+noise. Home and status still link to the same raw report, while the evaluation entry point delegates complete row-level
+rendering to `development/benchmarks.html`, where its fields and limitations are explained in the appropriate context.
 
 ### Question #4: Why must strategy implementation states remain visible in prose?
 
@@ -198,6 +272,37 @@ silently elevate a lower-authority contract into complete interpretation coverag
 Response: A stable identity-to-details relation remains readable across desktop and mobile without hiding fields or
 requiring horizontal scanning. Explicit labels inside the details cell preserve the distinctions formerly expressed
 by additional columns, while the responsive card form can present the same complete content on a narrow viewport.
+
+### Question #7: Why separate architectural planes and move code paths into implementation maps?
+
+Response: A source filename identifies current ownership but does not explain the operation, data contract, authority,
+or failure semantics. Mixing those levels forces readers to reverse-engineer the design from paths and makes ordinary
+refactoring look like an architecture change. Separate planes give engineers stable abstractions first while retaining
+exact implementation evidence in the reference view. CLI commands and physical package layouts remain explicit where
+their paths are themselves part of the operator contract.
+
+### Question #8: Why does the documentation check validate execution artifacts instead of trusting their filenames?
+
+Response: A `latest-*` filename is an operator convention, not evidence. Closed report schemas, independently
+recomputed arithmetic, content-addressed behavior identity, and deterministic rendering establish that the artifact
+actually represents the current implementation and that its browser view has not diverged. The check fails with a
+regeneration instruction instead of silently rewriting evidence during documentation validation.
+
+### Question #9: Why must graph-research pages name plan, analysis, review, and cycle separately?
+
+Response: Each artifact answers a different review question at a different time. The plan proves what was authorized
+before results were visible; analysis v5 proves what deterministic machine work occurred; the human review records how
+machine hypotheses were interpreted against DS028 and DS029; and cycle v3 proves that the reviewed mapping is closed
+and complete. Collapsing them would let observed success retroactively justify admission, let machine output impersonate
+a maintainer decision, or make research consolidation look like runtime promotion.
+
+### Question #10: Why are human-facing chapters grouped into shallow topical folders?
+
+Response: The root contains only stable operational entry points plus a bounded compatibility surface, so a reader can
+distinguish navigation hubs from technical chapters at a glance. One-level folders make ownership explicit without a
+deep URL hierarchy, while the common root-relative base preserves shared assets and navigation. Canonical repository
+links move immediately; the eight marked root redirects preserve only established external landing URLs and cannot
+become a second editable copy of any chapter.
 
 ## Conclusion
 

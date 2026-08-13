@@ -1,6 +1,6 @@
 # ESLM Open Issues and Strategy-Architecture Worklist
 
-This file is the live implementation worklist for the strategy-plugin refactor requested on 2026-08-12. It is not a
+This file is the live implementation worklist for the processing-node strategy refactor requested on 2026-08-12. It is not a
 design authority: normative behavior belongs in `docs/specs/`, and measured evidence belongs in generated reports.
 Items are closed only after code, tests, specifications, HTML documentation, and relevant execution evidence agree.
 
@@ -8,7 +8,7 @@ The checked items describe the stabilized 2026-08-12 architecture checkpoint. Un
 integration or research phases, not hidden release claims. In particular, language approximation is the first stage
 whose alternatives all cross the common registry/coordinator boundary; several other stages already have exact
 selection gates inside their bounded owner modules, while compiler strategies and the complete cross-stage ledger
-remain explicit work rather than simulated plugins.
+remain explicit work rather than catalog-only processing placeholders.
 
 ## P0 — architecture and semantic integrity
 
@@ -16,8 +16,10 @@ remain explicit work rather than simulated plugins.
   preconditions, deterministic identity, confidence semantics, exact work budgets, and bounded receipts.
 - [x] Implement a static trusted strategy registry. Runtime configuration may select registered strategy IDs, but KB
   or corpus data must never supply executable paths, dynamic imports, or code.
-- [x] Implement a meta-rational coordinator that allocates finite work, runs eligible strategies in canonical order,
-  records declined/inapplicable/exhausted strategies, and combines votes without converting confidence into truth.
+- [x] Implement a meta-rational coordinator that allocates finite work, launches funded asynchronous strategies
+  concurrently from a canonical schedule, preserves completion-independent canonical receipts, keeps the deployed
+  synchronous path sequential, records declined/inapplicable/exhausted strategies, and combines votes without
+  converting confidence into truth.
 - [x] Separate three outcomes at every extension point: interpretation proposals, relevance evidence, and answer
   support. A majority vote may rank candidates; only the declared semantic verifier may authorize an answer.
 - [x] Preserve deterministic behavior under strategy-registration order, provider order, KB order, and renamed
@@ -53,8 +55,9 @@ remain explicit work rather than simulated plugins.
   module paths. A configuration profile must be serializable, hashable, and included in result accounting.
 - [x] Provide inventory/status output showing registered, selected, applicable, executed, declined, failed, and
   budget-truncated strategies by stage.
-- [x] Keep the external Language Agent disabled by default and outside the deployable strategy registry. It remains a
-  separately disclosed operator wrapper after deterministic local strategies are exhausted.
+- [x] Keep the external Language Agent outside the deployable strategy registry and disclose the general CLI's
+  assisted default. The deployed/library runtime stays offline, `--no-external-language-agent` selects the fully local
+  CLI profile, and every external translation or simplification remains an untrusted proposal with no answer authority.
 
 ## P1 — research and evaluation
 
@@ -113,8 +116,9 @@ remain explicit work rather than simulated plugins.
 The generator now defines 43 reviewed shapes across 18 domains and 28 target families. Its default receipt records all
 1,200 surfaces as unique and observes 593 of the 774 possible declared technique-by-domain cells. These are combination
 and surface-diversity measures, not 1,200 independent constructions or an independent domain-by-predicate design. It
-explicitly labels six oracle levels—answer execution, candidate selection, query-local decomposition, request
-execution, proposal-only preservation, and safety abstention—and aggregates them separately. It also restores
+explicitly labels eight oracle levels—answer execution, semantic-query execution, candidate selection,
+query-local decomposition, request execution, request planning, proposal-only preservation, and safety abstention—and
+aggregates them separately. It also restores
 deletion, insertion, substitution, and
 transposition spelling processes and adds six named morphology strata. The published report validates with definition
 digest `sha256:909549edb887ba4729ada5c45ed0b15a94775463afc9a243292ee198fdf971b3`, suite digest
@@ -170,7 +174,7 @@ coverage produces no contextual winner. Renamed controls cover the recurring spe
 
 The published post-fix default seed passes all 1,200 declared contracts and has no remaining failure cluster. Its
 interpretation remains narrow: the distribution still has 43 reviewed shapes, 18 domain records coupled to their
-predicates, 28 target-family labels, and six different oracle levels. The report has 224 passing `UNPARSED` outcomes;
+predicates, 28 target-family labels, and eight different oracle levels. The report has 224 passing `UNPARSED` outcomes;
 generator/runtime inspection attributes 112 to proposal-only operator preservation and 112 to safety abstention. The
 proposal-only rows are not executable interpretations. The green fixed distribution therefore demonstrates that the
 specific repeated baseline clusters are closed under these project-owned contracts; it does not establish general

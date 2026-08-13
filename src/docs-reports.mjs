@@ -1,13 +1,36 @@
 import { access, lstat, readFile, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
-import { benchmarkBehaviorIdentity } from './evaluation/benchmark-execution-identity.mjs';
+import {
+  assertMatchingBenchmarkBehaviorIdentity,
+  benchmarkBehaviorIdentity,
+} from './evaluation/benchmark-execution-identity.mjs';
 import { auditFreshBenchmarkReceipts } from './evaluation/benchmark-receipt-audit.mjs';
 import { validatePublicBenchmarkRows } from './evaluation/benchmark-report-contract.mjs';
 import { assertGeneratedHeuristicBenchmarkReport } from './evaluation/generated-heuristic-benchmark-contract.mjs';
 import { renderGeneratedHeuristicBenchmarkHtml } from './evaluation/generated-heuristic-benchmark-html.mjs';
+import { assertGeneratedHeuristicMultiSeedAudit } from './evaluation/generated-heuristic-multi-seed-audit-contract.mjs';
+import {
+  assertInternalAuthoredBenchmarkReport,
+  assertInternalEvaluationReport,
+} from './evaluation/internal-authored-report-contract.mjs';
 import { PROJECT_ROOT } from './paths.mjs';
+import { processingGraphResearchStatus } from './research/processing-graph-research-status.mjs';
 
 const SAFE_SPEC_SOURCE = /^(?:matrix|DS\d{3}-[A-Za-z0-9-]+)\.md$/u;
+
+async function documentationHtmlFiles(directory = join(PROJECT_ROOT, 'docs'), prefix = '') {
+  const files = [];
+  const entries = await readdir(directory, { withFileTypes: true });
+  for (const entry of entries) {
+    const relativePath = prefix ? `${prefix}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      files.push(...await documentationHtmlFiles(join(directory, entry.name), relativePath));
+    } else if (entry.isFile() && entry.name.endsWith('.html')) {
+      files.push(relativePath);
+    }
+  }
+  return files.toSorted();
+}
 
 function escapeHtml(value) {
   return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -131,6 +154,9 @@ export async function validatePublishedSpecificationSources() {
 export async function publishReport(kind) {
   const jsonPath = join(PROJECT_ROOT, 'docs/results', `latest-${kind}.json`);
   const report = JSON.parse(await readFile(jsonPath, 'utf8'));
+  if (kind === 'evaluation') assertInternalEvaluationReport(report);
+  else if (kind === 'benchmark') assertInternalAuthoredBenchmarkReport(report);
+  else throw new TypeError(`Unsupported authored report kind: ${kind}.`);
   const htmlPath = join(PROJECT_ROOT, 'docs/results', `latest-${kind}.html`);
   await writeFile(htmlPath, renderReportHtml(`Latest ${kind} report`, report), 'utf8');
   return htmlPath;
@@ -147,22 +173,47 @@ export async function publishGeneratedHeuristicBenchmark() {
 
 export async function checkDocumentation() {
   const required = [
-    '.nojekyll', 'index.html', 'architecture.html', 'language.html', 'knowledge-bases.html', 'training.html',
-    'evaluation.html', 'cli.html', 'status.html', 'research-program.html', 'reasoning-methods.html',
-    'reasoning-categorical-logic.html',
-    'reasoning-deduction-and-models.html', 'reasoning-defaults-and-abduction.html',
-    'reasoning-state-time-and-relations.html', 'reasoning-narrative-and-compatibility.html',
-    'language-agent.html', 'research-decisions.html', 'specification-architecture.html',
-    'kb-storage-and-indexing.html', 'symbolic-document-kbs.html', 'grounded-failure.html', 'heuristic-language.html',
-    'sources.html', 'specsLoader.html',
-    'benchmark-logicbench.html', 'benchmark-iibench.html', 'benchmark-proofwriter.html',
-    'benchmark-prontoqa.html', 'benchmark-folio.html', 'assets/site.css',
+    '.nojekyll', 'index.html', 'evaluation.html', 'status.html', 'specsLoader.html',
+    'architecture.html', 'language.html', 'knowledge-bases.html', 'reasoning-methods.html',
+    'research-program.html', 'cli.html', 'sources.html', 'training.html',
+    'architecture/architecture.html', 'architecture/logical-processing-architecture.html',
+    'architecture/strategy-architecture.html',
+    'language/language.html', 'language/heuristic-language.html', 'language/language-agent.html',
+    'language/grounded-failure.html',
+    'knowledge/knowledge-bases.html', 'knowledge/kb-storage-and-indexing.html',
+    'knowledge/symbolic-document-kbs.html',
+    'reasoning/reasoning-methods.html', 'reasoning/reasoning-categorical-logic.html',
+    'reasoning/reasoning-deduction-and-models.html', 'reasoning/reasoning-defaults-and-abduction.html',
+    'reasoning/reasoning-state-time-and-relations.html', 'reasoning/reasoning-narrative-and-compatibility.html',
+    'research/research-program.html', 'research/research-horizons.html', 'research/research-decisions.html',
+    'research/processing-graph-research.html',
+    'operations/cli.html', 'operations/training.html', 'operations/metamorphic-testing.html',
+    'operations/exceptions-issues.html',
+    'reference/sources.html', 'reference/specification-architecture.html',
+    'development/knowledge-bases.html', 'development/benchmarks.html', 'development/rl-datasets.html',
+    'benchmarks/benchmark-logicbench.html', 'benchmarks/benchmark-iibench.html',
+    'benchmarks/benchmark-proofwriter.html', 'benchmarks/benchmark-prontoqa.html',
+    'benchmarks/benchmark-folio.html', 'assets/site.css',
     'assets/mermaid-loader.mjs', 'assets/public-benchmark-dashboard.mjs', 'assets/status-dashboard.mjs',
     'partials/header.html', 'partials/footer.html', 'partials-loader.js',
     'results/latest-evaluation.json', 'results/latest-evaluation.html',
     'results/latest-benchmark.json', 'results/latest-benchmark.html',
     'results/latest-generated-heuristic-benchmark.json',
     'results/latest-generated-heuristic-benchmark.html',
+    'results/latest-generated-heuristic-seed-audit.json',
+    'results/latest-processing-graph-pilot.json',
+    'results/latest-processing-graph-pilot-plan.json',
+    'results/latest-processing-graph-pilot-cycle.json',
+    'results/latest-processing-graph-pilot-publication.json',
+    'results/latest-oasst1-large-source-readiness.json',
+    'results/latest-processing-graph-research.json',
+    'results/latest-processing-graph-research-plan.json',
+    'results/latest-processing-graph-research-cycle.json',
+    'results/latest-oasst1-processing-graph-research.json',
+    'results/latest-oasst1-processing-graph-research-plan.json',
+    'results/latest-oasst1-processing-graph-research-cycle.json',
+    'results/latest-processing-graph-source-status.json',
+    'results/latest-processing-graph-scale-publication.json',
     'results/latest-public-benchmark-probes.json', 'results/current-status.json', 'specs/matrix.md',
   ];
   const missing = [];
@@ -171,6 +222,7 @@ export async function checkDocumentation() {
   }
   if (missing.length) throw new Error(`Missing documentation files: ${missing.join(', ')}`);
   await validatePublishedSpecificationSources();
+  await processingGraphResearchStatus({ root: PROJECT_ROOT });
   const publicReport = JSON.parse(await readFile(join(PROJECT_ROOT, 'docs/results/latest-public-benchmark-probes.json'), 'utf8'));
   if (publicReport.format !== 'eslm-public-benchmark-probe-report-v2' || !Array.isArray(publicReport.rows) || publicReport.rows.length === 0) {
     throw new Error('Latest public benchmark report must use the supported format and contain rows.');
@@ -222,41 +274,65 @@ export async function checkDocumentation() {
   }
   for (const kind of ['evaluation', 'benchmark']) {
     const report = JSON.parse(await readFile(join(PROJECT_ROOT, `docs/results/latest-${kind}.json`), 'utf8'));
-    if (report.evidenceRegime !== 'internal-authored-smoke-fixture'
-        || report.claimScope !== 'implementation-regression-only'
-        || report.model?.comparable !== false
-        || !Number.isInteger(report.total) || report.total <= 0) {
-      throw new Error(`Latest ${kind} report must identify its non-comparable authored-fixture claim scope.`);
-    }
+    if (kind === 'evaluation') assertInternalEvaluationReport(report);
+    else assertInternalAuthoredBenchmarkReport(report);
+    assertMatchingBenchmarkBehaviorIdentity(report.behaviorIdentity, currentBehavior, `Latest ${kind} report`);
     const reportPage = await readFile(join(PROJECT_ROOT, `docs/results/latest-${kind}.html`), 'utf8');
-    if (!reportPage.includes(`${report.total} authored cases`) || !reportPage.includes('Benchmark comparable:</strong> no')) {
-      throw new Error(`Latest ${kind} HTML must display its authored case count and non-comparable status.`);
+    const expectedPage = renderReportHtml(`Latest ${kind} report`, report);
+    if (reportPage !== expectedPage) {
+      throw new Error(`Latest ${kind} HTML does not correspond exactly to its current JSON receipt.`);
     }
   }
   const generatedReport = JSON.parse(await readFile(
     join(PROJECT_ROOT, 'docs/results/latest-generated-heuristic-benchmark.json'), 'utf8',
   ));
   assertGeneratedHeuristicBenchmarkReport(generatedReport);
+  assertMatchingBenchmarkBehaviorIdentity(
+    generatedReport.execution.behaviorIdentity,
+    currentBehavior,
+    'Generated heuristic benchmark',
+  );
   const generatedPage = await readFile(
     join(PROJECT_ROOT, 'docs/results/latest-generated-heuristic-benchmark.html'), 'utf8',
   );
-  if (!generatedPage.includes(`${generatedReport.passed}/${generatedReport.total}`)
-      || !generatedPage.includes('Benchmark comparable:</strong> no')
-      || !generatedPage.includes(`${generatedReport.generator.domains} structural domains`)) {
-    throw new Error('Generated heuristic benchmark HTML must expose its denominator, scope, and coverage.');
+  if (generatedPage !== renderGeneratedHeuristicBenchmarkHtml(generatedReport)) {
+    throw new Error('Generated heuristic benchmark HTML does not correspond exactly to its current JSON receipt.');
   }
-  const htmlFiles = (await readdir(join(PROJECT_ROOT, 'docs'))).filter((file) => file.endsWith('.html'));
+  const seedAudit = JSON.parse(await readFile(
+    join(PROJECT_ROOT, 'docs/results/latest-generated-heuristic-seed-audit.json'), 'utf8',
+  ));
+  assertGeneratedHeuristicMultiSeedAudit(seedAudit);
+  assertMatchingBenchmarkBehaviorIdentity(
+    seedAudit.sharedIdentity.behaviorIdentity,
+    currentBehavior,
+    'Generated heuristic multi-seed audit',
+  );
+  const htmlFiles = (await documentationHtmlFiles())
+    .filter((file) => !file.startsWith('partials/'));
   for (const file of htmlFiles) {
     const html = await readFile(join(PROJECT_ROOT, 'docs', file), 'utf8');
     validateDocumentationDiagrams(file, html);
-    if (!html.includes('data-include="partials/header.html"')) throw new Error(`${file} must load the shared navigation partial.`);
+    const compatibilityRedirect = html.includes('data-compatibility-redirect=');
+    if (!compatibilityRedirect && !html.includes('data-include="partials/header.html"')) {
+      throw new Error(`${file} must load the shared navigation partial.`);
+    }
     if (/<nav\b[^>]*class="[^"]*\bsite-nav\b/u.test(html)) {
       throw new Error(`${file} duplicates the primary navigation instead of using the shared partial.`);
     }
-    for (const match of html.matchAll(/href="([^"#]+)"/gu)) {
-      const target = match[1].split('?')[0];
-      if (/^(?:https?:|mailto:|\$)/u.test(target)) continue;
-      const path = resolve(dirname(join(PROJECT_ROOT, 'docs', file)), target);
+    const fullPath = join(PROJECT_ROOT, 'docs', file);
+    const declaredBase = html.match(/<base\s+href="([^"]+)"/u)?.[1];
+    const linkBase = declaredBase
+      ? resolve(dirname(fullPath), declaredBase)
+      : dirname(fullPath);
+    for (const match of html.matchAll(/(?:href|src|data-include)="([^"]+)"/gu)) {
+      const rawTarget = match[1];
+      if (/^(?:https?:|mailto:|data:|#|\$)/u.test(rawTarget)) continue;
+      const target = rawTarget.split(/[?#]/u)[0];
+      if (!target) continue;
+      if (target === declaredBase) continue;
+      const path = target.startsWith('/')
+        ? resolve(join(PROJECT_ROOT, 'docs'), target.slice(1))
+        : resolve(linkBase, target);
       try { await access(path); } catch { throw new Error(`${file} links to missing local target ${target}.`); }
     }
   }
@@ -271,11 +347,11 @@ export async function checkDocumentation() {
   const home = await readFile(join(PROJECT_ROOT, 'docs/index.html'), 'utf8');
   if ((home.match(/<section(?:\s|>)/gu) ?? []).length !== 3) throw new Error('Home page must contain exactly three substantive sections.');
   if (home.includes('data-public-benchmark-dashboard')) throw new Error('Home page must link to, not duplicate, the full benchmark dashboard.');
-  const evaluationPage = await readFile(join(PROJECT_ROOT, 'docs/evaluation.html'), 'utf8');
-  if ((evaluationPage.match(/data-public-benchmark-dashboard/gu) ?? []).length !== 1) {
-    throw new Error('Evaluation must be the single full public benchmark dashboard page.');
+  const benchmarkStatusPage = await readFile(join(PROJECT_ROOT, 'docs/development/benchmarks.html'), 'utf8');
+  if ((benchmarkStatusPage.match(/data-public-benchmark-dashboard/gu) ?? []).length !== 1) {
+    throw new Error('Benchmark development status must be the single full public benchmark dashboard page.');
   }
-  for (const file of htmlFiles.filter((file) => file !== 'evaluation.html')) {
+  for (const file of htmlFiles.filter((file) => file !== 'development/benchmarks.html')) {
     const html = await readFile(join(PROJECT_ROOT, 'docs', file), 'utf8');
     if (html.includes('data-public-benchmark-dashboard')) {
       throw new Error(`${file} duplicates the full public benchmark dashboard.`);

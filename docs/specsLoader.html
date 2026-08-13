@@ -348,6 +348,17 @@
         return this.headingLabel(markdown) || fallback;
       }
 
+      tableClass(headers, rows) {
+        const primaryLabels = rows.map((row) => this.tableCellLabel(row[0] ?? '', ''));
+        const primaryHeader = this.tableCellLabel(headers[0] ?? '', '');
+        const compactPrimary = primaryHeader.length <= 28 && primaryLabels.length > 0
+          && primaryLabels.every((label) => label.length <= 28 && !/[.!?]/u.test(label));
+        const classes = ['spec-table'];
+        if (compactPrimary) classes.push('table--compact-key');
+        if (this.specPath === 'matrix.md') classes.push('spec-table--matrix');
+        return classes.join(' ');
+      }
+
       tableDetails(headers, row) {
         const details = headers.slice(1).map((header, index) => {
           const value = row[index + 1] ?? '';
@@ -399,8 +410,9 @@
             + '</tr>';
         }).join('');
 
+        const tableClass = this.tableClass(headers, rows);
         return {
-          html: `<div class="table-wrap"><table class="spec-table">${thead}<tbody>${tbody}</tbody></table></div>`,
+          html: `<div class="table-wrap"><table class="${tableClass}">${thead}<tbody>${tbody}</tbody></table></div>`,
           nextIndex: cursor - 1
         };
       }

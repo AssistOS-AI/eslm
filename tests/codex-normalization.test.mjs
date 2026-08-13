@@ -8,32 +8,35 @@ import {
   DEFAULT_CODEX_NORMALIZATION_MODEL, validateCodexNormalization,
 } from '../src/language/codex-normalizer.mjs';
 import { LanguageAgentAssistedRuntime } from '../src/runtime/language-agent-assisted-runtime.mjs';
-import { EslmEngine } from '../src/runtime/engine.mjs';
-import { createCoreModel } from '../src/runtime/core-model.mjs';
+import { EnglishLanguageGateRuntime } from '../src/runtime/english-language-gate-runtime.mjs';
+import {
+  assertRuntimeTextResultContract, directCoreMemorySnapshot,
+} from '../src/runtime/result-contract.mjs';
 
 function candidate(normalizedEnglish) {
   return {
     protocol: CODEX_NORMALIZATION_PROTOCOL,
-    operation: 'translation',
-    sourceLanguage: 'ro',
+    operation: 'simplification',
+    sourceLanguage: 'en',
     normalizedEnglish,
     alignments: [{ kind: 'named-entity', source: 'Gertrude', target: 'Gertrude' }],
   };
 }
 
-function romanianWhereCandidate() {
+function englishReorderingCandidate() {
   return {
     protocol: CODEX_NORMALIZATION_PROTOCOL,
-    operation: 'translation',
-    sourceLanguage: 'ro',
-    normalizedEnglish: 'Where is Gertrude?',
+    operation: 'simplification',
+    sourceLanguage: 'en',
+    normalizedEnglish: 'Is Gertrude in the garden?',
     alignments: [
-      { kind: 'interrogative', source: 'Unde', target: 'Where' },
-      { kind: 'lexical-content', source: 'este', target: 'is' },
+      { kind: 'directed-relation', source: 'In', target: 'in' },
       { kind: 'named-entity', source: 'Gertrude', target: 'Gertrude' },
     ],
   };
 }
+
+const ENGLISH_REORDERING_SOURCE = 'In the garden, is Gertrude?';
 
 test('Codex normalization invocation pins Spark, low reasoning, and a tool-disabled ephemeral boundary', () => {
   const invocation = codexNormalizationInvocation('/tmp/eslm-normalization-contract');
@@ -47,49 +50,41 @@ test('Codex normalization invocation pins Spark, low reasoning, and a tool-disab
 });
 
 test('host validation preserves question force, names, numbers, and protected operators', () => {
-  assert.equal(validateCodexNormalization('Unde este Gertrude?', romanianWhereCandidate()).accepted, true);
+  assert.equal(validateCodexNormalization(
+    ENGLISH_REORDERING_SOURCE, englishReorderingCandidate(),
+  ).accepted, true);
   const changedNegation = {
     ...candidate('Is Gertrude in room 4?'),
     alignments: [
       { kind: 'named-entity', source: 'Gertrude', target: 'Gertrude' },
-      { kind: 'directed-relation', source: 'în', target: 'in' },
       { kind: 'number', source: '4', target: '4' },
-      { kind: 'lexical-content', source: 'camera', target: 'room' },
     ],
   };
-  assert.equal(validateCodexNormalization('Gertrude nu este în camera 4?', changedNegation).accepted, false);
-  assert.match(validateCodexNormalization('Gertrude nu este în camera 4?', changedNegation).errors.join(' '), /negation/u);
+  const source = 'Is Gertrude not in room 4?';
+  assert.equal(validateCodexNormalization(source, changedNegation).accepted, false);
+  assert.match(validateCodexNormalization(source, changedNegation).errors.join(' '), /negation/u);
 });
 
-test('Romanian idiomatic mai is not mistaken for a comparison operator', () => {
-  const checkIn = {
+test('generic non-English detection requests translation but never licenses lexical equivalence', () => {
+  const proposedTranslation = {
     protocol: CODEX_NORMALIZATION_PROTOCOL,
     operation: 'translation',
-    sourceLanguage: 'ro',
-    normalizedEnglish: 'How are you?',
-    alignments: [
-      { kind: 'interrogative', source: 'Ce', target: 'How' },
-      { kind: 'lexical-content', source: 'Ce mai faci', target: 'How are you' },
-    ],
-  };
-  assert.equal(classifyNormalizationOperation('Ce mai faci?').operation, 'translation');
-  const validation = validateCodexNormalization('Ce mai faci?', checkIn, {
-    expectedOperation: 'translation', operationConfidence: 'high',
-  });
-  assert.equal(validation.accepted, true, validation.errors?.join('; '));
-  const comparative = {
-    ...checkIn,
-    normalizedEnglish: 'Is Nera bigger than Vela?',
+    sourceLanguage: 'und',
+    normalizedEnglish: 'Is Nera in chamber 4?',
     alignments: [
       { kind: 'named-entity', source: 'Nera', target: 'Nera' },
-      { kind: 'named-entity', source: 'Vela', target: 'Vela' },
-      { kind: 'comparison', source: 'mai mare decât', target: 'bigger than' },
+      { kind: 'number', source: '4', target: '4' },
     ],
   };
-  const preserved = validateCodexNormalization('Este Nera mai mare decât Vela?', comparative, {
+  const source = 'Nera жарум кивес 4?';
+  assert.equal(classifyNormalizationOperation(source).operation, 'translation');
+  const validation = validateCodexNormalization(source, proposedTranslation, {
     expectedOperation: 'translation', operationConfidence: 'high',
   });
-  assert.equal(preserved.accepted, true, preserved.errors?.join('; '));
+  assert.equal(validation.accepted, false);
+  assert.match(validation.errors.join(' '), /independent lexical validator/u);
+  assert.equal(validation.sourceLanguageAssessment.classification, 'likely-non-english');
+  assert.equal(validation.normalizedEnglishAssessment.classification, 'likely-english');
 });
 
 test('host validation accepts conservative English simplification and rejects an answered question', () => {
@@ -107,6 +102,13 @@ test('host validation accepts conservative English simplification and rejects an
   assert.equal(validateCodexNormalization('In the garden, is Gertrude?', {
     ...simplified, normalizedEnglish: 'Gertrude is in the garden.',
   }).accepted, false);
+  const indeterminate = validateCodexNormalization('Qorin zeta_4?', {
+    protocol: CODEX_NORMALIZATION_PROTOCOL,
+    operation: 'simplification', sourceLanguage: 'en', normalizedEnglish: 'Qorin zeta_4?',
+    alignments: [{ kind: 'named-entity', source: 'Qorin', target: 'Qorin' }],
+  });
+  assert.equal(indeterminate.accepted, false);
+  assert.match(indeterminate.errors.join(' '), /English likelihood gate/u);
 });
 
 test('protected operators preserve typed identity and relation direction instead of only counts', () => {
@@ -220,53 +222,22 @@ test('every recognized protected source anchor requires a compatible exact-subst
   assert.match(wrongKind.errors.join(' '), /kind does not identify/u);
 });
 
-test('reviewed Romanian translations require operator and non-function-content evidence', () => {
-  const roomTranslation = {
+test('translation sourceLanguage remains generic metadata and cannot assert bilingual meaning', () => {
+  const proposedTranslation = {
     protocol: CODEX_NORMALIZATION_PROTOCOL,
     operation: 'translation',
-    sourceLanguage: 'ro',
-    normalizedEnglish: 'Is Gertrude not in room 4?',
+    sourceLanguage: 'und-x-source',
+    normalizedEnglish: 'Is Nera above Vela?',
     alignments: [
-      { kind: 'named-entity', source: 'Gertrude', target: 'Gertrude' },
-      { kind: 'negation', source: 'nu', target: 'not' },
-      { kind: 'lexical-content', source: 'este', target: 'Is' },
-      { kind: 'directed-relation', source: 'în', target: 'in' },
-      { kind: 'lexical-content', source: 'camera', target: 'room' },
-      { kind: 'number', source: '4', target: '4' },
+      { kind: 'named-entity', source: 'Nera', target: 'Nera' },
+      { kind: 'named-entity', source: 'Vela', target: 'Vela' },
     ],
   };
-  const accepted = validateCodexNormalization('Gertrude nu este în camera 4?', roomTranslation, {
+  const rejected = validateCodexNormalization('Nera жарум Vela?', proposedTranslation, {
     expectedOperation: 'translation', operationConfidence: 'high',
   });
-  assert.equal(accepted.accepted, true, accepted.errors.join('; '));
-
-  const unreviewed = validateCodexNormalization('Gertrude nu este în camera 4?', {
-    ...roomTranslation,
-    normalizedEnglish: 'Is Gertrude not in garden 4?',
-    alignments: roomTranslation.alignments.map((alignment) => alignment.kind === 'lexical-content'
-      ? { ...alignment, target: 'garden' }
-      : alignment),
-  });
-  assert.equal(unreviewed.accepted, false);
-  assert.match(unreviewed.errors.join(' '), /not a reviewed equivalence|unverified/u);
-
-  for (const fixture of [
-    { source: 'Este Nera la stânga de Vela?', target: 'Is Nera left of Vela?', sourceRelation: 'stânga', targetRelation: 'left' },
-    { source: 'Este Nera deasupra Vela?', target: 'Is Nera above Vela?', sourceRelation: 'deasupra', targetRelation: 'above' },
-  ]) {
-    const directional = validateCodexNormalization(fixture.source, {
-      protocol: CODEX_NORMALIZATION_PROTOCOL,
-      operation: 'translation',
-      sourceLanguage: 'ro',
-      normalizedEnglish: fixture.target,
-      alignments: [
-        { kind: 'named-entity', source: 'Nera', target: 'Nera' },
-        { kind: 'directed-relation', source: fixture.sourceRelation, target: fixture.targetRelation },
-        { kind: 'named-entity', source: 'Vela', target: 'Vela' },
-      ],
-    });
-    assert.equal(directional.accepted, true, directional.errors.join('; '));
-  }
+  assert.equal(rejected.accepted, false);
+  assert.match(rejected.errors.join(' '), /independent lexical validator/u);
 });
 
 test('normalizer accepts a schema-bound subprocess result and reuses it only as an attributed cache hit', async () => {
@@ -276,17 +247,17 @@ test('normalizer accepts a schema-bound subprocess result and reuses it only as 
 import { writeFileSync } from 'node:fs';
 const args = process.argv.slice(2);
 const output = args[args.indexOf('--output-last-message') + 1];
-writeFileSync(output, JSON.stringify(${JSON.stringify(romanianWhereCandidate())}));
+writeFileSync(output, JSON.stringify(${JSON.stringify(englishReorderingCandidate())}));
 process.stdout.write('{"type":"turn.completed"}\\n');
 `, 'utf8');
   await chmod(executable, 0o755);
   const invocationEvents = [];
   const normalizer = new CodexLanguageNormalizer({
-    command: executable, cacheDirectory: join(directory, 'cache'), timeoutMs: 5_000,
+    command: executable, cacheDirectory: join(directory, 'cache'), timeoutMs: 30_000,
     onExternalInvocation: (event) => invocationEvents.push(event),
   });
-  const first = await normalizer.normalize('Unde este Gertrude?');
-  const second = await normalizer.normalize('Unde este Gertrude?');
+  const first = await normalizer.normalize(ENGLISH_REORDERING_SOURCE);
+  const second = await normalizer.normalize(ENGLISH_REORDERING_SOURCE);
   assert.equal(first.status, 'accepted');
   assert.equal(first.cacheHit, false);
   assert.equal(second.status, 'accepted');
@@ -312,7 +283,7 @@ setInterval(() => {}, 1_000);
   await chmod(executable, 0o755);
   const normalizer = new CodexLanguageNormalizer({ command: executable, cache: false, timeoutMs: 500 });
   const started = Date.now();
-  const result = await normalizer.normalize('Unde este Gertrude?');
+  const result = await normalizer.normalize(ENGLISH_REORDERING_SOURCE);
   assert.equal(result.status, 'failed');
   assert.match(result.diagnostic, /timed out/u);
   assert.equal(result.receipt.timedOut, true);
@@ -332,8 +303,8 @@ setInterval(() => {}, 1_000);
 `, 'utf8');
   await chmod(executable, 0o755);
   const result = await new CodexLanguageNormalizer({
-    command: executable, cache: false, timeoutMs: 5_000,
-  }).normalize('Unde este Gertrude?');
+    command: executable, cache: false, timeoutMs: 30_000,
+  }).normalize(ENGLISH_REORDERING_SOURCE);
   assert.equal(result.status, 'failed');
   assert.match(result.diagnostic, /process output exceeded/u);
   assert.equal(result.receipt.outputLimitExceeded, true);
@@ -354,8 +325,8 @@ writeFileSync(output, Buffer.alloc(1024 * 1024 + 1, 0x20));
 `, 'utf8');
   await chmod(executable, 0o755);
   const result = await new CodexLanguageNormalizer({
-    command: executable, cache: false, timeoutMs: 5_000,
-  }).normalize('Unde este Gertrude?');
+    command: executable, cache: false, timeoutMs: 30_000,
+  }).normalize(ENGLISH_REORDERING_SOURCE);
   assert.equal(result.status, 'failed');
   assert.match(result.diagnostic, /response exceeds .* UTF-8 bytes/u);
   assert.equal(result.receipt.responseReadStatus, 'oversized');
@@ -371,14 +342,14 @@ test('normalizer ignores an oversized cache entry using a bounded read and recor
 import { writeFileSync } from 'node:fs';
 const args = process.argv.slice(2);
 const output = args[args.indexOf('--output-last-message') + 1];
-writeFileSync(output, JSON.stringify(${JSON.stringify(romanianWhereCandidate())}));
+writeFileSync(output, JSON.stringify(${JSON.stringify(englishReorderingCandidate())}));
 `, 'utf8');
   await chmod(executable, 0o755);
-  const normalizer = new CodexLanguageNormalizer({ command: executable, cacheDirectory, timeoutMs: 5_000 });
-  const first = await normalizer.normalize('Unde este Gertrude?');
+  const normalizer = new CodexLanguageNormalizer({ command: executable, cacheDirectory, timeoutMs: 30_000 });
+  const first = await normalizer.normalize(ENGLISH_REORDERING_SOURCE);
   assert.equal(first.status, 'accepted');
   await writeFile(join(cacheDirectory, `${first.cacheKey}.json`), Buffer.alloc(4 * 1024 * 1024 + 1, 0x20));
-  const second = await normalizer.normalize('Unde este Gertrude?');
+  const second = await normalizer.normalize(ENGLISH_REORDERING_SOURCE);
   assert.equal(second.status, 'accepted');
   assert.equal(second.cacheHit, false);
   assert.equal(second.cacheReadStatus, 'oversized');
@@ -418,7 +389,7 @@ process.stdin.on('end', () => {
 `, 'utf8');
   await chmod(executable, 0o755);
   const normalizer = new CodexLanguageNormalizer({
-    command: executable, cache: false, timeoutMs: 5_000,
+    command: executable, cache: false, timeoutMs: 30_000,
   });
   const result = await normalizer.normalize('In the garden, is Gertrude?');
   assert.equal(result.status, 'accepted');
@@ -522,22 +493,56 @@ test('Language Agent receives bounded parser feedback and can propose a differen
   assert.deepEqual(calls, ['unsupported wording', 'Gertrude present?', 'Is Gertrude present?']);
 });
 
-test('Romanian check-in translation returns through the generic symbolic meta-intent', async () => {
-  const runtime = new EslmEngine(await createCoreModel());
+test('likely non-English input requests translation immediately and a rejected proposal stays ungrounded', async () => {
+  let parserCalls = 0;
+  let groundingCalls = 0;
+  let providerCalls = 0;
+  const runtime = new EnglishLanguageGateRuntime({
+    model: { manifest: { modelId: 'test:model', knowledgeBaseVersions: [] } },
+    providers: [{
+      manifest: { id: 'opaque-provider', kbVersion: '1' },
+      ask: async () => { providerCalls += 1; },
+    }], selected: ['opaque-provider'], core: {}, workPolicy: undefined,
+    memorySnapshot: () => directCoreMemorySnapshot(),
+    score: () => ({ score: 0 }),
+    ask: async () => { parserCalls += 1; throw new Error('parser must not run'); },
+    askDirect: async () => { parserCalls += 1; throw new Error('parser must not run'); },
+    attachGrounding: (result) => { groundingCalls += 1; return result; },
+  });
+  const observed = [];
   const normalizer = {
     configuration: () => ({ enabled: true }),
-    normalize: async () => ({
-      status: 'accepted', model: DEFAULT_CODEX_NORMALIZATION_MODEL, cacheHit: false,
-      requestedOperation: 'translation', externalInvocations: 1,
-      candidate: {
-        protocol: CODEX_NORMALIZATION_PROTOCOL, operation: 'translation', sourceLanguage: 'ro',
-        normalizedEnglish: 'How are you?', alignments: [],
-      },
-      validation: { accepted: true },
-    }),
+    normalize: async (_text, episode) => {
+      observed.push(episode);
+      return {
+        status: 'rejected', model: DEFAULT_CODEX_NORMALIZATION_MODEL, cacheHit: false,
+        requestedOperation: 'translation', externalInvocations: 1,
+        candidate: {
+          protocol: CODEX_NORMALIZATION_PROTOCOL, operation: 'translation', sourceLanguage: 'und',
+          normalizedEnglish: 'Is Nera in chamber 4?',
+          alignments: [{ kind: 'named-entity', source: 'Nera', target: 'Nera' }],
+        },
+        validation: { accepted: false, errors: ['independent lexical validator unavailable'] },
+      };
+    },
   };
-  const result = await new LanguageAgentAssistedRuntime(runtime, normalizer).ask('Ce mai faci?');
-  assert.equal(result.languageRoute, 'language-agent-normalized');
-  assert.equal(result.status, 'SOLVED');
-  assert.deepEqual(result.values, ['ready']);
+  const result = await new LanguageAgentAssistedRuntime(runtime, normalizer)
+    .ask('Nera жарум кивес 4?');
+  assert.equal(result.languageRoute, 'language-agent-normalization-rejected');
+  assert.equal(result.status, 'UNVERIFIED_NORMALIZATION');
+  assert.equal(result.languageAssessment.classification, 'likely-non-english');
+  assert.equal(observed[0].operation, 'translation');
+  assert.equal(result.normalization.strategyIdentity,
+    'strategy:language:external-translation-proposal@1');
+  assert.equal(result.normalization.answerAuthority, 'none');
+  assert.equal(parserCalls, 0);
+  assert.equal(providerCalls, 0);
+  assert.equal(groundingCalls, 0);
+  assert.deepEqual(result.consultedKbVersions, []);
+  assert.deepEqual(result.usedKbVersions, []);
+  assert.doesNotThrow(() => assertRuntimeTextResultContract(result));
+  const missingAccounting = structuredClone(result);
+  delete missingAccounting.normalization.strategyIdentity;
+  assert.throws(() => assertRuntimeTextResultContract(missingAccounting),
+    /exact host-owned proposal-strategy accounting/u);
 });

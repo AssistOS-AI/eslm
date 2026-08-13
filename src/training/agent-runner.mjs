@@ -14,6 +14,7 @@ export const TRAINING_SKILLS = Object.freeze({
   'benchmark-guided-symbolic-learner': 'training/.agents/skills/benchmark-guided-symbolic-learner',
   'core-change-guardian': 'training/.agents/skills/core-change-guardian',
   'kb-compiler-quality-auditor': 'training/.agents/skills/kb-compiler-quality-auditor',
+  'rl-dataset-graph-discovery': 'training/.agents/skills/rl-dataset-graph-discovery',
 });
 
 export function codexInvocation(workspace, options = {}) {

@@ -18,6 +18,25 @@ This specification governs external documents, knowledge sources, and benchmark 
 
 Every external source receives a source manifest before semantic use. The manifest records a stable source identifier, upstream owner, official source and paper URLs, exact revision or delivered edition, acquisition method, local cache policy, byte length, cryptographic digest, media type, declared license, access terms, citation, redistribution boundary, and extraction inventory. A mutable branch name, landing page, or cache directory is not a frozen source identity.
 
+The research pipeline realizes this boundary as the closed `eslm-rl-dataset-source-manifest-v2` packet. Its
+`acquisition` record names the authorized immutable URL, access terms, ignored-cache policy, and credential policy.
+`deliveredFiles` binds every source, split-authority, license, or metadata file by role, safe relative cache path,
+source URL, bytes, media type, and SHA-256. Each component separately binds its license URL, rights decision, allowed
+uses, redistribution boundary, split visibility, raw identity, and exact semantic projection. Delivered-file IDs and
+paths are unique. The manifest-level `identityFileId` must name the delivered file whose bytes, media type, and digest
+equal the source identity. Each component likewise names one `identityFileId`; `supportingFileIds` separately names
+split-authority or other content-bound inputs without pretending that their bytes are the component payload. Thus a
+source or component identity cannot be an unrelated self-asserted digest. `rightsReview` names a
+repository-policy review, exact reviewed revision, delivered-file and primary-source evidence, decision, and retained
+limitations. `extractionInventory` names selected and excluded component classes and confirms that the raw source and
+projection losses remain retained. Unknown fields, duplicate split names, unbound evidence, and review/revision drift
+are rejected before source admission.
+
+This manifest is an auditable repository policy decision, not a cryptographic proof that an upstream legal claim is
+true and not legal advice. A reviewer still checks the pinned official pages and delivered license bytes. The
+admission gate may authorize only the exact component and projection named by an `admit-declared-projection`
+decision; it cannot broaden access, redistribution, runtime truth, or promotion authority.
+
 Redirected and form-delivered artifacts record the authorized initial URL and the final delivered artifact identity. Protected sources remain in ignored local storage. Tokens, cookies, signed URLs, and credentials never enter the manifest, repository, diagnostics, or documentation.
 
 ### Authority classes
@@ -55,6 +74,14 @@ Response: Yes when the benchmark's own terms authorize non-commercial research. 
 ### Question #2: How is a dataset archive handled when it has no explicit license?
 
 Response: The manifest records that precise uncertainty, the official owner and contact path, and a narrow local research/no-redistribution policy. The project may validate locally authorized bytes, but it does not publish or imply broader rights.
+
+### Question #3: What makes a research-source approval inspectable?
+
+Response: Approval is not a bare enum. The v2 manifest binds the immutable acquisition URL, delivered source and
+rights-evidence files, component license URL, split inventory, exact allowed use, extraction scope, reviewed revision,
+limitations, and removal obligations. Host and portable validators reject an approval that omits or contradicts
+those bindings. Live status must also re-read the current manifest, so a later tombstone, withdrawal, or rights change
+closes admission instead of leaving a historical analysis looking current.
 
 ## Conclusion
 

@@ -45,6 +45,16 @@ test('unsupported language is UNPARSED and missing evidence is UNKNOWN', async (
   assert.equal(engine.ask('Can Ada fly?', learned.context).status, 'UNKNOWN');
 });
 
+test('unsupported nominal surfaces are never resolved as English discourse pronouns', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  const context = { lastEntity: 'penguin' };
+  for (const surface of ['xe', 'qa']) {
+    const result = engine.ask(`Can ${surface} swim?`, context);
+    assert.notEqual(result.query?.subject, 'penguin', surface);
+    assert.notEqual(result.status, 'SOLVED', surface);
+  }
+});
+
 test('mixed supported and unsupported episodes roll back atomically', async () => {
   const engine = new EslmEngine(await createCoreModel());
   for (const input of [
@@ -59,6 +69,19 @@ test('mixed supported and unsupported episodes roll back atomically', async () =
     assert.equal(result.context.session.facts.length, 0, input);
     assert.equal(engine.ask('Is Zara a pilot?', result.context).status, 'UNKNOWN', input);
   }
+});
+
+test('an unsupported final question rolls back otherwise valid tentative assertions', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  const rejected = engine.ask('Nira is a zoral. Could you tell me whether Nira is a zoral?');
+  assert.equal(rejected.status, 'UNPARSED');
+  assert.equal(rejected.episode.transaction, 'rolled-back');
+  assert.deepEqual(rejected.learned, []);
+  assert.deepEqual(rejected.learnedRules, []);
+  assert.deepEqual(rejected.context.session.facts, []);
+
+  const followUp = engine.ask('Is Nira a zoral?', rejected.context);
+  assert.equal(followUp.status, 'UNKNOWN');
 });
 
 test('oversized input and accumulated sessions fail before mutation with structured resource accounting', async () => {
@@ -161,7 +184,7 @@ test('multi-thousand nonce smoke corpus is deterministic and passes without agen
   assert.equal(summary.templateCount, 69);
   assert.deepEqual(Object.keys(summary.oracleLevels), [
     'answer-execution', 'candidate-selection', 'proposal-only', 'query-local-decomposition',
-    'request-execution', 'safety-abstention',
+    'request-execution', 'request-planning', 'safety-abstention', 'semantic-query-execution',
   ]);
   assert.equal(new Set(cases.map((item) => item.input)).size, 4096);
   for (const item of cases) {

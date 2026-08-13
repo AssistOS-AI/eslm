@@ -1,0 +1,100 @@
+{
+  "format": "eslm-rl-dataset-discovery-plan-v2",
+  "planId": "plan:processing-graph:001-small-pilot",
+  "cycleId": "cycle:processing-graph:001-small-pilot",
+  "state": "approved",
+  "question": "Do independent response-rating and explicit-step training projections justify new processing responsibilities beyond the current processing catalog?",
+  "nullHypothesis": "The observed task frames, dependencies, quality axes, and completion boundaries are already expressible as packets, edges, gates, or strategies of existing nodes.",
+  "sourceRevisions": [
+    "gsm8k@3101c7d5072418e28b9008a6636bde82a006892c",
+    "helpsteer2@990b2711a36180dd19d9c94b8627844866f8982a"
+  ],
+  "projectionDigests": [
+    "sha256:091b9409be5f8de95ece02f0ea6ff14d51955818adcfa231d4612e859c36e6c0",
+    "sha256:27246fd7dafc5435483507e187db97179f496c6f92114a0392b9b3974de21476"
+  ],
+  "sourceScopes": [
+    {
+      "sourceRevision": "helpsteer2@990b2711a36180dd19d9c94b8627844866f8982a",
+      "componentId": "train-ratings",
+      "projectionId": "helpsteer2-structural-feedback-v1",
+      "projectionDigest": "sha256:091b9409be5f8de95ece02f0ea6ff14d51955818adcfa231d4612e859c36e6c0",
+      "contentMembershipDigest": "sha256:24dd8fcdb1bc048ef73e1710512c5af6b330bfb22dbfca56c442ddf7520f3da7",
+      "splits": [
+        {
+          "name": "train",
+          "visibility": "training-visible",
+          "rowsDeclared": 20324,
+          "rowsAdmitted": 10161
+        }
+      ]
+    },
+    {
+      "sourceRevision": "gsm8k@3101c7d5072418e28b9008a6636bde82a006892c",
+      "componentId": "train-socratic",
+      "projectionId": "gsm8k-socratic-task-structure-v1",
+      "projectionDigest": "sha256:27246fd7dafc5435483507e187db97179f496c6f92114a0392b9b3974de21476",
+      "contentMembershipDigest": "sha256:d4b9e14c42063b8ff1831fb1de4f69e4ae2ea270110732cace339f74ae57ec62",
+      "splits": [
+        {
+          "name": "train-socratic",
+          "visibility": "training-visible",
+          "rowsDeclared": 7473,
+          "rowsAdmitted": 7473
+        }
+      ]
+    }
+  ],
+  "baselineGraphDigest": "sha256:5534952eb6b2ab83d5c8ae3d0e15eda4dd69745a75f0e2abbea81f9ff5bf0348",
+  "analysisIdentity": {
+    "analysisId": "helpsteer2-gsm8k-small-pilot",
+    "version": "1.0.0",
+    "seed": "eslm-processing-graph-pilot-v1",
+    "inputMode": "iterable-or-async-iterable",
+    "selectionMethod": "bounded-min-hash-v1"
+  },
+  "strategyIdentities": [
+    "bounded-subcircuit-motif-v1",
+    "cross-source-recurrence-v1",
+    "earliest-error-v1",
+    "metamorphic-recurrence-v1",
+    "partial-order-motif-v1",
+    "phase-change-point-v1",
+    "preference-axis-v1",
+    "task-frame-induction-v1",
+    "typed-operation-responsibility-v1"
+  ],
+  "workPolicy": {
+    "format": "eslm-processing-graph-research-work-policy-v1",
+    "progressionStage": "pilot",
+    "limits": {
+      "maxRowsScanned": 30000,
+      "maxEpisodes": 20000,
+      "maxInputBytes": 67108864,
+      "maxTokens": 16777216,
+      "maxActions": 200000,
+      "maxDependencies": 200000,
+      "maxVotes": 8192,
+      "maxHypotheses": 1024,
+      "maxEvidenceDigestsPerVote": 14
+    },
+    "techniqueBudgets": {
+      "bounded-subcircuit-motif-v1": { "maxEvents": 200000, "maxProposals": 4096 },
+      "cross-source-recurrence-v1": { "maxEvents": 200000, "maxProposals": 4096 },
+      "earliest-error-v1": { "maxEvents": 200000, "maxProposals": 4096 },
+      "metamorphic-recurrence-v1": { "maxEvents": 200000, "maxProposals": 4096 },
+      "partial-order-motif-v1": { "maxEvents": 200000, "maxProposals": 4096 },
+      "phase-change-point-v1": { "maxEvents": 200000, "maxProposals": 4096 },
+      "preference-axis-v1": { "maxEvents": 200000, "maxProposals": 4096 },
+      "task-frame-induction-v1": { "maxEvents": 200000, "maxProposals": 4096 },
+      "typed-operation-responsibility-v1": { "maxEvents": 200000, "maxProposals": 4096 }
+    }
+  },
+  "authority": {
+    "analysisAdmission": "reviewed-training-projections-only",
+    "answer": "none",
+    "runtime": "none",
+    "proof": "none",
+    "promotion": "none"
+  }
+}

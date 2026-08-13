@@ -3,20 +3,29 @@ id: DS003
 title: Symbolic Language Front-End and Controlled Natural Language
 status: in-progress
 owner: language
-summary: Specifies direct symbolic parsing, Semantic IR, controlled-language growth, ambiguity, diagnostics, and the boundaries with deterministic local recovery and opt-in external normalization.
+summary: Specifies the English-only local language gate, direct symbolic parsing, Semantic IR, controlled-language growth, ambiguity, diagnostics, and boundaries with deterministic recovery and operator-side external language proposals.
 ---
 
 # DS003 Symbolic Language Front-End and Controlled Natural Language
 
 ## Introduction
 
-The language front-end accepts a growing, explicitly tested fragment of ordinary language while refusing interpretations that lose protected meaning. This specification owns direct parsing, semantic composition, ambiguity, and parser diagnostics. DS022 owns deterministic local approximation, request-intent planning, confidence voting, query focus, and work profiles. DS013 exclusively owns the explicitly enabled external Language Agent trigger, proposal protocol, validation, cache, and assisted CLI profile.
+The local language front-end accepts a growing, explicitly tested fragment of English while refusing interpretations
+that lose protected meaning. It does not translate and it does not claim cross-language understanding. This
+specification owns the bounded English-likelihood ingress diagnostic, direct parsing, semantic composition, ambiguity,
+and parser diagnostics. DS022 owns deterministic English approximation, request-intent planning, confidence voting,
+query focus, and work profiles. DS013 exclusively owns the operator-side external Language Agent proposal
+strategy, proposal protocol, preservation validation, cache, and assisted CLI profile.
 
 ## Core Content
 
 ### 1. Direct-symbolic-first policy
 
-Every input is first offered to the symbolic language front-end. The front-end must determine whether it can construct
+Every input first passes a bounded, deterministic English-likelihood assessment. The assessment returns
+`likely-english`, `likely-non-english`, or `indeterminate` with finite work accounting and inspectable signals. It is a
+diagnostic gate rather than a translator, language identifier, or semantic classifier. `likely-non-english` fails the
+local language path closed; `likely-english` and `indeterminate` may proceed to the symbolic English front-end, where
+the front-end must determine whether it can construct
 a semantically complete and safe representation, not merely whether it can produce a syntactic tree. The default
 operator path then evaluates explicit request force independently of the direct result; an accepted plan restores the
 incoming session snapshot so an imperative cannot commit its source material as assertions. When no plan applies,
@@ -26,7 +35,13 @@ Semantic IR can supersede that direct interpretation. Equal IR preserves the dir
 remains unchanged without an accepted structural alternative. KB or answer evidence may not influence candidate
 selection.
 
-Language Agent is never the first recovery path, is disabled by default, and is not part of the deployable runtime. It may run only when the operator explicitly enabled the DS013 wrapper and the direct and deterministic local language routes still end in `UNPARSED`. A Language Agent proposal receives no KB evidence or proof state and must return through the unchanged direct parser and reasoner.
+Language Agent is not part of the deployable runtime. Logically it is one untrusted proposal strategy at the
+language-interpretation node, not a second reasoner. The general CLI composes it by default and exposes an explicit
+local override. When the gate reports likely non-English, the assisted profile may propose a translation before
+English-only repair is attempted.
+When English or indeterminate input exhausts direct and deterministic local recovery, it may propose a conservative
+English simplification. It receives no KB evidence, proof state, answer, or result authority, and every candidate must
+return through the unchanged non-voting English parser and semantic gate.
 
 The accepted language is an extensible Controlled Natural Language. It begins with the linguistic forms required by reasoning benchmarks and grows through rigorously tested generic additions. The CNL is an interface contract between text and executable semantics, not a benchmark-specific collection of templates.
 
@@ -48,7 +63,10 @@ The parser must separate interpretation from inference. From “Every dog is an 
 
 ### 3. Front-end phases
 
-The first phase identifies language, sentence boundaries, protected operators, morphology and lexical candidates. Unknown nouns, names and nonce predicates remain valid symbolic atoms when their grammatical roles are clear.
+The first phase assesses English likelihood, identifies sentence boundaries, protected English operators, morphology,
+and lexical candidates. The assessment may reject likely non-English text but cannot translate it or infer its
+meaning. Unknown nouns, names, and nonce predicates remain valid symbolic atoms when their grammatical roles are clear,
+so unfamiliar vocabulary alone is never sufficient evidence of another language.
 
 The second phase builds syntactic alternatives with features. The third phase composes semantic structures for every constituent. The fourth phase resolves references when the evidence is structural and preserves candidate alternatives when it is not. The fifth phase runs a CNL acceptance gate.
 
@@ -72,6 +90,23 @@ comparison, outline, essay, report, article, document, table, list, and paragrap
 cited `PARTIAL` artifact even though nested scope, implicit relations, broad causal explanation, and verified
 abstractive prose require further accepted language and synthesis mechanisms.
 
+The implemented ingress function `assessEnglishLikelihood(text, options?)` returns the closed
+`eslm-english-likelihood-v1` receipt with classification `likely-english`, `likely-non-english`, or `indeterminate`,
+bounded confidence and threshold, inspectable signals, token count, completeness, work, and diagnostic. It inspects at
+most 64 KiB of UTF-8 and 1,024 tokens; its prefix bound follows encoded bytes rather than slicing code units. The
+confidence is the leading directional evidence share multiplied by a bounded evidence-mass factor. Only reviewed
+English function words, operators, and sentence frames contribute positive direction. ASCII letters, nonce words,
+technical identifiers, and formulas establish compatibility only; they cannot authorize English regardless of input
+length. Generic suffix morphology adds mass only after a directional English cue exists. The mass factor reaches one
+only after 0.5 weighted evidence units, so a short or repeated Latin token cannot appear almost classified merely
+because it has no competing signal. The same score is compared with the threshold: either classified outcome
+meets it, while `indeterminate` remains strictly below it. Incomplete inspection has zero routing confidence. The
+receipt validator recomputes classification and confidence from the declared signals. The value is
+interpretation-routing evidence, not semantic or answer confidence. The
+`EnglishLanguageGateRuntime` attaches that receipt to continuing English or indeterminate results. A likely-non-English
+classification returns `UNPARSED` on route `english-language-gate-rejected`, preserves the incoming session, consults
+no KB, and exposes only the gap `translate-input-to-english / likely-non-english`.
+
 The implemented direct CNL also accepts the generic range-restricted pair `Every CLASS VERBs OBJECT` and `Does ENTITY
 VERB OBJECT?`. Nouns and predicates may be nonce symbols: this is reusable language structure, not a dictionary of the
 motivating example.
@@ -81,9 +116,10 @@ providers, and a source/host structured task use different route metadata. Solve
 increase raw-language coverage. A future chart parser must preserve current accepted semantics and statuses rather
 than relabeling every existing adapter as generic language.
 
-Session compilation is transactional. If an episode contains any unsupported statement, its tentative entities, facts,
-rules, and history events are discarded and the result is `UNPARSED`; a later request cannot observe a fact learned by
-a rejected partial interpretation. Input bytes, segment count and size, and accumulated session entities, facts, rules,
+Session compilation is transactional. Any episode whose final status is `UNPARSED` discards its tentative entities,
+facts, rules, and history events, including the case where earlier assertions parsed but the final question or request
+was unsupported. A later request cannot observe a fact learned by a rejected partial interpretation. Input bytes,
+segment count and size, and accumulated session entities, facts, rules,
 and history are bounded before inference. Crossing one of those gates returns `RESOURCE_LIMIT` with the exhausted field
 and leaves the caller's prior context unchanged.
 
@@ -122,7 +158,19 @@ A new grammar form is accepted only after focused examples, metamorphic equivale
 
 For every failed or partially accepted input, the front-end must expose the longest covered spans, unmatched tokens, candidate lexical categories, failed feature constraints, missing semantic actions, unresolved operators and reference status. These diagnostics are the training signal for the coding agent.
 
-The front-end must report whether an input was directly parsed, handled by an explicit symbolic task adapter, accepted through deterministic local approximation, left ambiguous among local interpretations, understood as an artifact request without supported source material, handled by extractive request synthesis, accepted after Language Agent translation or simplification, rejected by host normalization validation, failed in the external normalization process, or left unparsed. The implemented route names include `direct-symbolic`, `direct-symbolic-task-adapter`, `heuristic-cnl-approximated`, `heuristic-cnl-ambiguous`, `heuristic-request-planned`, `heuristic-request-synthesis`, `language-agent-normalized`, `language-agent-normalization-rejected`, and `language-agent-normalization-failed`. Approximation receipts record candidate confidence, votes, transformations, and reparse outcomes. Request-planning receipts record intent votes, topics, output contract, and subrequests. Normalization receipts separately record whether an accepted external candidate declared translation or simplification. The route is part of every runtime and benchmark result.
+The front-end must report whether an input was rejected by the English-only gate, directly parsed, handled by an
+explicit symbolic task adapter, accepted through deterministic local approximation, left ambiguous among local
+interpretations, understood as an artifact request without supported source material, handled by extractive request
+synthesis, accepted after a Language Agent simplification or independently verified translation proposal, rejected by
+host proposal validation, failed in the external process, or left unparsed. Route names include
+`english-language-gate-rejected`, `direct-symbolic`, `direct-symbolic-task-adapter`,
+`heuristic-cnl-approximated`, `heuristic-cnl-ambiguous`, `heuristic-request-planned`,
+`heuristic-request-synthesis`, `language-agent-normalized`, `language-agent-normalization-rejected`, and
+`language-agent-normalization-failed`. The language-gate receipt exposes the bounded assessment and never a purported
+translation. Approximation receipts record candidate confidence, votes, transformations, and reparse outcomes.
+Request-planning receipts record intent votes, topics, output contract, and subrequests. External proposal receipts
+separately record requested and declared translation or simplification. The route is part of every runtime and
+benchmark result.
 
 ### 9. Capability curriculum and benchmark evidence
 
@@ -146,10 +194,19 @@ ensemble. Direct `SOLVED` and `PARTIAL` can also be inspected when a visible str
 IR different from the original direct IR; an identical interpretation keeps the direct result. Candidate selection
 uses parse-only Semantic IR rather than downstream answer success. A changed local interpretation is
 non-authoritative: a strict proof through that interpretation is exposed as `DEFEASIBLE`, and statements extracted
-only from the candidate remain query-local rather than entering the returned session. An `UNKNOWN` with no accepted
+only from the candidate remain query-local rather than entering the returned session. This incoming-session snapshot
+rule applies to every eligible direct status, not only to direct `SOLVED` or `PARTIAL`. An `UNKNOWN` with no accepted
 structural alternative remains the direct knowledge gap.
 
-Only after those local language routes remain `UNPARSED` may an explicitly enabled operator CLI invoke the DS013 Language Agent wrapper. DS013 exclusively defines translation and simplification authority, protected anchors, retry feedback, subprocess isolation, cache, route accounting, and explicit opt-in. The parser and local layer contribute only bounded unsupported-form diagnostics. They never request an answer or expose reasoning state, selected KB records, failure grounding, or desired values.
+Likely non-English input is rejected before English-only approximation. In the general CLI's disclosed assisted
+profile, that rejection may route to the DS013 translation-proposal strategy instead of being treated as misspelled English.
+For likely-English or indeterminate input, the direct and DS022 local paths retain priority; only terminal
+`UNPARSED` may request an external English simplification. DS013 defines proposal authority, protected anchors, retry
+feedback, subprocess isolation, cache, route accounting, assisted disclosure, and local override. The parser and local layer contribute
+only bounded language-form diagnostics. They never request an answer or expose reasoning state, selected KB records,
+failure grounding, or desired values. A translated target that parses is still not accepted when open-class
+source-to-target equivalence lacks an independent reviewed language profile; model-declared alignments cannot validate
+the model's own translation.
 
 ### Implemented factoid and narrative projections
 
@@ -220,9 +277,14 @@ coverage, not evidence that the question was linguistically uninterpretable. Kee
 Language Agent normalization from being misused as factual retrieval. DS009 may additionally return bounded related
 KB records, but they remain outside the answer and do not change `UNKNOWN` into `SOLVED`.
 
-### Question #3: Why does Language Agent normalization have a separate authority?
+### Question #3: Why is Language Agent a strategy at the same logical node but a separate trust regime?
 
-Response: Direct parsing, deterministic local recovery, and external normalization have different trust, reproducibility, and deployment boundaries. DS003 stays stable when a local voting policy or an adapter model, process protocol, cache, or proposal policy changes; DS022 can evolve inspectable local recovery and DS013 can evolve the opt-in operator service without redefining accepted Semantic IR.
+Response: All three routes propose an interpretation, so they belong to the language-interpretation node. Their
+authority is not equal. Direct parsing is a non-voting acceptance gate, deterministic local strategies produce
+inspectable candidates, and the external strategy produces an untrusted candidate outside the deployed closure. DS003
+stays stable when a local voting policy or an adapter model, process protocol, cache, or proposal policy changes;
+DS022 can evolve inspectable local recovery and DS013 can evolve the operator service without redefining
+accepted Semantic IR.
 
 ### Question #4: Why is a successful heuristic interpretation not merged into the direct route?
 
@@ -239,9 +301,21 @@ clause fragment can then resolve to a shorter known name and inherit facts that 
 subject. Removing only one licensed article and comparing the complete remaining surface preserves ordinary
 multiword aliases while forcing every other token to receive explicit grammar and semantic treatment.
 
+### Question #6: Why does English-routing confidence include evidence mass as well as direction?
+
+Response: A directional share alone becomes one whenever the gate sees any positive signal and no negative signal.
+Treating ASCII length or a broadly shared suffix as that signal would let repeated nonce text or another ASCII-written
+language authorize English. The gate therefore separates compatibility from direction and requires a reviewed English
+function, operator, or clause-frame cue before positive classification. Multiplying the leading directional share by
+a bounded evidence-mass factor then keeps short, neutral, or conflicting surfaces visibly uncertain while allowing
+several independent English cues to cross the declared threshold. The validator recomputes the score from the receipt
+signals, and incomplete inspection remains confidence zero rather than a partial-language claim. This score controls
+only routing; the parser still decides whether any meaning is accepted.
+
 ## Conclusion
 
-The accepted CNL is an extensible semantic interface rather than a list of benchmark templates. Direct parsing remains
-the exact semantic authority; deterministic approximation, request planning, and explicitly enabled external
-normalization are separately attributed routes. Every interpretation path preserves protected meaning and returns
-through trusted symbolic execution, while related evidence remains distinct from proof.
+The accepted CNL is an extensible English semantic interface rather than a list of benchmark templates. A bounded
+English-likelihood gate protects that boundary without pretending to translate. Direct parsing remains the exact
+semantic authority; deterministic approximation, request planning, and externally assisted proposals are
+separately attributed routes. Every accepted interpretation returns through trusted symbolic execution, while
+related evidence remains distinct from proof.

@@ -1,87 +1,53 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Evaluation and claims — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/public-benchmark-dashboard.mjs"></script></head>
-<body><div data-include="partials/header.html"></div><main>
-<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation and claims</p>
-<h1>What each result actually proves</h1>
-<p class="lead">ESLM has real symbolic mechanisms and substantial benchmark-adapter work, but the evidence is heterogeneous. A parser score, a structured-task run, a formula solver, an authored fixture, and an official end-to-end test are not interchangeable. This page makes the route, denominator, split, receipt, and remaining gap visible.</p>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Development evidence — ESLM Documentation</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="partials-loader.js" defer></script>
+</head>
+<body>
+<div data-include="partials/header.html"></div>
+<main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Development / Evidence overview</p>
+<h1>Development evidence without one misleading score</h1>
+<p class="lead">ESLM keeps three development ledgers because they answer different questions. Knowledge-base status says what information can be loaded. Benchmark status says what behavior was actually executed and scored. Reinforcement-learning dataset status says what task structure has been studied for possible future processing nodes and strategies.</p>
 
-<h2>Evidence hierarchy</h2>
-<div class="table-wrap"><table><thead><tr><th>Layer</th><th>Evidence and claim boundary</th></tr></thead><tbody>
-<tr><td>Unit and integration tests</td><td><dl class="table-details"><div><dt>Supports</dt><dd>A local implementation contract works and rejects known invalid inputs.</dd></div><div><dt>Does not support alone</dt><dd>Coverage of unseen language or an external task distribution.</dd></div></dl></td></tr>
-<tr><td>Authored fixtures and metamorphic smoke</td><td><dl class="table-details"><div><dt>Supports</dt><dd>Readable integration contracts and accepted behaviors survive nonce renaming, contrasts, and deterministic replay.</dd></div><div><dt>Does not support alone</dt><dd>Public benchmark accuracy. The authored evaluation and benchmark fixtures contain five cases each.</dd></div></dl></td></tr>
-<tr><td>Generated heuristic development</td><td><dl class="table-details"><div><dt>Supports</dt><dd>Collective behavior over 1,200 deterministic nonce instantiations of 43 reviewed shapes across 18 domains, including repair-required inputs, direct controls, and unsafe contrasts.</dd></div><div><dt>Does not support alone</dt><dd>Independently authored or unseen language evidence. The distribution is project-owned and development-visible.</dd></div></dl></td></tr>
-<tr><td>External development probe</td><td><dl class="table-details"><div><dt>Supports</dt><dd>Behavior on visible externally defined cases and a reproducible failure diagnosis.</dd></div><div><dt>Does not support alone</dt><dd>Untouched generalization; these outcomes may guide implementation.</dd></div></dl></td></tr>
-<tr><td>Fresh frozen evaluation</td><td><dl class="table-details"><div><dt>Supports</dt><dd>One frozen candidate's aggregate behavior on a pool opened once.</dd></div><div><dt>Does not support alone</dt><dd>Current behavior after dependencies change, or structural novelty when the split is merely row-IID.</dd></div></dl></td></tr>
-<tr><td>Official test or external comparison</td><td><dl class="table-details"><div><dt>Supports</dt><dd>Comparable evidence only when source, split, route, grader, tools, and resource policy match.</dd></div><div><dt>Does not support alone</dt><dd>Capabilities omitted by that protocol.</dd></div></dl></td></tr>
+<div class="nav-grid">
+  <a class="nav-card" href="development/knowledge-bases.html"><strong>Knowledge-base status</strong><span>Current packages, what each contributes, and the next useful ingestion targets.</span></a>
+  <a class="nav-card" href="development/benchmarks.html"><strong>Benchmark status</strong><span>Internal checks, public executions, result freshness, measured quality, and candidate evaluations.</span></a>
+  <a class="nav-card" href="development/rl-datasets.html"><strong>RL dataset status</strong><span>Acquisition, structural projection, analysis maturity, source candidates, and distance from runtime use.</span></a>
+</div>
+
+<h2>The three claims must stay separate</h2>
+<div class="table-wrap"><table><thead><tr><th>Question</th><th>Evidence that answers it</th></tr></thead><tbody>
+<tr><td>What can the runtime know?</td><td>A validated package and its declared projection show which records and policies are available. A package count does not show that a query used them or that an answer is correct.</td></tr>
+<tr><td>What can the system do?</td><td>An execution receipt names the tested cases, route, scorer, witness policy, result checkpoint, and failures. A catalog entry or downloaded source is not an execution.</td></tr>
+<tr><td>What architecture might be missing?</td><td>Rights-cleared training projections can reveal repeated operations, dependencies, feedback axes, and failure boundaries. These are research hypotheses until a separate implementation, ablation, transfer test, and promotion decision succeed.</td></tr>
 </tbody></table></div>
 
-<h2>The default internal benchmark has two reports</h2>
-<p><code>npm run benchmark</code> first executes the five-case authored fixture and then the deterministic generated heuristic suite. The command deliberately preserves two result artifacts and two denominators. <a href="results/latest-benchmark.html"><code>latest-benchmark.html</code></a> keeps the small cases readable. <a href="results/latest-generated-heuristic-benchmark.html"><code>latest-generated-heuristic-benchmark.html</code></a> summarizes the broad development run; its <a href="results/latest-generated-heuristic-benchmark.json">JSON receipt</a> is the machine authority.</p>
-<p>The generated suite defaults to 1,200 cases, 43 technique templates, 18 domain themes, 28 target families, and the stable seed <code>eslm-generated-heuristic-development-v1</code>. The current default receipt records 1,200 unique surface inputs and observes 593 of the 774 possible declared technique-by-domain cells. The generator repeatedly instantiates those 43 shapes with nonce content and domain combinations; unique surface text and cell coverage measure useful combination breadth, not 1,200 independent structures. It derives a typed oracle from template variables before invoking the real local heuristic runtime. Language Agent assistance and failure grounding are disabled, so the measurement follows direct parsing, local proposal families, safety checks, voting, reparse, and the final symbolic status without external repair or unrelated retrieval.</p>
-<p>The 18 current domain records contain 15 distinct base predicate lemmas, and each record fixes its predicate. A cluster labeled <em>acoustics</em>, <em>communication</em>, or <em>rigging</em> can therefore be driven by the morphology of <code>buzz</code>, <code>pass</code>, or <code>tie</code>, not by domain semantics. Domain labels help organize this distribution, but they are not an independent domain-by-verb generalization test. The realism plan crosses themes and morphology classes independently and reserves unseen lemmas.</p>
-<div class="table-wrap"><table><thead><tr><th>Report view</th><th>Question answered</th></tr></thead><tbody>
-<tr><td>Structural domain and technique</td><td>Which forms fail repeatedly across different subject matter, spelling, morphology, agreement, auxiliaries, punctuation, clause structure, request envelopes, and protected operators?</td></tr>
-<tr><td>Target family, route, and status</td><td>Was the intended local family reached, and did execution remain direct, become a safe approximation, stay ambiguous, or fail at an earlier boundary?</td></tr>
-<tr><td>Complexity, confidence, and resources</td><td>Are errors associated with episode size, calibration, an exhausted finite budget, or a completed but wrong structural decision?</td></tr>
-<tr><td>Earliest-failure cluster</td><td>Which stage and target-family boundary should be investigated first, and across which techniques and domains does it recur?</td></tr>
-</tbody></table></div>
-<p>At most 24 representative failures are printed for review, while every generated case remains in the fixed denominator and aggregate clusters. Research starts from the largest repeated cluster: state a generic structural hypothesis, add renamed and meaning-changing controls, change a strategy only at its typed boundary, and replay both the fixed seed and another seed. This workflow turns many executions into cumulative evidence and prevents the memorable wording of one example from becoming a runtime branch.</p>
-<p>A pass has the authority of its oracle level. Entailment cases may require answer execution; candidate-selection cases require the exact intended structural candidate to win, carry its required family, receive a matching accepted parse-only reparse, and execute as the query-local interpreted episode under the declared route and status; decompositions require query-local retained structure; requests require executed plans and output contracts; negative controls require safe abstention; and proposal-only cases require a retained candidate with protected operators. Candidate selection does not assert that the runtime emitted a complete relation-shaped query: such a row may terminate <code>UNKNOWN</code> with <code>missingEntity</code>. A proposal-only row may pass while the final status remains <code>UNPARSED</code>. That is useful proposal-generation and safety evidence, not executable interpretation coverage. The report aggregates these six levels separately. Its machine field named <code>accuracy</code> is still exactly <code>passed / total</code> across all levels, so the headline remains a mixed development-contract rate and must be read with oracle-level, route, and status tables.</p>
-<p>Semantic success and heuristic activation are scored separately. A direct parse that reaches the oracle's meaning is a successful end-to-end result, not a failure caused by skipping an unnecessary repair. It is recorded as a bypass for the intended family. A template claimed to test recovery must first demonstrate direct <code>UNPARSED</code> or direct Semantic IR that differs from the structural oracle, whether the direct status is <code>UNKNOWN</code>, <code>SOLVED</code>, or <code>PARTIAL</code>. This distinction keeps the suite from penalizing broader direct-language support while still exposing permissive parses that need a licensed local repair.</p>
-<p>The current generator covers deletion, insertion, substitution, and transposition spelling processes plus explicit silent-<code>e</code>, doubled-consonant, sibilant, final-<code>y</code>, <code>ie</code>-ending, and terminal-<code>z</code> morphology strata. The current 593/774 technique-by-domain cell coverage is measured breadth, but domain records still bind fixed predicates, so it is not an independent domain-by-morphology experiment. The next realism layer adds template-disjoint, vocabulary-disjoint, and independently authored packets; publishes distinct template, predicate, and morphology-class counts; crosses domains and morphology independently; balances underrepresented cells; and adds multi-edit, irregular, and genuinely ambiguous nonce forms. A difficult mutation remains in the evidence even when it lowers the rate. When several repairs are plausible, the system should retain calibrated alternatives or return <code>AMBIGUOUS</code>, or consult an explicitly reviewed lexical resource; the benchmark must not reward a hard-coded verb branch.</p>
-<div class="callout"><p><strong>Claim boundary:</strong> the generated report uses <code>internal-generated-development</code> and <code>benchmarkComparable: false</code>. It is strong development evidence for this generator distribution, not a public, fresh, official, or external-comparison score. Its accuracy is never added to the authored fixture or public portfolio.</p></div>
-
-<h2>Latest assembled public report</h2>
-<p>The table is rendered from <a href="results/latest-public-benchmark-probes.json"><code>latest-public-benchmark-probes.json</code></a>. Its top-level <code>assembledAt</code> field is portfolio assembly time, not a claim that every row ran then. A receipt-backed row retains its own execution checkpoint; assembly must never make historical measurements look newly executed. Use <code>npm run benchmark:receipts:audit</code> to classify frozen receipts against current behavior dependencies.</p>
-<p>Rows executed by the current public-probe command run sequentially, but still inside one CLI process. Their resident memory is sampled rather than enforced as a hard operating-system limit, and each row says so. Process-isolated reruns with true peak-memory measurement remain a release-evidence requirement, not a capability already delivered.</p>
-<div class="callout"><p><strong>Read the label before the number.</strong> Historical-stale evidence remains useful as a checkpoint, but it is not a claim about the current worktree. “Executed” means a declared task ran; it does not mean the raw benchmark prose passed through the ordinary language frontend.</p></div>
-<div data-public-benchmark-dashboard>Loading the latest public benchmark report…</div>
-
-<h2>How to read one row</h2>
-<ul>
-<li><strong>Track</strong> identifies what is measured: <code>raw-language</code>, <code>structured-task</code>, or <code>solver-conformance</code>.</li>
-<li><strong>Input route</strong> identifies what entered the system: raw language, a source template, a structured task, or a source annotation. A formula, graph, CNF, finite program, or host-projected task can test a real generic solver without testing prose understanding.</li>
-<li><strong>Evidence state and split quality</strong> distinguish development, diagnostic, one-shot fresh, grouped structural holdout, row-IID holdout, and official test. “Fresh” describes lifecycle, not necessarily difficult generalization.</li>
-<li><strong>Checkpoint state</strong> says whether a stored execution is current, stale, unrecoverable, unverified, invalid, or unavailable. <code>historical-unverified</code> means an execution receipt exists but no complete currentness audit covers that receipt family. Execution time, source/partition/oracle/scorer identity, selected methods and KB versions, resource policy, measured time and memory, replay command, and content-addressed behavior identity are required before a row can support a current release claim.</li>
-<li><strong>Diagnosis</strong> comes from the generated report. HTML pages do not keep a second mutable copy of counts or explanations.</li>
-</ul>
-<p><code>selectedKbVersions</code> means packages available to routing, <code>consultedKbVersions</code> means providers or indexes actually queried, and <code>usedKbVersions</code> means evidence that contributed to the supported answer or verified task result. Related grounding evidence has its own contributor versions and never enters answer provenance.</p>
-
-<h2>Denominators and abstention</h2>
-<p>For forced-choice tasks, every eligible case remains in the end-to-end denominator. Reports carry three complementary metrics:</p>
-<p>The generated row's <code>forcedChoice</code> value is joined from the typed benchmark contract and validated; it is not trusted as free-form receipt metadata.</p>
-<ul>
-<li><strong>end-to-end accuracy</strong> = correct / all eligible cases;</li>
-<li><strong>attempt coverage</strong> = in-domain predictions / all eligible cases;</li>
-<li><strong>selective accuracy</strong> = correct / attempted predictions, or <code>null</code> when there were no attempts.</li>
-</ul>
-<p>Therefore a system that predicts nothing on a non-empty forced-choice set has 0% end-to-end accuracy, 0% attempt coverage, and no selective accuracy. By contrast, a task whose private correctness oracle is unavailable has no accuracy denominator; it must report a separately named completion, consistency, witness, or uniqueness metric.</p>
-
-<h2>Why several high scores are narrower than they look</h2>
-<p>The implementation genuinely contains Horn deduction, categorical reasoning, finite-model search, DPLL, relation closure, spatial composition, state transitions, and finite constraint solving. Several reported tracks feed those mechanisms source formulas, annotations, structured graphs, or task-local projections. That is valid solver or adapter evidence. It is not raw-language evidence, and the dashboard must keep an independent language diagnostic visible where one exists.</p>
-<p>The strongest architecture evidence is structural: generic runtime directories contain no benchmark-family or row-ID dispatch, and the test suite includes nonce renaming, negative controls, changed ordering, proof replay, countermodel validation, and witness checks. The next high-value gates strengthen claim provenance and language generalization while preserving those solver controls.</p>
-
-<h2>More realistic generalization</h2>
-<p>Hashing individual rows into development and “fresh” pools is often only an in-distribution holdout. Future partitions group the causal unit that could leak: generator world or seed, story, paraphrase template, lexicon and predicate vocabulary, relation composition, proof graph and depth, spatial path, or source document. Correlated decisions from one source item remain in one group.</p>
-<p>Each report uses an explicit split-quality label such as <code>row-IID</code>, <code>grouped-world</code>, <code>grouped-template</code>, <code>vocabulary-disjoint</code>, <code>structure-disjoint</code>, <code>source-version</code>, or <code>official-test</code>. Opened fresh pools remain historical checkpoints; later repairs require a genuinely new pool rather than relabeling the old cases.</p>
-
-<h2>Grounded-failure product benchmark</h2>
-<p>The new fallback needs its own independently authored, frozen evaluation. Cases include answerable, partially answerable, unanswerable, ambiguous, conflicting, malformed, typo and paraphrase, multilingual, multi-KB, and wrong-KB-distractor questions. Expected answer support and acceptable related records stay host-only.</p>
-<div class="table-wrap"><table><thead><tr><th>Layer</th><th>Measurements</th></tr></thead><tbody>
-<tr><td>Primary result</td><td>Answer correctness, status correctness, abstention calibration, proof validity, and unsupported-claim rate.</td></tr>
-<tr><td>Related retrieval</td><td>Record or span recall@k, precision@k, ranking quality, contradiction and distractor rate, truncation, latency, bytes, and calibration of complete versus incomplete search.</td></tr>
-<tr><td>Attribution</td><td>KB and version identity, citation validity, provenance reachability, derived-rule witness validity, and proof that grounding never appears as answer support.</td></tr>
-<tr><td>Optional downstream LLM</td><td>Answer quality, citations, unsupported claims, model and prompt identity, latency, and cost when the model receives only the visible question and grounding bundle. This is an assisted formulation track, not deterministic ESLM inference.</td></tr>
-</tbody></table></div>
-<p>Metamorphic controls rename entities and predicates, reorder providers, inject high-overlap distractors, remove the supporting KB, change the requested relation, truncate search, and force provider failure. A correct result preserves the truthful inability, returns useful context when available, and distinguishes “no evidence found in a complete search” from “search incomplete.”</p>
-
-<h2>Release sequence</h2>
+<h2>A practical reading order</h2>
 <ol>
-<li><strong>Truth gate:</strong> enforce row schema, denominator semantics, track and route labels, strict prediction imports, and receipt dependency audits.</li>
-<li><strong>Reproducible baseline:</strong> freeze a clean checkpoint and rerun feasible rows in isolated processes with measured time and peak memory.</li>
-<li><strong>Structural splits:</strong> build grouped and disjoint development pools; keep raw language separate from annotations and task adapters.</li>
-<li><strong>Grounding evaluation:</strong> freeze the unanswered-question suite and score primary answers, retrieval, provenance, and optional formulation separately.</li>
-<li><strong>External validation:</strong> export label-free predictions, use official evaluators where permitted, and compare symbolic, no-retrieval, retrieval, and external-model tracks under the same evidence scope.</li>
+<li>Open the relevant status page and read its plain-language “current” and “next” sections.</li>
+<li>For a numerical claim, follow the link to the generated receipt and check whether the result is current, historical, invalid, or unavailable.</li>
+<li>For implementation details, continue to the dedicated knowledge, benchmark, or graph-research chapter.</li>
+<li>For a normative guarantee, use the linked DS specification; HTML explains the contract but does not replace it.</li>
 </ol>
-<p>The authoritative contracts are <a href="specsLoader.html?spec=DS010-evaluation-benchmarks-and-comparison.md">DS010</a> for measurement, <a href="specsLoader.html?spec=DS017-benchmark-adapters-oracles-and-splits.md">DS017</a> for adapters and split isolation, and <a href="specsLoader.html?spec=DS021-memory-budgets-and-shard-caches.md">DS021</a> for resource accounting. Source licenses and access limits are listed on the <a href="sources.html">sources page</a>.</p>
-</main><div data-include="partials/footer.html"></div></body></html>
+
+<h2>Commands that reproduce the three views</h2>
+<pre><code>node src/cli.mjs kb list
+node src/cli.mjs benchmark status
+node src/cli.mjs research graph status
+
+npm run kb:validate
+npm run benchmark
+npm run benchmark:receipts:audit</code></pre>
+<p>The status commands inspect existing catalogs and receipts. They do not silently acquire sources, rerun costly public evaluations, promote research hypotheses, or make an old result current.</p>
+
+<p class="related">Detailed implementation chapters: <a href="knowledge/knowledge-bases.html">knowledge packages</a>, <a href="research/processing-graph-research.html">dataset-guided graph research</a>, and <a href="specsLoader.html?spec=DS010-evaluation-benchmarks-and-comparison.md">the evaluation contract</a>.</p>
+</main>
+<div data-include="partials/footer.html"></div>
+</body>
+</html>
+

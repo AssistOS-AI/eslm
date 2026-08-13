@@ -8,7 +8,7 @@ function resolveEntityPhrase(words, model, context) {
   const nominal = analyzeNominalSurface(original);
   if (!nominal.accepted) return { invalid: original, nominal };
   const phrase = nominal.surface;
-  if (['it', 'he', 'she', 'they', 'el', 'ea'].includes(phrase) && context.lastEntity) {
+  if (['it', 'he', 'she', 'they'].includes(phrase) && context.lastEntity) {
     return { id: context.lastEntity, confidence: 0.65, source: 'discourse' };
   }
   const candidates = [];

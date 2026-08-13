@@ -66,22 +66,26 @@ Stage F adds explicit default and exception semantics, conflict priority, skepti
 
 Acceptance requires strict and defeasible conclusions to remain distinguishable, counterevidence and alternatives to remain visible, provider order invariance, source provenance for every contribution, fresh transfer across domains, and no conversion of plausible continuation or explanation into strict truth.
 
-### 8. Stage G: broader language and external normalization minimization
+### 8. Stage G: broader English and external-proposal minimization
 
-Stage G expands relative and embedded clauses, coordination, quantifier scope, modality, reference, discourse, and
-multilingual preservation. DS022 supplies the default deterministic recovery layer after direct `UNPARSED` or
+Stage G expands English relative and embedded clauses, coordination, quantifier scope, modality, reference, and
+discourse. A bounded English-likelihood gate refuses likely non-English input without pretending to translate it.
+DS022 supplies the deterministic English recovery layer after direct `UNPARSED` or
 `UNKNOWN`; it may also challenge direct `SOLVED` or `PARTIAL` when an accepted structural candidate has different
 parse-only Semantic IR. Its mechanisms include confidence-voted spelling and morphology repairs, bounded
 decomposition proposals, query-local reparse, role-focused grounding terms, and explicit request planning that can
-preempt an accidental assertion parse without retaining its episode state. DS013 remains a later, explicit opt-in
-operator boundary only after the local result is `UNPARSED`; it translates or simplifies and never performs reasoning.
+preempt an accidental assertion parse without retaining its episode state. DS013 remains a separate operator proposal
+strategy: the general CLI composes it by default and the explicit local override omits it. It may translate input
+rejected as likely non-English or simplify English after the local
+result remains `UNPARSED`, and it never performs reasoning. Its candidate remains untrusted and must pass the ordinary
+English parser and independent preservation gates.
 
 Acceptance requires construction-level direct and local-recovery coverage, semantic-preservation and
 meaning-changing contrasts, confidence calibration, ambiguity behavior, query-local session atomicity, route-specific
 accuracy, realistic misspelling and complex-sentence suites, work-profile convergence for completed cases, declining
 Language Agent eligibility as generic parsing and heuristics grow, and zero hidden external calls in the deployed
 runtime and canonical direct evaluations. The present DS022 implementation is a bounded Stage G slice; it does not by
-itself accept unrestricted coordination, reference, discourse, or multilingual semantics.
+itself accept unrestricted coordination, reference, discourse, or cross-language semantics.
 
 ### 9. Corpus and benchmark ordering
 
@@ -102,7 +106,7 @@ unqualified end-to-end product score.
 A release may contain explicit capability gaps and benchmark exceptions. It may not claim completion merely because a visible development sample is perfect, because unsupported cases were dropped, because a Language Agent answered them, or because a benchmark-specific branch reproduces labels.
 
 Release evidence exercises the default `balanced` work profile, at least one smaller and one larger profile, the
-explicitly disabled Language Agent default, and a controlled opt-in invocation path. For results that complete under
+general CLI's disclosed assisted default, the explicit local override, and a controlled stub invocation path. For results that complete under
 multiple profiles, semantic values, proof, provenance, trust, and status agree. Request-synthesis fixtures separately
 check `PARTIAL` status, citations for every selected KB statement, explicit coverage gaps, and absence of invented
 bridges.

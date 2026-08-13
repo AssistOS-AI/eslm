@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="../">
+  <title>Benchmark development status — ESLM Documentation</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="partials-loader.js" defer></script>
+  <script type="module" src="assets/public-benchmark-dashboard.mjs"></script>
+</head>
+<body>
+<div data-include="partials/header.html"></div>
+<main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / <a href="evaluation.html">Development</a> / Benchmark status</p>
+<h1>Benchmark status: what ran, how well, and what remains</h1>
+<p class="lead">A useful benchmark status starts with the execution regime, not the largest percentage. ESLM currently has small internal regression checks, a large project-owned structural development suite, external development probes, and stored fresh-evaluation receipts. Their denominators and claims remain separate.</p>
+
+<h2>First-level status</h2>
+<div class="table-wrap"><table><thead><tr><th>Evidence group</th><th>What it tells us now</th></tr></thead><tbody>
+<tr><td>Authored internal checks</td><td><dl class="table-details"><div><dt>Scope</dt><dd>The evaluation fixture and authored benchmark each contain five readable cases.</dd></div><div><dt>Meaning</dt><dd>They are fast end-to-end software sanity checks. A perfect result is not public-benchmark or broad-language evidence.</dd></div><div><dt>Published view</dt><dd><a href="results/latest-evaluation.html">Evaluation fixture</a> and <a href="results/latest-benchmark.html">authored benchmark fixture</a>.</dd></div></dl></td></tr>
+<tr><td>Generated heuristic development</td><td><dl class="table-details"><div><dt>Scope</dt><dd>1,200 deterministic nonce cases instantiate 43 reviewed structural shapes and several different oracle levels.</dd></div><div><dt>Meaning</dt><dd>This tests repeated combinations, safety contrasts, and regression stability inside a known generator. Its mixed contract rate is not answer accuracy on unseen English.</dd></div><div><dt>Published view</dt><dd><a href="results/latest-generated-heuristic-benchmark.html">Fixed generated run</a> and <a href="results/latest-generated-heuristic-seed-audit.json">multi-seed stability audit</a>.</dd></div></dl></td></tr>
+<tr><td>Public and source-defined tasks</td><td><dl class="table-details"><div><dt>Scope</dt><dd>The generated portfolio below includes raw-language, source-template, structured-task, source-annotation, and solver-conformance routes.</dd></div><div><dt>Meaning</dt><dd>Only a row marked as an executed and current receipt describes the present checkpoint. Historical, invalid, unavailable, and not-run states remain visible.</dd></div><div><dt>Published view</dt><dd><a href="results/latest-public-benchmark-probes.json">Machine-readable public portfolio</a>.</dd></div></dl></td></tr>
+</tbody></table></div>
+
+<h2>How to interpret quality</h2>
+<div class="table-wrap"><table><thead><tr><th>Field</th><th>Plain meaning</th></tr></thead><tbody>
+<tr><td>End-to-end accuracy</td><td>Correct cases divided by every eligible case. Abstentions and resource failures remain in the denominator.</td></tr>
+<tr><td>Attempt coverage</td><td>The fraction for which the system produced a prediction inside the task's answer domain.</td></tr>
+<tr><td>Selective accuracy</td><td>Correct predictions divided only by attempted predictions. A high value can coexist with low coverage.</td></tr>
+<tr><td>Track and input route</td><td>Whether the run tested raw English, a source template, an already structured task, an annotation, or only a generic solver. A formula-track success is real solver evidence but not prose-understanding evidence.</td></tr>
+<tr><td>Checkpoint state</td><td>Whether the stored execution still matches the current implementation. A stale result remains historical evidence and must not be reported as current quality.</td></tr>
+</tbody></table></div>
+
+<h2>Next benchmark work</h2>
+<ul>
+<li><strong>Raw-English companions for structured successes:</strong> separately measure whether the frontend can build the formulas, state transitions, relation graphs, and constraints that current adapters already execute.</li>
+<li><strong>Grounded composition:</strong> freeze independent prompts for summaries, explanations, comparisons, and short documents; score factual support, coherence, citation coverage, unsupported claims, and output structure separately.</li>
+<li><strong>Stronger generated splits:</strong> add template-disjoint, vocabulary-disjoint, independently authored, multi-edit, irregular, and genuinely ambiguous cases rather than only adding more rows from the same shapes.</li>
+<li><strong>New untouched pools:</strong> a behavior change cannot reuse an opened fresh partition as unseen evidence. New source versions or newly frozen groups are required.</li>
+<li><strong>Official comparisons:</strong> use the source owner's evaluator when available and keep model, prompt, tools, evidence access, grader, and resource policy aligned.</li>
+</ul>
+
+<h2>Complete generated portfolio</h2>
+<p>The compact sections above are the first-level status. The expandable table is the audit view for individual benchmark rows. It is generated from the current portfolio receipt, so scores, tested scope, diagnoses, and next actions are not copied into this page.</p>
+<details>
+<summary><strong>Open the complete benchmark-by-benchmark status</strong></summary>
+<div data-public-benchmark-dashboard>Loading the latest public benchmark report…</div>
+</details>
+
+<h2>Reproduce or audit</h2>
+<pre><code>npm run benchmark
+npm run benchmark:generated:seed-audit
+npm run benchmark:public-probe
+npm run benchmark:receipts:audit</code></pre>
+<p><code>benchmark:public-probe</code> can combine rows executed during assembly with stored receipts. The assembly time is not the execution time of every row. Use the receipt audit before describing any stored result as current.</p>
+
+<p class="related">The <a href="specsLoader.html?spec=DS010-evaluation-benchmarks-and-comparison.md">DS010 contract</a> defines measurement semantics, and <a href="specsLoader.html?spec=DS017-benchmark-adapters-oracles-and-splits.md">DS017</a> defines adapter, oracle, and split isolation.</p>
+</main>
+<div data-include="partials/footer.html"></div>
+</body>
+</html>

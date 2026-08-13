@@ -1,6 +1,12 @@
 import { readFile } from 'node:fs/promises';
 import { extname, relative } from 'node:path';
 import { readJsonLines, writeJson } from './io.mjs';
+import { benchmarkBehaviorIdentity } from './evaluation/benchmark-execution-identity.mjs';
+import {
+  assertInternalAuthoredBenchmarkReport,
+  INTERNAL_AUTHORED_BENCHMARK_REPORT_PROTOCOL,
+  INTERNAL_REGRESSION_PROTOCOL,
+} from './evaluation/internal-authored-report-contract.mjs';
 import { RESEARCH_BENCHMARK_CATALOG } from './evaluation/benchmark-research-catalog.mjs';
 import { PROJECT_ROOT } from './paths.mjs';
 import { hashFile, sha256 } from './util.mjs';
@@ -51,6 +57,7 @@ async function scoreCase(engine, item) {
     return {
       pass: left.score > right.score, actual: [left.score, right.score], status: 'SCORED',
       languageRoute: 'direct-symbolic', normalizationAttempted: false,
+      normalizationExternalInvocation: false,
     };
   }
   const input = item.context ? `${item.context} ${item.text}` : item.text;
@@ -58,33 +65,45 @@ async function scoreCase(engine, item) {
   const route = {
     status: result.status, languageRoute: result.languageRoute,
     normalizationAttempted: Boolean(result.normalization?.attempted),
-    normalizationStatus: result.normalization?.status,
-    normalizationCacheHit: result.normalization?.cacheHit,
     normalizationExternalInvocation: Boolean(result.normalization?.attempted
       && !result.normalization?.cacheHit && result.normalization?.receipt),
+    ...(result.normalization?.status === undefined ? {} : {
+      normalizationStatus: result.normalization.status,
+    }),
+    ...(result.normalization?.cacheHit === undefined ? {} : {
+      normalizationCacheHit: result.normalization.cacheHit,
+    }),
   };
-  if (item.values) return { pass: JSON.stringify([...result.values ?? []].sort()) === JSON.stringify([...item.values].sort()), actual: result.values, ...route };
+  if (item.values) {
+    return {
+      pass: JSON.stringify([...result.values ?? []].sort()) === JSON.stringify([...item.values].sort()),
+      actual: result.values ?? null,
+      ...route,
+    };
+  }
   const aliases = [item.answer, ...(item.aliases ?? [])].map(normalizeAnswer);
-  return { pass: aliases.includes(normalizeAnswer(result.answer)), actual: result.answer, ...route };
+  return { pass: aliases.includes(normalizeAnswer(result.answer)), actual: result.answer ?? null, ...route };
 }
 
 export async function runBenchmark(engine, suitePath, publishPath) {
   const suite = await readJsonLines(suitePath);
+  const behaviorIdentity = await benchmarkBehaviorIdentity();
   const results = [];
   for (let index = 0; index < suite.length; index += 1) {
     results.push({ id: suite[index].id ?? String(index + 1), ...await scoreCase(engine, suite[index]) });
   }
   const report = {
-    format: 'eslm-benchmark-report-v2',
-    protocol: 'eslm-internal-regression-v1',
+    format: INTERNAL_AUTHORED_BENCHMARK_REPORT_PROTOCOL,
+    protocol: INTERNAL_REGRESSION_PROTOCOL,
     createdAt: new Date().toISOString(),
     evidenceRegime: 'internal-authored-smoke-fixture',
     claimScope: 'implementation-regression-only',
+    behaviorIdentity,
     dataset: { path: relative(PROJECT_ROOT, suitePath), sha256: await hashFile(suitePath) },
     model: {
       id: engine.model.manifest.modelId,
-      knowledgeBases: engine.model.manifest.knowledgeBases ?? [],
-      comparable: engine.model.manifest.benchmarkComparable !== false,
+      knowledgeBases: [...new Set(engine.model.manifest.knowledgeBases ?? [])].toSorted(),
+      comparable: false,
     },
     total: results.length,
     correct: results.filter((item) => item.pass).length,
@@ -92,6 +111,7 @@ export async function runBenchmark(engine, suitePath, publishPath) {
     language: languageMetrics(results),
     results,
   };
+  assertInternalAuthoredBenchmarkReport(report);
   if (publishPath) await writeJson(publishPath, report);
   return report;
 }

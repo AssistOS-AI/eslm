@@ -1,0 +1,305 @@
+{
+  "format": "eslm-processing-graph-consolidation-review-v1",
+  "cycleId": "cycle:processing-graph:001-small-pilot",
+  "review": {
+    "reviewId": "review:processing-graph:001-small-pilot-v6",
+    "reviewAuthority": "repository-maintainer-review",
+    "reviewedSpecifications": [
+      "DS028",
+      "DS029"
+    ],
+    "decisionScope": "research-consolidation-only"
+  },
+  "hypotheses": [
+    {
+      "hypothesisId": "hypothesis:reviewed:pilot:typed-task-frame-coordination",
+      "type": "coordination-node",
+      "state": "merge-candidate",
+      "responsibility": "Coordinate typed operations, capabilities, constraints, and output obligations before method selection.",
+      "containingCircuit": "circuit:runtime:request-session",
+      "inputPacketTypes": [
+        "packet:runtime:request-force-decision-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:request-plan-v1"
+      ],
+      "authority": "coordination",
+      "failureKinds": [
+        "unsatisfied-capability",
+        "unsupported-operation"
+      ],
+      "resourceDimensions": [
+        "resource:graph-nodes",
+        "resource:tokens"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:4a9b547398b8bea1fe06af6ceffd276a4228ece65b719198aee9ff22fb4ecb95",
+        "hypothesis:73f3b593e4da744d4bb09bde29336afab34d5c15c8eaa5cec8601e60ec47dcb0"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:pilot:reason-operation-processing",
+      "type": "processing-node",
+      "state": "merge-candidate",
+      "responsibility": "Execute a capability-selected reasoning operation and return its typed result or inability under the method plan.",
+      "containingCircuit": "circuit:runtime:method-selection",
+      "inputPacketTypes": [
+        "packet:runtime:method-plan-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:method-result-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "unsatisfied-capability",
+        "unsupported-operation"
+      ],
+      "resourceDimensions": [
+        "resource:graph-nodes",
+        "resource:solver-nodes"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:71a31832fa79cd881ca64c55b5e62fcced3f3caeb13659da1d0f885e55a51f46"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:pilot:plan-operation-wrapper",
+      "type": "processing-node",
+      "state": "rejected",
+      "responsibility": "Add a generic process node for planning outside the existing request-plan coordination responsibility.",
+      "containingCircuit": "circuit:runtime:request-session",
+      "inputPacketTypes": [
+        "packet:runtime:request-force-decision-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:request-plan-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "unsatisfied-capability",
+        "unsupported-operation"
+      ],
+      "resourceDimensions": [
+        "resource:graph-nodes"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:98c3b739c992285a094d67d38c88872a7dc6453aa60becf39af58f5f00bff2b5"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:pilot:construction-operation-wrapper",
+      "type": "processing-node",
+      "state": "rejected",
+      "responsibility": "Add a generic process node for construction outside the existing result-construction coordinator and strategy family.",
+      "containingCircuit": "circuit:runtime:failure-result",
+      "inputPacketTypes": [
+        "packet:runtime:verification-decision-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:construction-candidate-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "unsatisfied-capability",
+        "unsupported-operation"
+      ],
+      "resourceDimensions": [
+        "resource:graph-nodes",
+        "resource:output-bytes"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:57a29e9a6b7aa7468588f9d7ef4adeaa2b26ae8d90e2838c7c43872a6dc70881",
+        "hypothesis:ef8a9a460b1a11f8fbdbac0761f636a08859481ff25f2bba46582e972f0d8821"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:pilot:reason-step-subcircuit",
+      "type": "nested-circuit",
+      "state": "deferred",
+      "responsibility": "Encapsulate recurrent same-phase reason-step dependencies as a bounded internal method-execution subcircuit.",
+      "containingCircuit": "circuit:runtime:method-selection",
+      "inputPacketTypes": [
+        "packet:runtime:method-plan-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:method-result-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "invalid-transition",
+        "missing-dependency"
+      ],
+      "resourceDimensions": [
+        "resource:graph-edges",
+        "resource:solver-nodes"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:a8935bc29d1b3926f7af41779b2bbfb19dbe3b9ffa544f2adff927b30a1d451a"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:pilot:lifecycle-subcircuit-wrapper",
+      "type": "nested-circuit",
+      "state": "rejected",
+      "responsibility": "Add one extra nested wrapper around plan, reason, construct, and terminate phase boundaries.",
+      "containingCircuit": "circuit:runtime:request-cycle",
+      "inputPacketTypes": [
+        "packet:runtime:request-plan-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:runtime-result-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "invalid-transition",
+        "missing-dependency"
+      ],
+      "resourceDimensions": [
+        "resource:graph-edges",
+        "resource:graph-nodes"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:6004bf3eade4d1ce4eb70022a58258651d5c3492dbc2bb1c3465624f89b69347",
+        "hypothesis:8e439638176831494a6eceea5ded5d1e2256ec386f9fde13e15b7bc76c44f9c7",
+        "hypothesis:f2660ca613656a1aa710b9bb71902031e6c9499387a6a6b98b73411bdafcc5ac"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:pilot:typed-action-dependency-field",
+      "type": "packet-field",
+      "state": "merge-candidate",
+      "responsibility": "Preserve typed action dependency motifs in the existing source-neutral structural-feature packet.",
+      "containingCircuit": "circuit:research:evidence-projection",
+      "inputPacketTypes": [
+        "packet:research:projected-episode-batch-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:research:structural-feature-batch-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "dependency-cycle",
+        "missing-dependency"
+      ],
+      "resourceDimensions": [
+        "resource:graph-edges"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:20f6ec567617da14be81c91e8b329a6a9d644e5a25edbf0f2a3a2989fde608c7",
+        "hypothesis:5ccc9ffc55e824d58a5e88f89e4e48edd8dfd178a043b0c4b1063b8d16fbbcee",
+        "hypothesis:737362d48797438ca852eace0c4301969fd531e9f31af9969b27e3017a699af3",
+        "hypothesis:778024f129bcd0cd36b73af2416b4e309c513dc6f3d03541378dfbf4dcfadf0d"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:pilot:typed-phase-transition-edge",
+      "type": "edge",
+      "state": "rejected",
+      "responsibility": "Turn observed trajectory phase transitions directly into processing-graph control edges.",
+      "containingCircuit": "circuit:research:hypothesis-discovery",
+      "inputPacketTypes": [
+        "packet:research:structural-feature-batch-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:research:hypothesis-batch-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "invalid-transition"
+      ],
+      "resourceDimensions": [
+        "resource:graph-edges"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:2158cf403dd7fc33b8bf26b9097f87d531501a95cf87250ca6fe36e308851ad2",
+        "hypothesis:3836dda2782620535e10816aa2a0d960e0b66a5d261058fd07da450e81cb0a42",
+        "hypothesis:6a6dcfabce5bdf02d42c65a80bf2f0ffadd15b85b734c22742ace3e654097008"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:pilot:quality-ranking-strategy-family",
+      "type": "strategy",
+      "state": "merge-candidate",
+      "responsibility": "Rank already admissible result candidates by reviewed quality axes while retaining disagreement and every proof boundary.",
+      "containingCircuit": "circuit:runtime:failure-result",
+      "inputPacketTypes": [
+        "packet:runtime:verification-decision-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:construction-candidate-v1"
+      ],
+      "authority": "proposal",
+      "failureKinds": [
+        "feedback-disagreement",
+        "insufficient-transfer-evidence"
+      ],
+      "resourceDimensions": [
+        "resource:candidates",
+        "resource:votes"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:2507e858b679a96f574dfb0485da5bbd8a7b60679063eae214f72499f062b573",
+        "hypothesis:a16f6bb37376a38cf40fc6f9842191f2460ceb7a239d7c69f9da75b291ee83e9",
+        "hypothesis:be4a92b8edccd09522be770c25d9b2728eee8bf6bee33e4e8c8c5daf391c1317",
+        "hypothesis:ceb3815a4833601c90e90df1dbee89fe954d5ce4ebcb60c4c1a2dcfd26d1d463",
+        "hypothesis:ea24c4a372b743149dba752cc030a8de9bf40fadb44e4cfa73c014f799a53ab7"
+      ]
+    }
+  ],
+  "consolidation": [
+    {
+      "candidateId": "hypothesis:reviewed:pilot:typed-task-frame-coordination",
+      "decision": "merge",
+      "resultId": "node:runtime:request-plan-coordinator",
+      "reason": "The existing request-plan coordinator already owns typed operations and output obligations; this evidence sharpens that responsibility instead of creating a duplicate coordinator."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:pilot:reason-operation-processing",
+      "decision": "merge",
+      "resultId": "node:runtime:method-executor",
+      "reason": "The method executor already owns capability-selected DS015 reasoning execution and typed method results, so a second reasoning process node would duplicate it."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:pilot:plan-operation-wrapper",
+      "decision": "reject",
+      "resultId": null,
+      "reason": "Planning is a coordination and selection responsibility in the current graph; recasting the operation label as a process node erases that authority boundary."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:pilot:construction-operation-wrapper",
+      "decision": "reject",
+      "resultId": null,
+      "reason": "Construction already belongs to a coordinator with reviewed alternative strategies; a generic construction process node adds no distinct invariant or failure boundary."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:pilot:reason-step-subcircuit",
+      "decision": "defer",
+      "resultId": null,
+      "reason": "The evidence proves only repeated same-phase reason-step dependencies, not a distinct capability-selection, witness, or verification circuit; method-level transfer and ablation are required."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:pilot:lifecycle-subcircuit-wrapper",
+      "decision": "reject",
+      "resultId": null,
+      "reason": "The proposed wrapper merely restates ordinary lifecycle phase edges and mixes planning, reasoning, construction, and termination without one new responsibility."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:pilot:typed-action-dependency-field",
+      "decision": "merge",
+      "resultId": "packet:research:structural-feature-batch-v1",
+      "reason": "Dependency motifs are already explicit source-neutral structural features with a validation owner and research lifetime; the pilot supplies no missing field semantics for a second packet contract."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:pilot:typed-phase-transition-edge",
+      "decision": "reject",
+      "resultId": null,
+      "reason": "A transition observed inside an inert trajectory is structural feature data, not evidence for a runtime or analyzer-control edge between packet-producing nodes."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:pilot:quality-ranking-strategy-family",
+      "decision": "merge",
+      "resultId": "node:runtime:result-construction-coordinator",
+      "reason": "Quality comparisons are non-authoritative result-construction strategies, and their observed disagreement prevents treating score or resource spend as proof."
+    }
+  ]
+}

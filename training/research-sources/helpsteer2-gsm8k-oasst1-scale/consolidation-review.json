@@ -1,0 +1,156 @@
+{
+  "format": "eslm-processing-graph-consolidation-review-v1",
+  "cycleId": "cycle:processing-graph:003-three-source-transfer",
+  "review": {
+    "reviewId": "review:processing-graph:003-bounded-transfer",
+    "reviewAuthority": "repository-maintainer-review",
+    "reviewedSpecifications": [
+      "DS028",
+      "DS029"
+    ],
+    "decisionScope": "research-consolidation-only"
+  },
+  "hypotheses": [
+    {
+      "hypothesisId": "hypothesis:reviewed:transfer:typed-task-frame-coordination",
+      "type": "coordination-node",
+      "state": "merge-candidate",
+      "responsibility": "Coordinate ordered typed operations and construction obligations before method execution under one request plan.",
+      "containingCircuit": "circuit:runtime:request-session",
+      "inputPacketTypes": [
+        "packet:runtime:request-force-decision-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:request-plan-v1"
+      ],
+      "authority": "coordination",
+      "failureKinds": [
+        "unsatisfied-capability",
+        "unsupported-operation"
+      ],
+      "resourceDimensions": [
+        "resource:graph-nodes",
+        "resource:tokens"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:3f52f00fc3c8d3ee80ee219c956e5362bb65b847905b4351bb11325064a60fd3",
+        "hypothesis:4a9b547398b8bea1fe06af6ceffd276a4228ece65b719198aee9ff22fb4ecb95",
+        "hypothesis:73f3b593e4da744d4bb09bde29336afab34d5c15c8eaa5cec8601e60ec47dcb0"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:transfer:typed-action-dependency-field",
+      "type": "packet-field",
+      "state": "retained",
+      "responsibility": "Preserve typed prerequisite relationships between decomposition, reasoning, interpretation, construction, and termination actions.",
+      "containingCircuit": "circuit:research:evidence-projection",
+      "inputPacketTypes": [
+        "packet:research:projected-episode-batch-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:research:structural-feature-batch-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "dependency-cycle",
+        "missing-dependency"
+      ],
+      "resourceDimensions": [
+        "resource:graph-edges"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:14c16497b766d0c0d5f84ced170e576ae8a7212d0fe6fb88241287949a9bb526",
+        "hypothesis:20f6ec567617da14be81c91e8b329a6a9d644e5a25edbf0f2a3a2989fde608c7",
+        "hypothesis:44b25e77bd84f4469ba168f835dabb897e43500b93a7e438d962152ea869bd5f",
+        "hypothesis:5ccc9ffc55e824d58a5e88f89e4e48edd8dfd178a043b0c4b1063b8d16fbbcee",
+        "hypothesis:737362d48797438ca852eace0c4301969fd531e9f31af9969b27e3017a699af3",
+        "hypothesis:778024f129bcd0cd36b73af2416b4e309c513dc6f3d03541378dfbf4dcfadf0d"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:transfer:typed-phase-transition-edge",
+      "type": "edge",
+      "state": "retained",
+      "responsibility": "Carry explicit transitions among interpretation, planning, reasoning, construction, and termination as inspectable typed edges.",
+      "containingCircuit": "circuit:research:hypothesis-discovery",
+      "inputPacketTypes": [
+        "packet:research:structural-feature-batch-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:research:hypothesis-batch-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "invalid-transition"
+      ],
+      "resourceDimensions": [
+        "resource:graph-edges"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:2158cf403dd7fc33b8bf26b9097f87d531501a95cf87250ca6fe36e308851ad2",
+        "hypothesis:3836dda2782620535e10816aa2a0d960e0b66a5d261058fd07da450e81cb0a42",
+        "hypothesis:6a6dcfabce5bdf02d42c65a80bf2f0ffadd15b85b734c22742ace3e654097008",
+        "hypothesis:d901a0253abec90cddb712329bd59b24e580a5694fa2e74b5f544a707eee88da",
+        "hypothesis:fb38c5f3f35a8f319ec0e2b32b6963784262b084a31245c5f52184397c1f7d31"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:transfer:quality-ranking-strategy-family",
+      "type": "strategy",
+      "state": "merge-candidate",
+      "responsibility": "Compare admissible result candidates over typed quality axes with correlation-aware support, opposition, and abstention.",
+      "containingCircuit": "circuit:runtime:failure-result",
+      "inputPacketTypes": [
+        "packet:runtime:verification-decision-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:construction-candidate-v1"
+      ],
+      "authority": "proposal",
+      "failureKinds": [
+        "feedback-disagreement",
+        "incomplete-frontier",
+        "insufficient-transfer-evidence"
+      ],
+      "resourceDimensions": [
+        "resource:candidates",
+        "resource:votes"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:2507e858b679a96f574dfb0485da5bbd8a7b60679063eae214f72499f062b573",
+        "hypothesis:63111e71c0f08d911955da5fe61a2cc7007ffee4b245a1ba5b455f6ac1db8db8",
+        "hypothesis:a16f6bb37376a38cf40fc6f9842191f2460ceb7a239d7c69f9da75b291ee83e9",
+        "hypothesis:a4fcdbf25e1f41307c2b19cff8aca9948185301e9f16ca08a6246283e9e508ab",
+        "hypothesis:be4a92b8edccd09522be770c25d9b2728eee8bf6bee33e4e8c8c5daf391c1317",
+        "hypothesis:ceb3815a4833601c90e90df1dbee89fe954d5ce4ebcb60c4c1a2dcfd26d1d463",
+        "hypothesis:ea24c4a372b743149dba752cc030a8de9bf40fadb44e4cfa73c014f799a53ab7"
+      ]
+    }
+  ],
+  "consolidation": [
+    {
+      "candidateId": "hypothesis:reviewed:transfer:typed-task-frame-coordination",
+      "decision": "merge",
+      "resultId": "node:runtime:request-plan-coordinator",
+      "reason": "The existing request-plan coordinator already owns ordered task-frame obligations across the observed structural variants."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:transfer:typed-action-dependency-field",
+      "decision": "retain",
+      "resultId": "hypothesis:reviewed:transfer:typed-action-dependency-field",
+      "reason": "Dependency fields generalize across task shapes, but exact motifs remain lineage-local and the bounded frontier cannot support an absence or promotion claim."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:transfer:typed-phase-transition-edge",
+      "decision": "retain",
+      "resultId": "hypothesis:reviewed:transfer:typed-phase-transition-edge",
+      "reason": "Phase transitions support an explicit edge vocabulary, not an additional solver node, and require leave-source-out ablation before any runtime topology change."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:transfer:quality-ranking-strategy-family",
+      "decision": "merge",
+      "resultId": "node:runtime:result-construction-coordinator",
+      "reason": "Only one quality axis recurs across two independent lineages and remains contested; all such scores stay non-authoritative strategies of result construction."
+    }
+  ]
+}

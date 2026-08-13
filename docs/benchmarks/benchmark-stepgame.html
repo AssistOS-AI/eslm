@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head>
+  <base href="../"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>StepGame protocol — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation / StepGame</p>
+<h1>StepGame: multi-hop spatial constraints from controlled text</h1>
+<p class="lead">StepGame tests whether a chain of qualitative spatial statements determines the relation between two entities. ESLM separates source-template recognition from reasoning: the adapter emits typed vector facts, while a benchmark-neutral constraint solver composes them and returns a replayable displacement path.</p>
+<div class="callout"><p><strong>Current measurements:</strong> Read the generated StepGame rows on the <a href="evaluation.html">evaluation dashboard</a> or inspect the <a href="results/latest-public-benchmark-probes.json">raw v2 report</a>. Validation outcomes and status counts remain generated.</p></div>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  S[Official relation sentences] --> F[Typed vector facts]
+  F --> P[Coordinate propagation]
+  P --> V[Replayable path sum]
+  V --> O[Host-only label]</pre><figcaption>Spatial relations with label isolation.</figcaption></figure><p class="diagram-explanation">The label is joined only after the vector result exists. Relation words and templates never enter generic core control flow.</p>
+
+<h2 id="protocol">Source and denominator</h2>
+<p>ESLM pins the corrected March 2024 official dataset release and the official generator repository separately. The source contains 155,000 rows: 50,000 training, 5,000 validation, and 100,000 test. Every JSONL row is streamed and retained; no case is rejected by file size. An execution row states which split and hop depths ran; source inventory alone is not an execution denominator.</p>
+
+<h2>Vector semantics</h2>
+<p>A declarative system assigns every accepted relation an integer displacement vector. A fact relating subject <em>s</em> to object <em>o</em> means <strong>p</strong>(<em>s</em>)−<strong>p</strong>(<em>o</em>)=<strong>v</strong>. The executor anchors one query endpoint, propagates coordinates through asserted and inverse edges, rejects inconsistent cycles, and classifies the final vector by its declared component-wise sign. The core receives abstract relation and dimension identifiers, so complete renaming preserves the result.</p>
+<p>The path witness lists every original or inverse edge in order and the exact accumulated vector. A verifier checks each edge against the input facts and recomputes the sum and output class. A disconnected query or incomplete accepted evidence remains <code>UNKNOWN</code>; the engine does not use the answer label or choose the most frequent direction.</p>
+
+<h2 id="outcomes">How to read the result</h2>
+<p>A solved case must be exact and carry a verified path witness. <code>UNKNOWN</code> means the accepted evidence did not determine an answer; it is not a reversed guess. The frozen template inventory includes a generator function that omits one of the two entity placeholders and therefore cannot encode a binary relation. A case containing that pattern may still be solvable from independent facts, so the execution report must record actual statuses rather than assign a failure from pattern presence alone.</p>
+<p>This is a source anomaly and an engineering boundary, not permission to reconstruct the missing entity from the answer. A repair requires independent source evidence or a corrected official release. The page does not claim a universal impossibility for spatial reasoning, and the unopened test split is not used to tune the template policy.</p>
+
+<h2>Theory and citation</h2>
+<p>The exact method is a graph of additive difference constraints and potential assignments, described technically in the <a href="reasoning/reasoning-state-time-and-relations.html">state, time, and relations chapter</a>. The source citation is Zhengxiang Shi, Qiang Zhang, and Aldo Lipani, <a href="https://doi.org/10.1609/aaai.v36i10.21383">StepGame: A New Benchmark for Robust Multi-Hop Spatial Reasoning in Texts</a>, AAAI 2022. Both the selected corrected dataset and official repository are MIT.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

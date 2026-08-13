@@ -23,8 +23,8 @@ The CLI is the primary operational interface for KB construction, registration, 
 A KB construction operation accepts one or more documents, a target KB identity, an existing KB version when updating, and the approved coding-agent skills. It starts the document-to-KB process, permits supervised code proposals when necessary, runs validation and produces canonical and compiled KB packages plus a report.
 
 The operation must support a mode that forbids changes to `src`. This mode is useful for determining how far the
-current CNL and reasoning system can process a source using only KB additions, the unchanged deterministic DS022
-recovery layer, and, when explicitly authorized, validated DS013 Language Agent normalization.
+current English CNL and reasoning system can process a source using only KB additions, the unchanged deterministic
+DS022 recovery layer, and, when explicitly authorized, validated DS013 Language Agent proposals.
 
 ### 3. KB registration operation
 
@@ -46,16 +46,22 @@ Ordinary CLI execution evaluates the bounded DS022 request-force planner beside 
 summary, expansion, explanation, comparison, outline, retrieval, essay, report, and document requests may produce a
 dependency-ordered request plan even when the direct parser accidentally accepted their sentence-like material as
 assertions. That route restores the incoming session snapshot, is query-local, and cannot commit tentative direct
-items. The implemented construction route is extractive and returns `PARTIAL` with citations and gaps; it is not the
-general multi-goal planner promised by DS008.
+items. The implemented construction route performs bounded grounded symbolic generation and returns `PARTIAL` with
+citations and gaps; it is not the general multi-goal planner promised by DS008. It may create coherent English
+sentences and document organization only after a non-voting claim gate admits the underlying supplied or KB claims.
 
-When no request plan applies, direct `UNPARSED` and `UNKNOWN` results enter bounded local approximation. A direct
+Before these routes, a bounded English-likelihood diagnostic rejects likely non-English input without translating it;
+unknown names and nonce terms alone do not justify rejection. Likely-English and indeterminate input continue to the
+English parser. When no request plan applies, direct `UNPARSED` and `UNKNOWN` results enter bounded local English
+approximation. A direct
 `SOLVED` or `PARTIAL` interpretation may also be challenged when a structurally licensed candidate has different
 parse-only Semantic IR; an identical candidate IR preserves the direct result. Selection never depends on whether a
 rewording later finds an answer. A changed accepted interpretation is labeled `heuristic-cnl-approximated`, exposes
 its votes and confidence, returns a strict proof only as top-level `DEFEASIBLE`, and discards every fact or rule learned
 only from that interpreted episode. A well-formed knowledge gap with no structurally licensed alternative remains the
-original `UNKNOWN`; only a final local `UNPARSED` is eligible for the opt-in DS013 Language Agent.
+original `UNKNOWN`. In the general CLI's disclosed assisted profile, likely non-English input is eligible for a DS013 translation proposal rather
+than English repair, while final unsupported English is eligible for a DS013 simplification proposal. Both return to
+the same non-voting English parser and semantic gate.
 
 ### 5. Interactive execution
 
@@ -69,7 +75,9 @@ The session must not silently treat a previous uncertain conclusion as a fact. T
 
 ### 6. Benchmark operations
 
-Benchmark operations cache immutable source data, select development and holdout partitions, run direct-symbolic and normalized tracks, capture traces, cluster failures, compare checkpoints and invoke the benchmark-guided skill.
+Benchmark operations cache immutable source data, select development and holdout partitions, run local English and
+separately attributed assisted-proposal tracks, capture traces, cluster failures, compare checkpoints, and invoke the
+benchmark-guided skill.
 
 A regression operation runs all suites required by a candidate change. A shadow operation reports aggregate metrics without exposing held-out examples to the coding agent.
 
@@ -90,13 +98,15 @@ validated finite denominator, `--seed VALUE` selects a reproducible nonce instan
 JSON and HTML reports under the separate `latest-generated-heuristic-benchmark` name. The operation executes the real
 local heuristic runtime with grounding and the Language Agent disabled. It never reads a public benchmark adapter or
 merges its rate with `benchmark run`. Its typed oracles cover executed semantics, request plans, safe abstention, and
-proposal/operator preservation. Separate oracle-level aggregates distinguish answer execution, candidate selection,
-query-local decomposition, request execution, proposal-only preservation, and safety abstention. Candidate-selection
+proposal/operator preservation. Separate oracle-level aggregates distinguish answer execution, semantic-query
+execution, candidate selection, query-local decomposition, request execution, request planning, proposal-only
+preservation, and safety abstention. Semantic-query rows require a complete expected query shape; candidate-selection
 rows require the intended structural candidate to win, carry its required family, receive a matching accepted
 parse-only reparse, and execute as the query-local interpreted episode under the declared route and status. They do
 not require a complete relation-shaped query and may terminate `UNKNOWN` with `missingEntity`. The top-level pass
 rate is still a mixed development-contract measure; oracle level, route, and status show whether a passing proposal
-contract also reached executable interpretation.
+contract also reached executable interpretation. Request-planning rows preserve the correctly shaped obligation and
+its missing-source gap, whereas request-execution rows require the construction path.
 
 The package command `benchmark:authored` runs the unchanged five-case authored fixture, while
 `benchmark:generated` publishes the generated development suite. The default `npm run benchmark` sequences those two
@@ -122,6 +132,67 @@ tests, and detailed benchmark page. A future typed executor registry should remo
 then, catalog inclusion must not be described as automatic probe registration. The CLI command syntax can remain stable
 through that refactor.
 
+### Processing-graph research operations
+
+The operator workflow has four non-interchangeable contracts. An approved
+`eslm-rl-dataset-discovery-plan-v1` is validated before analysis and is the only artifact with
+training-projection analysis-admission authority. An `eslm-processing-graph-research-analysis-v5` then records exact
+machine work, lineage, hypotheses, omissions, and completeness. A repository-maintainer supplies a separate
+`eslm-processing-graph-consolidation-review-v1` that maps real machine-hypothesis identities to reviewed candidates.
+Only after that review may the host seal an `eslm-rl-dataset-discovery-cycle-v3`, which binds the plan and analysis,
+copies the analysis-derived per-split declared, available, visited, selected, and analyzed counts, accounts for every
+machine hypothesis exactly once, and records consolidation with
+`decisionScope: research-consolidation-only`. Plan, analysis, review, and cycle all have `none` answer, runtime, proof,
+and promotion authority. Running analysis is not consolidation, and sealing a cycle is not promotion.
+
+`research graph status` is a read-only governance projection, not a research execution command. It validates exactly
+five published historical artifacts: the two-source pilot analysis, the published large-source readiness gate, the
+source-local large-source analysis, the bounded combined analysis, and the source-status receipt. It also loads the
+three current source manifests, verifies each present cache against its exact byte length and SHA-256 identity, and
+recomputes the current pilot admission, large-source admission, combined registry, and large-source readiness gates.
+The bounded three-source analysis is also compared with its own approved pre-analysis plan and combined admission
+receipt; concatenating two source registries is not a substitute for that plan-bound gate.
+Cache verification may hash the frozen source bytes, but status does not parse source rows, rebuild a projection, run
+discovery strategies, replace a receipt, or alter the runtime or processing-graph catalog.
+`research graph status --publish` is rejected rather than treated as a no-op or publication request.
+
+The machine result is `eslm-processing-graph-research-status-v3`. It keeps `publishedEvidence` with evidence class
+`historical-execution-receipts` separate from `liveGovernance` with evidence class
+`current-source-manifests-admission-and-readiness`. Every source reports registry, acquisition, projection, and
+analysis states; visible components and split visibility; exact source, training-visible, non-training, projected,
+dedicated-analysis, combined-analysis, excluded-training, excluded-non-training, and total excluded row or episode
+counts; source, manifest, component, projection,
+shard, approved discovery-plan artifact and canonical-content digests, admission, preflight, and readiness identities;
+checkpoint and diagnostic frontier; historical and current completeness;
+stop reason; and next allowed stage. The vocabulary includes `reviewed`, `cached`, `projected`, `pilot-analyzed`,
+`fully-analyzed`, `blocked`, `withdrawn`, and `superseded`. An incomplete bounded checkpoint is a valid status with a
+stop reason, not malformed evidence. A current tombstone, rights withdrawal, cache mismatch, admission failure,
+registry drift, projection drift, or readiness drift therefore remains visible even when an older execution receipt
+said complete. Malformed historical receipts, malformed manifests, and unsupported protocols remain command errors.
+
+`research graph pilot` and `research graph scale` execute bounded deterministic research but do not publish unless
+`--publish` is present. Pilot publication replaces only the named pilot receipt. Scale publication replaces only the
+named source-local, combined, source-status, and readiness receipts produced by that run. The scale runner admits the
+large source only at the exact `large-corpus` stage and only through a content-bound
+`eslm-rl-large-source-preflight-v1` receipt. That preflight binds the current implementation, baseline graph, producer
+script bytes and command, a recursively enumerated content identity for every repository-local module in the
+preflight's static import closure, both byte-exact and canonical-content identities of the approved pre-analysis discovery
+plan, source and split identities, projection and every shard, two independent full replays, and
+one projection-input checkpoint restored after its creator process has terminated. The checkpoint freezes exact
+prefix shard bytes and membership; the restorer validates those bytes, reads only the untouched suffix shards, and
+must reproduce both fresh full-analysis receipts. This tests projection input restart, not continuation of internal
+analyzer state. The parent records all four process exit codes and samples each child peak resident memory from Linux
+`/proc/PID/status`; tested removal obligations and zero development/protected visitation remain bound as well.
+Hand-authored readiness booleans or memory values cannot substitute for this
+receipt. Running or publishing research never grants answer, proof, runtime, catalog, or promotion authority.
+
+The sealing operation accepts one already approved plan, one validated analysis-v5 receipt, and one explicit human
+review artifact, and writes one cycle-v3 receipt. It refuses a changed plan, registry, baseline graph, split accounting, work policy,
+analysis identity, invented machine hypothesis, duplicate mapping, missing decision, or review outside DS028 and
+DS029. Sealing does not rerun analysis and does not publish or alter the processing graph. Bundle validation is a
+later consistency gate over the source manifests, plan, analysis, cycle, discovery log, and optional readiness
+receipt; it does not establish the truth of external rights claims or create promotion authority.
+
 ### 7. Input contract
 
 The runtime accepts ordinary text, but internally distinguishes instruction, assertion, constraint, question, desired output schema and optional resource policy. When the distinction is ambiguous, it may preserve alternatives or ask for clarification in interactive mode. In one-shot evaluation it returns an ambiguous-input status.
@@ -137,8 +208,11 @@ status, answer, session and episode state, language route, the three KB-version 
 model/memory metadata plus the immutable DS022 `workPolicy` snapshot, including its strategy inventory view and exact
 stage allowlists. Normalized `input`, accepted `query`, `taskFrame`, `plan`, semantic `values`, answer
 `provenance`, and a `reasoning` summary appear only when execution reached the stage that can truthfully construct
-them; an early `UNPARSED` result can omit all of those fields. The result may additionally expose grounding, a
-typed-task witness, heuristic approximation and request-plan receipts, extractive synthesis details, Language Agent
+them; an early `UNPARSED` result can omit all of those fields. A language-gate rejection exposes its bounded
+`eslm-english-likelihood-v1` assessment under `languageAssessment`, route
+`english-language-gate-rejected`, and one `translate-input-to-english / likely-non-english` gap rather than a guessed
+translation. It preserves the incoming session and has empty consulted-KB, used-KB, value, and provenance sets. The result may additionally expose grounding, a
+typed-task witness, heuristic approximation and request-plan receipts, grounded realization details, Language Agent
 normalization receipts, or profiler measurements. It does not yet promise a general answer-confidence object, a
 standalone accepted-Semantic-IR field, loaded-shard identifiers, complete per-step receipts, or measured resources on
 an ordinary non-profiled call. Clients must branch on status and feature-detect optional fields rather than infer them
@@ -154,17 +228,23 @@ provider count.
 
 `usedKbVersions` lists only KBs whose records or policy contributed to the primary result. Merely loading, selecting,
 consulting, or returning a KB in ordinary failure grounding does not make it used. The explicit
-`heuristic-request-synthesis` route is the narrow exception: records actually selected and cited in its `PARTIAL`
-artifact are source-claim contributions, so their package identities appear in `usedKbVersions` and their records in
-top-level provenance. Unselected grounding entries never become contributors.
+`heuristic-request-synthesis` route is the narrow exception: records admitted and realized into cited sentences in its
+`PARTIAL` artifact are source-claim contributions, so their package identities appear in `usedKbVersions` and their
+records in top-level provenance. Related, rejected, or merely retrieved grounding entries never become contributors.
 
 Human-readable output may be concise, but a machine-readable result must be available for benchmark evaluation and agent diagnostics.
+
+For a planned synthesis result, interactive output has two explicit visual regions. A dimmed
+`Thinking · symbolic processing` region reports the request plan, output contract, evidence admission, exact
+construction-strategy path, construction confidence, and authority boundary. A normal `Answer` region then contains
+only the coherent user-facing document. This thinking region is an inspectable deterministic execution summary, not
+private chain-of-thought and not additional evidence.
 
 When the runtime cannot answer but returns ordinary related KB records, one-shot JSON keeps the primary `answer`
 unchanged and serializes `grounding` separately. Interactive output prints the primary status and answer first, then a
 visibly separated “Related KB evidence — not an answer” section. `/trace` distinguishes answer premises from grounding
 search receipts and exposes incomplete coverage. Only a request recognized before retrieval under DS022 may enter the
-separately named extractive synthesis route; its `PARTIAL` answer visibly cites selected source claims and states the
+separately named grounded synthesis route; its `PARTIAL` answer visibly cites realized source claims and states the
 remaining gaps. A generic inability result cannot acquire that route after retrieval merely because records exist.
 
 ### 9. Determinism and reproducibility
@@ -192,10 +272,12 @@ The canonical executable is `node src/cli.mjs` or the package bin `eslm`. With n
 
 Dataset acquisition, source probing, compilation, evaluation, benchmark execution, external prediction export/import,
 and documentation publication remain explicit operations. No direct or deployed-runtime inference path downloads data
-or calls an agent. The DS013 operator-side normalization wrapper is the only agent-call exception exposed beside
-inference commands. It is disabled by default and is added only by `--external-language-agent` or interactive
-`/normalize on`; even then, direct execution and DS022 local recovery run before it. `--no-external-language-agent`
-explicitly selects the same entirely local profile used by default. Network acquisition is never an implicit effect
+or calls an agent. The DS013 operator-side proposal wrapper is the only agent-call exception exposed beside inference
+commands. The general CLI composes it by default and discloses the external boundary; `--external-language-agent` or
+interactive `/normalize on` explicitly restates that policy. Likely non-English input may request translation before
+English-only repair; English or indeterminate input still runs through direct execution and DS022 local recovery before
+it may request simplification. `--no-external-language-agent` or `/normalize off` selects the entirely local profile.
+Network acquisition is never an implicit effect
 of asking a question, and no dataset credential is inferred from the normalization profile.
 
 ### Interactive commands and session state
@@ -232,15 +314,16 @@ change the meaning of an existing status, answer, provenance item, or KB-version
 ### Generated examples and regression smoke
 
 Interactive `/examples [PAGE] [SEED]` selects a reproducible, stratified page over the exact default generated
-regression catalog executed by `/smoke`. A page contains 24 cases and round-robins the six heuristic oracle levels and
+regression catalog executed by `/smoke`. A page contains 24 cases and round-robins the eight heuristic oracle levels and
 the established core capability groups before taking a second example from a stratum. Thus the first page visibly
 contains direct, repair, decomposition, request, safety, preference, state, relation, and typed-task work instead of
 an accidental run of adjacent templates. Page order is presentation only; no case is omitted or duplicated.
 
 The default catalog contains exactly 4,096 cases: 1,200 fresh instantiations from all 43 DS022 heuristic-development
 technique shapes and 2,896 instantiations from the 26 established core templates. The heuristic portion retains its
-six honest oracle levels: answer execution, candidate selection, query-local decomposition, request execution,
-proposal-only preservation, and safety abstention. The core portion retains class and relation queries, state and
+eight honest oracle levels: answer execution, semantic-query execution, candidate selection, query-local
+decomposition, request execution, request planning, proposal-only preservation, and safety abstention. The core
+portion retains class and relation queries, state and
 temporal execution, open-world controls, preference scoring, scalable Boolean entailment, and categorical logic.
 
 The shared default seed is stable for both commands; an explicit seed deterministically changes nonce surfaces without
@@ -265,20 +348,22 @@ direct, preference, and typed-task cases use their ordinary public engine bounda
 still contributes to the pass/fail aggregate. A passing summary is invalid if displayed answers were fabricated or if
 the command compared expectations without invoking the runtime.
 
-### Optional operator normalization
+### Optional operator language proposals
 
 The CLI exposes the DS013 operator profile through the canonical flags `--external-language-agent`,
 `--no-external-language-agent`, `--language-agent-model`, `--language-agent-timeout-ms`, and
 `--no-normalization-cache`, plus interactive `/normalize`, `/normalize on`, and `/normalize off`. The assisted profile
-is disabled by default. An operator opts in explicitly after considering disclosure; canonical verification, public
-probe publication, sensitive input, and deployed-style reproduction keep it disabled. Product-specific normalization
+is enabled by default for general CLI interaction and disclosed at startup. An operator uses the explicit local
+override for sensitive input and deployed-style reproduction; canonical verification and public probe publication
+construct the local profile. Product-specific normalization
 flags, including the former `--no-codex-normalize`, are rejected rather than retained as aliases; scripts must use the
 role-based interface.
 
 Startup, status, structured results, and human output disclose the active adapter, model, cache policy, route, proposal
-and invocation counts, original input, transformed English when accepted, host validation, and final symbolic result.
-DS013 exclusively defines the trigger, proposal feedback, authority, validation, cache, and failure routes. Loading a KB
-or changing session state never changes the Language Agent policy.
+and invocation counts, original input, proposed English, host validation, and final symbolic result. The UI must say
+that it is interpreting with the configured Language Agent immediately before a real invocation; it must never imply
+that the agent is answering. DS013 exclusively defines the trigger, proposal feedback, absence of answer authority,
+validation, cache, and failure routes. Loading a KB or changing session state never changes the Language Agent policy.
 
 ### Work profiles and bounded overrides
 
@@ -360,6 +445,15 @@ would make neither result intelligible, while sequencing both commands gives the
 the small review surface and the broad diagnostic surface. Its candidate-selection level is also intentionally
 narrower than complete Semantic IR execution, so the CLI must present oracle level, route, and status beside the mixed
 pass rate.
+
+### Question #7: Why does research status combine historical receipts with live governance?
+
+Response: Historical receipts answer what a particular frozen execution measured. Current manifests, cache identity,
+rights, source admission, registry composition, projection identity, and readiness answer whether that execution is
+still admissible now. Reporting only the historical copy would let a tombstoned source, changed split, replaced
+projection, or stale preflight continue to look current. Re-running analysis inside a status command would hide the
+same distinction and create an expensive mutation boundary. The v2 result therefore preserves both evidence classes
+and marks drift as `blocked`, `withdrawn`, or `superseded` without pretending that the old execution never occurred.
 
 ## Conclusion
 

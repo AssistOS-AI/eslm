@@ -1,5 +1,8 @@
 export function cliHelpText(defaultLanguageAgentModel) {
-  return `ESLM — offline executable symbolic language model
+  return `ESLM — executable symbolic language model
+
+The deployed symbolic runtime is offline and English-only. The general operator CLI adds a disclosed
+Language Agent proposal strategy by default; use --no-external-language-agent for the entirely local profile.
 
 Usage:
   eslm                         interactive conversation
@@ -30,9 +33,13 @@ Usage:
   eslm benchmark probe --benchmark all|ID[,ID] [--publish]
   eslm benchmark run --suite FILE [--publish]
   eslm benchmark generated [--cases N] [--seed TEXT] [--publish]
+  eslm benchmark generated-seed-audit [--cases N] [--seeds A,B,C] [--publish]
   eslm benchmark export --suite FILE --output FILE
   eslm benchmark score-predictions --suite FILE --input FILE --protocol-metadata FILE [--output FILE]
   eslm benchmark import-results --input FILE [--output FILE]
+  eslm research graph status                       # read-only; --publish is rejected
+  eslm research graph pilot [--output DIRECTORY] [--publish]
+  eslm research graph scale [--output DIRECTORY] [--publish]
   eslm docs check|publish
 
 Global options:
@@ -62,9 +69,10 @@ Global options:
   --horn-max-joins N            exact Horn join-attempt override
   --color auto                  auto, always, or never; structured output is never colored
   --profile                     include per-stage timing, CPU, memory deltas, and work counts
-  --external-language-agent     opt in to the configured Language Agent after local heuristics
-  --no-external-language-agent  explicitly select the entirely local execution profile
+  --external-language-agent     explicitly restate the default Language Agent profile
+  --no-external-language-agent  select the entirely local execution profile
   --language-agent-model MODEL  adapter model; default ${defaultLanguageAgentModel}
+  --language-agent-timeout-ms N external proposal timeout; 1000 through 600000, default 120000
   --no-normalization-cache      do not read or write the ignored operator normalization cache
 `;
 }
@@ -76,5 +84,5 @@ export function cliStartupText(style, selectedKbIds, workPolicy, languageAgentEn
 Use ${style.blue('/help')} for an explanation, ${style.blue('/examples')} for varied examples, or \
 ${style.blue('/smoke')} to execute a regression check. Press Tab to complete commands and KB names.
 Work profile: ${style.green(workPolicy.effective.profile)}. Language Agent normalization is \
-${normalization}; external assistance is opt-in.`;
+${normalization}; use --no-external-language-agent or /normalize off for entirely local execution.`;
 }

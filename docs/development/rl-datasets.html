@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="../">
+  <title>RL dataset development status — ESLM Documentation</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="partials-loader.js" defer></script>
+</head>
+<body>
+<div data-include="partials/header.html"></div>
+<main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / <a href="evaluation.html">Development</a> / RL dataset status</p>
+<h1>RL and task-feedback datasets: what has been learned so far</h1>
+<p class="lead">The dataset program studies repeated task operations, dependencies, feedback dimensions, phase changes, and failure boundaries. It does not train an answer policy. Source trajectories remain inert evidence; only a later reviewed implementation can change the processing graph.</p>
+
+<h2>Current source line</h2>
+<div class="table-wrap"><table><thead><tr><th>Source</th><th>Acquisition, projection, and research use</th></tr></thead><tbody>
+<tr><td>HelpSteer2 ratings</td><td><dl class="table-details"><div><dt>Acquired</dt><dd>The frozen training component and its rights evidence are registered locally.</dd></div><div><dt>Projected</dt><dd>20,324 rating rows are grouped into 10,161 prompt episodes with typed quality feedback.</dd></div><div><dt>What it reveals</dt><dd>Alternative result-construction strategies and distinct quality axes such as helpfulness, correctness, coherence, complexity, and verbosity.</dd></div></dl></td></tr>
+<tr><td>GSM8K Socratic training</td><td><dl class="table-details"><div><dt>Acquired</dt><dd>The frozen training-Socratic component is registered; test material is not admitted to discovery.</dd></div><div><dt>Projected</dt><dd>7,473 training episodes preserve step order, decomposition, intermediate obligations, and final-answer boundaries without turning solutions into KB facts.</dd></div><div><dt>What it reveals</dt><dd>Subgoal structure, witness gaps, earliest failed obligations, and the distinction between planning a step and verifying it.</dd></div></dl></td></tr>
+<tr><td>OASST1 conversation trees</td><td><dl class="table-details"><div><dt>Acquired</dt><dd>A frozen source, split authority, and reviewed rights packet are present.</dd></div><div><dt>Projected</dt><dd>The bounded English training projection admits 2,220 complete trees from 9,846 training trees. All 518 validation trees remain declared but unavailable to discovery.</dd></div><div><dt>What it reveals</dt><dd>Continuation, branch choice, repair dependencies, multi-turn state, and response-quality disagreements across a larger conversational source.</dd></div></dl></td></tr>
+<tr><td>Combined three-source frontier</td><td><dl class="table-details"><div><dt>Planned scope</dt><dd>The approved training-only plan admits 19,854 projected episodes before its independent bounded-analysis frontier.</dd></div><div><dt>Currentness rule</dt><dd>A plan, readiness file, analysis, or review alone is not enough. <a href="results/latest-processing-graph-source-status.json">Live status</a> must validate the complete chain before a combined execution is called current.</dd></div><div><dt>Authority</dt><dd>Even a complete current cycle can consolidate research hypotheses only; it cannot activate a node or strategy.</dd></div></dl></td></tr>
+</tbody></table></div>
+
+<h2>How close this is to real task behavior</h2>
+<div class="table-wrap"><table><thead><tr><th>Reality layer</th><th>Current assessment</th></tr></thead><tbody>
+<tr><td>Real source structure</td><td><strong>Substantial.</strong> The work uses real ratings, Socratic steps, and conversation trees from three independently collected sources, with frozen rights and split boundaries.</td></tr>
+<tr><td>Structural task representation</td><td><strong>Useful but lossy.</strong> Episodes preserve operation kinds, dependencies, state changes, feedback, and outcomes. Raw conversation text, identities, protected rows, and unsupported fields are intentionally excluded from generic features.</td></tr>
+<tr><td>Distribution breadth</td><td><strong>Early.</strong> Preference scoring, school-math decomposition, and assistant conversations expose different motifs, but they are still a narrow sample of planning, tools, long documents, environments, and high-stakes verification.</td></tr>
+<tr><td>Causal architectural evidence</td><td><strong>Hypothesis level.</strong> Repeated motifs can suggest a node, gate, packet field, edge, nested circuit, or strategy. Frequency does not prove that the proposed boundary causes better task performance.</td></tr>
+<tr><td>Runtime impact</td><td><strong>None by default.</strong> The completed small pilot consolidated proposals into existing request planning, result construction, dependency packets, and phase edges. It promoted no runtime node. Scale hypotheses still require ablation and protected cross-source transfer.</td></tr>
+</tbody></table></div>
+
+<h2>What the analyzer actually looks for</h2>
+<p>Nine deterministic research techniques compare task frames, typed operation responsibilities, phase changes, earliest errors, partial orders, bounded subcircuits, preference axes, metamorphic stability, and cross-source recurrence. Their output is useful only when several differently biased techniques support the same source-neutral responsibility and meaning-changing controls oppose the wrong generalization.</p>
+<p>A maintainer then asks a concrete engineering question: is this a new responsibility with a distinct input, output, failure, resource, and authority boundary; an alternative strategy for an existing node; an exceptional edge; a missing packet field; or merely a source-specific rename that should be rejected? The discovery ledger records those decisions in ordinary language.</p>
+
+<h2>Candidate queue after the three-source foundation</h2>
+<div class="table-wrap"><table><thead><tr><th>Candidate source</th><th>Potential contribution and admission condition</th></tr></thead><tbody>
+<tr><td>PRM800K</td><td>Step-level process feedback could strengthen verification and earliest-error hypotheses. Embedded MATH problem and solution rights must be frozen separately before text projection.</td></tr>
+<tr><td>Summarize-from-feedback</td><td>Preference data could expose summary planning, coverage, compression, and result-construction strategies. Only the explicitly covered feedback artifact is eligible; excluded Reddit and news content cannot be inherited silently.</td></tr>
+<tr><td>Mind2Web</td><td>Task and action metadata could expose capability preconditions, observation updates, and repair loops. Website snapshots, recordings, network traces, and third-party content require separate rights and safety gates and are never replayed.</td></tr>
+<tr><td>tau2-bench</td><td>Reviewed task and trajectory metadata could add tool-like planning and stateful interaction patterns. Environment code, tools, simulators, and source actions remain inert and unexecuted.</td></tr>
+<tr><td>Super-NaturalInstructions</td><td>Task definitions and metadata can widen output obligations and task-frame families. Instance components have independent licenses and are excluded until each is reviewed.</td></tr>
+<tr><td>Protected or unresolved sources</td><td>AppWorld and GAIA remain protected evaluation evidence. LMSYS conversation releases, WebGPT, and SHP remain outside analysis until license, embedded-content, privacy, split-use, and redistribution questions are frozen.</td></tr>
+</tbody></table></div>
+
+<h2>Next credible milestone</h2>
+<p>The next milestone is not “more hypotheses.” It is a complete current three-source execution followed by a small set of source-neutral candidates that survive feature and technique ablations, renamed and meaning-changing controls, an independently protected transfer source, bounded resources, and explicit architectural review. Only then is one candidate implemented as a non-default strategy or node and evaluated against the unchanged baseline.</p>
+
+<h2>Inspect current execution state</h2>
+<pre><code>node src/cli.mjs research graph status
+npm run research:graph:pilot
+npm run research:graph:oasst1:preflight
+npm run research:graph:scale</code></pre>
+<p>The status command validates published receipts without rerunning analysis. Use <a href="results/latest-processing-graph-source-status.json">the machine status artifact</a> for current execution identity and the repository's <code>processing_graph_discoveries.md</code> ledger for human consolidation history. Missing or stale receipts mean the current chain is not yet publishable; they do not imply zero research work.</p>
+
+<p class="related">Read <a href="research/processing-graph-research.html">Dataset-guided processing-graph research</a> for the complete method, <a href="architecture/logical-processing-architecture.html">Logical processing architecture</a> for the catalog being studied, and <a href="specsLoader.html?spec=DS028-dataset-guided-processing-graph-discovery-research.md">DS028</a> for the authority and contamination contract.</p>
+</main>
+<div data-include="partials/footer.html"></div>
+</body>
+</html>

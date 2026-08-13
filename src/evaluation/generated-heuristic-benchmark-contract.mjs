@@ -1,9 +1,13 @@
 import { assertWorkPolicy } from '../runtime/work-policy.mjs';
+import { assertBenchmarkBehaviorIdentity } from './benchmark-execution-identity.mjs';
 import { assertBenchmarkStrategyConfiguration } from './benchmark-strategy-configuration.mjs';
+import {
+  assertGeneratedHeuristicOracle,
+  GENERATED_HEURISTIC_ORACLE_LEVELS,
+} from './generated-heuristic-oracle-contract.mjs';
 
 const REPORT_PROTOCOL = 'eslm-generated-heuristic-benchmark-report-v1';
 const DIGEST = /^sha256:[0-9a-f]{64}$/u;
-const RAW_DIGEST = /^[0-9a-f]{64}$/u;
 const REPORT_FIELDS = Object.freeze([
   'format', 'createdAt', 'evidenceRegime', 'benchmarkComparable', 'claimScope',
   'generator', 'execution', 'workPolicy', 'strategyConfiguration', 'total', 'passed',
@@ -18,10 +22,7 @@ const FAILURE_STAGES = new Set([
   'execution', 'resource', 'route', 'status', 'candidate', 'strategy-family',
   'semantic-query', 'request-plan', 'safety', 'answer',
 ]);
-const ORACLE_LEVELS = new Set([
-  'answer-execution', 'candidate-selection', 'query-local-decomposition',
-  'request-execution', 'proposal-only', 'safety-abstention',
-]);
+const ORACLE_LEVELS = new Set(GENERATED_HEURISTIC_ORACLE_LEVELS);
 
 function record(value, path) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -136,14 +137,7 @@ function validateExecution(execution, total) {
   exactFields(execution.runtimeIdentity, ['modelId', 'knowledgeBases'], 'Generated runtime identity');
   boundedText(execution.runtimeIdentity.modelId, 'Generated model identity', 256);
   stringArray(execution.runtimeIdentity.knowledgeBases, 'Generated knowledge bases', 64);
-  record(execution.behaviorIdentity, 'Generated behavior identity');
-  if (typeof execution.behaviorIdentity.digest !== 'string'
-      || !RAW_DIGEST.test(execution.behaviorIdentity.digest)) {
-    throw new TypeError('Generated behavior digest must be a raw SHA-256 digest.');
-  }
-  if (execution.behaviorIdentity.format !== 'eslm-benchmark-behavior-identity-v1') {
-    throw new TypeError('Generated benchmark behavior identity uses an unsupported format.');
-  }
+  assertBenchmarkBehaviorIdentity(execution.behaviorIdentity, 'Generated benchmark behavior identity');
   for (const field of ['wallMilliseconds', 'startRssBytes', 'endRssBytes', 'sampledPeakRssBytes']) {
     if (!Number.isFinite(execution[field]) || execution[field] < 0) {
       throw new TypeError(`Generated execution ${field} must be finite and non-negative.`);
@@ -212,7 +206,7 @@ function validateRepresentative(value) {
     boundedText(value[field], `Representative ${field}`, 256);
   }
   boundedText(value.input, 'Representative input', 4_096);
-  jsonValue(value.oracle, 'Representative oracle');
+  assertGeneratedHeuristicOracle(value.oracle);
   jsonValue(value.actual, 'Representative actual result');
   if (!Array.isArray(value.failures) || value.failures.length < 1 || value.failures.length > 16) {
     throw new TypeError('Representative failures must contain bounded diagnostics.');

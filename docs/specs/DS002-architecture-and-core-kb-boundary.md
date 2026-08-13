@@ -16,13 +16,41 @@ The architecture preserves one reusable symbolic system across every document co
 
 ### 1. Architectural boundary
 
-The existing distinction between reusable code in `src` and data in KBs is retained and strengthened. The system must not create a new parallel architecture for each benchmark. Benchmark adaptation occurs by extending a current KB, adding a new KB, enriching the reusable lexicon or semantic frames, and only exceptionally improving generic code.
+The existing distinction between trusted executable mechanisms and data in KBs is retained and strengthened. The system must not create a new parallel architecture for each benchmark. Benchmark adaptation occurs by extending a current KB, adding a new KB, enriching the reusable lexicon or semantic frames, and only exceptionally improving a generic processing strategy.
 
-The central question for every learned artifact is not where it is easiest to put it, but what kind of thing it is. World knowledge and domain semantics belong in KBs. Generic computation and language mechanisms belong in `src`.
+The central question for every learned artifact is not where it is easiest to put it, but what kind of thing it is. World knowledge and domain semantics belong in KBs. Generic computation and language mechanisms belong in the trusted implementation layer; Section 2 supplies its implementation map.
 
-### 2. What belongs in `src`
+### 1.1 Logical processing architecture
 
-`src` is the only location for trusted executable mechanisms. In the target architecture this includes the symbolic
+At the conceptual level, request execution is a typed directed acyclic graph of **processing nodes** and guarded
+edges. A processing node owns one operation with a named input envelope, output envelope, semantic responsibility,
+resource contract, failure vocabulary, and receipt. A **strategy** is one statically trusted implementation of a
+selectable processing node. A **coordination node** schedules eligible strategies and may arbitrate their typed
+candidates. An **authority gate** validates syntax, safety, schema, or a proof witness and returns pass, fail, or a
+typed gap; it is not a confidence voter. A reasoning node computes under the DS015 semantics and returns a witness;
+agreement among implementations cannot replace the witness gate.
+
+The graph must be explained through four separate planes:
+
+1. The **logical request and dataflow plane** identifies the node order, conditional branches, authority edges, and
+   exceptional paths from visible request to result.
+2. The **named data and protocol plane** identifies the immutable envelopes exchanged between nodes, including
+   bounded input, Semantic IR, task frame, focus set, evidence frontier, method plan, method result and witness,
+   grounding bundle, runtime result, and processing receipt.
+3. The **execution and resource plane** identifies exact strategy selection, finite preallocation, stage barriers,
+   query-local state, cache and provider transactions, failure containment, and resource outcomes.
+4. The **implementation and reference plane** maps those conceptual owners to repository modules, commands, tests,
+   and normative DS files. Paths belong in this plane and must not substitute for an architectural explanation.
+
+These planes are views of the same processing graph, not four independent runtimes. The first three define the
+system contract. The implementation map supplies review evidence and may change without renaming the conceptual
+nodes. DS029 owns the exact hierarchical circuits, node identities, packets, edges, and resources; DS027 owns
+selectable node strategies and coordination; DS008 owns task and plan structures; DS009 owns
+authority and result status; DS015 owns reasoning semantics and witness acceptance.
+
+### 2. What belongs in the trusted implementation layer
+
+The repository's `src` tree is the implementation map for trusted executable mechanisms. In the target architecture this includes the symbolic
 tokenizer, morphology, feature grammar or chart parser, semantic-composition operators, reference resolution,
 task-frame builder, planner, rule interpreters, graph and temporal methods, default reasoning, constraint solvers,
 search, proof construction, contradiction handling, confidence semantics, deterministic language approximation,
@@ -36,7 +64,7 @@ several finite typed methods rather than every listed logic, and provider-specif
 complete future catalog. DS003, DS008, DS015, DS020, and DS022 state those exact boundaries. Documentation must not
 infer an executor from the appearance of a mechanism in this ownership list.
 
-A new mechanism belongs in `src` when its behavior is independent of the vocabulary and topic of the benchmark. Passive-voice semantic-role inversion, quantifier scope, temporal state supersession, unification, backtracking and proof search are representative examples.
+A new mechanism belongs in the trusted layer when its behavior is independent of the vocabulary and topic of the benchmark. Passive-voice semantic-role inversion, quantifier scope, temporal state supersession, unification, backtracking and proof search are representative examples.
 
 DS008 owns the planner-facing capability descriptor and DS015 owns the executable semantics, completeness boundary,
 uncertainty behavior, and witnesses of each method. DS027 owns the common strategy descriptor and static coordination
@@ -66,13 +94,18 @@ increases a resource limit. Deployable strategy executors remain statically regi
 
 ### 5. CNL placement
 
-The generic grammar and semantic composition of the CNL belong in `src`. Language-specific lexical entries, domain terminology, predicate aliases and semantic frames may be supplied by language or domain KBs.
+The generic English grammar and semantic composition of the CNL belong in `src`. Reviewed English lexical entries,
+domain terminology, predicate aliases, and semantic frames may be supplied by domain KBs. A KB language tag or
+source-language field does not extend the deployed parser beyond English and cannot authorize translation.
 
 The distinction is important during document ingestion. If the sentence fails because the word `purchase` is unknown but the `buy` event frame already exists, a lexical mapping belongs in the relevant KB. If all passive constructions fail, the missing operation is grammatical and belongs in `src`.
 
 A new CNL form must not be added merely because one source document uses an unusual sentence. DS022 first permits a
-bounded deterministic interpretation proposal; if local recovery is exhausted, an operator may explicitly enable the
-DS013 Language Agent, otherwise the form remains unsupported. Promotion into the direct grammar or the reviewed
+bounded deterministic English interpretation proposal. A bounded ingress diagnostic may first reject likely
+non-English text rather than treating it as damaged English. The general CLI composes the DS013 Language Agent
+proposal strategy for translation or English simplification and exposes an explicit local override; without the
+external proposal route, the form remains unsupported. Promotion
+into the direct grammar or the reviewed
 heuristic catalog requires evidence across independent examples, renamed and meaning-changing controls, confidence
 calibration where applicable, and a regression suite that demonstrates stable semantics.
 
@@ -98,17 +131,20 @@ The desired long-term shape is a compact, highly tested core; rich but declarati
 
 ### Runtime phase boundaries
 
-The direct answer path is language front-end → accepted Semantic IR → task frame → catalog discovery → shard and
-method planning → bounded execution → proof verification → result realization. DS027 assigns these responsibilities
-to typed strategy stages with one deterministic host coordinator; a strategy cannot make an opaque cross-stage call or
-use downstream answer success to reinterpret an earlier stage. The default text interface independently recognizes a
+The direct answer path is an ingress node → bounded English-likelihood gate → language interpretation node → accepted Semantic IR → request/task
+planning node → focus and evidence nodes → method planning node → bounded reasoning node → non-voting witness
+gate → result construction node. DS027 assigns these responsibilities to typed stages with deterministic host
+coordination; a strategy cannot make an opaque cross-node call or use downstream answer success to reinterpret an
+earlier stage. The default text interface independently recognizes a
 bounded explicit artifact request so instruction text accidentally accepted as assertions cannot commit session state.
 When no request plan applies, direct `UNPARSED` or `UNKNOWN` may enter the DS022 deterministic candidate ensemble. A
 direct `SOLVED` or `PARTIAL` interpretation may also be challenged when visible structure produces an accepted
 candidate whose parse-only Semantic IR differs from the original IR; an equal IR preserves the direct route. Every
 changed candidate interpretation executes with query-local episode state. A normal missing-knowledge `UNKNOWN` with no
-structurally licensed candidate remains unchanged. Only a final local `UNPARSED` may let an explicitly enabled DS013
-Language Agent propose another reparse candidate.
+structurally licensed candidate remains unchanged. Likely non-English input does not enter English spelling and
+morphology repair. In the general CLI, DS013 may ask the disclosed external proposal strategy for an English translation;
+terminal unsupported English may similarly request simplification. Both candidates re-enter the same non-voting
+English parser and semantic gate. The external executor has no answer, KB, proof, voting, or result authority.
 DS003, DS022, DS013, DS008, DS020, DS015, and DS009 own those typed boundaries. DS004 owns construction and promotion;
 DS017 owns evaluation-pool isolation. The runtime does not discover training files, invoke a coding agent, download a
 source, or execute a KB payload.
@@ -153,6 +189,13 @@ Response: It is demoted into canonical KB records and interpreted by a generic m
 Response: No. It permits researchers to develop independently testable generic executors and compare them through a
 shared typed coordinator. A deployable executor enters the system only through repository review and static host
 registration. KBs and configuration can reference allowed identities as data but never supply code or import paths.
+
+### Question #5: Is every processing node a voting ensemble?
+
+Response: No. Candidate-producing nodes may have several strategies, but only an explicit coordination node applies a
+stage-specific arbitration policy. Direct parsers, schema validators, safety checks, reasoning executors, proof
+verifiers, and package compilers have authority from their declared contracts rather than popularity. A gate failure
+cannot be outvoted, and agreeing unverified method outputs cannot authorize an answer.
 
 ## Conclusion
 

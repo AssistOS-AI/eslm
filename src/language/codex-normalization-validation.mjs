@@ -1,7 +1,5 @@
 import {
   ENGLISH_FUNCTION_WORDS,
-  ROMANIAN_ENGLISH_LEXICAL_EQUIVALENCES,
-  ROMANIAN_FUNCTION_WORDS,
   extractProtectedAnchors,
   normalizationAnchorOverlaps,
   normalizedWords,
@@ -13,30 +11,24 @@ import {
   MAX_NORMALIZATION_OUTPUT_CHARACTERS,
   NORMALIZATION_ANCHOR_KINDS,
 } from './codex-normalization-contract.mjs';
+import { assessEnglishLikelihood } from './english-likelihood.mjs';
 
 function normalizedPhrase(text) {
   return normalizedWords(text).join(' ');
 }
 
-function lexicalAlignmentIsCompatible(operation, source, target) {
+function lexicalAlignmentIsCompatible(source, target) {
   const sourcePhrase = normalizedPhrase(source);
   const targetPhrase = normalizedPhrase(target);
-  if (!sourcePhrase || !targetPhrase) return false;
-  if (sourcePhrase === targetPhrase) return true;
-  if (operation !== 'translation') return false;
-  return ROMANIAN_ENGLISH_LEXICAL_EQUIVALENCES.get(sourcePhrase)?.has(targetPhrase) === true;
+  return Boolean(sourcePhrase && targetPhrase && sourcePhrase === targetPhrase);
 }
 
-function protectedAlignmentIsCompatible(operation, sourceRecord, targetRecord) {
+function protectedAlignmentIsCompatible(sourceRecord, targetRecord) {
   if (sourceRecord.identity !== targetRecord.identity) return false;
   if (sourceRecord.language === 'neutral' || targetRecord.language === 'neutral') {
     return sourceRecord.language === targetRecord.language;
   }
-  if (operation === 'simplification') {
-    return sourceRecord.language === 'en' && targetRecord.language === 'en';
-  }
-  return (sourceRecord.language === 'ro' || sourceRecord.language === 'en')
-    && targetRecord.language === 'en';
+  return sourceRecord.language === 'en' && targetRecord.language === 'en';
 }
 
 function nextSubstringSpan(text, value, usedSpans) {
@@ -55,10 +47,6 @@ function nextSubstringSpan(text, value, usedSpans) {
 function openContentOccurrences(text, anchors, functionWords) {
   return wordOccurrences(text).filter((occurrence) => !functionWords.has(occurrence.normalized)
     && !anchors.some((record) => normalizationAnchorOverlaps(record, occurrence)));
-}
-
-function contentIsCovered(occurrence, spans) {
-  return spans.some((span) => occurrence.start >= span.start && occurrence.end <= span.end);
 }
 
 function subtractLiteralContent(sourceOccurrences, targetOccurrences) {
@@ -146,8 +134,8 @@ function validateAlignments(original, candidate, source, target, errors) {
     if (!targetIsExact) errors.push(`alignment ${index} target is not an exact normalized substring`);
     if (!sourceIsExact || !targetIsExact) continue;
     if (alignment.kind === 'lexical-content') {
-      if (!lexicalAlignmentIsCompatible(candidate.operation, alignment.source, alignment.target)) {
-        errors.push(`alignment ${index} lexical source and target are not a reviewed equivalence`);
+      if (!lexicalAlignmentIsCompatible(alignment.source, alignment.target)) {
+        errors.push(`alignment ${index} lexical source and target are not host-verified equivalent`);
         continue;
       }
       const sourceSpan = nextSubstringSpan(original, alignment.source, usedSourceLexicalSpans);
@@ -180,11 +168,8 @@ function validateAlignments(original, candidate, source, target, errors) {
     }
     let compatible;
     for (const sourceRecord of sourceMatches) {
-      const targetRecord = targetMatches.find((record) => protectedAlignmentIsCompatible(
-        candidate.operation,
-        sourceRecord,
-        record,
-      ));
+      const targetRecord = targetMatches.find((record) =>
+        protectedAlignmentIsCompatible(sourceRecord, record));
       if (targetRecord) {
         compatible = { sourceRecord, targetRecord };
         break;
@@ -225,9 +210,12 @@ function validateProtectedIdentity(source, target, errors) {
   }
 }
 
-function validateEnglishContent(original, candidate, source, target, errors) {
+function validateEnglishContent(original, candidate, source, target, targetAssessment, errors) {
   if (!/^en(?:-|$)/iu.test(candidate.sourceLanguage)) {
     errors.push('simplification sourceLanguage must identify English');
+  }
+  if (targetAssessment.classification !== 'likely-english') {
+    errors.push('simplified target did not pass the host-owned English likelihood gate');
   }
   const sourceContent = openContentOccurrences(original, source.records, ENGLISH_FUNCTION_WORDS)
     .map((occurrence) => occurrence.normalized)
@@ -253,28 +241,30 @@ function validateEnglishContent(original, candidate, source, target, errors) {
   }
 }
 
-function validateRomanianContent(original, candidate, source, target, lexicalSpans, errors) {
-  if (!/^(?:ro|ron)(?:-|$)/iu.test(candidate.sourceLanguage)) {
-    errors.push('translation sourceLanguage is outside the reviewed Romanian validation profile');
+function validateTranslationContent(original, candidate, source, target, assessments, errors) {
+  if (/^en(?:-|$)/iu.test(candidate.sourceLanguage)) {
+    errors.push('translation sourceLanguage must not identify English');
   }
-  const sourceContent = openContentOccurrences(original, source.records, ROMANIAN_FUNCTION_WORDS);
+  if (assessments.source.classification !== 'likely-non-english') {
+    errors.push('translation requires a host-owned likely-non-English source assessment');
+  }
+  if (assessments.target.classification !== 'likely-english') {
+    errors.push('translated target did not pass the host-owned English likelihood gate');
+  }
+  const sourceContent = openContentOccurrences(original, source.records, new Set());
   const targetContent = openContentOccurrences(
     candidate.normalizedEnglish,
     target.records,
     ENGLISH_FUNCTION_WORDS,
   );
   const unmatched = subtractLiteralContent(sourceContent, targetContent);
-  const uncoveredSource = unmatched.remainingSource.filter(
-    (occurrence) => !contentIsCovered(occurrence, lexicalSpans.sourceLexicalSpans),
-  );
-  const uncoveredTarget = unmatched.remainingTarget.filter(
-    (occurrence) => !contentIsCovered(occurrence, lexicalSpans.targetLexicalSpans),
-  );
-  if (uncoveredSource.length > 0) {
-    errors.push(`translation has unverified source content: ${uncoveredSource.map((item) => item.surface).join(', ')}`);
+  if (unmatched.remainingSource.length > 0) {
+    errors.push('translation changed open-class source content without an independent lexical validator: '
+      + unmatched.remainingSource.map((item) => item.surface).join(', '));
   }
-  if (uncoveredTarget.length > 0) {
-    errors.push(`translation has unverified target content: ${uncoveredTarget.map((item) => item.surface).join(', ')}`);
+  if (unmatched.remainingTarget.length > 0) {
+    errors.push('translation introduced open-class target content without an independent lexical validator: '
+      + unmatched.remainingTarget.map((item) => item.surface).join(', '));
   }
 }
 
@@ -288,18 +278,24 @@ export function validateCodexNormalization(original, candidate, options = {}) {
   }
   const source = extractProtectedAnchors(original);
   const target = extractProtectedAnchors(candidate.normalizedEnglish);
-  const lexicalSpans = validateAlignments(original, candidate, source, target, errors);
+  validateAlignments(original, candidate, source, target, errors);
   validateProtectedIdentity(source, target, errors);
+  const assessments = Object.freeze({
+    source: assessEnglishLikelihood(original),
+    target: assessEnglishLikelihood(candidate.normalizedEnglish),
+  });
   if (candidate.operation === 'simplification') {
-    validateEnglishContent(original, candidate, source, target, errors);
+    validateEnglishContent(original, candidate, source, target, assessments.target, errors);
   } else {
-    validateRomanianContent(original, candidate, source, target, lexicalSpans, errors);
+    validateTranslationContent(original, candidate, source, target, assessments, errors);
   }
   return Object.freeze({
     accepted: errors.length === 0,
     errors: Object.freeze(errors),
     sourceAnchors: source,
     normalizedAnchors: target,
+    sourceLanguageAssessment: assessments.source,
+    normalizedEnglishAssessment: assessments.target,
     validatorVersion: CODEX_NORMALIZATION_VALIDATOR,
   });
 }

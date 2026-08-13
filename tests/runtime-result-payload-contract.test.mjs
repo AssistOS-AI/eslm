@@ -280,6 +280,10 @@ test('normalization payloads require a versioned candidate and route-consistent 
   const normalization = {
     protocol: NORMALIZATION_RESULT_PROTOCOL, attempted: true, triggerStatus: 'UNPARSED',
     status: 'accepted', proposalCount: 1, proposalLimit: 3, externalInvocations: 0, cacheHit: true,
+    requestedOperation: 'simplification',
+    strategyIdentity: 'strategy:language:external-simplification-proposal@1',
+    stage: 'runtime.language.interpret', proposalRole: 'untrusted-language-form-candidate',
+    answerAuthority: 'none',
     receipts: [], candidate, validation: { accepted: true }, reparseStatus: 'SOLVED',
   };
   const accepted = textResult({
@@ -347,6 +351,10 @@ test('normalization payloads require a versioned candidate and route-consistent 
       proposalLimit: 3,
       externalInvocations: 2,
       cacheHit: false,
+      requestedOperation: 'simplification',
+      strategyIdentity: 'strategy:language:external-simplification-proposal@1',
+      stage: 'runtime.language.interpret', proposalRole: 'untrusted-language-form-candidate',
+      answerAuthority: 'none',
       receipts: [],
       diagnostic: 'bounded exhaustion',
     },
@@ -361,6 +369,10 @@ test('normalization payloads require a versioned candidate and route-consistent 
     status: 'UNPARSED', normalization: {
       protocol: NORMALIZATION_RESULT_PROTOCOL, attempted: true, triggerStatus: 'UNPARSED',
       status: 'failed', proposalCount: 1, proposalLimit: 3, externalInvocations: 1,
+      requestedOperation: 'simplification',
+      strategyIdentity: 'strategy:language:external-simplification-proposal@1',
+      stage: 'runtime.language.interpret', proposalRole: 'untrusted-language-form-candidate',
+      answerAuthority: 'none',
       cacheHit: false, receipts: [], diagnostic: 'bounded failure',
     },
   })), /requires a Language Agent language route/u);

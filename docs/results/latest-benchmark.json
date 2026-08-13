@@ -1,7 +1,7 @@
 {
   "format": "eslm-benchmark-report-v2",
   "protocol": "eslm-internal-regression-v1",
-  "createdAt": "2026-08-12T13:18:03.534Z",
+  "createdAt": "2026-08-12T20:42:04.699Z",
   "evidenceRegime": "internal-authored-smoke-fixture",
   "claimScope": "implementation-regression-only",
   "dataset": {

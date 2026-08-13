@@ -11,7 +11,7 @@ import {
 } from '../src/interface/interactive-presenter.mjs';
 
 const style = Object.freeze({
-  blue: String, bold: String, dim: String, green: String, magenta: String, red: String,
+  blue: String, bold: String, dim: String, gray: String, green: String, magenta: String, red: String,
   yellow: String, status: (_status, text) => text ?? _status,
 });
 
@@ -59,7 +59,7 @@ test('examples uses deterministic 24-case pages from the executable smoke catalo
   assert.match(first, /1,200 heuristic-language cases plus 2,896 core regressions/u);
   for (const level of [
     'answer-execution', 'candidate-selection', 'proposal-only', 'query-local-decomposition',
-    'request-execution', 'safety-abstention',
+    'request-execution', 'request-planning', 'safety-abstention', 'semantic-query-execution',
   ]) assert.match(first, new RegExp(`\\[${level}\\]`, 'u'));
   assert.match(first, /categorical-subalternation/u);
   assert.match(first, /boolean-entailment-chain/u);
@@ -81,17 +81,31 @@ test('smoke output displays representative input, expected contract, and actual 
   assert.equal((output.match(/^PASS \[/gmu) ?? []).length, 24);
 });
 
-test('accepted Language Agent normalization is shown as original, transformation, and symbolic result', () => {
+test('accepted Language Agent simplification is shown as original, transformation, and symbolic result', () => {
   const output = interactiveResultText({
     status: 'SOLVED', answer: 'I am ready.', languageRoute: 'language-agent-normalized',
     normalization: {
       cacheHit: false,
-      candidate: { operation: 'translation', normalizedEnglish: 'How are you?' },
+      candidate: { operation: 'simplification', normalizedEnglish: 'How are you?' },
     },
-  }, 'Ce mai faci?', style);
-  assert.match(output, /Original: Ce mai faci\?/u);
-  assert.match(output, /Translation: How are you\?/u);
+  }, 'How are you doing?', style);
+  assert.match(output, /Original: How are you doing\?/u);
+  assert.match(output, /Simplification: How are you\?/u);
   assert.match(output, /Symbolic result: \[SOLVED\] I am ready\./u);
+});
+
+test('English language rejection is visible and states the untouched boundaries', () => {
+  const output = interactiveResultText({
+    status: 'UNPARSED', languageRoute: 'english-language-gate-rejected',
+    languageAssessment: {
+      classification: 'likely-non-english', confidence: 0.81, threshold: 0.68,
+      diagnostic: 'Bounded generic script evidence is unlikely to be English.',
+    },
+  }, 'Жарум кивес Нолта?', style);
+  assert.match(output, /English language check did not accept/u);
+  assert.match(output, /Confidence 0\.810 at threshold 0\.680/u);
+  assert.match(output, /Translate the request to English/u);
+  assert.match(output, /No parser, heuristic interpretation, KB lookup, or session update ran/u);
 });
 
 test('accepted local approximation shows selected CNL, confidence votes, and ephemeral effects', () => {
@@ -115,7 +129,7 @@ test('accepted local approximation shows selected CNL, confidence votes, and eph
   assert.match(output, /Symbolic result: \[DEFEASIBLE\] Yes\./u);
 });
 
-test('request synthesis shows intent, bounded subrequests, output shape, and evidence policy', () => {
+test('request synthesis separates a symbolic processing trace from the coherent answer', () => {
   const output = interactiveResultText({
     status: 'PARTIAL', languageRoute: 'heuristic-request-synthesis',
     answer: '# Report: zorals\n\n- A zoral is a mineral. [nonce@1; r1]',
@@ -124,10 +138,21 @@ test('request synthesis shows intent, bounded subrequests, output shape, and evi
       subrequests: [{}, {}, {}],
       outputContract: { length: 'brief', artifact: 'report', format: 'sections' },
     } },
+    synthesis: { realization: {
+      coverage: { evidenceRealized: 1, evidenceRejected: 2 }, confidence: 0.82,
+      strategyTrace: [
+        'strategy:result:rhetorical-section-planner@1',
+        'strategy:result:lexical-definition-sentence@1',
+        'strategy:result:sectioned-document-assembly@1',
+      ],
+    } },
   }, 'Write a short report about zorals.', style);
-  assert.match(output, /Local request plan accepted/u);
-  assert.match(output, /Intent: compose; 3 bounded subrequests/u);
-  assert.match(output, /brief report, sections/u);
-  assert.match(output, /related KB records are not upgraded to proof/u);
-  assert.match(output, /\[PARTIAL\]/u);
+  assert.match(output, /^Thinking · symbolic processing/mu);
+  assert.match(output, /Request plan coordinator: compose; 3 bounded subrequests/u);
+  assert.match(output, /Output contract: brief report, sections/u);
+  assert.match(output, /Evidence admission: 1 KB claim\(s\) realized; 2 related claim\(s\) withheld/u);
+  assert.match(output, /rhetorical-section-planner → lexical-definition-sentence/u);
+  assert.match(output, /Authority boundary: citations support wording/u);
+  assert.match(output, /\nAnswer\n# Report: zorals/u);
+  assert.doesNotMatch(output.slice(output.indexOf('\nAnswer\n')), /PARTIAL/u);
 });

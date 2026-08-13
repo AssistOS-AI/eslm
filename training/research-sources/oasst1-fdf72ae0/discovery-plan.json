@@ -1,0 +1,89 @@
+{
+  "format": "eslm-rl-dataset-discovery-plan-v2",
+  "planId": "plan:processing-graph:002-oasst1-scale",
+  "cycleId": "cycle:processing-graph:002-oasst1-scale",
+  "state": "approved",
+  "question": "Do complete reviewed English conversation trees reveal a new cross-turn processing responsibility after source-neutral structural projection?",
+  "nullHypothesis": "Conversation dependencies, phase changes, task frames, and feedback axes are instances of existing packet, edge, request-planning, and result-construction contracts.",
+  "sourceRevisions": [
+    "oasst1@fdf72ae0827c1cda404aff25b6603abec9e3399b"
+  ],
+  "projectionDigests": [
+    "sha256:ffb914e544f774123d323db4921031963c316f4fb7689696c5f94784291580b5"
+  ],
+  "sourceScopes": [
+    {
+      "sourceRevision": "oasst1@fdf72ae0827c1cda404aff25b6603abec9e3399b",
+      "componentId": "ready-conversation-trees",
+      "projectionId": "oasst1-ready-english-structural-trees-v1",
+      "projectionDigest": "sha256:ffb914e544f774123d323db4921031963c316f4fb7689696c5f94784291580b5",
+      "contentMembershipDigest": "sha256:990121179c410e6ac769f4cf1e0517143e67fb008b7379ba4a59e285b392bb3d",
+      "splits": [
+        {
+          "name": "training",
+          "visibility": "training-visible",
+          "rowsDeclared": 9846,
+          "rowsAdmitted": 2220
+        },
+        {
+          "name": "validation",
+          "visibility": "development-visible",
+          "rowsDeclared": 518,
+          "rowsAdmitted": 0
+        }
+      ]
+    }
+  ],
+  "baselineGraphDigest": "sha256:5534952eb6b2ab83d5c8ae3d0e15eda4dd69745a75f0e2abbea81f9ff5bf0348",
+  "analysisIdentity": {
+    "analysisId": "oasst1-complete-source-analysis",
+    "version": "1.0.0",
+    "seed": "oasst1-complete-v1",
+    "inputMode": "iterable-or-async-iterable",
+    "selectionMethod": "bounded-min-hash-v1"
+  },
+  "strategyIdentities": [
+    "bounded-subcircuit-motif-v1",
+    "cross-source-recurrence-v1",
+    "earliest-error-v1",
+    "metamorphic-recurrence-v1",
+    "partial-order-motif-v1",
+    "phase-change-point-v1",
+    "preference-axis-v1",
+    "task-frame-induction-v1",
+    "typed-operation-responsibility-v1"
+  ],
+  "workPolicy": {
+    "format": "eslm-processing-graph-research-work-policy-v1",
+    "progressionStage": "scale",
+    "limits": {
+      "maxRowsScanned": 2220,
+      "maxEpisodes": 2220,
+      "maxInputBytes": 268435456,
+      "maxTokens": 67108864,
+      "maxActions": 400000,
+      "maxDependencies": 400000,
+      "maxVotes": 16384,
+      "maxHypotheses": 2048,
+      "maxEvidenceDigestsPerVote": 14
+    },
+    "techniqueBudgets": {
+      "bounded-subcircuit-motif-v1": { "maxEvents": 400000, "maxProposals": 8192 },
+      "cross-source-recurrence-v1": { "maxEvents": 400000, "maxProposals": 8192 },
+      "earliest-error-v1": { "maxEvents": 400000, "maxProposals": 8192 },
+      "metamorphic-recurrence-v1": { "maxEvents": 400000, "maxProposals": 8192 },
+      "partial-order-motif-v1": { "maxEvents": 400000, "maxProposals": 8192 },
+      "phase-change-point-v1": { "maxEvents": 400000, "maxProposals": 8192 },
+      "preference-axis-v1": { "maxEvents": 400000, "maxProposals": 8192 },
+      "task-frame-induction-v1": { "maxEvents": 400000, "maxProposals": 8192 },
+      "typed-operation-responsibility-v1": { "maxEvents": 400000, "maxProposals": 8192 }
+    }
+  },
+  "authority": {
+    "analysisAdmission": "reviewed-training-projections-only",
+    "answer": "none",
+    "runtime": "none",
+    "proof": "none",
+    "promotion": "none"
+  }
+}

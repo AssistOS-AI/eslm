@@ -1,6 +1,6 @@
 {
   "format": "eslm-generated-heuristic-benchmark-report-v1",
-  "createdAt": "2026-08-12T18:36:34.853Z",
+  "createdAt": "2026-08-12T20:42:16.306Z",
   "evidenceRegime": "internal-generated-development",
   "benchmarkComparable": false,
   "claimScope": "heuristic-strategy-development-and-regression-only",
@@ -9,10 +9,14 @@
     "seed": "eslm-generated-heuristic-development-v1",
     "requestedCases": 1200,
     "casesGenerated": 1200,
+    "uniqueInputs": 1200,
     "definitionDigest": "sha256:909549edb887ba4729ada5c45ed0b15a94775463afc9a243292ee198fdf971b3",
-    "suiteDigest": "sha256:c1f969787f328b8bd6dc74a7bf4235cfa33e5a3d82dfd1edca2a4f5dc2c7d319",
+    "suiteDigest": "sha256:a1e46690f87140e28960a2c2991948a160225b0f55eebf7171c0ae5caef56f37",
     "domains": 18,
-    "techniques": 43
+    "techniques": 43,
+    "observedTargetFamilies": 28,
+    "observedOracleLevels": 8,
+    "observedTechniqueDomainCells": 593
   },
   "execution": {
     "casesExecuted": 1200,
@@ -37,18 +41,18 @@
         ],
         "includedExtension": ".mjs"
       },
-      "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
-      "files": 172,
+      "digest": "c7006419690d621b12019e4ed7503220562499b359ceaca749f664a73a5a40d2",
+      "files": 187,
       "runtime": {
         "node": "v22.23.1",
         "platform": "linux",
         "architecture": "x64"
       }
     },
-    "wallMilliseconds": 4850.816159,
-    "startRssBytes": 82264064,
-    "endRssBytes": 138993664,
-    "sampledPeakRssBytes": 135708672
+    "wallMilliseconds": 5853.430445,
+    "startRssBytes": 91103232,
+    "endRssBytes": 144908288,
+    "sampledPeakRssBytes": 137146368
   },
   "workPolicy": {
     "format": "eslm-work-policy-v1",
@@ -95,7 +99,7 @@
     "mode": "runtime-work-policy",
     "catalog": {
       "format": "eslm-builtin-strategy-catalog-v1",
-      "digest": "sha256:3dfc28863e78ce2a6f7586199d037c5cfe4bdc804d9796dd6c876851893548e4"
+      "digest": "sha256:9f44d779f0a9ada195cc511aea7d5d02c45ba27a010ebe7e5fcd273e425883f3"
     },
     "selection": {
       "source": "eslm-work-policy-v1",
@@ -2975,7 +2979,7 @@
       }
     ],
     "adapterLocal": null,
-    "configurationDigest": "sha256:548d72da63b9652d9449e187cc339fdba4826c1ea233d4facafcd7fb2dcfa319"
+    "configurationDigest": "sha256:4d852fe2f85a93fe6d0102d04c4c604125c85083376108cbd427996d32cee4a9"
   },
   "total": 1200,
   "passed": 1200,
@@ -3614,8 +3618,15 @@
     "oracleLevel": [
       {
         "key": "answer-execution",
-        "total": 670,
-        "passed": 670,
+        "total": 642,
+        "passed": 642,
+        "failed": 0,
+        "passRate": 1
+      },
+      {
+        "key": "candidate-selection",
+        "total": 54,
+        "passed": 54,
         "failed": 0,
         "passRate": 1
       },
@@ -3635,8 +3646,15 @@
       },
       {
         "key": "request-execution",
-        "total": 112,
-        "passed": 112,
+        "total": 84,
+        "passed": 84,
+        "failed": 0,
+        "passRate": 1
+      },
+      {
+        "key": "request-planning",
+        "total": 28,
+        "passed": 28,
         "failed": 0,
         "passRate": 1
       },
@@ -3648,9 +3666,9 @@
         "passRate": 1
       },
       {
-        "key": "semantic-ir",
-        "total": 54,
-        "passed": 54,
+        "key": "semantic-query-execution",
+        "total": 28,
+        "passed": 28,
         "failed": 0,
         "passRate": 1
       }

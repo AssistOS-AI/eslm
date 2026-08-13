@@ -1,4 +1,8 @@
 import { sha256, stableStringify } from '../util.mjs';
+import {
+  assertGeneratedHeuristicOracle,
+  createGeneratedHeuristicOracle,
+} from './generated-heuristic-oracle-contract.mjs';
 
 export const GENERATED_HEURISTIC_BENCHMARK_PROTOCOL =
   'eslm-generated-heuristic-benchmark-suite-v1';
@@ -113,9 +117,7 @@ function canonicalEpisode(values) {
 }
 
 function entailmentOracle(values, expectedCandidateText, requiredFamilies, direct = false, options = {}) {
-  return Object.freeze({
-    kind: 'boolean-entailment',
-    oracleLevel: options.oracleLevel ?? 'answer-execution',
+  return createGeneratedHeuristicOracle('boolean-entailment', {
     acceptableStatuses: Object.freeze(direct ? ['SOLVED'] : options.acceptableStatuses ?? ['DEFEASIBLE']),
     expectedAnswer: 'Yes.',
     expectedRoute: direct ? 'direct-symbolic' : 'heuristic-cnl-approximated',
@@ -131,33 +133,78 @@ function entailmentOracle(values, expectedCandidateText, requiredFamilies, direc
   });
 }
 
-function interpretedQuestionOracle(values, candidate, families) {
-  return Object.freeze({
-    kind: 'interpreted-question', oracleLevel: 'candidate-selection',
+function interpretedQuestionOracle(candidate, families) {
+  return createGeneratedHeuristicOracle('interpreted-question', {
     acceptableStatuses: Object.freeze(['UNKNOWN']),
     expectedRoute: 'heuristic-cnl-approximated', expectedAnswer: null,
-    expectedQuery: null,
     expectedCandidateText: candidate, requireSelectedCandidate: true,
     requiredFamilies: Object.freeze(families),
   });
 }
 
-function requestOracle(operation, artifact, format = 'paragraphs') {
-  return Object.freeze({
-    kind: 'request-construction', oracleLevel: 'request-execution',
+function semanticQueryOracle(values, candidate, families) {
+  return createGeneratedHeuristicOracle('semantic-query-execution', {
+    acceptableStatuses: Object.freeze(['UNKNOWN']),
+    expectedRoute: 'heuristic-cnl-approximated', expectedAnswer: null,
+    expectedQuery: Object.freeze({
+      intent: 'yes-no', subject: values.name.toLocaleLowerCase('en-US'),
+      predicate: 'is_a', object: 'calm',
+    }),
+    expectedCandidateText: candidate, requireSelectedCandidate: true,
+    requiredFamilies: Object.freeze(families),
+  });
+}
+
+function statementInterpretationOracle(candidate, families) {
+  return createGeneratedHeuristicOracle('statement-interpretation', {
+    acceptableStatuses: Object.freeze(['PARTIAL']),
+    expectedRoute: 'heuristic-cnl-approximated', expectedAnswer: null,
+    expectedCandidateText: candidate, requireSelectedCandidate: true,
+    requiredFamilies: Object.freeze(families),
+  });
+}
+
+function requestOracle(operation, artifact, format = 'paragraphs', operationContracts = [
+  { intent: operation, artifact, format },
+]) {
+  return createGeneratedHeuristicOracle('request-construction', {
     acceptableStatuses: Object.freeze(['PARTIAL']),
     expectedRoute: 'heuristic-request-synthesis', operation, artifact, format,
-    expectedAnswer: null, expectedQuery: null, expectedCandidateText: null,
-    requiredFamilies: Object.freeze([]),
+    operationSequence: Object.freeze(operationContracts.map((item) => item.intent)),
+    operationContracts: Object.freeze(operationContracts.map((item) => Object.freeze({ ...item }))),
+    expectedAnswer: null,
+  });
+}
+
+function requestPlanningOracle(operation, artifact, format = 'paragraphs') {
+  return createGeneratedHeuristicOracle('request-planning', {
+    acceptableStatuses: Object.freeze(['MISSING_KNOWLEDGE']),
+    expectedRoute: 'heuristic-request-planned',
+    operation, artifact, format, operationSequence: Object.freeze([operation]),
+    operationContracts: Object.freeze([Object.freeze({ intent: operation, artifact, format })]),
+    expectedAnswer: null,
   });
 }
 
 function safetyOracle(operator) {
-  return Object.freeze({
-    kind: 'safe-abstention', oracleLevel: 'safety-abstention',
+  return createGeneratedHeuristicOracle('safe-abstention', {
+    acceptableStatuses: Object.freeze(['UNPARSED']),
+    expectedRoute: 'direct-symbolic',
     forbiddenStatuses: Object.freeze(['SOLVED', 'DEFEASIBLE']),
-    forbiddenAnswer: 'Yes.', protectedOperator: operator, requiredFamilies: Object.freeze([]),
-    expectedAnswer: null, expectedQuery: null, expectedCandidateText: null,
+    forbiddenAnswer: 'Yes.', protectedOperator: operator,
+    requireNoAnswerEvidence: true,
+    expectedAnswer: null,
+  });
+}
+
+function proposalOracle(operator, candidate, families) {
+  return createGeneratedHeuristicOracle('interpretable-complex-clause', {
+    acceptableStatuses: Object.freeze(['UNPARSED']),
+    expectedRoute: 'direct-symbolic', expectedAnswer: null,
+    forbiddenStatuses: Object.freeze(['SOLVED', 'DEFEASIBLE']),
+    forbiddenAnswer: 'Yes.', protectedOperator: operator,
+    requireNoAnswerEvidence: true, expectedCandidateText: candidate,
+    requireCandidateFamilyBinding: true, requiredFamilies: Object.freeze(families),
   });
 }
 
@@ -272,10 +319,8 @@ const TEMPLATES = Object.freeze([
   template('copula-auxiliary', 'missing-copula-and-auxiliary', 'copula-and-auxiliary-insertion', 3, (v) => {
     const candidate = `${v.name} is ${nominal(v.className)}. Is ${v.name} calm?`;
     return { input: `${v.name} ${nominal(v.className, wrongArticleFor(v.className))}. ${v.name} calm?`,
-      oracle: Object.freeze({ ...entailmentOracle(v, candidate,
+      oracle: semanticQueryOracle(v, candidate,
         ['copula-and-auxiliary-insertion', 'determiner-agreement']),
-      acceptableStatuses: Object.freeze(['UNKNOWN']), expectedAnswer: null,
-      expectedQuery: Object.freeze({ intent: 'yes-no', subject: v.name.toLocaleLowerCase('en-US'), predicate: 'is_a', object: 'calm' }) }),
       tags: ['repair', 'ellipsis'] };
   }),
   template('semicolon-segmentation', 'semicolon-clause-boundary', 'sentence-segmentation', 2, (v) => {
@@ -288,12 +333,13 @@ const TEMPLATES = Object.freeze([
   template('request-envelope', 'polite-polar-envelope', 'request-envelope-stripping', 2, (v) => {
     const candidate = `Does ${v.name} ${v.basePredicate} ${v.object}?`;
     return { input: `Could you tell me whether ${v.name} ${v.predicate} ${v.object}?`,
-      oracle: interpretedQuestionOracle(v, candidate, ['request-envelope-stripping']), tags: ['question-only'] };
+      oracle: interpretedQuestionOracle(candidate, ['request-envelope-stripping']), tags: ['question-only'] };
   }),
   template('embedded-question', 'embedded-polar-question', 'embedded-polar-question', 3, (v) => {
     const candidate = `Does ${v.name} ${v.basePredicate} ${v.object}?`;
     return { input: `The question is whether ${v.name} ${v.predicate} ${v.object}.`,
-      oracle: interpretedQuestionOracle(v, candidate, ['embedded-polar-question', 'nominalized-request-simplification']), tags: ['question-only', 'embedded'] };
+      oracle: interpretedQuestionOracle(candidate,
+        ['embedded-polar-question', 'nominalized-request-simplification']), tags: ['question-only', 'embedded'] };
   }),
   template('filler-removal', 'discourse-filler-prefix', 'discourse-filler-removal', 2, (v) => {
     const candidate = `${v.name} is ${nominal(v.className)}. Is ${v.name} ${nominal(v.className)}?`;
@@ -313,76 +359,57 @@ const TEMPLATES = Object.freeze([
   })),
   template('independent-coordination', 'coordinated-independent-clauses', 'independent-clause-coordination', 4, (v) => {
     const candidate = `${v.name} is ${nominal(v.className)}. ${v.otherName} is ${nominal(v.otherClass)}.`;
-    const oracle = Object.freeze({ ...entailmentOracle(v, candidate, ['independent-clause-coordination']),
-      expectedQuery: Object.freeze({ intent: 'yes-no', subject: v.name.toLocaleLowerCase('en-US'), predicate: 'is_a', object: v.className }) });
     return { input: `${v.name} is ${nominal(v.className)} and ${v.otherName} is ${nominal(v.otherClass)}.`,
-      oracle: Object.freeze({ ...oracle, acceptableStatuses: Object.freeze(['PARTIAL']),
-        oracleLevel: 'query-local-decomposition', expectedAnswer: null, expectedQuery: null }),
+      oracle: statementInterpretationOracle(candidate, ['independent-clause-coordination']),
       tags: ['decomposition', 'coordination'] };
   }),
   template('parallel-ellipsis', 'shared-subject-coordination', 'local-parallel-ellipsis', 4, (v) => {
     const candidate = `${v.name} is ${nominal(v.className)}. ${v.name} is ${nominal(v.otherClass)}.`;
-    const oracle = Object.freeze({ ...entailmentOracle(v, candidate, ['local-parallel-ellipsis']),
-      expectedQuery: Object.freeze({ intent: 'yes-no', subject: v.name.toLocaleLowerCase('en-US'), predicate: 'is_a', object: 'calm' }) });
     return { input: `${v.name} is ${nominal(v.className)} and ${nominal(v.otherClass)}.`,
-      oracle: Object.freeze({ ...oracle, acceptableStatuses: Object.freeze(['PARTIAL']),
-        oracleLevel: 'query-local-decomposition', expectedAnswer: null, expectedQuery: null }),
+      oracle: statementInterpretationOracle(candidate, ['local-parallel-ellipsis']),
       tags: ['decomposition', 'ellipsis'] };
   }),
   template('relative-extraction', 'nonrestrictive-relative-clause', 'relative-clause-extraction', 5, (v) => {
     const candidate = `${v.name} is ${nominal(v.className)}. ${v.name} is ${nominal(v.otherClass)}.`;
-    const oracle = Object.freeze({ ...entailmentOracle(v, candidate, ['relative-clause-extraction']),
-      expectedQuery: Object.freeze({ intent: 'yes-no', subject: v.name.toLocaleLowerCase('en-US'), predicate: 'is_a', object: v.className }) });
     return { input: `${v.name}, who is ${nominal(v.className)}, is ${nominal(v.otherClass)}.`,
-      oracle: Object.freeze({ ...oracle, acceptableStatuses: Object.freeze(['PARTIAL']),
-        oracleLevel: 'query-local-decomposition', expectedAnswer: null, expectedQuery: null }),
+      oracle: statementInterpretationOracle(candidate, ['relative-clause-extraction']),
       tags: ['decomposition', 'relative'] };
   }),
   template('apposition', 'nominal-apposition', 'apposition-expansion', 5, (v) => {
     const candidate = `${v.name} is ${nominal(v.className)}. ${v.name} is ${nominal(v.otherClass)}.`;
-    const oracle = Object.freeze({ ...entailmentOracle(v, candidate, ['apposition-expansion']),
-      expectedQuery: Object.freeze({ intent: 'yes-no', subject: v.name.toLocaleLowerCase('en-US'), predicate: 'is_a', object: v.className }) });
     return { input: `${v.name}, ${nominal(v.className)}, is ${nominal(v.otherClass)}.`,
-      oracle: Object.freeze({ ...oracle, acceptableStatuses: Object.freeze(['PARTIAL']),
-        oracleLevel: 'query-local-decomposition', expectedAnswer: null, expectedQuery: null }),
+      oracle: statementInterpretationOracle(candidate, ['apposition-expansion']),
       tags: ['decomposition', 'apposition'] };
   }),
   template('passive-active', 'explicit-passive-agent', 'explicit-passive-to-active', 5, (v) => ({
     input: `The ${v.object} was grabbed by ${v.name}.`,
-    oracle: Object.freeze({ kind: 'statement-interpretation', oracleLevel: 'query-local-decomposition',
-      acceptableStatuses: Object.freeze(['PARTIAL']),
-      expectedAnswer: null, expectedRoute: 'heuristic-cnl-approximated',
-      expectedCandidateText: `${v.name} grabbed the ${v.object}.`,
-      expectedQuery: null, requiredFamilies: Object.freeze(['explicit-passive-to-active']) }),
+    oracle: statementInterpretationOracle(`${v.name} grabbed the ${v.object}.`,
+      ['explicit-passive-to-active']),
     tags: ['decomposition', 'passive'],
   })),
   template('conditional-normalization', 'explicit-if-then', 'conditional-punctuation-normalization', 5, (v) => ({
     input: `If ${v.name} is ${nominal(v.className)}, then ${v.otherName} is calm.`,
-    oracle: Object.freeze({ ...safetyOracle('if-then'), kind: 'interpretable-complex-clause',
-      oracleLevel: 'proposal-only',
-      expectedCandidateText: `If ${v.name} is ${nominal(v.className)} then ${v.otherName} is calm.`,
-      requiredFamilies: Object.freeze(['conditional-punctuation-normalization']) }), tags: ['decomposition', 'conditional'],
+    oracle: proposalOracle('if-then',
+      `If ${v.name} is ${nominal(v.className)} then ${v.otherName} is calm.`,
+      ['conditional-punctuation-normalization']), tags: ['decomposition', 'conditional'],
   })),
   template('temporal-normalization', 'fronted-before-clause', 'temporal-clause-normalization', 5, (v) => ({
     input: `Before ${v.name} enters ${v.object}, ${v.otherName} leaves hall.`,
-    oracle: Object.freeze({ ...safetyOracle('before'), kind: 'interpretable-complex-clause',
-      oracleLevel: 'proposal-only',
-      expectedCandidateText: `${v.otherName} leaves hall before ${v.name} enters ${v.object}.`,
-      requiredFamilies: Object.freeze(['temporal-clause-normalization']) }), tags: ['decomposition', 'temporal'],
+    oracle: proposalOracle('before',
+      `${v.otherName} leaves hall before ${v.name} enters ${v.object}.`,
+      ['temporal-clause-normalization']), tags: ['decomposition', 'temporal'],
   })),
   template('causal-normalization', 'fronted-because-clause', 'causal-clause-normalization', 5, (v) => ({
     input: `Because ${v.name} is ${nominal(v.className)}, ${v.otherName} waits.`,
-    oracle: Object.freeze({ ...safetyOracle('because'), kind: 'interpretable-complex-clause',
-      oracleLevel: 'proposal-only',
-      expectedCandidateText: `${v.otherName} waits because ${v.name} is ${nominal(v.className)}.`,
-      requiredFamilies: Object.freeze(['causal-clause-normalization']) }), tags: ['decomposition', 'causal'],
+    oracle: proposalOracle('because',
+      `${v.otherName} waits because ${v.name} is ${nominal(v.className)}.`,
+      ['causal-clause-normalization']), tags: ['decomposition', 'causal'],
   })),
   template('unique-reference', 'unique-local-pronoun', 'unique-local-reference-substitution', 5, (v) => ({
     input: `The ${v.className} entered ${v.object}. It rested.`,
-    oracle: Object.freeze({ ...safetyOracle('reference'), kind: 'interpretable-complex-clause',
-      oracleLevel: 'proposal-only',
-      expectedCandidateText: `The ${v.className} entered ${v.object}. The ${v.className} rested.`,
-      requiredFamilies: Object.freeze(['unique-local-reference-substitution']) }), tags: ['decomposition', 'reference'],
+    oracle: proposalOracle('reference',
+      `The ${v.className} entered ${v.object}. The ${v.className} rested.`,
+      ['unique-local-reference-substitution']), tags: ['decomposition', 'reference'],
   })),
   template('summary-paragraphs', 'extractive-summary-request', 'request-planning', 3, (v) => ({
     input: `Summarize this text: ${v.name} is ${nominal(v.className)}. Every ${v.className} ${v.predicate} ${v.object}.`,
@@ -394,14 +421,16 @@ const TEMPLATES = Object.freeze([
   })),
   template('report-request', 'grounded-report-request', 'request-planning', 3, (v) => ({
     input: `Write a short report about ${v.className}.`,
-    oracle: Object.freeze({ ...requestOracle('compose', 'report', 'sections'),
-      acceptableStatuses: Object.freeze(['PARTIAL', 'MISSING_KNOWLEDGE']),
-      alternateRoutes: Object.freeze(['heuristic-request-planned']) }),
+    oracle: requestPlanningOracle('compose', 'report', 'sections'),
     tags: ['request', 'retrieval'],
   })),
   template('multi-request', 'ordered-multi-operation-request', 'request-decomposition', 6, (v) => ({
     input: `Summarize "${v.name} is ${nominal(v.className)}."; then compare ${v.className} with ${v.otherClass} in a table; finally outline the evidence.`,
-    oracle: Object.freeze({ ...requestOracle('summarize', 'summary'), operationSequence: Object.freeze(['summarize', 'compare', 'outline']) }),
+    oracle: requestOracle('summarize', 'composite-response', 'sections', [
+      { intent: 'summarize', artifact: 'summary', format: 'paragraphs' },
+      { intent: 'compare', artifact: 'response', format: 'table' },
+      { intent: 'outline', artifact: 'outline', format: 'outline' },
+    ]),
     tags: ['request', 'multi-operation', 'aggregation'],
   })),
   template('unsafe-coordination-object', 'operator-in-nominal-object', 'nominal-safety', 6, (v) => ({
@@ -444,6 +473,7 @@ function generatedCase(index, seed) {
   const selected = TEMPLATES[(index + offset) % TEMPLATES.length];
   const values = valuesFor(index, seed);
   const built = selected.build(values);
+  assertGeneratedHeuristicOracle(built.oracle);
   return Object.freeze({
     id: `generated-heuristic-${String(index + 1).padStart(5, '0')}`,
     input: built.input,

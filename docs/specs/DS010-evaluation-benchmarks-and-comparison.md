@@ -28,6 +28,28 @@ small fixture but is still neither a public benchmark nor fresh evidence. An ada
 sample is not an untouched test result, a local exact scorer is not an official semantic grader, and a fresh aggregate
 ceases to describe a later behavior change.
 
+### Internal report identity and currentness
+
+Every published internal execution receipt binds itself to the one closed
+`eslm-benchmark-behavior-identity-v1` object. That object content-addresses every `.mjs` file under `src` plus
+`package.json`, records the exact scope and file count, and retains the execution runtime as context. The authored
+evaluation fixture uses `eslm-evaluation-report-v3`, the authored benchmark fixture uses
+`eslm-benchmark-report-v3`, and both use `eslm-internal-regression-v2`. Their top-level schemas are closed and include
+the complete behavior-identity object; a second timestamp-only, commit-only, or free-form freshness field is not a
+substitute.
+
+The fixed generated heuristic report and its multi-seed audit retain the same identity through their existing
+versioned execution and shared-identity envelopes. Publication validation checks each full envelope and requires its
+complete identity—including content digest, declared source scope, file count, and execution runtime—to equal a newly
+computed behavior identity. A matching creation time, HTML page, score, generator seed, or report receipt digest
+cannot make behavior-stale evidence current.
+
+`docs:check` treats all four internal receipts as release inputs: authored evaluation, authored benchmark, the fixed
+generated heuristic benchmark, and the generated multi-seed audit. It rejects a missing or malformed receipt, a
+different behavior checkpoint, or generated HTML that is not the exact deterministic rendering of its JSON receipt.
+The seed audit deliberately has no duplicate HTML report; its validated JSON is the machine authority. This is a
+freshness gate, not an instruction for documentation validation to execute a benchmark silently.
+
 ### Case and scorer contract
 
 Every evaluated case has a stable join identifier, label-free visible input, declared answer or preference domain, evidence scope, capability tags, route policy, resource policy, and required proof or witness kind. The host-only oracle is joined after predictions exist. Missing predictions count according to the scorer and are never silently removed from the denominator.
@@ -71,8 +93,9 @@ Correctness measurements include correct count, tested denominator, available so
 
 Language measurements include direct accepted semantics, direct `UNPARSED`, DS022 heuristic proposals and voting
 families, candidates above threshold, reparses, accepted changed interpretations, semantic ties, request plans,
-request-synthesis results, and accuracy by route. They separately count Language Agent eligibility after local
-exhaustion, explicit opt-in, proposals, actual external calls, cache hits, accepted translations or simplifications,
+request-synthesis results, and accuracy by route. They separately count likely-non-English gate rejections,
+translation eligibility, simplification eligibility after local exhaustion, assisted-versus-local CLI policy,
+proposals, actual external calls, cache hits, accepted translations or simplifications,
 host rejections, and process failures. A direct-`UNPARSED` rate is not agent use, and an eligible assisted request is
 not an actual invocation. A cached normalization remains assisted even when no live process ran.
 
@@ -175,7 +198,7 @@ The report may contain development, diagnostic, or fresh rows, but each row name
 
 The repository owns a deterministic 4,096-case default metamorphic corpus with two explicitly accounted components.
 The language component contains 1,200 independently instantiated rows from the same 43 reviewed generator shapes used
-by the heuristic development suite. It includes all six oracle levels and exercises direct controls, spelling and
+by the heuristic development suite. It includes all eight oracle levels and exercises direct controls, spelling and
 morphology repair, decomposition, request planning and construction, proposal preservation, and safety abstention.
 The core component contains 2,896 cases from 26 rotating templates and exercises direct retrieval, class inference,
 Horn rules, open-world behavior, state replacement, temporal predecessor, possession, paraphrase, preference
@@ -198,6 +221,9 @@ task selection, source validity, held-out generalization, or benchmark accuracy.
 The default `evaluate` suite and `benchmark:authored` suite are small authored integration fixtures. Their generated
 HTML must show the case count, authored/internal regime, and `benchmarkComparable: false` beside any accuracy. A
 perfect fixture score is useful executable sanity evidence, but it is never a headline public benchmark result.
+Their v3 machine receipts additionally carry the complete current behavior identity, and their validators reproduce
+top-level arithmetic and case counts before publication. The deterministic HTML renderer consumes the validated JSON;
+documentation validation compares the complete rendered bytes rather than searching for a few score strings.
 
 ### Generated heuristic development benchmark
 
@@ -207,7 +233,7 @@ The repository also owns a separate deterministic heuristic-language development
 reviewed shapes, not 1,200 independent language structures. Each typed oracle is derived directly from template
 variables before the runtime executes; the generator does not ask the runtime to define its own oracle.
 
-The default receipt records 1,200 unique surface inputs, all 28 target families and six oracle levels, and 593 of the
+The default receipt records 1,200 unique surface inputs, all 28 target families and eight oracle levels, and 593 of the
 774 possible cells in the declared 43-technique by 18-domain grid. These are explicit diversity measures, not a claim
 that each surface is a new construction or that every technique applies meaningfully to every domain.
 
@@ -247,9 +273,14 @@ and in the denominator.
 
 The top-level schema field `accuracy` is arithmetically `passed / total`, but its interpretation is a mixed
 development-contract rate over the declared oracle levels, not semantic answer accuracy. The report therefore exposes
-separate aggregates for `answer-execution`, `candidate-selection`, `query-local-decomposition`, `request-execution`,
-`proposal-only`, and `safety-abstention`. Follow-up analysis must inspect those aggregates together with status and
-route. In particular, candidate selection and proposal preservation can be compared separately without removing
+separate aggregates for `answer-execution`, `semantic-query-execution`, `candidate-selection`,
+`query-local-decomposition`, `request-execution`, `request-planning`, `proposal-only`, and `safety-abstention`.
+Follow-up analysis must inspect those aggregates together with status and route. Semantic-query execution requires
+the complete expected query shape even when knowledge is missing. Request planning requires a correctly shaped
+obligation and honest missing-source gap, whereas request execution requires construction. Both request levels validate
+the intent, artifact kind, and format of every ordered obligation; multi-request execution also validates the composite
+response and section structure. Candidate selection and
+proposal preservation can be compared separately without removing
 their cases from the fixed denominator or presenting them as executed queries or answers.
 
 The next realism layer must separate row volume from structural diversity. Reports must publish counts of distinct
@@ -273,11 +304,24 @@ replayable measurement of a visible project-owned distribution; claims about uns
 selection, or public benchmark accuracy require the separate development, fresh, official, and comparison regimes
 defined above.
 
+`npm run benchmark:generated:seed-audit` publishes the separate
+`eslm-generated-heuristic-multi-seed-audit-v1` receipt. Canonical publication is locked to five source-owned seed
+names, 1,200 cases per seed, the `quick` model, balanced offline execution, and no runtime override. Every run retains
+its distinct suite digest, full fixed denominator, oracle/route/status counts, failure clusters, replay command,
+behavior identity, runtime/KB identity, work-policy digest, strategy catalog and selection, and arbiter configuration.
+The aggregate validator recomputes all sums, requires distinct suites under one shared definition and execution
+identity, and binds the receipt with a content digest. This audit measures cross-seed stability inside the same
+43-shape generator definition. Even a perfect 6,000-case aggregate is not template-disjoint, vocabulary-disjoint,
+independently authored, public, or general-English evidence.
+The published JSON is a mandatory documentation release artifact. Its shared behavior identity must match the current
+source checkpoint independently of the fixed-seed report; agreement between two stale reports is insufficient.
+
 ### Grounded-failure and request-construction benchmark
 
 Failure-time grounding and the adjacent DS022 request-construction route have an independent, frozen product benchmark.
 Cases cover answerable, partially answerable, unanswerable, ambiguous, conflicting, malformed, typo/paraphrase,
-multilingual, multi-KB, wrong-KB-distractor, summary, expansion, explanation, comparison, and document-shaping requests.
+likely-non-English rejection, separately attributed external translation proposals, multi-KB,
+wrong-KB-distractor, summary, expansion, explanation, comparison, and document-shaping requests.
 The pool is authored independently of the retrieval implementation and contains host-only expected answer support,
 acceptable related-record sets, and construction obligations.
 
@@ -309,7 +353,7 @@ complete absence from incomplete search.
 
 Before a final comparison, freeze the symbolic commit, accepted KB versions, adapters, CNL and heuristic-catalog
 versions, built-in strategy-catalog digest, exact strategy allowlists, configured arbiter identities and policies,
-named work profile and overrides, coordinated stage-receipt digests, Language Agent opt-in policy, prompts and model
+named work profile and overrides, coordinated stage-receipt digests, Language Agent assistance policy, prompts and model
 when an assisted track is included, seeds, scorers, memory policy, and prediction schema. A label-free export manifest
 lets another system produce predictions. The local deterministic oracle joins by stable identifier, validates shape,
 and counts omissions.
@@ -357,8 +401,24 @@ still owns a separately frozen seed, suite and behavior identity, detailed techn
 failure clusters, representative failures, conclusions, and publishable machine receipt. Smoke owns interactive
 regression visibility and adds 2,896 core cases; it does not publish or merge the generated report's metric. Public
 and fresh benchmarks test independently defined distributions or held-out lifecycles. Within either project-owned
-use, candidate selection names evidence that the intended structural alternative was chosen under the declared route
-and status; it is not a synonym for a complete relation-shaped query or an executed answer.
+use, semantic-query execution names a complete expected query shape; candidate selection names evidence that the
+intended structural alternative was chosen under the declared route and status, not a complete relation-shaped query
+or an executed answer. Request planning and request construction likewise remain distinct gates.
+
+### Question #7: Why is the generated multi-seed audit a separate receipt rather than another accuracy row?
+
+Response: Its claim is identity-controlled stability under several deterministic nonce instantiations of one known
+generator, not another benchmark distribution. The receipt must prove that all runs share the intended behavior,
+runtime, policy, catalog, selection, arbiter, and denominator while retaining distinct suite digests. Keeping its
+mixed-contract aggregate separate prevents repeated in-family rows from being presented as public accuracy or
+independent structural generalization.
+
+### Question #8: Why does documentation validation reject a correct but behavior-stale internal result?
+
+Response: A score describes the executable checkpoint that produced it. If any executable source or benchmark
+command dependency changes, the old outcome may still be useful historical evidence but cannot substantiate the
+current implementation. One shared content-addressed identity lets every internal report prove the same kind of
+currentness, while exact JSON-to-HTML rendering prevents the human page from drifting away from the machine receipt.
 
 ## Conclusion
 

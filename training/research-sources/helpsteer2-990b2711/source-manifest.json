@@ -1,0 +1,103 @@
+{
+  "format": "eslm-rl-dataset-source-manifest-v2",
+  "sourceId": "helpsteer2",
+  "revision": "990b2711a36180dd19d9c94b8627844866f8982a",
+  "owner": "NVIDIA Corporation",
+  "officialUrl": "https://huggingface.co/datasets/nvidia/HelpSteer2",
+  "paperUrl": "https://arxiv.org/abs/2406.08673",
+  "citation": "Wang et al. HelpSteer2: Open-source dataset for training top-performing reward models.",
+  "registryState": "pilot-approved",
+  "independenceGroup": "nvidia-helpsteer2-collection",
+  "acquisition": {
+    "method": "pinned-https-download",
+    "authorizedUrl": "https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/train.jsonl.gz",
+    "accessTerms": "Public dataset component declared CC BY 4.0 by the official dataset card.",
+    "cachePolicy": "Immutable source bytes stay in the ignored content-addressed training cache.",
+    "credentialPolicy": "No credential, token, cookie, or signed URL is required or retained."
+  },
+  "identity": {
+    "sha256": "sha256:c0d7e91d738d42e8a08070db26c4c09a9c7631308e1f0fd380ff43d130c9f713",
+    "bytes": 11315813,
+    "mediaType": "application/gzip"
+  },
+  "identityFileId": "helpsteer2-train-ratings",
+  "deliveredFiles": [
+    {
+      "fileId": "helpsteer2-train-ratings",
+      "role": "training-source-component",
+      "path": "helpsteer2-990b2711/train.jsonl.gz",
+      "sourceUrl": "https://huggingface.co/datasets/nvidia/HelpSteer2/resolve/990b2711a36180dd19d9c94b8627844866f8982a/train.jsonl.gz",
+      "sha256": "sha256:c0d7e91d738d42e8a08070db26c4c09a9c7631308e1f0fd380ff43d130c9f713",
+      "bytes": 11315813,
+      "mediaType": "application/gzip"
+    }
+  ],
+  "components": [
+    {
+      "componentId": "train-ratings",
+      "kind": "response-ratings",
+      "licenseId": "cc-by-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "rightsState": "approved",
+      "allowedUses": ["processing-graph-discovery"],
+      "redistribution": "metadata-only",
+      "identityFileId": "helpsteer2-train-ratings",
+      "supportingFileIds": [],
+      "splits": [
+        { "name": "train", "visibility": "training-visible", "rows": 20324 }
+      ],
+      "projection": {
+        "projectionId": "helpsteer2-structural-feedback-v1",
+        "membershipDigest": "sha256:091b9409be5f8de95ece02f0ea6ff14d51955818adcfa231d4612e859c36e6c0",
+          "contentMembershipDigest": "sha256:24dd8fcdb1bc048ef73e1710512c5af6b330bfb22dbfca56c442ddf7520f3da7",
+        "shardCount": 1,
+        "shardFormat": "synthetic-memory",
+        "allowedFields": ["coherence", "complexity", "correctness", "helpfulness", "prompt", "verbosity"],
+        "excludedFields": ["response-text", "source-row-index"],
+        "privacyReview": "passed",
+        "safetyReview": "passed"
+      },
+      "identity": {
+        "sha256": "sha256:c0d7e91d738d42e8a08070db26c4c09a9c7631308e1f0fd380ff43d130c9f713",
+        "bytes": 11315813,
+        "rows": 20324,
+        "mediaType": "application/gzip"
+      }
+    }
+  ],
+  "rightsReview": {
+    "reviewId": "review:helpsteer2-990b2711-local-research",
+    "reviewAuthority": "repository-policy-review",
+    "reviewedRevision": "990b2711a36180dd19d9c94b8627844866f8982a",
+    "evidenceFileIds": [
+      "helpsteer2-train-ratings"
+    ],
+    "evidenceUrls": [
+      "https://huggingface.co/datasets/nvidia/HelpSteer2/tree/990b2711a36180dd19d9c94b8627844866f8982a",
+      "https://creativecommons.org/licenses/by/4.0/"
+    ],
+    "decision": "admit-declared-projection",
+    "limitations": [
+      "Only the training ratings component and declared structural projection are admitted.",
+      "Redistribution is limited to metadata and aggregate research receipts.",
+      "Dataset ratings are preference evidence and never truth authority."
+    ]
+  },
+  "extractionInventory": {
+    "selectedComponentIds": [
+      "train-ratings"
+    ],
+    "excludedComponentKinds": [
+      "disagreement-records",
+      "preference-records",
+      "validation-ratings"
+    ],
+    "retainedRawSource": true,
+    "projectionLossRecorded": true
+  },
+  "removalObligations": [
+    "purge-raw-cache-on-rights-withdrawal",
+    "reassess-derived-hypotheses",
+    "retain-only-legally-permitted-aggregate-provenance"
+  ]
+}

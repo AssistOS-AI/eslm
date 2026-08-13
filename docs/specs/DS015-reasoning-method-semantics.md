@@ -34,6 +34,24 @@ A method receives semantic structures, not a benchmark name, source path, record
 DS009 is the sole top-level status authority. Method sections here define when one of those statuses applies and may add
 method-specific witness fields or semantic values; they cannot silently create an unclassified runtime status.
 
+### Ordinary-language method-node integration
+
+The current ordinary English route exposes three closed `instrumented-local` boundaries at
+`runtime.method.plan`, `runtime.reason.execute`, and `runtime.result.verify`. Planning binds one reviewed capability to
+one method and cannot authorize truth. Execution consumes a bounded host-owned model, closure, index, and history
+snapshot, returns bounded values plus evidence, and also cannot authorize truth. The verification gate replays the
+method-specific witness from that immutable input rather than rerunning the executor or trusting its final status.
+
+For exact retrieval and Horn deduction, replay checks every returned fact against the host closure and reconstructs a
+derived conclusion from the named rule and support facts. For configured induction it recomputes class membership,
+support, population, counterexamples, confidence, provenance, and KB accounting under the declared policy. For guarded
+abduction it reunifies the named reversible rule with the observation and recomputes supported and missing premises.
+For temporal predecessor it reconstructs the distinct ordered history and verifies the adjacent event pair. The gate
+counts inspected evidence, supports, facts, rules, and history events against the task-frame search-work ceiling.
+Exhaustion returns `RESOURCE_LIMIT`; an invalid witness rejects; only an accepted non-empty strict `ANSWERED` result
+receives truth authority. This is a real ordinary verification seam, not yet the shared selectable DS027 coordinator or
+a complete public proof DAG.
+
 ### Exact retrieval
 
 `method:core:indexed-lookup` evaluates a ground or partially bound query atom over selected typed assertions. It intersects the smallest available predicate and argument postings, verifies every candidate record against the complete query, and returns semantic values with direct record references. It is sound for exact matching records and complete only for the shards proven relevant by the exact routing contract in DS020. A cache miss or an unexpanded routing frontier cannot be reported as logical absence.

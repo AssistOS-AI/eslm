@@ -6,7 +6,7 @@ import { PROJECT_ROOT } from '../src/paths.mjs';
 test('consolidated specifications are contiguous and structurally complete', async () => {
   const root = `${PROJECT_ROOT}/docs/specs`;
   const files = (await readdir(root)).filter((file) => /^DS\d{3}-.+\.md$/u.test(file)).sort();
-  assert.equal(files.length, 28);
+  assert.equal(files.length, 30);
   files.forEach((file, index) => assert.equal(file.slice(2, 5), String(index).padStart(3, '0')));
   for (const file of files) {
     const text = await readFile(`${root}/${file}`, 'utf8');
@@ -28,7 +28,13 @@ test('consolidated specifications are contiguous and structurally complete', asy
 test('repository-owned training skills are self-contained and catalogued', async () => {
   const root = `${PROJECT_ROOT}/training/.agents/skills`;
   const skills = (await readdir(root)).sort();
-  assert.deepEqual(skills, ['benchmark-guided-symbolic-learner', 'core-change-guardian', 'document-to-kb-builder', 'kb-compiler-quality-auditor']);
+  assert.deepEqual(skills, [
+    'benchmark-guided-symbolic-learner',
+    'core-change-guardian',
+    'document-to-kb-builder',
+    'kb-compiler-quality-auditor',
+    'rl-dataset-graph-discovery',
+  ]);
   for (const skill of skills) {
     const text = await readFile(`${root}/${skill}/SKILL.md`, 'utf8');
     assert.match(text, /^---\nname: /u);

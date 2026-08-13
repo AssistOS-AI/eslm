@@ -107,6 +107,31 @@ function requireArray(result, field) {
 }
 
 function assertRuntimeRoutePayloadInvariants(result) {
+  if (result.languageRoute === 'english-language-gate-rejected'
+    && (result.status !== 'UNPARSED'
+      || result.languageAssessment?.classification !== 'likely-non-english'
+      || (result.values?.length ?? 0) > 0 || (result.provenance?.length ?? 0) > 0
+      || (result.usedKbVersions?.length ?? 0) > 0 || (result.consultedKbVersions?.length ?? 0) > 0
+      || result.approximation !== undefined || result.requestPlanning !== undefined
+      || result.synthesis !== undefined || result.grounding !== undefined
+      || !result.unresolvedSubgoals.some((item) =>
+        item.operation === 'translate-input-to-english'))) {
+    throw new TypeError('english-language-gate-rejected requires non-English assessment and a clean translation gap.');
+  }
+  if (result.languageAssessment?.classification === 'likely-non-english'
+    && !['english-language-gate-rejected', 'language-agent-normalization-failed',
+      'language-agent-normalization-rejected', 'language-agent-normalized']
+      .includes(result.languageRoute)) {
+    throw new TypeError('Likely non-English input cannot enter an English symbolic or heuristic route.');
+  }
+  if (result.languageAssessment?.classification === 'likely-non-english'
+    && ['language-agent-normalization-failed', 'language-agent-normalization-rejected']
+      .includes(result.languageRoute)
+    && ((result.values?.length ?? 0) > 0 || (result.provenance?.length ?? 0) > 0
+      || (result.usedKbVersions?.length ?? 0) > 0 || (result.consultedKbVersions?.length ?? 0) > 0
+      || result.grounding !== undefined)) {
+    throw new TypeError('Rejected non-English normalization cannot consult KBs or expose answer evidence.');
+  }
   if (['heuristic-cnl-approximated', 'heuristic-cnl-ambiguous'].includes(result.languageRoute)
     && !result.approximation) throw new TypeError(`${result.languageRoute} requires approximation evidence.`);
   if (['heuristic-request-planned', 'heuristic-request-synthesis'].includes(result.languageRoute)
@@ -171,7 +196,7 @@ function assertRuntimeRoutePayloadInvariants(result) {
       if (provenance.fact !== entry.recordId || provenance.kbId !== entry.kbId
         || provenance.kbVersion !== entry.kbVersion
         || JSON.stringify(provenance.source) !== JSON.stringify(entry.provenance)
-        || provenance.method !== 'extractive-request-synthesis' || provenance.sourceClaim !== true) {
+        || provenance.method !== 'grounded-symbolic-realization' || provenance.sourceClaim !== true) {
         throw new TypeError('heuristic-request-synthesis provenance must identify its ordered source claims.');
       }
     });

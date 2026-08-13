@@ -1,40 +1,74 @@
 ---
 id: DS013
-title: Language-Agent-Assisted Language Normalization
+title: Language-Agent-Assisted English Proposals
 status: in-progress
 owner: language
-summary: Defines the explicitly enabled Language Agent profile for conservative translation and simplification after local recovery is exhausted, including process isolation, validation, cache, accounting, and separation from the deployed runtime.
+summary: Defines the operator Language Agent proposal strategy for conservative translation or English simplification, including isolation, independent validation, cache, accounting, and separation from the deployed runtime.
 ---
 
-# DS013 Language-Agent-Assisted Language Normalization
+# DS013 Language-Agent-Assisted English Proposals
 
 ## Introduction
 
-ESLM expands language coverage through trusted direct parsing and deterministic local approximation. An operator may also choose to test a sentence whose wording remains outside that local frontier. This specification defines the narrowly scoped, explicitly enabled Language-Agent-assisted normalization profile. A Language Agent may translate or simplify the surface form of one input only after the direct symbolic route and the DS022 local heuristic route remain `UNPARSED`. It may be a general coding agent, as the current Codex adapter is, or a smaller agent specialized for translation into ESLM controlled natural language. It may not answer the question, select an answer option, retrieve facts, perform the requested reasoning, or add knowledge. Its output returns through the unchanged direct symbolic parser and reasoner.
+ESLM's deployed and local language boundary is English-only. A bounded deterministic diagnostic may reject likely
+non-English text, but it does not translate, identify meaning, or claim language coverage. The operator CLI can also
+use a narrowly scoped Language Agent proposal strategy. It may propose English translation for input the local gate
+rejects as likely non-English, or propose conservative controlled-English simplification after English direct and
+DS022 local routes remain `UNPARSED`. It may be a general coding agent, as the current Codex adapter is, or a smaller
+translation-focused model. It may not answer the question, select an answer option, retrieve facts, perform the
+requested reasoning, or add knowledge. Its output returns through the unchanged direct English parser and reasoner.
 
 “Language Agent” is the product-neutral contract. The implementation currently supported by this repository is Codex through its local CLI. Product and model details belong to the adapter configuration and execution receipt; they do not change the generic trigger, authority, validation, or evidence contract.
 
-This profile changes the execution regime and must be named honestly. The deployed ESLM runtime remains deterministic, dependency-free, offline, and free of language-agent calls. The assisted CLI is an operator tool wrapped around that runtime. A result produced by the wrapper is not evidence for the pure deployed-runtime track, even when the final reasoning and proof are symbolic.
+This profile changes the execution regime and must be named honestly. The deployed ESLM runtime remains deterministic,
+dependency-free, offline, English-only, and free of language-agent calls. The general CLI composes the assisted
+operator wrapper by default and discloses that fact; `--no-external-language-agent` or `/normalize off` selects the
+fully local profile. A result produced by the wrapper is not evidence for the pure deployed-runtime track, even when
+the final reasoning and proof are symbolic.
 
 ## Core Content
 
-### 1. Local default and explicitly enabled assisted profile
+### 1. Offline core and disclosed operator profile
 
 The deployable runtime and direct library profile are `direct-symbolic`. They normalize Unicode and declared lexical
 variants, parse supported language, construct the task frame, select capabilities, load declarative KB data, reason,
 and realize a result without a network or agent process. The general CLI composes that runtime with the deterministic
-DS022 heuristic language and request-planning wrapper. This complete local profile is the CLI default: original text
-runs first; bounded explicit request force may preempt an accidental assertion parse; otherwise direct `UNPARSED` and
+DS022 heuristic language and request-planning wrapper. This complete local profile is always available through the
+explicit CLI override and is the canonical benchmark profile: original English text runs first; bounded explicit
+request force may preempt an accidental assertion parse; otherwise direct `UNPARSED` and
 `UNKNOWN` enter parse-only-selected local approximation. A structurally licensed candidate may also challenge direct
 `SOLVED` or `PARTIAL` when its Semantic IR differs from the direct interpretation; equal IR preserves the direct route.
 Eligible inability results may then receive role-focused grounding. A normal knowledge gap remains unchanged without
 an accepted structural alternative. None of these local stages calls a model or starts a child process.
 
-The optional operator profile is `language-agent-assisted-normalization`. It adds the external wrapper only after explicit opt-in. The complete direct and deterministic local attempts still run first. Only a terminal `UNPARSED` language result may trigger one bounded normalization episode; a locally synthesized `PARTIAL` document request, an accepted heuristic interpretation, and every parsed semantic inability bypass the Language Agent. An episode permits at most three external proposals in total. A proposal that fails host surface validation may be retried with those validation-error categories. A proposal that passes surface validation but remains `UNPARSED` after the direct symbolic reparse may be retried with the narrow fact that the previous controlled-language form was unsupported. The Language Agent never receives an answer, KB result, failure-time grounding bundle, proof state, desired semantic value, or benchmark label as feedback. A successfully reparsed sentence records `languageRoute: language-agent-normalized`; the original local failure, all proposals and receipts, requested and declared operation, normalized text, validation evidence, adapter and model identity, prompt-policy version, input digest, cache state, and invocation count remain attached.
+The operator profile is `language-agent-assisted-normalization`. The general CLI composes it by default, while the
+deployable runtime, library runtime, canonical local benchmarks, and explicit local CLI profile never do. A likely
+non-English gate rejection may trigger one bounded translation-proposal episode without running English repair. For
+likely-English or indeterminate input, the complete direct and deterministic local attempts still run first, and only
+a terminal `UNPARSED` may trigger simplification. A locally synthesized `PARTIAL` document request, an accepted
+heuristic interpretation, and every parsed semantic inability bypass the Language Agent. An episode permits at most
+three external proposals in total. A proposal that fails host surface validation may be retried with those
+validation-error categories. A proposal that passes surface validation but remains `UNPARSED` after the direct
+English reparse may be retried with the narrow fact that the previous controlled-language form was unsupported. The
+Language Agent never receives an answer, KB result, failure-time grounding bundle, proof state, desired semantic
+value, or benchmark label as feedback. A successfully accepted sentence records
+`languageRoute: language-agent-normalized`; the original local failure, all proposals and receipts, requested and
+declared operation, proposed English, validation evidence, adapter and model identity, prompt-policy version, input
+digest, cache state, and invocation count remain attached.
 
-`--external-language-agent` and interactive `/normalize on` enable the wrapper. `--no-external-language-agent` and `/normalize off` explicitly select the entirely local profile, which is already the default. Product-specific option names are not accepted: the interface names the role and remains unchanged when a different adapter replaces Codex. Loading a KB, selecting a larger DS022 work profile, or encountering difficult text never changes this setting. The public catalog probe, canonical local evaluation, canonical benchmark suite, unit tests, and 4,096-case smoke regression explicitly keep the wrapper disabled so service availability, authentication, and cache state cannot alter published or required local evidence.
+`--external-language-agent` and interactive `/normalize on` explicitly restate the general CLI's assisted default.
+`--no-external-language-agent` and `/normalize off` select the entirely local profile. Product-specific option names
+are not accepted: the interface names the role and remains unchanged when a different adapter replaces Codex. Loading
+a KB, selecting a larger DS022 work profile, or encountering difficult text never changes this setting. The public
+catalog probe, canonical local evaluation, canonical benchmark suite, unit tests that do not target the wrapper, and
+4,096-case smoke regression explicitly keep the wrapper disabled so service availability, authentication, and cache
+state cannot alter published or required local evidence.
 
-Explicit opt-in does not make external disclosure invisible. Interactive startup and `/normalize` state whether assistance is enabled and, when enabled, the active model, cache policy, and the fact that otherwise-unparsed source text can leave the offline boundary. Confidential, restricted, or otherwise non-disclosable input stays on the default local profile. Missing authentication, model unavailability, or process failure preserves the local result and records the failed assisted route.
+The assisted default does not make external disclosure invisible. Interactive startup and `/normalize` state whether
+assistance is enabled and, when enabled, the active model, cache policy, and the fact that source text may leave the
+offline boundary. Confidential, restricted, or otherwise non-disclosable input must use
+`--no-external-language-agent` or `/normalize off`. Missing authentication, model unavailability, or process failure
+preserves the local result and records the failed assisted route.
 
 ### 2. Currently supported Language Agent implementation
 
@@ -42,22 +76,41 @@ The current adapter invokes Codex. Its initial configured model is the exact loc
 
 The implementation must never silently replace this model with `gpt-5.3-codex`, another model, or an API model. If the requested model is unavailable, authentication fails, the subprocess exits unsuccessfully, or the installed Codex CLI lacks a required isolation option, the result reports a normalization failure. An operator may deliberately provide a different model through an explicit option, and that choice creates a distinct evaluation configuration and cache namespace.
 
-Language Agent performs one of two operations:
+Language Agent is one external, untrusted proposal strategy attached logically to the
+`runtime.language.interpret` processing node. It performs one of two operations:
 
 - `translation` converts a non-English sentence into conservative English while preserving names, numbers, operators, relation direction, and question intent.
 - `simplification` rewrites an unsupported English construction into one or more shorter controlled-English statements and one controlled-English question without changing the information supplied.
 
 Language Agent does not receive benchmark labels, reference answers, answer keys, hidden splits, KB search results, reasoning traces that disclose the expected answer, or instructions to solve the task. For a benchmark case it receives only the visible input text, the language-only contract, and the output schema.
 
-### 3. Local-first trigger and minimization
+### 3. English-gate trigger, local-first simplification, and minimization
 
-The trigger is the terminal language outcome after original-text execution and DS022 local recovery, not a benchmark name, sentence length, domain, or anticipated difficulty. `SOLVED`, `PARTIAL`, `DEFEASIBLE`, `UNKNOWN`, `AMBIGUOUS`, `MISSING_KNOWLEDGE`, `NO_APPLICABLE_METHOD`, `UNDERDETERMINED`, `INCONSISTENT_CONTEXT`, `RESOURCE_LIMIT`, and `UNSUPPORTED_OUTPUT` do not trigger normalization because those states do not establish a remaining surface-language failure. A `heuristic-cnl-ambiguous` result requests user confirmation rather than external tie-breaking.
+The trigger is a typed language outcome, not a benchmark name, sentence length, domain, or anticipated difficulty.
+`likely-non-english` from the bounded local gate licenses only the translation-proposal operation; it does not license
+English spelling repair. For likely-English or indeterminate input, only terminal `UNPARSED` after original-text
+execution and DS022 local recovery licenses simplification. `SOLVED`, `PARTIAL`, `DEFEASIBLE`, `UNKNOWN`, `AMBIGUOUS`,
+`MISSING_KNOWLEDGE`, `NO_APPLICABLE_METHOD`, `UNDERDETERMINED`, `INCONSISTENT_CONTEXT`, `RESOURCE_LIMIT`, and
+`UNSUPPORTED_OUTPUT` do not trigger a proposal because those states do not establish a remaining surface-language
+failure. A `heuristic-cnl-ambiguous` result requests user confirmation rather than external tie-breaking.
 
-One original input permits at most one normalization episode and three external proposals. The host requests `translation` when independently recognized source-language cues identify non-English input and `simplification` when the source appears to be English. The route and its evidence are recorded before the Language Agent responds; a high-confidence mismatch between requested and declared operations is rejected.
+One original input permits at most one proposal episode and three external proposals. The host requests `translation`
+when its bounded diagnostic classifies the surface as likely non-English; the diagnostic need not and must not guess a
+specific source language. It requests `simplification` only after an English or indeterminate surface exhausts local
+recovery. The route and its evidence are recorded before the Language Agent responds; a mismatch between requested
+and declared operations is rejected.
 
 An episode normally contains one Language Agent invocation. If its JSON candidate fails host-owned schema or protected-surface validation, the next proposal may receive only the bounded validation-error categories. If a surface-valid proposal remains `UNPARSED`, the next proposal may receive the previous normalized sentence and the bounded frontend diagnosis that a different conservative CNL formulation is needed. This feedback communicates language compatibility, not task correctness. It never contains a benchmark answer, provider answer, proof, desired semantic values, selected option, hidden label, or a diagnosis of `UNKNOWN`.
 
-The host never invokes the Language Agent after a parsed semantic status, a completed local request plan, or a locally ambiguous interpretation; it never treats a wrong answer as a language failure. Each proposal still targets the original input; the previous proposal is feedback rather than a recursively authoritative source. All surface-validation corrections and parser-feedback proposals share the three-invocation ceiling. A cache hit replaces external work for the initial proposal but remains counted as a Language-Agent-normalized route because the text was produced by that adapter and policy. The project minimizes use by expanding direct parsing and generic DS022 heuristic coverage from repeated failure clusters, never by relabeling cached or precomputed Language Agent text as direct symbolic input.
+The host never invokes the Language Agent after a parsed semantic status, a completed local request plan, or a locally
+ambiguous interpretation; it never treats a wrong answer as a language failure. The likely-non-English gate is the one
+early exception to local-first execution because running English repair on that surface would fabricate the wrong
+language contract. Each proposal still targets the original input; the previous proposal is feedback rather than a
+recursively authoritative source. All surface-validation corrections and parser-feedback proposals share the
+three-invocation ceiling. A cache hit replaces external work for the initial proposal but remains counted as a
+Language-Agent-normalized route because the text was produced by that adapter and policy. The project minimizes use
+by expanding direct English parsing and generic DS022 heuristic coverage from repeated failure clusters, never by
+relabeling cached or precomputed Language Agent text as direct symbolic input.
 
 ### 4. Subprocess and authority boundary
 
@@ -86,35 +139,38 @@ below and is validated as part of `eslm-runtime-result-v1` before publication.
 
 Each proposal response is one JSON object with protocol `eslm-language-agent-normalization-v2`, operation `translation` or `simplification`, a declared source-language tag, `normalizedEnglish`, and an array of source-to-target anchor alignments. `normalizedEnglish` must be non-empty plain text within the configured limit. Markdown fences, NUL bytes, executable payload fields, tool requests, answers, explanations, confidence scores, retrieved facts, and additional properties are rejected.
 
-An alignment names an allowlisted anchor kind and identifies exact source and normalized substrings. Anchor kinds include
-named entity, number, answer option, quoted material, interrogative, lexical content, negation, quantifier, modality,
-conditional, temporal operator, conjunction, disjunction, comparison, and directed relation. Every recognized protected
-source occurrence requires one compatible exact-substring alignment to one as-yet-unmatched target occurrence. Reusing
-one occurrence to satisfy several alignments is rejected. Alignments help reviewers locate the proposed correspondence;
-they do not by themselves prove semantic equivalence because they are also model output.
+An alignment names an allowlisted anchor kind and identifies exact source and proposed-English substrings. Anchor kinds
+include named entity, number, answer option, quoted material, interrogative, lexical content, negation, quantifier,
+modality, conditional, temporal operator, conjunction, disjunction, comparison, and directed relation. Every recognized
+protected source occurrence requires one compatible exact-substring alignment to one as-yet-unmatched target
+occurrence. Reusing one occurrence to satisfy several alignments is rejected. Alignments help reviewers locate the
+proposed correspondence; they do not by themselves prove semantic equivalence because they are also model output.
 
 ### 6. Host validation and reparse
 
-The host independently extracts surface anchors it can recognize. It checks exact numbers and answer-option markers,
-quoted material, likely entity names outside sentence-initial function words, question-versus-statement force, and
-configured multilingual operator families. It requires a one-to-one exact alignment for every protected source
-occurrence and requires the complete source and target protected-identity multisets to match. Compatibility is typed,
-not count-only: `all` and `every` share the universal identity, while `all` and `some` do not; `left` cannot align to
-`right`, and `above` cannot align to `below`. The same rule protects conditional roles, temporal direction,
-interrogative kind, comparison type, modality, negation, conjunction, and disjunction. Operator extraction identifies
-semantic constructions rather than counting every word that can have an operator reading. A Romanian `mai` followed by
-an ordinary verb is not a comparative merely because `mai` also occurs in `mai mare decât`; the validator protects the
-comparative construction, not the isolated spelling.
+The host independently extracts language-neutral surface anchors it can recognize. It checks exact numbers and
+answer-option markers, quoted material, likely entity names outside sentence-initial function words, and
+question-versus-statement force. For English simplification it additionally extracts reviewed English operator
+identities and directions. It requires one-to-one occurrence coverage for every protected source anchor and rejects
+reuse of one occurrence to satisfy several alignments. Compatibility is typed rather than count-only: `all` and
+`every` share the universal identity, while `all` and `some` do not; `left` cannot become `right`, and `above` cannot
+become `below`. The same rule protects conditional roles, temporal direction, interrogative kind, comparison type,
+modality, negation, conjunction, and disjunction when the source profile can recognize them.
 
 For English simplification, protected anchors are only the first gate. After removing those anchors, the validator
 requires equality of the normalized open-class-content multiset and of the reviewed English function-word multiset.
 This permits reordering into supported controlled English but rejects predicate replacement, deletion, or invention.
-For translation, the only currently accepted non-English `sourceLanguage` profile is Romanian (`ro` or `ron`).
-Non-function content must either remain literally present or be covered occurrence by occurrence through the small
-reviewed Romanian-to-English lexical-equivalence map. An arbitrary fluent paraphrase or an alignment asserted by the
-Language Agent is not accepted merely because it sounds plausible.
+For translation, language-neutral anchors, an English-likelihood assessment of the target, and successful English
+reparse are necessary but insufficient. Open-class source-to-target equivalence requires an independent, reviewed,
+versioned language profile whose evidence is not produced by the same model invocation. A proposal's fluency,
+declared source-language tag, or self-authored alignment cannot establish that equivalence.
 
-This check is intentionally conservative. When the host cannot establish preservation, it returns `UNVERIFIED_NORMALIZATION`; it does not infer that fluent English is faithful. Translation coverage therefore depends on the independently recognized source-language operator lexicon. Adding a language or operator family requires contrastive preservation tests, including negated, quantified, modal, conditional, temporal, comparative, and direction-reversing examples.
+This check is intentionally conservative. When the host cannot establish preservation, it returns
+`UNVERIFIED_NORMALIZATION`; it does not infer that fluent English is faithful. The current generic translation route
+therefore remains proposal-only unless an independent reviewed source-language profile covers every required
+open-class and operator correspondence. Adding such a profile requires licensed evidence, versioned mappings, and
+contrastive preservation tests, including negated, quantified, modal, conditional, temporal, comparative, idiomatic,
+and direction-reversing examples. It extends assisted validation, never the local English-only parser contract.
 
 After anchor validation, the complete normalized text is submitted directly to the ordinary symbolic runtime. The host does not recursively pass Language Agent output through the DS022 approximation ensemble. If the direct reparse remains `UNPARSED`, a remaining proposal may receive only the bounded parser-form feedback described above. Exhausting the proposal limit, producing an ambiguous interpretation, or failing another acceptance invariant rejects the normalized route. If it parses, all retrieval, reasoning, proof, provenance, KB, budget, and realization behavior is performed by ESLM. Language Agent output is never evaluated as code or accepted as a conclusion.
 
@@ -128,7 +184,12 @@ Caching minimizes repeated external work but does not change evidence attributio
 
 ### 8. CLI behavior
 
-`ask`, `run`, and ordinary interactive execution use the deterministic local profile unless `--external-language-agent` is present or interactive `/normalize on` has been selected. `--language-agent-model` selects a deliberate adapter model override only for that assisted profile. `--no-normalization-cache` disables both cache reads and writes for that invocation. Timeout and maximum-input options remain bounded and validated. Canonical evaluation and public benchmark probes keep assistance off explicitly; an assisted evaluation is a separately named experiment.
+`ask`, `run`, and ordinary interactive execution compose the assisted operator profile by default.
+`--no-external-language-agent` and interactive `/normalize off` select the deterministic local profile;
+`--external-language-agent` and `/normalize on` explicitly restate the default. `--language-agent-model` selects a
+deliberate adapter model override only for the assisted profile. `--no-normalization-cache` disables both cache reads
+and writes for that invocation. Timeout and maximum-input options remain bounded and validated. Canonical evaluation
+and public benchmark probes keep assistance off explicitly; an assisted evaluation is a separately named experiment.
 
 The public `benchmark probe` command constructs external-agent-free engines internally and rejects an affirmative `--external-language-agent` request so the published development baseline remains deterministic and reproducible. Canonical package scripts also pass `--no-external-language-agent` visibly. An operator who needs an assisted benchmark track freezes an explicit JSONL suite and runs `benchmark run --suite FILE --external-language-agent`; the resulting report records normalization candidates, proposals, external invocations, cache hits, accepted rewrites, route-specific accuracy, and overall accuracy. This separation prevents a mutable external service or cache from changing the canonical local probe.
 
@@ -145,7 +206,14 @@ Every public benchmark report publishes at least two distinct tracks when assist
 - the deterministic local track, whose denominator is every scored case and whose agent-use rate is zero; it reports `direct-symbolic`, `heuristic-cnl-approximated`, `heuristic-cnl-ambiguous`, `heuristic-request-planned`, `heuristic-request-synthesis`, and other local semantic routes separately;
 - the language-agent-assisted-normalization track, which begins from the same cases and records direct and heuristic local outcomes, remaining normalization attempts, cache hits, external calls, accepted and rejected rewrites, and accuracy by route.
 
-The requested “percentage needing special analysis” is `normalizationAttempts / totalCases`, where an attempt occurs only after local recovery remains `UNPARSED`. It is not the percentage of wrong answers, unknown answers, complex sentences, or heuristic proposals. `directSymbolicRate` is the count of cases accepted on the original direct route divided by `totalCases`; local heuristic and request-synthesis rates are reported separately rather than being inferred from the complement of normalization attempts. Reports also publish `externalInvocationRate`, `cacheHitRateAmongAttempts`, `acceptedNormalizationRateAmongAttempts`, direct-route accuracy, local-heuristic-route accuracy, normalized-route accuracy, and overall assisted accuracy.
+The requested “percentage needing special analysis” is `normalizationAttempts / totalCases`, where an attempt occurs
+after a likely-non-English local rejection or after eligible English local recovery remains `UNPARSED`. It is not the
+percentage of wrong answers, unknown answers, complex sentences, or heuristic proposals. `directSymbolicRate` is the
+count of cases accepted on the original direct route divided by `totalCases`; local heuristic and request-synthesis
+rates are reported separately rather than being inferred from the complement of normalization attempts. Reports also
+publish operation-specific attempt and acceptance counts, `externalInvocationRate`, `cacheHitRateAmongAttempts`,
+`acceptedNormalizationRateAmongAttempts`, direct-route accuracy, local-heuristic-route accuracy, normalized-route
+accuracy, and overall assisted accuracy.
 
 A preference benchmark whose current adapter calls only a deterministic grammar scorer cannot invoke Language Agent unless the adapter has a separately reviewed language-normalization contract. An inaccessible or gated benchmark has no denominator and therefore displays `not-run`, not zero percent. A small probe is labeled with its exact sample count and selection method; it is not promoted to a full benchmark score.
 
@@ -157,9 +225,24 @@ The benchmark answer and correctness label remain outside the normalization pack
 
 ### 11. Acceptance tests
 
-The implementation requires tests for the CLI-disabled-by-default policy, explicit opt-in, the explicit local override, deployable-runtime independence, direct-and-heuristic exhaustion before invocation, canonical-command local selection, restrained notification immediately before a real invocation, no notification for cache hits, exact model argument, low reasoning setting, empty-workspace subprocess, bounded environment, schema rejection, cache-key separation, cache corruption, timeout and TERM-to-KILL settlement, byte-bounded multibyte process output, oversized response and cache files, malformed JSON, one-to-one exact alignments, added and removed protected anchors, typed operator identity and relation direction, English content-multiset preservation, the reviewed Romanian lexical map, contextual comparison detection, number and entity preservation, operation routing, the three-proposal ceiling, recursion prevention, successful direct reparse, failed reparse, exclusion of DS009 grounding evidence from normalization input, structured route accounting, interactive transformation display, interactive toggling, batch JSONL, and benchmark metrics.
+The implementation requires tests for the CLI-assisted-by-default policy, the explicit local override,
+deployable-runtime independence, bounded English-likelihood classification, likely-non-English rejection without
+English repair, translation-proposal routing, direct-and-heuristic exhaustion before English simplification,
+canonical-command local selection, restrained notification immediately before a real invocation, no notification for
+cache hits, exact model argument, low reasoning setting, empty-workspace subprocess, bounded environment, schema
+rejection, cache-key separation, cache corruption, timeout and TERM-to-KILL settlement, byte-bounded multibyte process
+output, oversized response and cache files, malformed JSON, one-to-one exact alignments, added and removed protected
+anchors, typed operator identity and relation direction, English content-multiset preservation, rejection of
+unreviewed open-class translation equivalence, number and entity preservation, operation routing, the three-proposal
+ceiling, recursion prevention, successful direct reparse, failed reparse, exclusion of DS009 grounding evidence from
+the proposal input, structured route accounting, interactive transformation display, interactive toggling, batch
+JSONL, and benchmark metrics.
 
-At least one translation and one English simplification fixture must use a stub executable rather than a live Language Agent call so the normal test suite remains offline. A manually executed live probe may establish that a particular local Language Agent installation exposes GPT-5.3-Codex-Spark, but that machine-local observation is recorded as an operational receipt rather than a portable project guarantee.
+At least one rejected translation proposal and one English simplification fixture must use a stub executable rather
+than a live Language Agent call so the normal test suite remains offline. An accepted translation fixture requires an
+independent reviewed preservation profile; a model-provided alignment alone is a negative test. A manually executed
+live probe may establish that a particular local Language Agent installation exposes GPT-5.3-Codex-Spark, but that
+machine-local observation is recorded as an operational receipt rather than a portable project guarantee.
 
 ### Current implementation evidence and remaining limits
 
@@ -171,22 +254,34 @@ the stable orchestration facade and owns prompts, proposal execution, receipts, 
 `codex-normalizer-io.mjs` owns the exact invocation, bounded process lifecycle, bounded JSON reads, and atomic cache
 writes. This separation keeps every normalizer module below DS001's 500-line review threshold and does not introduce
 the operator subprocess into the deployable runtime closure. `src/runtime/language-agent-assisted-runtime.mjs`
-wraps `src/runtime/heuristic-language-runtime.mjs` only after explicit opt-in and implements the product-neutral
-local-first trigger, three-proposal episode budget, direct reparse, bounded parser-form feedback, accepted route,
+wraps `src/runtime/heuristic-language-runtime.mjs` in the general CLI profile and implements the product-neutral
+language-gate trigger, local-first English simplification, three-proposal episode budget, direct reparse, bounded parser-form feedback, accepted route,
 rejection route, and failure route. `src/cli.mjs` supplies one-shot, batch, and interactive controls while canonical
 evaluation and public probing explicitly disable assistance. Offline stub tests verify exact arguments,
-operation selection, typed anchor identity, English and reviewed Romanian content preservation, cache reuse and bounds,
+operation selection, typed anchor identity, English content preservation, unreviewed translation rejection, cache reuse and bounds,
 process output bounds, TERM-to-KILL settlement, response bounds, the proposal ceiling, trigger isolation, reparse
 feedback, invocation notification, and original-to-transformed presentation.
 
 Machine-local live probes and their receipts are operational evidence. They belong in replaceable status or execution artifacts, not in this specification, and they never establish portable model availability. Local public benchmark reports distinguish actual Language Agent calls from counterfactual normalization-candidate counts derived from `UNPARSED`; the two measurements must not be presented as the same rate.
 
-The current validator has protected operator vocabulary for English and Romanian, conservative language-independent
-checks for numbers, answer markers, quotations, likely named tokens, and question force, exact English content
-multisets for simplification, and only a small reviewed Romanian lexical-equivalence map for translation. It does not
-establish semantic preservation for unrestricted Romanian or any other language. A Romanian content word outside that
-map must remain literal or the proposal is rejected; expanding the map requires review and contrastive tests.
-Long-distance scope, implicit negation, lexicalized modality, idioms beyond the explicitly reviewed check-in forms,
+The implemented English assessment is `eslm-english-likelihood-v1`; its closed receipt contains only protocol,
+classification, confidence, threshold, signals, inspected-token count, completeness, bounded work, and diagnostic.
+Confidence combines the leading directional evidence share with bounded evidence mass. ASCII letters, nonce and
+technical surfaces, and formulas are compatibility-only; generic suffix morphology cannot decide English without a
+reviewed English function, operator, or sentence-frame cue. Classified outcomes meet the threshold on that same scale,
+weak or conflicting complete evidence remains below it, and incomplete inspection has zero routing confidence. The
+receipt validator recomputes this value from its signals. This
+confidence controls only language-route eligibility and never authorizes a translation, meaning, or answer.
+The gate records it as `languageAssessment`. The implemented normalizer extension records
+`strategyIdentity` as `strategy:language:external-translation-proposal@1` or
+`strategy:language:external-simplification-proposal@1`, stage `runtime.language.interpret`, proposal role
+`untrusted-language-form-candidate`, and `answerAuthority: none`.
+
+The current validator uses reviewed English protected operators for simplification and conservative
+language-neutral checks for numbers, answer markers, quotations, likely named tokens, and question force. It has no
+built-in cross-language equivalence authority. Translation proposals remain `UNVERIFIED_NORMALIZATION` unless a separately
+reviewed, versioned source-language preservation profile covers their open-class and operator correspondences.
+Long-distance scope, implicit negation, lexicalized modality, idioms outside reviewed profiles,
 coreference, presupposition, and relation direction outside the allowlist can remain undetected. Such coverage requires
 explicit contrastive tests before its accepted-route evidence can support a claim.
 
@@ -194,11 +289,19 @@ explicit contrastive tests before its accepted-route evidence can support a clai
 
 ### Question #1: Does assisted `ask` alter the offline runtime boundary?
 
-Response: No. The core, deployed profile, and default CLI path remain offline and deterministic. The CLI constructs the external operator wrapper only after explicit `--external-language-agent` or `/normalize on` selection; every assisted attempt is labeled, and disabling it leaves the complete direct-plus-local heuristic path available. Documentation and benchmark tables must never report an assisted result as a local-only runtime result; canonical published commands explicitly keep assistance disabled.
+Response: No. The core and deployed/library profiles remain offline and deterministic. The general CLI composes the
+external operator wrapper by default, labels every assisted attempt, and exposes
+`--no-external-language-agent` plus `/normalize off` for the complete local path. Documentation and benchmark tables
+must never report an assisted result as a local-only runtime result; canonical published commands explicitly keep
+assistance disabled.
 
-### Question #2: Why may Language Agent trigger only after local recovery remains `UNPARSED`?
+### Question #2: Why can translation trigger at the ingress gate while simplification waits for local `UNPARSED`?
 
-Response: An unknown answer, missing premise, unavailable method, ambiguity, resource limit, or locally recognized document request is not a translation problem. Deterministic spelling, morphology, auxiliary, and clause repairs should also be attempted without disclosure or service dependence. Sending any of those cases to Language Agent would invite it to perform reasoning or supply knowledge and would hide the layer that actually succeeded or failed.
+Response: Likely non-English input is outside the English repair contract, so running spelling or morphology repairs
+first would create misleading candidates. A translation proposal is separately attributed and still untrusted. For
+English input, deterministic spelling, morphology, auxiliary, and clause repairs should be attempted without service
+dependence. An unknown answer, missing premise, unavailable method, ambiguity, resource limit, or locally recognized
+document request is not a language problem and never authorizes the agent.
 
 ### Question #3: Is model-provided alignment sufficient preservation evidence?
 
@@ -216,15 +319,19 @@ Response: Model substitution changes behavior, cost, availability, and reproduci
 
 Response: Host validation can identify a correctable proposal defect, and the symbolic parser can report only that a surface-valid CNL form remains unsupported, without revealing an answer. A three-proposal ceiling gives the service a bounded opportunity to obey both contracts. Restricted feedback, continued use of the original source as authority, absence of KB and reasoner state, and prohibition on retries after any parsed semantic status prevent iterative solving or answer search.
 
-### Question #7: Why reject a fluent translation whose content is outside the reviewed lexical map?
+### Question #7: Why reject a fluent translation without an independent preservation profile?
 
-Response: Fluency is evidence about target-language form, not source-to-target preservation. The model supplies both the
-translation and its alignments, so accepting a novel lexical equivalence on its assertion would make validation
-self-attestation. The present Romanian profile accepts literal content and a deliberately small reviewed equivalence
-map, while typed protected anchors preserve operators and direction independently. This sacrifices translation
-coverage in exchange for an auditable inability result. Coverage may expand only by reviewing new equivalences and
-adding positive, negative, and direction-changing tests.
+Response: Fluency is evidence about target-language form, not source-to-target preservation. The model supplies both
+the translation and its alignments, so accepting a novel lexical equivalence on its assertion would make validation
+self-attestation. Language-neutral anchors and a successful English reparse protect only the properties they can
+observe. An independent reviewed language profile must establish open-class and source-operator correspondences.
+Without one, the system returns an auditable inability. Coverage may expand only through licensed reviewed evidence
+and positive, negative, idiomatic, and direction-changing tests.
 
 ## Conclusion
 
-Language Agent assistance is a measured, explicitly enabled language adapter around ESLM, not a hidden second reasoner. Direct parsing and deterministic local recovery receive the complete first opportunity, every external rewrite remains untrusted, protected meaning is checked conservatively, the normalized text must return through the direct symbolic runtime, and all cache and model use stays visible in the result and benchmark evidence.
+Language Agent assistance is a measured operator proposal strategy around ESLM, not a hidden second reasoner. The
+local runtime is English-only and never translates. Likely non-English input is rejected locally; unsupported English
+receives the complete direct and deterministic recovery opportunity. Every external proposal remains untrusted,
+protected meaning is checked conservatively, the proposed English must return through the direct symbolic runtime,
+and all cache and model use stays visible in the result and benchmark evidence.

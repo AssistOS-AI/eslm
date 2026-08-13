@@ -5,8 +5,8 @@ import {
   withLanguageAgentNormalization, workPolicyFromCliOptions,
 } from '../src/interface/cli-runtime-policy.mjs';
 
-test('CLI assistance is opt-in and retains an explicit offline override', () => {
-  assert.equal(languageAgentNormalizationEnabled({}), false);
+test('CLI assistance is enabled by default and retains an explicit offline override', () => {
+  assert.equal(languageAgentNormalizationEnabled({}), true);
   assert.equal(languageAgentNormalizationEnabled({ 'external-language-agent': true }), true);
   assert.equal(languageAgentNormalizationEnabled({ 'external-language-agent': false }), false);
   assert.equal(languageAgentNormalizationEnabled({ 'external-language-agent': 'false' }), false);
@@ -58,7 +58,7 @@ test('CLI strategy selection accepts only exact trusted executable identities', 
     'runtime.reason.execute=strategy:core:finite-entailment@1',
   ), /planned and cannot be selected/u);
   assert.throws(() => parseStrategySelection(
-    'runtime.evidence.assess=../research-plugin.mjs',
+    'runtime.evidence.assess=../untrusted-executor.mjs',
   ), /Unknown .* strategy identity/u);
 });
 

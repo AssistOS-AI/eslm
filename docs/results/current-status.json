@@ -9,7 +9,7 @@
       {
         "id": "knowledge",
         "label": "Knowledge breadth",
-        "mainGap": "Broad encyclopedic, physical, spatial, narrative, temporal-world, scientific, domain, and multilingual knowledge remain incomplete even though several large typed sources now exist.",
+        "mainGap": "Broad encyclopedic, physical, spatial, narrative, temporal-world, scientific, and operator-domain knowledge remain incomplete even though several large typed English sources now exist.",
         "bands": [
           { "label": "Lexical and taxonomic knowledge", "state": "implemented", "evidence": "Open English WordNet supplies validated lexical and typed relation shards." },
           { "label": "Event and social commonsense", "state": "implemented", "evidence": "ATOMIC supplies provenance-bearing defeasible event tuples and typed continuation evidence." },
@@ -19,14 +19,13 @@
           { "label": "Narrative and script schemas", "state": "partial", "evidence": "ATOMIC and bounded narrative event frames support continuation evidence; richer goals, causality, conflict, and scripts remain incomplete." },
           { "label": "Temporal and world-state knowledge", "state": "partial", "evidence": "Discrete histories and authored state-change relations exist; broad temporal-world knowledge and interval facts do not." },
           { "label": "Scientific and technical knowledge", "state": "absent", "evidence": "No reviewed scientific or technical document corpus has crossed the DS014 and DS018–DS021 compiler gates." },
-          { "label": "User or project domain knowledge", "state": "absent", "evidence": "The canonical compiler exists, but no substantial operator-domain document package is promoted." },
-          { "label": "Multilingual knowledge", "state": "absent", "evidence": "Language Agent translation does not create a multilingual KB." }
+          { "label": "User or project domain knowledge", "state": "absent", "evidence": "The canonical compiler exists, but no substantial operator-domain document package is promoted." }
         ]
       },
       {
         "id": "language",
         "label": "Language coverage",
-        "mainGap": "Broad interrogatives, unrestricted scope, embedded clauses, direct multilingual parsing, and long natural-language theory compilation remain incomplete.",
+        "mainGap": "Broad interrogatives, unrestricted scope, embedded clauses, and long English natural-language theory compilation remain incomplete.",
         "bands": [
           { "label": "Controlled atomic assertions and direct questions", "state": "implemented", "evidence": "Supported class, property, relation, ability, location, WH, and yes/no forms compile to symbolic structures." },
           { "label": "Movement, possession, and bounded state language", "state": "implemented", "evidence": "Movement, acquisition, release, location, and predecessor forms execute with witnesses." },
@@ -35,7 +34,7 @@
           { "label": "Feature grammar and acceptability", "state": "partial", "evidence": "A generic feature grammar spans every BLiMP paradigm but fresh performance remains incomplete." },
           { "label": "Quantification, negation scope, and modality", "state": "partial", "evidence": "Typed finite formulas and categorical A/E/I/O tasks execute; the ordinary prose parser covers only a narrow subset." },
           { "label": "Embedded clauses and complex coordination", "state": "absent", "evidence": "No general parser path supports the declared final-stage forms." },
-          { "label": "Direct multilingual parsing", "state": "absent", "evidence": "Assisted translation does not count as direct parsing." },
+          { "label": "English-only ingress policy", "state": "implemented", "evidence": "The local language gate assesses bounded English likelihood, refuses likely non-English input without translation, and leaves translation proposals outside deployed inference." },
           { "label": "Narrative discourse", "state": "partial", "evidence": "A bounded four-sentence narrative compiler exists, but it does not provide unrestricted story understanding." },
           { "label": "Realization and structured task projection", "state": "partial", "evidence": "Several strict adapters and typed realizers exist; open-ended realization and source-independent theory compilation remain incomplete." }
         ]

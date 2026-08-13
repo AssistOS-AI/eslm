@@ -131,20 +131,79 @@ const RETRIEVAL_RANKING_STRATEGIES = Object.freeze([
 })));
 
 const RESULT_CONSTRUCTION_STRATEGIES = Object.freeze([
-  'extractive-summary', 'extractive-expansion', 'comparison', 'outline', 'table', 'sectioned-document',
-].map((name) => descriptor({
-  strategyId: `strategy:result:${name}`,
-    stage: 'runtime.result.construct',
-  inputTypes: ['type:ordered-obligation-plan', 'type:provenance-bearing-evidence'],
-  outputTypes: ['type:bounded-grounded-artifact'],
+  {
+    name: 'rhetorical-section-planner', input: 'ordered-obligation-plan', output: 'rhetorical-plan',
+    confidence: 'rhetorical-plan-coverage', cost: 'bounded-rhetorical-planning',
+    witness: 'operation-section-alignment', group: 'rhetorical-structure',
+  },
+  {
+    name: 'source-summary-sentence', input: 'bounded-source-sentence', output: 'grounded-sentence',
+    confidence: 'source-preservation', cost: 'bounded-source-sentence-preservation',
+    witness: 'source-sentence-alignment', group: 'source-realization',
+  },
+  {
+    name: 'lexical-definition-sentence', input: 'lexical-sense-evidence', output: 'grounded-sentence',
+    confidence: 'lexical-definition-coverage', cost: 'bounded-lexical-template',
+    witness: 'lemma-definition-alignment', group: 'lexical-realization',
+  },
+  {
+    name: 'typed-fact-sentence', input: 'typed-fact-evidence', output: 'grounded-sentence',
+    confidence: 'typed-fact-coverage', cost: 'bounded-typed-fact-template',
+    witness: 'fact-sentence-alignment', group: 'typed-fact-realization',
+  },
+  {
+    name: 'defeasible-relation-sentence', input: 'defeasible-relation-evidence', output: 'grounded-sentence',
+    confidence: 'defeasible-relation-coverage', cost: 'bounded-defeasible-template',
+    witness: 'relation-sentence-alignment', group: 'defeasible-realization',
+  },
+  {
+    name: 'claim-fusion', input: 'ordered-grounded-sentences', output: 'grounded-paragraph',
+    confidence: 'claim-fusion-coverage', cost: 'bounded-claim-fusion',
+    witness: 'paragraph-claim-ledger', group: 'discourse-fusion',
+  },
+  {
+    name: 'comparison-bridge', input: 'correlated-grounded-claims', output: 'grounded-paragraph',
+    confidence: 'comparison-coverage', cost: 'bounded-comparison-bridge',
+    witness: 'shared-relation-ledger', group: 'comparison-discourse',
+  },
+  {
+    name: 'coverage-gap-sentence', input: 'construction-coverage-receipt', output: 'grounded-paragraph',
+    confidence: 'gap-accounting-coverage', cost: 'bounded-gap-realization',
+    witness: 'gap-sentence-ledger', group: 'coverage-discourse',
+  },
+  {
+    name: 'prose-assembly', input: 'rhetorical-plan', output: 'bounded-grounded-artifact',
+    confidence: 'prose-assembly-coverage', cost: 'bounded-prose-assembly',
+    witness: 'artifact-paragraph-ledger', group: 'prose-assembly',
+  },
+  {
+    name: 'sectioned-document-assembly', input: 'rhetorical-plan', output: 'bounded-grounded-artifact',
+    confidence: 'section-assembly-coverage', cost: 'bounded-section-assembly',
+    witness: 'section-paragraph-ledger', group: 'sectioned-assembly',
+  },
+  {
+    name: 'outline-assembly', input: 'rhetorical-plan', output: 'bounded-grounded-artifact',
+    confidence: 'outline-assembly-coverage', cost: 'bounded-outline-assembly',
+    witness: 'outline-claim-ledger', group: 'outline-assembly',
+  },
+  {
+    name: 'table-assembly', input: 'rhetorical-plan', output: 'bounded-grounded-artifact',
+    confidence: 'table-assembly-coverage', cost: 'bounded-table-assembly',
+    witness: 'table-cell-claim-ledger', group: 'table-assembly',
+  },
+].map((item) => descriptor({
+  strategyId: `strategy:result:${item.name}`,
+  stage: 'runtime.result.construct',
+  inputTypes: [`type:${item.input}`, 'type:provenance-bearing-evidence'],
+  outputTypes: [`type:${item.output}`],
   preconditions: ['precondition:planned-output-obligation'],
-    epistemicRole: 'presentation-construction',
-    confidenceKind: 'confidence:construction-coverage',
-  costModel: 'cost:bounded-extractive-construction',
-  budgetKeys: ['budget:grounding-output-bytes'],
-    witnessKind: 'witness:claim-source-ledger',
-    correlationGroup: `correlation:result:${name}`,
-    implementationState: 'instrumented-local',
+  epistemicRole: 'presentation-construction',
+  confidenceKind: `confidence:${item.confidence}`,
+  costModel: `cost:${item.cost}`,
+  budgetKeys: ['budget:grounding-output-bytes', 'budget:grounding-evidence-items'],
+  witnessKind: `witness:${item.witness}`,
+  correlationGroup: `correlation:result:${item.group}`,
+  implementationState: 'instrumented-local',
 })));
 
 // These executors exist for benchmark adapters, but those adapters have not yet
@@ -228,7 +287,7 @@ const BOUNDARY_STRATEGIES = Object.freeze([
     witnessKind: 'witness:verification-receipt',
     answerAuthority: 'verified-only',
     correlationGroup: 'correlation:verification:declared-witness',
-    implementationState: 'planned',
+    implementationState: 'instrumented-local',
   }),
   descriptor({
     strategyId: 'strategy:grounding:bounded-related-evidence',

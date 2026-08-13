@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head>
+  <base href="../"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BLiMP protocol — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / <a href="evaluation.html">Evaluation</a> / BLiMP</p>
+<h1>BLiMP: grammatical minimal-pair preference</h1>
+<p class="lead">BLiMP tests whether an acceptability method ranks a grammatical English sentence above a minimally different ungrammatical sentence. Its focused scope isolates grammatical contrasts from factual knowledge and free-form generation, producing a precise minimal-pair measurement rather than a general estimate of English coverage.</p>
+<div class="callout"><p><strong>Current measurements:</strong> Read the generated BLiMP row on the <a href="evaluation.html">evaluation dashboard</a> or inspect the <a href="results/latest-public-benchmark-probes.json">raw v2 report</a>. Execution counts, scores, and receipt currentness are intentionally not copied here.</p></div>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  P[Sentence pair] --> G[Feature grammar]
+  G --> C[Strict comparison]
+  C --> O[Correct, reversed, or tied]</pre><figcaption>Symmetric grammatical comparison.</figcaption></figure><p class="diagram-explanation">Both members of the pair pass through the same feature grammar. Only their resulting score order determines the outcome; the benchmark label never enters the grammar.</p>
+
+<h2>What the benchmark forces the system to represent</h2>
+<p>Each pair changes a controlled grammatical property while attempting to keep vocabulary and meaning as close as possible. The 67 paradigms cover agreement, argument structure, binding, control and raising, determiner-noun agreement, ellipsis, filler-gap dependencies, islands, irregular forms, quantifiers, and subject-verb agreement. A useful symbolic account must model the relevant phrase structure and dependencies. A table keyed by paradigm name would not establish the capability, because it would not explain a renamed or newly constructed pair.</p>
+
+<h2 id="protocol">ESLM protocol</h2>
+<p>The frozen official source contains 67,000 labeled sentence pairs. The adapter supplies both sentences without exposing the label to the scorer. The feature grammar assigns each sentence a deterministic scalar acceptability score, and the evaluator awards one point only when the grammatical member has the higher score.</p>
+<p>This is a direct symbolic preference protocol. Because BLiMP has no official train/test division, each execution receipt must identify its label-blind partition, development exposure, Language Agent policy, behavior digest, and checkpoint state. The dashboard shows whether an older one-shot receipt is still current rather than repeating its claim here.</p>
+
+<h2 id="preference-outcomes">Correct, reversed, tied, and “ties fail”</h2>
+<p><strong>Correct</strong> means the grammatical sentence received a strictly higher score. <strong>Reversed</strong> means the scorer expressed a preference, but assigned the higher score to the ungrammatical sentence. <strong>Tied</strong> means both sentences received exactly the same score, so the method did not distinguish the intended contrast. <strong>Ties fail</strong> means a tie earns no point: the benchmark asks for a preference, and abstaining is not counted as a correct forced choice. Reporting all three counts matters because the same overall accuracy can describe very different failure modes when one run contains many ties and another contains confident reversals.</p>
+
+<h2>Evidence scope of a reported percentage</h2>
+<p>The denominator is sentence pairs, not sentences, vocabulary items, English constructions, or user questions. A score supports only the declared partition and feature scorer. It does not prove complete syntax, semantic interpretation, discourse understanding, or calibrated linguistic probability. Remaining failures should be repaired through reusable phrase structure, attachment, valency, agreement, and binding mechanisms, with nonce and contrastive controls—not through sentence fragments, paradigm identifiers, or expected labels copied into core code.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

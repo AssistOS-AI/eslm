@@ -14,31 +14,31 @@ import { makeGroundingEntry } from './reasoning/grounding-retrieval.mjs';
 export const PUBLIC_KB_CATALOG = Object.freeze({
   'oewn-2025': Object.freeze({
     id: 'oewn-2025', title: 'Open English WordNet 2025', role: 'public lexical and taxonomic knowledge',
-    model: 'training/KBs/oewn-2025/package/manifest.json', documentation: 'knowledge-bases.html',
+    model: 'training/KBs/oewn-2025/package/manifest.json', documentation: 'knowledge/knowledge-bases.html',
     defaultInteractive: true, benchmarkEligible: false, priority: 1,
     estimatedEagerRssBytes: 349 * 1024 * 1024,
   }),
   'atomic-2020': Object.freeze({
     id: 'atomic-2020', title: 'ATOMIC 2020', role: 'public defeasible event and social commonsense',
-    model: 'training/KBs/atomic-2020/package/manifest.json', documentation: 'knowledge-bases.html',
+    model: 'training/KBs/atomic-2020/package/manifest.json', documentation: 'knowledge/knowledge-bases.html',
     defaultInteractive: true, benchmarkEligible: false, priority: 2,
     estimatedEagerRssBytes: 284 * 1024 * 1024,
   }),
   'geonames-2026': Object.freeze({
     id: 'geonames-2026', title: 'GeoNames 2026', role: 'public geographic and country knowledge',
-    model: 'training/KBs/geonames-2026/package/manifest.json', documentation: 'knowledge-bases.html',
+    model: 'training/KBs/geonames-2026/package/manifest.json', documentation: 'knowledge/knowledge-bases.html',
     defaultInteractive: true, benchmarkEligible: false, priority: 3,
     estimatedEagerRssBytes: 48 * 1024 * 1024,
   }),
   'conceptnet-5.7.0-en': Object.freeze({
     id: 'conceptnet-5.7.0-en', title: 'ConceptNet 5.7 English', role: 'public typed everyday relational knowledge',
-    model: 'training/KBs/conceptnet-5.7.0-en/package/manifest.json', documentation: 'knowledge-bases.html',
+    model: 'training/KBs/conceptnet-5.7.0-en/package/manifest.json', documentation: 'knowledge/knowledge-bases.html',
     defaultInteractive: true, benchmarkEligible: false, priority: 4,
     estimatedEagerRssBytes: 220 * 1024 * 1024,
   }),
   'world-relations-1.0': Object.freeze({
     id: 'world-relations-1.0', title: 'World Relations 1.0', role: 'authored semantic relations, inverses, and implications',
-    model: 'training/KBs/world-relations-1.0/package/manifest.json', documentation: 'knowledge-bases.html',
+    model: 'training/KBs/world-relations-1.0/package/manifest.json', documentation: 'knowledge/knowledge-bases.html',
     defaultInteractive: true, benchmarkEligible: false, priority: 0,
     estimatedEagerRssBytes: 2 * 1024 * 1024,
   }),

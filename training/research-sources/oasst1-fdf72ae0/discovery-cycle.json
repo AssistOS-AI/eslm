@@ -1,0 +1,167 @@
+{
+  "format": "eslm-rl-dataset-discovery-cycle-v2",
+  "cycleId": "cycle:processing-graph:002-oasst1-scale",
+  "state": "complete",
+  "planBinding": {
+    "planId": "plan:processing-graph:002-oasst1-scale",
+    "planDigest": "sha256:fc24c739f5c057dd2c7b40847d1588e423a501945b9bb7c29927a9a83a4fb4cb"
+  },
+  "analysisBinding": {
+    "protocol": "eslm-processing-graph-research-analysis-v4",
+    "receiptDigest": "sha256:f2dc861c2faf5d4dc6af37842c50c507dfca7ae7d5afacf529b141f98d6a9ef6",
+    "implementationAggregateDigest": "sha256:db366fc14a2655ed4076a19107d09020030004153889a53cd384aa86dfe59274",
+    "registryDigest": "sha256:0a770e19f3b7defaebe29b77d6d722eecad5352a30f901bf247845fdb9a3e648",
+    "baselineGraphDigest": "sha256:5534952eb6b2ab83d5c8ae3d0e15eda4dd69745a75f0e2abbea81f9ff5bf0348",
+    "analysisId": "oasst1-complete-source-analysis",
+    "version": "1.0.0",
+    "seed": "oasst1-complete-v1"
+  },
+  "review": {
+    "reviewId": "review:processing-graph:002-large-trajectory-source",
+    "reviewAuthority": "repository-maintainer-review",
+    "reviewedSpecifications": [
+      "DS028",
+      "DS029"
+    ],
+    "decisionScope": "research-consolidation-only"
+  },
+  "hypotheses": [
+    {
+      "hypothesisId": "hypothesis:reviewed:large-source:typed-task-frame-coordination",
+      "type": "coordination-node",
+      "state": "merge-candidate",
+      "responsibility": "Coordinate a typed construction obligation before downstream execution without granting answer authority.",
+      "containingCircuit": "circuit:runtime:request-session",
+      "inputPacketTypes": [
+        "packet:runtime:request-force-decision-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:request-plan-v1"
+      ],
+      "authority": "coordination",
+      "failureKinds": [
+        "unsatisfied-capability",
+        "unsupported-operation"
+      ],
+      "resourceDimensions": [
+        "resource:graph-nodes",
+        "resource:tokens"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:3f52f00fc3c8d3ee80ee219c956e5362bb65b847905b4351bb11325064a60fd3"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:large-source:cross-turn-dependency-field",
+      "type": "packet-field",
+      "state": "retained",
+      "responsibility": "Preserve typed dependencies across alternating interpretation and construction actions without retaining source text.",
+      "containingCircuit": "circuit:research:evidence-projection",
+      "inputPacketTypes": [
+        "packet:research:projected-episode-batch-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:research:structural-feature-batch-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "dependency-cycle",
+        "missing-dependency"
+      ],
+      "resourceDimensions": [
+        "resource:graph-edges"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:14c16497b766d0c0d5f84ced170e576ae8a7212d0fe6fb88241287949a9bb526",
+        "hypothesis:44b25e77bd84f4469ba168f835dabb897e43500b93a7e438d962152ea869bd5f"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:large-source:cross-turn-phase-edge",
+      "type": "edge",
+      "state": "retained",
+      "responsibility": "Represent reversible interpretation-to-construction phase changes as typed edges rather than a source-specific conversation node.",
+      "containingCircuit": "circuit:research:hypothesis-discovery",
+      "inputPacketTypes": [
+        "packet:research:structural-feature-batch-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:research:hypothesis-batch-v1"
+      ],
+      "authority": "none",
+      "failureKinds": [
+        "invalid-transition"
+      ],
+      "resourceDimensions": [
+        "resource:graph-edges"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:d901a0253abec90cddb712329bd59b24e580a5694fa2e74b5f544a707eee88da",
+        "hypothesis:fb38c5f3f35a8f319ec0e2b32b6963784262b084a31245c5f52184397c1f7d31"
+      ]
+    },
+    {
+      "hypothesisId": "hypothesis:reviewed:large-source:quality-ranking-strategy-family",
+      "type": "strategy",
+      "state": "merge-candidate",
+      "responsibility": "Rank admissible construction candidates by typed quality and safety feedback while retaining disagreement and abstention.",
+      "containingCircuit": "circuit:runtime:failure-result",
+      "inputPacketTypes": [
+        "packet:runtime:verification-decision-v1"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:construction-candidate-v1"
+      ],
+      "authority": "proposal",
+      "failureKinds": [
+        "feedback-disagreement",
+        "insufficient-transfer-evidence"
+      ],
+      "resourceDimensions": [
+        "resource:candidates",
+        "resource:votes"
+      ],
+      "analysisHypothesisIds": [
+        "hypothesis:63111e71c0f08d911955da5fe61a2cc7007ffee4b245a1ba5b455f6ac1db8db8",
+        "hypothesis:a4fcdbf25e1f41307c2b19cff8aca9948185301e9f16ca08a6246283e9e508ab",
+        "hypothesis:ceb3815a4833601c90e90df1dbee89fe954d5ce4ebcb60c4c1a2dcfd26d1d463"
+      ]
+    }
+  ],
+  "unreviewedAnalysisHypothesisIds": [],
+  "consolidation": [
+    {
+      "candidateId": "hypothesis:reviewed:large-source:typed-task-frame-coordination",
+      "decision": "merge",
+      "resultId": "node:runtime:request-plan-coordinator",
+      "reason": "The current request-plan coordinator owns the same construction obligation, so the source-local recurrence strengthens an existing boundary rather than creating a new node."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:large-source:cross-turn-dependency-field",
+      "decision": "retain",
+      "resultId": "hypothesis:reviewed:large-source:cross-turn-dependency-field",
+      "reason": "The complete source projection supports an auditable dependency field, but one independent lineage cannot establish generic transfer."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:large-source:cross-turn-phase-edge",
+      "decision": "retain",
+      "resultId": "hypothesis:reviewed:large-source:cross-turn-phase-edge",
+      "reason": "Alternating phase edges are structurally visible, yet the evidence does not justify a dedicated conversation processor or cyclic runtime graph."
+    },
+    {
+      "candidateId": "hypothesis:reviewed:large-source:quality-ranking-strategy-family",
+      "decision": "merge",
+      "resultId": "node:runtime:result-construction-coordinator",
+      "reason": "Typed quality and safety comparisons are non-authoritative result-construction strategies; contested safety evidence remains an explicit abstention signal."
+    }
+  ],
+  "analysisOmissionReasons": [],
+  "authority": {
+    "answer": "none",
+    "runtime": "none",
+    "proof": "none",
+    "promotion": "none",
+    "decisionScope": "research-consolidation-only"
+  },
+  "receiptDigest": "sha256:203876c8a61f15fd5282953435b136f213a50787bd476d15763ab337f011cf49"
+}

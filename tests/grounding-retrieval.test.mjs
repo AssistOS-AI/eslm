@@ -601,6 +601,79 @@ test('a public provider cannot attribute grounding evidence or receipts to anoth
     receipt.kbId === 'provider-a' && receipt.status === 'invalid-grounding-result'));
 });
 
+test('grounding commits provider evidence only after successful lifecycle cleanup', async () => {
+  let cleanupCalls = 0;
+  const provider = {
+    manifest: { id: 'provider-cleanup', kbId: 'provider-cleanup', kbVersion: '1' },
+    beginQuery() {},
+    endQuery() {
+      cleanupCalls += 1;
+      throw new Error('cleanup nonce');
+    },
+    async retrieveGrounding() {
+      return {
+        entries: [entry('provider-cleanup', 'must-not-leak', 10)],
+        receipt: {
+          kbId: 'provider-cleanup', kbVersion: '1', status: 'matches-found',
+          coverage: 'exact-transaction-fixture', complete: true, candidatesConsidered: 1,
+          truncationReasons: [],
+        },
+      };
+    },
+  };
+  const runtime = new EslmRuntime(
+    new EslmEngine(await createCoreModel()), [provider], ['provider-cleanup'],
+  );
+  const primary = runtime.core.ask('Can Qorin glim vepa?');
+  const primaryAuthority = {
+    status: primary.status,
+    answer: primary.answer,
+    values: primary.values,
+    provenance: primary.provenance,
+    usedKbVersions: primary.usedKbVersions,
+  };
+  const result = await runtime.attachGrounding(primary);
+  assert.equal(cleanupCalls, 1);
+  assert.equal(result.status, 'UNKNOWN');
+  assert.deepEqual({
+    status: result.status,
+    answer: result.answer,
+    values: result.values,
+    provenance: result.provenance,
+    usedKbVersions: result.usedKbVersions,
+  }, primaryAuthority);
+  assert.equal(result.grounding.status, 'SEARCH_INCOMPLETE');
+  assert.deepEqual(result.grounding.entries, []);
+  assert.deepEqual(result.grounding.search.receipts.map((receipt) => receipt.status),
+    ['provider-error']);
+  assert.equal(result.grounding.search.receipts[0].coverage,
+    'grounding-provider-cleanup-failed');
+  assert.match(result.grounding.search.receipts[0].diagnostic, /cleanup nonce/u);
+});
+
+test('grounding performs best-effort cleanup after begin failure without retrieval', async () => {
+  let retrieveCalls = 0;
+  let cleanupCalls = 0;
+  const provider = {
+    manifest: { id: 'provider-begin', kbId: 'provider-begin', kbVersion: '1' },
+    beginQuery() { throw new Error('begin nonce'); },
+    endQuery() { cleanupCalls += 1; },
+    async retrieveGrounding() { retrieveCalls += 1; return {}; },
+  };
+  const runtime = new EslmRuntime(
+    new EslmEngine(await createCoreModel()), [provider], ['provider-begin'],
+  );
+  const primary = runtime.core.ask('Can Qorin glim vepa?');
+  const result = await runtime.attachGrounding(primary);
+  assert.equal(retrieveCalls, 0);
+  assert.equal(cleanupCalls, 1);
+  assert.equal(result.status, 'UNKNOWN');
+  assert.equal(result.grounding.status, 'SEARCH_INCOMPLETE');
+  assert.deepEqual(result.grounding.entries, []);
+  assert.equal(result.grounding.search.receipts[0].status, 'provider-error');
+  assert.match(result.grounding.search.receipts[0].diagnostic, /begin nonce/u);
+});
+
 test('a valid oversized provider response is visibly truncated rather than mislabeled invalid', async () => {
   const runtime = await quickRuntime();
   runtime.core.retrieveRelatedEvidence = async () => ({

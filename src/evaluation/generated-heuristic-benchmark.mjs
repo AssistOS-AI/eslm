@@ -2,6 +2,7 @@ import { performance } from 'node:perf_hooks';
 import { benchmarkBehaviorIdentity } from './benchmark-execution-identity.mjs';
 import { createRuntimeBenchmarkStrategyConfiguration } from './benchmark-strategy-configuration.mjs';
 import { assertGeneratedHeuristicBenchmarkReport } from './generated-heuristic-benchmark-contract.mjs';
+import { assessGeneratedHeuristicCase } from './generated-heuristic-case-assessor.mjs';
 import {
   DEFAULT_GENERATED_HEURISTIC_BENCHMARK_SIZE,
   GENERATED_HEURISTIC_BENCHMARK_PROTOCOL,
@@ -18,14 +19,10 @@ export {
   GENERATED_HEURISTIC_BENCHMARK_SEED,
   generateHeuristicBenchmarkCases,
 };
+export { assessGeneratedHeuristicCase };
 
 export const GENERATED_HEURISTIC_BENCHMARK_REPORT_PROTOCOL =
   'eslm-generated-heuristic-benchmark-report-v1';
-
-const FAILURE_STAGE_ORDER = Object.freeze([
-  'execution', 'resource', 'route', 'status', 'candidate', 'strategy-family',
-  'semantic-query', 'request-plan', 'safety', 'answer',
-]);
 
 function frozen(value) {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) {
@@ -33,147 +30,6 @@ function frozen(value) {
     for (const item of Object.values(value)) frozen(item);
   }
   return value;
-}
-
-function tokenPresent(surface, token) {
-  return new RegExp(`(?:^|[^\\p{L}\\p{N}])${token.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}(?:$|[^\\p{L}\\p{N}])`, 'iu')
-    .test(surface);
-}
-
-function observedFamilies(result) {
-  const families = new Set(result?.approximation?.selectedCandidate?.supportingFamilies ?? []);
-  for (const candidate of result?.approximation?.candidates ?? []) {
-    for (const family of candidate.supportingFamilies ?? []) families.add(family);
-  }
-  for (const receipt of result?.approximation?.receipt?.familyReceipts ?? []) {
-    if (receipt.proposalsRetained > 0) families.add(receipt.family);
-  }
-  return [...families].toSorted();
-}
-
-function candidateTexts(result) {
-  return [...new Set([
-    result?.approximation?.selectedCandidate?.text,
-    result?.approximation?.recommendedCandidate?.text,
-    ...(result?.approximation?.candidates ?? []).map((candidate) => candidate.text),
-  ].filter(Boolean))];
-}
-
-function resultQueryMatches(expected, actual) {
-  if (!expected) return true;
-  if (!actual || typeof actual !== 'object') return false;
-  return Object.entries(expected).every(([key, value]) => actual[key] === value);
-}
-
-function requestPlanMatches(oracle, result) {
-  const plan = result.requestPlanning?.selectedPlan;
-  if (!plan) return false;
-  if (oracle.operationSequence) {
-    return JSON.stringify(plan.operationPlans?.map((item) => item.intent))
-      === JSON.stringify(oracle.operationSequence);
-  }
-  return plan.primaryIntent === oracle.operation
-    && plan.outputContract?.artifact === oracle.artifact
-    && (oracle.format === undefined || plan.outputContract?.format === oracle.format);
-}
-
-export function assessGeneratedHeuristicCase(testCase, result, executionError) {
-  const oracle = testCase.oracle;
-  const failures = [];
-  const fail = (stage, code, explanation) => failures.push(Object.freeze({ stage, code, explanation }));
-  if (executionError) fail('execution', 'runtime-exception', executionError);
-  if (!result) return frozen({ pass: false, failures, observedFamilies: [], confidenceBand: 'none' });
-  const resourceLimited = result.status === 'RESOURCE_LIMIT'
-    || result.approximation?.receipt?.complete === false;
-  if (resourceLimited) fail('resource', 'bounded-work-exhausted', 'The runtime exhausted a declared work bound.');
-  const routeAccepted = !oracle.expectedRoute
-    || result.languageRoute === oracle.expectedRoute
-    || oracle.alternateRoutes?.includes(result.languageRoute);
-  if (!routeAccepted) {
-    fail('route', 'unexpected-language-route', `Expected ${oracle.expectedRoute}; observed ${result.languageRoute}.`);
-  }
-  if (oracle.acceptableStatuses && !oracle.acceptableStatuses.includes(result.status)) {
-    fail('status', 'unexpected-status', `Expected ${oracle.acceptableStatuses.join(' or ')}; observed ${result.status}.`);
-  }
-  if (oracle.forbiddenStatuses?.includes(result.status)) {
-    fail('safety', 'unsafe-positive-status', `The protected contrast produced forbidden status ${result.status}.`);
-  }
-  const texts = candidateTexts(result);
-  const successfulDirect = result.status === 'SOLVED' && result.languageRoute === 'direct-symbolic';
-  if (oracle.expectedCandidateText && !texts.includes(oracle.expectedCandidateText)
-      && !(oracle.candidateOptionalOnDirectSuccess && successfulDirect)) {
-    fail('candidate', 'expected-candidate-not-generated', 'No retained approximation matched the structural oracle.');
-  }
-  if (oracle.requireSelectedCandidate) {
-    const selected = result.approximation?.selectedCandidate;
-    if (selected?.text !== oracle.expectedCandidateText) {
-      fail('candidate', 'expected-candidate-not-selected',
-        'The selected approximation differs from the structural candidate oracle.');
-    } else {
-      if (result.episode?.interpretedText !== oracle.expectedCandidateText) {
-        fail('candidate', 'selected-candidate-not-executed',
-          'The query-local episode did not execute the selected structural candidate.');
-      }
-      const reparse = result.approximation?.reparses?.find((item) =>
-        item.candidateId === selected.candidateId && item.text === selected.text);
-      if (!reparse || reparse.status !== 'PARSED' || reparse.acceptedSemanticIr !== true) {
-        fail('candidate', 'selected-candidate-not-reparsed',
-          'The selected candidate has no matching accepted parse-only receipt.');
-      }
-      for (const family of oracle.requiredFamilies ?? []) {
-        if (!selected.supportingFamilies?.includes(family)) {
-          fail('strategy-family', 'selected-family-missing',
-            `The selected candidate is not supported by the required ${family} strategy.`);
-        }
-      }
-    }
-  }
-  const families = observedFamilies(result);
-  for (const family of oracle.requiredFamilies ?? []) {
-    if (oracle.requireSelectedCandidate) continue;
-    if (!families.includes(family)) {
-      if (!(oracle.familyOptionalOnDirectSuccess && successfulDirect)) {
-        fail('strategy-family', 'required-family-not-observed', `The ${family} strategy produced no retained proposal.`);
-      }
-    }
-  }
-  if (!resultQueryMatches(oracle.expectedQuery, result.query)) {
-    fail('semantic-query', 'semantic-ir-mismatch', 'The accepted query differs from the generating semantic structure.');
-  }
-  if (oracle.kind === 'request-construction' && !requestPlanMatches(oracle, result)) {
-    fail('request-plan', 'request-obligations-missing', 'The ordered request plan or output contract is incomplete.');
-  }
-  if (oracle.kind === 'safe-abstention' || oracle.kind === 'interpretable-complex-clause') {
-    if (oracle.forbiddenAnswer && result.answer === oracle.forbiddenAnswer) {
-      fail('safety', 'unsafe-positive-answer', `The protected contrast produced ${oracle.forbiddenAnswer}`);
-    }
-    const selected = result.approximation?.selectedCandidate?.text;
-    if (selected && !['reference', 'if-then'].includes(oracle.protectedOperator)
-        && !tokenPresent(selected, oracle.protectedOperator)) {
-      fail('safety', 'protected-operator-lost', `The selected approximation removed ${oracle.protectedOperator}.`);
-    }
-    if (selected && oracle.protectedOperator === 'if-then'
-        && (!tokenPresent(selected, 'if') || !tokenPresent(selected, 'then'))) {
-      fail('safety', 'protected-operator-lost', 'The selected approximation did not preserve if/then scope.');
-    }
-  }
-  if (oracle.expectedAnswer !== null && result.answer !== oracle.expectedAnswer) {
-    fail('answer', 'answer-mismatch', `Expected ${oracle.expectedAnswer}; observed ${result.answer}.`);
-  }
-  if (oracle.expectedValues && !oracle.expectedValues.every((value) => result.values?.includes(value))) {
-    fail('answer', 'value-mismatch', 'The expected structurally generated value is absent.');
-  }
-  const confidenceBand = result.approximation?.selectedCandidate?.confidenceBand
-    ?? result.approximation?.recommendedCandidate?.confidenceBand ?? 'none';
-  return frozen({
-    pass: failures.length === 0,
-    failures: failures.toSorted((left, right) =>
-      FAILURE_STAGE_ORDER.indexOf(left.stage) - FAILURE_STAGE_ORDER.indexOf(right.stage)
-        || left.code.localeCompare(right.code)),
-    observedFamilies: families,
-    confidenceBand,
-    resourceOutcome: resourceLimited ? 'resource-limit' : 'complete',
-  });
 }
 
 function increment(map, key, passed) {

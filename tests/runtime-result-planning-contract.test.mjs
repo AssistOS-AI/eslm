@@ -185,7 +185,7 @@ test('request-planning and synthesis payloads enforce their versions and route-s
   const evidenceSynthesis = synthesizeHeuristicRequest(evidencePlanning, evidenceGrounding);
   const evidenceProvenance = evidenceSynthesis.evidence.selected.map(({ entry }) => ({
     fact: entry.recordId, kbId: entry.kbId, kbVersion: entry.kbVersion,
-    source: entry.provenance, method: 'extractive-request-synthesis', sourceClaim: true,
+    source: entry.provenance, method: 'grounded-symbolic-realization', sourceClaim: true,
   }));
   const evidenceResult = textResult({
     status: 'PARTIAL', answer: evidenceSynthesis.answer,
@@ -194,6 +194,23 @@ test('request-planning and synthesis payloads enforce their versions and route-s
     grounding: evidenceGrounding, usedKbVersions: evidenceSynthesis.contributingKbVersions,
   });
   assert.equal(assertRuntimeTextResultContract(evidenceResult), evidenceResult);
+  assert.throws(() => assertRuntimeTextResultContract({
+    ...evidenceResult,
+    answer: 'Qorins can cross stars.',
+    synthesis: {
+      ...evidenceSynthesis,
+      answer: 'Qorins can cross stars.',
+      realization: {
+        ...evidenceSynthesis.realization,
+        answer: 'Qorins can cross stars.',
+        claims: evidenceSynthesis.realization.claims.map((claim) => claim.status === 'realized'
+          ? { ...claim, sentence: 'Qorins can cross stars.' } : claim),
+        paragraphs: evidenceSynthesis.realization.paragraphs.map((paragraph) => ({
+          ...paragraph, surface: 'Qorins can cross stars.',
+        })),
+      },
+    },
+  }), /reproduce exactly from the selected evidence/u);
   assert.throws(() => assertRuntimeTextResultContract({
     ...evidenceResult,
     provenance: evidenceProvenance.map((item) => ({ ...item, fact: 'record:forged' })),
@@ -212,7 +229,7 @@ test('request-planning and synthesis payloads enforce their versions and route-s
   const multiSynthesis = synthesizeHeuristicRequest(multiPlanning, evidenceGrounding);
   const multiProvenance = multiSynthesis.evidence.selected.map(({ entry }) => ({
     fact: entry.recordId, kbId: entry.kbId, kbVersion: entry.kbVersion,
-    source: entry.provenance, method: 'extractive-request-synthesis', sourceClaim: true,
+    source: entry.provenance, method: 'grounded-symbolic-realization', sourceClaim: true,
   }));
   const multiResult = textResult({
     status: 'PARTIAL', answer: multiSynthesis.answer,
@@ -254,4 +271,3 @@ test('request-planning and synthesis payloads enforce their versions and route-s
     ...ambiguous, status: 'UNKNOWN',
   }), /matching AMBIGUOUS/u);
 });
-

@@ -9,30 +9,34 @@ There are three deliberately separate boundaries:
 
 - **Deployment:** trusted dependency-free Node.js plus inert JSON/JSONL. No network, LLM, child process, `eval`, or
   executable KB payload.
-- **Operator CLI:** direct symbolic execution first, with deterministic request-force planning able to preempt an
-  accidental assertion parse. Local CNL approximation inspects `UNPARSED` and `UNKNOWN`; it may also challenge a
-  direct `SOLVED` or `PARTIAL` interpretation when a structurally licensed candidate compiles to different Semantic
-  IR. A Language Agent is available only through explicit `--external-language-agent` or
-  `/normalize on` opt-in after the local result remains `UNPARSED`. Related-KB grounding is attached only after the
-  final route is known.
+- **Operator CLI:** a bounded English-likelihood gate rejects likely non-English input without translating it. English
+  direct execution runs before deterministic request planning and local CNL approximation; structurally licensed
+  alternatives are compared through parse-only Semantic IR. The general CLI composes a disclosed Language Agent
+  proposal strategy by default. It may propose translation for a likely-non-English rejection or simplification after
+  unsupported English exhausts local recovery. Its candidate has no answer authority and must pass the unchanged
+  English parser and semantic gates. `--no-external-language-agent` or `/normalize off` selects the fully local
+  profile. Related-KB grounding is attached only after the final route is known.
 - **Training:** an isolated Coding Agent may analyze an authorized, train-visible packet and propose untrusted records
   or changes. Validation and explicit promotion remain host operations.
 
 What works now: a documented controlled-English subset; session facts; exact retrieval and safe positive Horn
 deduction; several bounded finite state, relation, categorical, Boolean, spatial, countermodel, induction, abduction,
 and continuation methods; versioned declarative packages; query-directed public providers; structured failures; and
-failure-time grounding with provenance and search receipts. The default CLI also provides confidence-bearing local
+failure-time grounding with provenance and search receipts. The local language contract is English-only, including a
+bounded likelihood diagnostic that can refuse likely non-English text but never translate it. The CLI also provides confidence-bearing local
 spelling, morphology, auxiliary, clause-decomposition, and request-intent heuristics; work profiles bound their search.
 Recognized summary, explanation, comparison, outline, essay, report, article, document, table, list, and paragraph
-requests can produce a cited extractive `PARTIAL` artifact from supplied text and selected KB source claims.
+requests can produce a coherent cited `PARTIAL` artifact through symbolic claim admission, rhetorical planning,
+sentence realization, and document assembly. Every factual sentence remains bound to supplied text or an admitted KB
+claim; presentation fluency does not become proof.
 
 These working subsystems now share the first production slice of the trusted-strategy architecture. All 24 local
 language-approximation families execute through one sealed typed registry and deterministic stage coordinator. Exact
 strategy allowlists also gate request planning, query focus, relevance features, reasoning methods, and result
 construction inside their current owner modules. The catalog labels every entry `coordinated`, `instrumented-local`,
 or `planned`, so registration, local instrumentation, and future design cannot be confused. DS027 defines the
-remaining cross-stage scheduler, independent verification, compiler-side knowledge-standardization registry, and
-pipeline-receipt gates. KBs and configuration select only reviewed identities and never supply executable plugin code.
+remaining cross-stage scheduler, unified multi-method verification, compiler-side knowledge-standardization registry, and
+pipeline-receipt gates. KBs and configuration select only reviewed identities and never supply executable strategies.
 
 **Current specialization and next acceptance gates:** ESLM's strongest path is explicit language, bounded planning,
 reviewable knowledge, and finite symbolic methods. The staged expansion program covers broader English composition,
@@ -53,7 +57,7 @@ node src/cli.mjs ask "What is the capital of Romania?" --kb geonames-2026
 node src/cli.mjs ask "What is a hammer used for?" --kb conceptnet-5.7.0-en
 node src/cli.mjs ask "Abura is an mura. All mura et bana. Is Abura eating bana?"
 node src/cli.mjs ask "Write a short report about Penguin" --kb quick
-node src/cli.mjs ask "Este Penguin o pasăre?" --kb quick --external-language-agent
+node src/cli.mjs ask "Could Penguin perhaps be categorized as a bird?" --kb quick --external-language-agent
 node src/cli.mjs ask "Can Penguin swim?" --kb quick --no-external-language-agent
 node src/cli.mjs ask "QUESTION" --kb all --work-profile deep
 node src/cli.mjs ask "QUESTION" --strategy-preset language
@@ -62,11 +66,43 @@ node src/cli.mjs ask "QUESTION" --strategy-select \
 node src/cli.mjs run --input tests/fixtures/questions.txt --output /tmp/eslm-answers.jsonl
 node src/cli.mjs kb list
 node src/cli.mjs benchmark status
+node src/cli.mjs research graph status
+npm run research:graph:oasst1:preflight
 npm run benchmark
 npm run benchmark:generated
+npm run benchmark:generated:seed-audit
 npm run benchmark:public-probe
+npm run research:graph:pilot
+npm run research:graph:scale
 npm run kb:validate
 ```
+
+`research graph status` validates five historical processing-graph artifacts and separately recomputes current
+governance from the three source manifests, exact cache identities, admission gates, registry composition, and
+large-source readiness. Pilot, source-local, and bounded three-source work are each compared with their own approved
+pre-analysis plan. Status may report a historical execution as blocked, withdrawn, or superseded; it does not rerun
+projection or discovery. `research graph pilot` executes the complete two-source pilot, while `research graph scale`
+executes the staged OASST1 diagnostic, complete source-local pass, and bounded three-source analysis. Scale requires
+an exact `large-corpus` readiness decision bound to an approved pre-analysis discovery plan and the content-bearing preflight produced by
+`research:graph:oasst1:preflight`. The corresponding `:publish` npm commands replace only their named research
+receipts. Running or publishing either analysis does not change the runtime, mutate the processing-graph catalog, make
+a hypothesis executable, or grant promotion authority. Read current episode counts, stop reasons, frontiers, and
+receipt identities from `research graph status`, not from hand-copied prose.
+
+One research cycle has four explicit artifacts:
+`eslm-rl-dataset-discovery-plan-v2` freezes authorized scope, analysis identity, seed, selection, and work before observation;
+`eslm-processing-graph-research-analysis-v6` records deterministic machine evidence and replay ledgers;
+`eslm-processing-graph-consolidation-review-v1` records the DS028/DS029 human mapping; and
+`eslm-rl-dataset-discovery-cycle-v3` binds the plan and analysis while accounting for every machine hypothesis. Only
+the plan can admit reviewed training projections to analysis, and only the cycle can close research consolidation.
+None of those artifacts, and no publication step, grants answer, proof, runtime, catalog, or promotion authority.
+
+The processing graph is a concrete nested architecture, not a count or a checksum. A runtime request passes through
+language, request/session, knowledge/evidence, reasoning/verification, and failure/result circuits. Grounded response
+construction expands again into work coordination, claim admission, rhetorical planning, sentence realization,
+document assembly, schema validation, and session commit. The compiler and RL-discovery circuits use the same node,
+packet, resource, and authority vocabulary without sharing runtime authority. The complete live map and every named
+strategy are shown on the documentation home page; machine identities remain available in technical status receipts.
 
 Every question produces `eslm-runtime-result-v1`. Read `status` and `answer` first. `values`, normalized input, parsed
 query, task frame, plan, provenance, and reasoning are stage-dependent and can be absent after an early `UNPARSED`.
@@ -74,9 +110,11 @@ When present, `provenance` and `usedKbVersions` support only the primary result.
 `consultedKbVersions` describe scope.
 `grounding`, when present, contains related records with `answerSupported: false`, per-KB search receipts, and explicit
 completion or truncation. Ordinary inability grounding never rewrites the machine answer or enters its provenance.
-The explicit `heuristic-request-synthesis` route is the narrow exception: it returns a cited extractive `PARTIAL`
-artifact, promotes only the records selected as source material into `provenance` and `usedKbVersions`, and does not
-claim that relevance is deductive proof. If the artifact intent is understood but neither supplied material nor a
+The explicit `heuristic-request-synthesis` route is the narrow exception: it returns a cited grounded-symbolic
+`PARTIAL` artifact, promotes only records admitted and realized into sentences into `provenance` and
+`usedKbVersions`, and does not claim that relevance or fluent wording is deductive proof. In the interactive CLI a
+dimmed `Thinking · symbolic processing` block reports the plan, evidence admission, construction strategies,
+confidence, and authority boundary; a separate `Answer` block contains the clean user-facing prose. If the artifact intent is understood but neither supplied material nor a
 related KB record is available, `heuristic-request-planned` returns an explicit `MISSING_KNOWLEDGE` result.
 
 Local heuristic interpretation is visible as `heuristic-cnl-approximated` or `heuristic-cnl-ambiguous`; receipts show
@@ -95,13 +133,19 @@ change the profile interactively with `/work` and `/work PROFILE`.
 which catalog rows are displayed. They are inventory and ablation views, not execution profiles. Use
 `--strategy-select 'STAGE=ID[,ID];STAGE=ID'` or interactive `/strategy STAGE=IDS` for exact execution allowlists;
 `/strategy clear` restores the default built-in set. The current selectable stages are language interpretation,
-request planning, knowledge focus, evidence assessment, reasoning execution, and result construction. Retrieval,
-failure grounding, method planning, and verification remain visible in the catalog but cannot be selected until their
-executors genuinely cross the shared coordinator boundary.
+request planning, knowledge focus, evidence assessment, reasoning execution, and result construction. Retrieval and
+failure grounding remain local owners. Ordinary method planning and witness verification now have closed bounded
+processing-node envelopes, but all four stages remain non-selectable until their executors genuinely cross the shared
+coordinator boundary.
 
-When assistance is explicitly enabled, interactive mode prints `Thinking: interpreting with the configured Language
-Agent…` immediately before a real external invocation. A cache hit remains attributed to the assisted route but does
-not claim that a new external call occurred.
+The general CLI discloses its assisted default. Immediately before a real external invocation, interactive, one-shot
+`ask`, and batch `run` modes emit exactly one
+`Thinking: interpreting with the configured Language Agent…` line. One-shot and batch modes write it to standard error,
+so JSON and JSONL standard output remain valid. Direct execution, the explicit local profile, and cache hits remain
+silent; a cached result stays attributed to the assisted route without claiming a new external call. Translation is
+only an untrusted proposal: without an independent reviewed source-language preservation profile, open-class
+cross-language equivalence remains
+`UNVERIFIED_NORMALIZATION` even when the proposed English parses.
 
 ## Declarative knowledge, not generated executable data
 
@@ -116,7 +160,7 @@ training/KBs/<kb-id>/
 `quick` is the small authored tutorial fixture. `babi-v1.2-language` and `clutrr-kinship-algebra` are declarative
 language/method policy packages, not answer stores. Public providers include Open English WordNet, ATOMIC, GeoNames,
 ConceptNet, and the reviewed World Relations ontology. Run `node src/cli.mjs kb list` for the current inventory and see
-[`docs/knowledge-bases.html`](docs/knowledge-bases.html) for semantics and limits. Package counts describe compiled
+[`docs/knowledge/knowledge-bases.html`](docs/knowledge/knowledge-bases.html) for semantics and limits. Package counts describe compiled
 source coverage, never benchmark performance. Memory targets are advisory retention policies; they cannot delete valid
 facts or promise a hard RSS cap.
 
@@ -126,12 +170,13 @@ Canonical records have allowlisted types, stable identifiers, explicit reference
 
 ## Agent-guided training
 
-The repository owns four self-contained skills under `training/.agents/skills/`:
+The repository owns five self-contained skills under `training/.agents/skills/`:
 
 - `document-to-kb-builder` extracts supported canonical records from assigned documents.
 - `benchmark-guided-symbolic-learner` clusters development-visible failures and proposes general changes without answer memorization.
 - `core-change-guardian` challenges generic-core changes for leakage, unsoundness, hidden policy, and regressions.
 - `kb-compiler-quality-auditor` independently checks candidate and package integrity.
+- `rl-dataset-graph-discovery` freezes and projects rights-cleared task-feedback or trajectory sources, runs bounded structural discovery, validates phased scale admission, and consolidates graph hypotheses without learning answers or executable policy.
 
 Prepare and inspect a workspace without launching Coding Agent:
 
@@ -164,6 +209,8 @@ src/                       trusted runtime and operator entry points
   language/                symbolic frontend, deterministic heuristic planners, optional operator normalizer
   runtime/                 orchestration, heuristic request synthesis, and bounded work policy
   strategy/                sealed descriptors, registry, coordinator, inventory, and confidence votes
+  processing-graph/        exact circuit, node, edge, packet, resource, and validation catalog
+  research/                inert dataset projections, bounded graph analysis, and status validation
   training/                isolated Coding Agent subprocess runner
 tests/                     Node tests and immutable fixtures
 training/
@@ -199,8 +246,9 @@ target families, with nonce vocabulary, repair-required inputs, direct controls,
 default receipt contains 1,200 unique surface inputs and observes 593 of the 774 possible declared
 technique-by-domain cells. Those rows provide renaming and combination breadth; they are not 1,200 independent
 language structures, and domain remains coupled to predicate in the current generator. Each typed
-oracle is derived from the generating variables and labeled as answer execution, candidate selection, query-local
-decomposition, request execution, proposal-only preservation, or safety abstention. Candidate-selection rows require
+oracle is derived from the generating variables and labeled as answer execution, semantic-query execution,
+candidate selection, query-local decomposition, request execution, request planning, proposal-only preservation, or
+safety abstention. Candidate-selection rows require
 the intended structural candidate to win, carry its required family, receive a matching accepted parse-only reparse,
 and execute as the query-local interpreted episode under the declared route and status. They do not claim that the
 runtime produced a complete relation-shaped query. The report clusters the earliest
@@ -213,6 +261,12 @@ separately as
 [`latest-generated-heuristic-benchmark.json`](docs/results/latest-generated-heuristic-benchmark.json). Neither is a
 public or fresh score, and their accuracies are never merged. `benchmark probe` may execute selected public adapters
 and may assemble frozen receipt rows; each row must say which happened. Report assembly time is not execution time.
+The authored evaluation and benchmark now use closed v3 receipt schemas; all authored, fixed-generated, and
+multi-seed internal receipts carry the same content-addressed behavior-identity protocol. `npm run docs:check` requires
+all four JSON artifacts to match the current executable source checkpoint and requires every published authored or
+fixed-generated HTML page to be the exact deterministic rendering of its JSON. It reports stale evidence rather than
+rerunning benchmarks silently.
+
 The static receipt audit marks frozen results current, historical-stale, historical-unrecoverable, invalid, or
 unavailable against behavioral dependencies and receipt integrity. Use
 `npm run benchmark:receipts:audit -- --require-current` before claiming the current checkpoint; the normal
@@ -228,9 +282,9 @@ EWoK materials are used under their CC BY 4.0 license and Terms of Use for evalu
 
 Interactive `/smoke` executes a deterministic 4,096-case nonce/metamorphic catalog without Language Agent assistance
 or ordinary inability grounding: 1,200 fresh instantiations of all 43 heuristic-development shapes plus 2,896 cases
-from 26 established core templates. It reports the six heuristic oracle levels, observed routes, and statuses beside
+from 26 established core templates. It reports the eight heuristic oracle levels, observed routes, and statuses beside
 the ordinary pass/fail total. `/examples` shows stratified 24-case pages from that exact default corpus, so direct and
 repaired language, decomposition, requests, safety, state and relation work, preferences, and typed tasks are visible
 without scrolling a sequential block. This is software regression evidence, not public benchmark evidence.
 
-Read the [documentation](docs/index.html), the [implementation status](docs/status.html), the [research horizons](docs/research-horizons.html), the [trusted strategy contract](docs/specs/DS027-trusted-strategy-extensions-and-meta-rational-coordination.md), the [specification architecture](docs/specification-architecture.html), and the [specification matrix](docs/specs/matrix.md). The HTML pages explain the design from implementation and review viewpoints; the complete DS files remain authoritative. DS023 through DS026 turn the difficult next layers into explicit relevance, language, planning/synthesis, and grounded-evaluation research programs without presenting their hypotheses as current runtime capability.
+Read the [documentation](docs/index.html), the [logical processing architecture](docs/architecture/logical-processing-architecture.html), the [implementation status](docs/status.html), the [research horizons](docs/research/research-horizons.html), the [dataset-guided graph research](docs/research/processing-graph-research.html), the [processing-node strategy contract](docs/specs/DS027-trusted-strategy-extensions-and-meta-rational-coordination.md), the [hierarchical circuit and packet contract](docs/specs/DS029-hierarchical-processing-circuits-and-packet-contracts.md), the [specification architecture](docs/reference/specification-architecture.html), and the [specification matrix](docs/specs/matrix.md). The HTML pages explain the design from implementation and review viewpoints; the complete DS files remain authoritative. DS023 through DS026 define relevance, language, planning/synthesis, and grounded-evaluation programs. DS028 separately governs rights-aware discovery of node, gate, strategy, edge, and protocol hypotheses from inert training-visible task evidence. DS029 owns the exact nested circuits, node identities, packet families, guarded edges, and resource vocabulary against which those hypotheses are consolidated. None of these research hypotheses is presented as current runtime capability.

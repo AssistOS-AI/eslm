@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <base href="../">
+  <title>Knowledge-base development status — ESLM Documentation</title>
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="partials-loader.js" defer></script>
+</head>
+<body>
+<div data-include="partials/header.html"></div>
+<main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / <a href="evaluation.html">Development</a> / Knowledge-base status</p>
+<h1>Knowledge-base ingestion: current line and next targets</h1>
+<p class="lead">The current catalog contains eight concrete packages. They cover a small tutorial world, two benchmark-policy packages, lexical knowledge, defeasible event knowledge, geography, everyday relations, and reviewed relation semantics. They form useful foundations; broad document-trained world modeling remains a separate ingestion and evaluation program.</p>
+
+<h2>What exists now</h2>
+<div class="table-wrap"><table><thead><tr><th>Package family</th><th>Current capability and boundary</th></tr></thead><tbody>
+<tr><td><code>quick</code></td><td><dl class="table-details"><div><dt>Current</dt><dd>A small authored package with terms, facts, safe rules, and provenance. It exercises the complete canonical compile-and-load path.</dd></div><div><dt>Boundary</dt><dd>It is a tutorial and regression fixture, not general world knowledge.</dd></div></dl></td></tr>
+<tr><td><code>babi-v1.2-language</code><br><code>clutrr-kinship-algebra</code></td><td><dl class="table-details"><div><dt>Current</dt><dd>Declarative source-level policy for color induction and typed kinship composition.</dd></div><div><dt>Boundary</dt><dd>They contain no evaluation answers, story instances, people, or private solvers.</dd></div></dl></td></tr>
+<tr><td><code>oewn-2025</code></td><td><dl class="table-details"><div><dt>Current</dt><dd>Definitions, senses, synonyms, lemma lookup, and bounded hypernym traversal from Open English WordNet.</dd></div><div><dt>Boundary</dt><dd>Sense disambiguation and unrestricted lexical-semantic composition remain outside the supported profile.</dd></div></dl></td></tr>
+<tr><td><code>atomic-2020</code><br><code>conceptnet-5.7.0-en</code></td><td><dl class="table-details"><div><dt>Current</dt><dd>Event-centered commonsense candidates and typed everyday relations such as purpose, capability, location, property, causation, taxonomy, and synonymy.</dd></div><div><dt>Boundary</dt><dd>Many relations are defeasible. Frequency or graph weight does not turn a plausible edge into a universal fact.</dd></div></dl></td></tr>
+<tr><td><code>geonames-2026</code></td><td><dl class="table-details"><div><dt>Current</dt><dd>Country and populated-place facts with names, population, coordinates, time zone, and country identity.</dd></div><div><dt>Boundary</dt><dd>The package uses the reviewed populated-place profile and returns unresolved name ambiguity instead of guessing.</dd></div></dl></td></tr>
+<tr><td><code>world-relations-1.0</code></td><td><dl class="table-details"><div><dt>Current</dt><dd>Repository-reviewed relation directions, inverses, polarity, implications, state changes, and compatibility cues.</dd></div><div><dt>Boundary</dt><dd>This is semantic policy, not an external fact collection and not a substitute for missing source evidence.</dd></div></dl></td></tr>
+</tbody></table></div>
+<p><code>node src/cli.mjs kb list</code> is the current inventory view. <code>npm run kb:validate</code> checks package structure and identities. Neither command proves that every package contributed to a particular answer; the runtime result separately names selected, consulted, and answer-contributing packages.</p>
+
+<h2>Where one package sits in the ingestion pipeline</h2>
+<ol>
+<li><strong>Source reviewed:</strong> origin, revision, rights, split, and retention policy are frozen.</li>
+<li><strong>Canonical records built:</strong> typed facts, terms, rules, constraints, and provenance are emitted as inert data.</li>
+<li><strong>Package compiled:</strong> deterministic indexes and shards are produced without changing canonical meaning.</li>
+<li><strong>Package validated and catalogued:</strong> files, references, namespaces, checksums, and supported projections pass the registration boundary.</li>
+<li><strong>Queried and witnessed:</strong> a request reaches the package through a real access path, and any contributing record appears in result provenance.</li>
+</ol>
+<p>A source can stop at any stage. “Downloaded,” “compiled,” “registered,” “consulted,” and “used in an answer” are intentionally different states.</p>
+
+<h2>Best next ingestion targets</h2>
+<div class="table-wrap"><table><thead><tr><th>Candidate</th><th>Why it matters and what must happen first</th></tr></thead><tbody>
+<tr><td>A small distributable technical manual</td><td><dl class="table-details"><div><dt>Value</dt><dd>Demonstrates section hierarchy, definitions, procedures, revisions, citations, and multi-step questions in one reviewable package.</dd></div><div><dt>Gate</dt><dd>Complete source freeze, span-addressed provenance, bounded extraction, identity review, canonical validation, held-out questions, and eager/lazy equivalence.</dd></div></dl></td></tr>
+<tr><td>Broader encyclopedic entity and event knowledge</td><td><dl class="table-details"><div><dt>Value</dt><dd>Addresses broad factoid and entity-relation gaps that lexical and geographic packages cannot cover.</dd></div><div><dt>Gate</dt><dd>A rights-cleared source profile, stable entity identity, qualifier preservation, exact routing, conflict policy, and source-version evaluation.</dd></div></dl></td></tr>
+<tr><td>Lexical frames and semantic roles</td><td><dl class="table-details"><div><dt>Value</dt><dd>Connects verbs and constructions to agent, patient, source, destination, instrument, and event structures.</dd></div><div><dt>Gate</dt><dd>A lossless source mapping and a real parser-side frame interpreter; storing frame-shaped records alone is not language understanding.</dd></div></dl></td></tr>
+<tr><td>Temporal and revision-aware knowledge</td><td><dl class="table-details"><div><dt>Value</dt><dd>Supports changing facts, validity intervals, supersession, and questions tied to a named time.</dd></div><div><dt>Gate</dt><dd>Context and temporal semantics, conflict handling, and witnesses that distinguish source time from described time.</dd></div></dl></td></tr>
+<tr><td>Domain packages for engineering and science</td><td><dl class="table-details"><div><dt>Value</dt><dd>Adds high-precision terminology, constraints, procedures, and equations where provenance and exact scope matter.</dd></div><div><dt>Gate</dt><dd>One source-specific ingestion strategy may decode the material, but every candidate must converge on shared records, validators, methods, and promotion gates.</dd></div></dl></td></tr>
+</tbody></table></div>
+
+<h2>What would count as real progress</h2>
+<p>The next package should improve held-out questions that require its source, preserve citations to exact source spans, expose unresolved identity or conflict instead of guessing, and leave unrelated package answers unchanged. More records alone are not enough. Extraction coverage, factual spot checks, provenance reachability, query routing, proof validity, memory behavior, and regression stability must move together.</p>
+
+<p class="related">Read <a href="knowledge/knowledge-bases.html">Knowledge packages</a> for record and runtime semantics, <a href="knowledge/kb-storage-and-indexing.html">KB storage and indexing</a> for physical compilation, and <a href="knowledge/symbolic-document-kbs.html">Symbolic document KBs</a> for the document-ingestion target.</p>
+</main>
+<div data-include="partials/footer.html"></div>
+</body>
+</html>

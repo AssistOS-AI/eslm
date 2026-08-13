@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en"><head>
+  <base href="../"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KB storage and indexing — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head>
+<body><div data-include="partials/header.html"></div><main><p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / System / KB storage and indexing</p>
+<h1>KB storage: canonical meaning, immutable packages, indexes, routing, and caches</h1>
+<p class="lead">A knowledge base has one logical record stream and several replaceable physical views. The current generic compiler implements a small JSON package format. Large public providers already use source-specific query-directed shards and byte-accounted caches. DS018–DS021 define the unified streaming architecture that must replace eager v1 compilation before the next larger corpus is accepted.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  C[Canonical JSONL] --> P[Deterministic compiler]
+  P --> S[Immutable shards and indexes]
+  S --> Q[Exact query router]
+  Q --> M[Reasoning method]</pre><figcaption>Canonical knowledge to bounded execution.</figcaption></figure><p class="diagram-explanation">Canonical records define meaning. Compilation creates validated access paths. Routing selects the exact candidate shards for a typed subgoal, and a reasoning method consumes verified records. Cache residence changes I/O only.</p>
+
+<h2>Canonical record envelope</h2>
+<p>The canonical-schema gate accepts thirteen record types: term, lexeme, assertion, event, role edge, semantic frame, rule, constraint, context, provenance, alignment, retraction, and plan. Every record has <code>recordType</code>, <code>recordId</code>, <code>kbNamespace</code>, <code>schemaVersion</code>, and <code>provenanceRefs</code>. Non-provenance records require at least one provenance reference. The gate then checks record-specific fields and the complete reference graph.</p>
+<pre><code>{
+  "recordType": "assertion",
+  "recordId": "fact:manual:coolant-loop-part",
+  "kbNamespace": "manual.v3",
+  "schemaVersion": "1",
+  "predicate": "term:common:PartOf",
+  "arguments": ["term:manual:valve-7", "term:manual:coolant-loop"],
+  "polarity": "positive",
+  "epistemicStatus": "asserted",
+  "contextRef": "context:manual:revision-3",
+  "provenanceRefs": ["prov:manual:section-4.2:p3"]
+}</code></pre>
+<p>Stable IDs are semantic identities, not array indexes. The current generic v1 audit proves local provenance, term, predicate, context, event, rule, and retraction references across all shards. It resolves package dependencies to exact immutable identities but does not yet use a dependency term directory to prove an imported record identifier, so a v1 record that names a term found only in another package is rejected. Rule head variables must be bound by positive body atoms. These checks prevent a visually plausible JSON file from becoming an inconsistent executable model.</p>
+
+<h2>Current generic package v1</h2>
+<p><code>compileKnowledgeBase</code> currently reads one canonical JSONL file, validates it, groups records by record type and a two-hex-digit predicate or language hash prefix, sorts each group by <code>recordId</code>, and writes stable JSON arrays under <code>segments/</code>. Assertions declare access path <code>predicate-arguments</code>; other v1 groups declare <code>record-id</code>. Each shard descriptor records kind, predicates, data path, record count, stored bytes, checksum, and dependencies.</p>
+<pre><code>{
+  "shardId": "assertions-8f",
+  "shardKind": "assertion",
+  "accessPath": "predicate-arguments",
+  "predicates": ["term:common:PartOf"],
+  "dataRef": "segments/assertions-8f.json",
+  "recordCount": 1842,
+  "compressedBytes": 391204,
+  "checksum": "sha256:...",
+  "dependencies": []
+}</code></pre>
+<p>The generic loader closes the package root to exactly the manifest, <code>shards.json</code>, and a real <code>segments/</code> directory; that directory may contain only the regular files declared by <code>segments/[a-z0-9-]+.json</code> references. Registration reads one complete shard at a time, verifies its SHA-256 digest, bytes, count, schema, record kind, namespace, and local cross-record references, then releases its record array before the next shard. It applies iterative per-record bounds to cumulative UTF-8 string bytes, JSON depth, nodes, array entries, and object keys, while separate global entry and UTF-8 byte bounds govern the retained identity/reference index. The catalog persists the immutable package and compiler identities, exact dependency resolutions, and a receipt containing work limits, structural maxima, and reconciled reference counts. It never treats an undeclared root file or symbolic link as package content.</p>
+
+<h2>Current limitation: generic v1 is eager</h2>
+<p>The v1 compiler calls <code>readFile</code> for the complete canonical file and retains both all records and grouping arrays. Registration is sequential across shards, but JSON parsing still materializes one complete shard before structural and semantic checks; the explicit shard-byte limit bounds that exposure without making it a streaming decoder. This is correct for the small authored packages but is not the DS019 large-corpus compiler. The target implementation must stream JSONL, spill bounded partitions, merge deterministic sorted runs, and decode selectable blocks.</p>
+
+<h2>Registered generic v1 identity</h2>
+<p>DS006 binds KB ID and stable semantic version, schema, namespace, canonical digest and count, compiler version and configuration digest, trust metadata, exact dependencies, and the complete shard inventory. The current allowlisted v1 envelope includes:</p>
+<pre><code>{
+  "manifestType": "knowledgeBasePackage",
+  "format": "eslm-kb-package-v1",
+  "kbId": "technical-manual-v3",
+  "kbVersion": "3.0.0",
+  "schemaVersion": "1",
+  "namespace": "manual.v3",
+  "canonicalSource": {
+    "checksum": "sha256:...",
+    "recordCount": 120000
+  },
+  "compiler": {
+    "version": "eslm-kb-compiler-vNext",
+    "configurationHash": "sha256:..."
+  },
+  "counts": {
+    "provenance": 1000,
+    "term": 19000,
+    "lexeme": 40000,
+    "assertion": 60000
+  },
+  "languages": ["en"],
+  "domains": ["technical-documentation"],
+  "dependencies": [],
+  "capabilities": ["document-fact-retrieval"],
+  "trustLevel": "schema-and-equivalence-validated",
+  "benchmarkEligible": false,
+  "license": "declared-source-license",
+  "shardDirectoryRef": "shards.json"
+}</code></pre>
+<p>Dependencies are resolved to exact immutable package identities in the registration receipt. Package-relative paths are allowlisted and confined, while exact inventory checks reject undeclared neighbors. Registration validates identity, all shard bytes, and the local record graph before an atomic catalog write; unregistration removes only the catalog entry and refuses to strand a registered dependent. Overlays add or retract records through explicit context and precedence rather than rewriting a baseline or trusting load order.</p>
+
+<h2>Access paths and block design</h2>
+<p>The large-package compiler must emit indexes for the queries the methods actually execute. Unary facts need predicate–subject and subject–predicate order. Binary facts need predicate–subject–object and predicate–object–subject order. Events need event-type, event–role–filler, and filler–role–event. Rules need head-predicate and body-dependency indexes. Document KBs add lexical, mention, hierarchy, procedure, temporal, and provenance-span indexes.</p>
+<p>An access-path shard is partitioned by predicate family and a stable key range or hash bucket. Inside it, sorted blocks record minimum and maximum key, count, encoding version, stored and decoded byte sizes, checksum, and optional conservative Bloom filter. Dictionary coding assigns dense local integers in deterministic canonical-ID order. Repeated predicate, context, role, and source IDs use dictionaries; integer columns may use delta encoding. None of these encodings changes term identity or qualifiers.</p>
+
+<h2>Exact routing</h2>
+<p>A task signature contains candidate terms, stable entities, predicates, bound arguments, time and space constraints, expected output type, and required methods. The catalog uses exact namespace, term-directory, predicate, rule-head, dependency, and range evidence to find possible shards. A verified exact miss or conservative Bloom negative can exclude a shard. Similarity and domain fingerprints may reorder candidates but cannot prove absence.</p>
+<p>Reasoning expands routing from unresolved proof subgoals. A rule head request first locates rules that can derive the predicate; each rule body then creates exact premise requests. A relation path can request adjacency blocks only for the current frontier. The trace records each request, selection reason, loaded block, and newly created subgoal. Exhaustive and lazy routing must return identical records and proofs for the same semantic bounds.</p>
+
+<h2>Cache key and memory accounting</h2>
+<p>A block cache key is <code>(kbId, kbVersion, shardId, blockId, checksum, decoderVersion)</code>. Entries record decoded bytes, retained-byte estimate, pin state, last access, and validation state. The policy evicts eligible least-recently-used or lower-value blocks until a new block fits. Core dictionaries and active session overlays may be pinned; domain blocks are normally evictable.</p>
+<p>A block larger than the soft retention target can be decoded once without admission when bounded and safe. Otherwise the task returns <code>RESOURCE_LIMIT</code> and the package profile records the need for finer future blocks. It never deletes facts or reduces a benchmark denominator. <code>/memory</code> and <code>ask --profile</code> expose loads, bytes, hits, misses, evictions, bypasses, pins, and expansion limits.</p>
+
+<h2>Three cache domains</h2>
+<p>Frozen source archives under ignored training caches, in-process KB block caches, and Language Agent normalization caches are separate. Source-cache presence does not mean a package was compiled. A KB cache hit does not mean a benchmark was executed. A normalization cache hit remains externally assisted language evidence. Each domain has its own identity and validation contract.</p>
+
+<h2>Acceptance tests</h2>
+<p>The compiler reconciles source, invalid, outside-projection, canonical, deduplicated, index-entry, and shard counts. Canonical and compiled readers must agree on IDs, arguments, polarity, epistemic status, context, time, confidence, and provenance for positive, negative, ambiguous, duplicate, overlay, cyclic, and boundary-block queries. Cold, warm, low-retention, and exhaustive runs must agree semantically. Any routing or cache false negative is a correctness defect, not approximate retrieval.</p>
+<p>The normative layers are <a href="specsLoader.html?spec=DS005-knowledge-base-logical-model.md">DS005</a>, <a href="specsLoader.html?spec=DS006-kb-package-identity-registration-dependencies-and-overlays.md">DS006</a>, and <a href="specsLoader.html?spec=DS018-corpus-source-gates-and-profiling.md">DS018</a> through <a href="specsLoader.html?spec=DS021-memory-budgets-and-shard-caches.md">DS021</a>.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

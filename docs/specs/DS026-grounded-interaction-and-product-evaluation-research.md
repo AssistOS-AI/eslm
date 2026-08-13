@@ -49,7 +49,7 @@ The product suite contains frozen, independently authored cases in at least thes
 7. conflicting or context-dependent sources;
 8. spelling, morphology, punctuation, and near-CNL wording;
 9. paraphrased and complex sentences with protected-operator traps;
-10. multilingual operator-normalization controls;
+10. likely-non-English local rejection and separately attributed external translation-proposal controls;
 11. multi-KB questions with wrong-KB and common-word distractors;
 12. source-only summarization and expansion;
 13. compare, explain, report, essay, outline, and table requests;

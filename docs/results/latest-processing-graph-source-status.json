@@ -1,0 +1,59 @@
+{
+  "format": "eslm-processing-graph-scale-status-v1",
+  "stage": "complete-large-source-bounded-cross-source-analysis",
+  "sources": [
+    {
+      "sourceId": "helpsteer2",
+      "state": "pilot-analyzed",
+      "rawRows": 20324,
+      "projectedEpisodes": 10161,
+      "projectionDigest": "sha256:091b9409be5f8de95ece02f0ea6ff14d51955818adcfa231d4612e859c36e6c0",
+      "complete": true
+    },
+    {
+      "sourceId": "gsm8k",
+      "state": "pilot-analyzed",
+      "rawRows": 7473,
+      "projectedEpisodes": 7473,
+      "projectionDigest": "sha256:27246fd7dafc5435483507e187db97179f496c6f92114a0392b9b3974de21476",
+      "complete": true
+    },
+    {
+      "sourceId": "oasst1",
+      "state": "large-source-analyzed",
+      "rawRows": 10364,
+      "rawMessages": 88838,
+      "projectedEpisodes": 2220,
+      "projectedMessages": 22373,
+      "excludedRows": 8144,
+      "projectionDigest": "sha256:ffb914e544f774123d323db4921031963c316f4fb7689696c5f94784291580b5",
+      "projectionManifestDigest": "sha256:a14764b73bd8e94f704dd399581aeac36af30491ae8b498d5af5b11b213914cf",
+      "shards": 16,
+      "complete": true
+    }
+  ],
+  "stagedExecution": {
+    "diagnosticShards": 4,
+    "diagnosticEpisodes": 569,
+    "diagnosticComplete": false,
+    "diagnosticOmissions": [
+      {
+        "scope": "input",
+        "reason": "projection-membership-incomplete",
+        "count": 1651
+      }
+    ],
+    "fullShards": 16,
+    "fullLargeSourceEpisodes": 2220,
+    "fullLargeSourceComplete": true,
+    "crossSourceEpisodesAvailable": 19854,
+    "crossSourceEpisodesAnalyzed": 8192,
+    "crossSourceComplete": false
+  },
+  "oasst1AnalysisReceiptDigest": "sha256:f2dc861c2faf5d4dc6af37842c50c507dfca7ae7d5afacf529b141f98d6a9ef6",
+  "analysisReceiptDigest": "sha256:0ffdaf6eb8f853224eaab3a64a41d94e9f48e2d4f00aba999347e0b40ddbbaf0",
+  "readinessGateReceiptDigest": "sha256:633cc69d955fcd1da4c6d4c75bc1165f1917cdae7cd6137fe362b19071a3add3",
+  "hypotheses": 21,
+  "nextGate": "manual-consolidation-and-independent-transfer",
+  "authority": "research-status-only"
+}

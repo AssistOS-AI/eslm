@@ -1,9 +1,22 @@
 import { NORMALIZATION_RESULT_PROTOCOL } from './result-payload-contracts.mjs';
 
 const MAX_LANGUAGE_AGENT_PROPOSALS = 3;
+const NORMALIZATION_STRATEGIES = Object.freeze({
+  translation: 'strategy:language:external-translation-proposal@1',
+  simplification: 'strategy:language:external-simplification-proposal@1',
+});
 
 function normalizationResult(value) {
   return { protocol: NORMALIZATION_RESULT_PROTOCOL, ...value };
+}
+
+function strategyAccounting(operation) {
+  return Object.freeze({
+    strategyIdentity: NORMALIZATION_STRATEGIES[operation],
+    stage: 'runtime.language.interpret',
+    proposalRole: 'untrusted-language-form-candidate',
+    answerAuthority: 'none',
+  });
 }
 
 export class LanguageAgentAssistedRuntime {
@@ -23,6 +36,8 @@ export class LanguageAgentAssistedRuntime {
   }
 
   attachGrounding(result) {
+    if (result.languageAssessment?.classification === 'likely-non-english'
+      && result.languageRoute !== 'language-agent-normalized') return result;
     return typeof this.runtime.attachGrounding === 'function'
       ? this.runtime.attachGrounding(result) : result;
   }
@@ -51,6 +66,8 @@ export class LanguageAgentAssistedRuntime {
       };
       return this.attachGrounding(annotated);
     }
+    const requestedOperation = direct.languageAssessment?.classification === 'likely-non-english'
+      ? 'translation' : 'simplification';
     let feedback = [];
     let previousCandidate;
     let externalInvocations = 0;
@@ -61,7 +78,9 @@ export class LanguageAgentAssistedRuntime {
       const remainingAttempts = MAX_LANGUAGE_AGENT_PROPOSALS - proposalCount;
       if (remainingAttempts <= 0) break;
       const normalized = await this.normalizer.normalize(text, {
-        feedback, previousCandidate, remainingAttempts,
+        feedback, previousCandidate, remainingAttempts, requestedOperation,
+        operation: requestedOperation,
+        languageAssessment: direct.languageAssessment,
       });
       externalInvocations += normalized.externalInvocations ?? 0;
       proposalCount += normalized.cacheHit
@@ -74,8 +93,9 @@ export class LanguageAgentAssistedRuntime {
         cacheHit, cacheKey: normalized.cacheKey,
         inputSha256: normalized.inputSha256, receipt: receipts.at(-1) ?? normalized.receipt,
         receipts: Object.freeze([...receipts]), externalInvocations,
-        requestedOperation: normalized.requestedOperation, proposalCount,
+        requestedOperation: normalized.requestedOperation ?? requestedOperation, proposalCount,
         proposalLimit: MAX_LANGUAGE_AGENT_PROPOSALS,
+        ...strategyAccounting(requestedOperation),
       };
       if (normalized.status === 'failed') {
         return this.attachGrounding({
@@ -126,6 +146,7 @@ export class LanguageAgentAssistedRuntime {
         ...reparsed,
         languageRoute: 'language-agent-normalized',
         originalInput: direct.input ?? { original: text },
+        ...(direct.languageAssessment ? { languageAssessment: direct.languageAssessment } : {}),
         normalization: normalizationResult({
           ...common, status: 'accepted', candidate: normalized.candidate,
           validation: normalized.validation, reparseStatus: reparsed.status,
@@ -137,6 +158,7 @@ export class LanguageAgentAssistedRuntime {
       normalization: normalizationResult({
         attempted: true, triggerStatus: direct.status, status: 'proposal-limit-exhausted',
         proposalCount, proposalLimit: MAX_LANGUAGE_AGENT_PROPOSALS, externalInvocations, cacheHit,
+        requestedOperation, ...strategyAccounting(requestedOperation),
         receipts: Object.freeze(receipts), diagnostic: 'The bounded Language Agent proposal limit was exhausted.',
       }),
     });

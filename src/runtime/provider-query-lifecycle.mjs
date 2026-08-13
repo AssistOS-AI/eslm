@@ -1,5 +1,9 @@
 function boundedDiagnostic(error) {
-  return String(error?.message ?? error).slice(0, 240);
+  try {
+    return String(error?.message ?? error).slice(0, 240);
+  } catch {
+    return 'unprintable provider failure';
+  }
 }
 
 function providerIdentity(provider) {

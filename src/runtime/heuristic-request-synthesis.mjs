@@ -1,8 +1,9 @@
 import {
   groundingTerms, groundingTokens, normalizedGroundingSurface,
 } from '../reasoning/grounding-query-focus.mjs';
+import { realizeGroundedResponse } from './grounded-response-realization.mjs';
 
-export const HEURISTIC_SYNTHESIS_PROTOCOL = 'eslm-heuristic-request-synthesis-v1';
+export const HEURISTIC_SYNTHESIS_PROTOCOL = 'eslm-heuristic-request-synthesis-v2';
 
 const SOURCE_STOP_WORDS = new Set([
   'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'has', 'have', 'in', 'is', 'it',
@@ -62,10 +63,6 @@ function contentLimits(outputContract) {
 
 function entryIdentity(entry) {
   return `${entry.kbId}@${entry.kbVersion ?? 'unversioned'}:${entry.recordId}`;
-}
-
-function citation(entry) {
-  return `[${entry.kbId}${entry.kbVersion ? `@${entry.kbVersion}` : ''}; ${entry.recordId}]`;
 }
 
 function topicMatch(entry, topic) {
@@ -144,80 +141,6 @@ function selectEntries(plan, grounding, maximumEntries) {
   });
 }
 
-function groupedByTopic(plan, selected) {
-  const groups = new Map(plan.topics.map((topic) => [topic.topicId, { topic, items: [] }]));
-  for (const item of selected) {
-    for (const topicId of item.topicIds) groups.get(topicId)?.items.push(item);
-  }
-  return [...groups.values()];
-}
-
-function titleFor(plan) {
-  const topics = plan.topics.map((topic) => topic.surface).join(' and ');
-  const artifact = plan.outputContract.artifact;
-  return `${artifact[0].toLocaleUpperCase('en-US')}${artifact.slice(1)}${topics ? `: ${topics}` : ''}`;
-}
-
-function statementLine(item, prefix = '- ') {
-  return `${prefix}${boundedText(item.entry.statement)} ${citation(item.entry)}`;
-}
-
-function renderTable(plan, selected) {
-  const lines = ['| Topic | Retrieved KB statement | Source |', '|---|---|---|'];
-  for (const item of selected) {
-    const names = plan.topics.filter((topic) => item.topicIds.includes(topic.topicId))
-      .map((topic) => topic.surface).join(', ') || 'general';
-    const statement = boundedText(item.entry.statement).replaceAll('|', '\\|');
-    lines.push(`| ${names.replaceAll('|', '\\|')} | ${statement} | ${citation(item.entry)} |`);
-  }
-  return lines;
-}
-
-function renderSource(summary, outputContract, intent) {
-  if (!summary?.selected.length) return [];
-  if (outputContract.format === 'table') {
-    return [
-      '| Supplied excerpt | Origin |',
-      '|---|---|',
-      ...summary.selected.map((item) =>
-        `| ${item.surface.replaceAll('|', '\\|')} | supplied material |`),
-    ];
-  }
-  if (intent === 'expand' || ['outline', 'bullets'].includes(outputContract.format)) {
-    return summary.selected.map((item) => `- ${item.surface}`);
-  }
-  return [summary.selected.map((item) => item.surface).join(' ')];
-}
-
-function renderOutline(plan, selected) {
-  const lines = [];
-  for (const group of groupedByTopic(plan, selected)) {
-    lines.push(`- ${group.topic.surface}`);
-    for (const item of group.items) lines.push(statementLine(item, '  - '));
-    if (group.items.length === 0) lines.push('  - No matching KB record was retrieved within this work policy.');
-  }
-  if (plan.topics.length === 0) for (const item of selected) lines.push(statementLine(item));
-  return lines;
-}
-
-function renderSections(plan, selected) {
-  const lines = [];
-  const groups = groupedByTopic(plan, selected);
-  if (groups.length === 0) {
-    lines.push('## Retrieved evidence', ...selected.map((item) => statementLine(item)));
-    return lines;
-  }
-  for (const group of groups) {
-    lines.push(`## ${group.topic.surface}`);
-    if (group.items.length === 0) {
-      lines.push('No matching KB record was retrieved within this work policy.');
-    } else {
-      lines.push(...group.items.map((item) => statementLine(item)));
-    }
-  }
-  return lines;
-}
-
 function correlationSummary(plan, selected) {
   if (plan.topics.length < 2) return null;
   const byPredicate = new Map();
@@ -265,14 +188,16 @@ function hasCausalEvidence(evidence) {
 
 function operationGaps(operation, sourceSummary, evidence, correlation, grounding) {
   const gaps = [
-    `Operation ${operation.order} produced a bounded extractive ${operation.intent} artifact; `
-      + 'complete generative composition was not performed.',
+    `Operation ${operation.order} used bounded evidence admission and symbolic sentence realization; `
+      + 'unsupported content remains an explicit gap.',
   ];
   if (sourceSummary && !sourceSummary.complete) {
     gaps.push(`${sourceSummary.truncatedSentences} supplied sentence(s) exceeded the per-sentence excerpt cap, `
       + `or ${sourceSummary.omitted} sentence(s) exceeded this operation's output budget.`);
   }
-  if (!grounding?.search?.complete) gaps.push('The related-evidence search was incomplete.');
+  if (grounding && grounding.search?.complete === false) {
+    gaps.push('The related-evidence search was incomplete.');
+  }
   if (evidence.budgetOmitted > 0) {
     gaps.push(`${evidence.budgetOmitted} relevant record(s) exceeded this operation's output budget.`);
   }
@@ -359,39 +284,6 @@ function aggregateEvidence(operationResults, grounding) {
   });
 }
 
-function renderOperation(lines, result, multiple) {
-  const { artifact, view } = result;
-  const topics = view.topics.map((topic) => topic.surface).join(' and ');
-  if (multiple) {
-    const label = `${artifact.intent[0].toLocaleUpperCase('en-US')}${artifact.intent.slice(1)}`;
-    lines.push('', `## Obligation ${artifact.order}: ${label}${topics ? ` — ${topics}` : ''}`);
-  }
-  if (artifact.sourceSummary?.selected.length) {
-    lines.push('', multiple ? '### Supplied material' : '## Supplied material');
-    lines.push(...renderSource(artifact.sourceSummary, artifact.outputContract, artifact.intent));
-  }
-  if (artifact.evidence.selected.length) {
-    const evidenceTitle = artifact.outputContract.format === 'table' ? 'Evidence table' : 'KB evidence';
-    lines.push('', `${multiple ? '###' : '##'} ${evidenceTitle}`);
-    if (artifact.outputContract.format === 'table') {
-      lines.push(...renderTable(view, artifact.evidence.selected));
-    } else if (['outline', 'bullets'].includes(artifact.outputContract.format)) {
-      lines.push(...renderOutline(view, artifact.evidence.selected));
-    } else if (artifact.outputContract.format === 'sections') {
-      lines.push(...renderSections(view, artifact.evidence.selected).map((line) =>
-        multiple && line.startsWith('## ') ? `###${line.slice(2)}` : line));
-    } else {
-      lines.push(...artifact.evidence.selected.map((item) => statementLine(item)));
-    }
-  }
-  if (artifact.correlation) {
-    lines.push('', `${multiple ? '###' : '##'} Correlation check`, artifact.correlation.statement);
-  }
-  if (multiple) {
-    lines.push('', '### Obligation coverage gaps', ...artifact.gaps.map((gap) => `- ${gap}`));
-  }
-}
-
 function boundedGaps(gaps) {
   const unique = [...new Set(gaps)];
   if (unique.length <= 64) return Object.freeze(unique);
@@ -414,20 +306,9 @@ export function synthesizeHeuristicRequest(planResult, grounding) {
         contentLimits(plan.outputContract).maximumSourceSentences) : null;
   if (!sourceSummary?.selected.length && evidence.selected.length === 0) return null;
   const correlation = operationArtifacts.find((item) => item.correlation)?.correlation ?? null;
-  const fullyPreserved = (plan.sourceMaterial?.complete ?? true) && (sourceSummary?.complete ?? true);
-  const multiple = operationArtifacts.length > 1;
-  const lines = [
-    `# ${titleFor(plan)}`,
-    '',
-    `This is a bounded, source-grounded draft. It ${fullyPreserved ? 'preserves' : 'quotes bounded excerpts from'} `
-      + 'supplied sentences and retrieved KB statements; '
-      + 'it does not treat lexical relevance as proof or claim that the search was exhaustive.',
-  ];
-  operationResults.forEach((result) => renderOperation(lines, result, multiple));
-
   const aggregateGaps = [
-    'This route produced a bounded extractive draft with explicit operation artifacts; '
-      + 'complete generative composition was not performed.',
+    'This route used bounded symbolic answer construction with explicit operation artifacts; '
+      + 'unsupported factual bridges were not generated.',
   ];
   if (plan.sourceMaterial && !plan.sourceMaterial.complete) {
     aggregateGaps.push(
@@ -444,7 +325,9 @@ export function synthesizeHeuristicRequest(planResult, grounding) {
     aggregateGaps.push(...(planResult.receipt.truncationReasons ?? []).map((reason) =>
       `Request planning was incomplete: ${reason}.`));
   }
-  if (!grounding?.search?.complete) aggregateGaps.push('The related-evidence search was incomplete.');
+  if (grounding && grounding.search?.complete === false) {
+    aggregateGaps.push('The related-evidence search was incomplete.');
+  }
   if (evidence.unrelatedEntriesOmitted > 0) {
     aggregateGaps.push(
       `${evidence.unrelatedEntriesOmitted} retrieved record(s) lacked direct topic overlap and were omitted.`,
@@ -454,27 +337,26 @@ export function synthesizeHeuristicRequest(planResult, grounding) {
     aggregateGaps.push(`${evidence.budgetOmitted} relevant record(s) exceeded the aggregate output budget.`);
   }
   const operationGaps = operationArtifacts.flatMap((item) =>
-    item.gaps.slice(1).map((gap) => multiple ? `Operation ${item.order}: ${gap}` : gap));
+    item.gaps.slice(1).map((gap) => operationArtifacts.length > 1
+      ? `Operation ${item.order}: ${gap}` : gap));
   const gaps = boundedGaps([...aggregateGaps, ...operationGaps]);
-  if (multiple) {
-    lines.push('', '## Aggregate artifact',
-      'The obligation sections above are the aggregate artifact, preserved in request order; '
-        + 'no additional factual bridge was generated.');
-  }
-  lines.push('', multiple ? '## Aggregate coverage gaps' : '## Coverage gaps',
-    ...gaps.map((gap) => `- ${gap}`));
+  const realization = realizeGroundedResponse({
+    plan, operationResults, evidence, sourceSummary, correlation, gaps, grounding,
+  });
+  if (!realization) return null;
   return Object.freeze({
     protocol: HEURISTIC_SYNTHESIS_PROTOCOL,
     status: 'PARTIAL',
-    answer: lines.join('\n'),
+    answer: realization.answer,
     plan,
-    claimMode: 'extractive-source-and-related-kb-draft',
+    claimMode: 'grounded-symbolic-generation',
     answerAuthority: 'related-evidence-is-not-entailment',
     operationArtifacts,
     sourceSummary,
     evidence,
     correlation,
     gaps: Object.freeze(gaps),
+    realization,
     contributingKbVersions: Object.freeze([...new Map(evidence.selected.flatMap((item) =>
       item.entry.contributingKbVersions.map((identity) => [
         `${identity.kbId}\u0000${identity.version ?? ''}`, identity,

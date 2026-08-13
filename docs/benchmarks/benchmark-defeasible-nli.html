@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head>
+  <base href="../"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Defeasible NLI protocol — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Evaluation / Defeasible NLI</p>
+<h1>Defeasible NLI: whether new information strengthens or weakens an inference</h1>
+<p class="lead">Defeasible NLI compares a plausible premise-to-hypothesis inference before and after an update, asking whether the new information makes that inference stronger or weaker. The symbolic target is a comparison between two explicit defeasible support states, with evidence contributions visible in each state.</p>
+<div class="callout"><p><strong>Current measurements:</strong> Read the generated Defeasible NLI row on the <a href="evaluation.html">evaluation dashboard</a> or inspect the <a href="results/latest-public-benchmark-probes.json">raw v2 report</a>. This page retains official source eligibility and scoring semantics, not mutable execution totals.</p></div>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  B[Premise and hypothesis] --> D[Base default theory]
+  U[Update] --> R[Revised theory]
+  D --> C[Preferred-support comparison]
+  R --> C
+  C --> L[Strengthener or weakener]</pre><figcaption>Defeasible support before and after an update.</figcaption></figure><p class="diagram-explanation">The intended method compares an unchanged base theory with a theory revised by the update. Both support values require explicit event, causal, physical, or normative evidence.</p>
+
+<h2 id="protocol">Source and official eligibility</h2>
+<p>The <a href="https://github.com/rudinger/defeasible-nli">official release</a> combines three upstream families: ATOMIC event inferences, SNLI premise–hypothesis pairs, and Social Chemistry situations and norms. ESLM pins one immutable release, streams all nine train/development/test files, validates closed family-specific schemas, and retains all 245,720 rows. No row is rejected because of source or file size.</p>
+<p>The release marks some proposed updates as impossible. Those rows remain frozen and countable, but the paper protocol excludes them from classification scoring. The official development split has 16,008 source rows: 14,968 are eligible and 1,040 are marked impossible. An execution report must distinguish that source eligibility denominator from the number actually tested. The official test split remains outside the public loader.</p>
+
+<h2>Typed task and oracle boundary</h2>
+<p>The adapter preserves the premise or social situation, hypothesis, update, source family, and requested comparison as visible input. <code>UpdateType</code>, impossible status, impossible reason, and worker metadata do not enter the task seen by a candidate method. The host joins the strengthener/weakener oracle only after a prediction exists. Schema validation also preserves the differences among the three families rather than flattening ATOMIC relations, SNLI pairs, and social norms into one untyped string.</p>
+
+<h2 id="outcomes">How to score inability on this forced-choice task</h2>
+<p>Each eligible update requires an in-domain strengthener or weakener prediction. If a non-empty evaluated pool receives no predictions, end-to-end accuracy and attempt coverage are both 0%, while selective accuracy is <code>null</code>. <code>NO_APPLICABLE_METHOD</code> diagnoses why a case was not attempted; it does not remove the case from the fixed denominator or imply that the opposite label was selected.</p>
+<p>The missing work begins before ranking. Arbitrary prose must become event roles, causal and physical effects, social or normative defaults, exceptions, and signed evidence with source provenance. Only then can a generic method compute preferred models or support sets before and after the update and compare them. Implementing a lexical sentiment rule or memorizing frequent update phrases would skip the semantic boundary and fail the required full-renaming tests.</p>
+<p>A standalone comparator can accept explicit provenance-bearing support and attack records, apply declared family weights, verify its witness, and abstain on missing evidence, ties, or insufficient margins. An adapter-local overlap projection is only an experiment until it demonstrates adequate end-to-end accuracy and generality. The generated report, not this page, records any executed experimental coverage and outcome.</p>
+
+<h2>Required generic candidate</h2>
+<p>A valid candidate must define a typed base theory Γ, an update Δ, a query hypothesis h, and a source-declared default policy. It must compute support for h under Γ and under Γ∪{Δ}, preserve conflicts rather than overwrite them, and return a witness naming the defaults activated, defeated, or newly contradicted. “Strengthener” requires a declared improvement in the preferred-support order; “weakener” requires a declared decrease. Ties and incomparable revisions require an explicit abstention status.</p>
+<p>Acceptance requires nonce event and norm vocabularies, complete participant renaming, premise/update reordering where semantics permits it, polarity and causal-direction contrasts, provider-order invariance, and an independent witness verifier. The <a href="reasoning/reasoning-defaults-and-abduction.html">defaults and abduction chapter</a> explains the currently implemented preferred-model and guarded-abduction foundations; neither yet constitutes this full update-comparison method.</p>
+
+<h2>References and rights</h2>
+<p>The benchmark is Rachel Rudinger et al., <a href="https://aclanthology.org/2020.findings-emnlp.418/">Thinking Like a Skeptic: Defeasible Inference in Natural Language</a>, Findings of EMNLP 2020. The release code and compound files are MIT, while upstream ATOMIC attribution, SNLI CC BY-SA 4.0, and Social Chemistry CC BY-SA 4.0 obligations remain recorded separately on the <a href="reference/sources.html">sources page</a>. Source rows stay in the ignored local cache; manifests and aggregates are committed.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

@@ -1,18 +1,12 @@
 #!/usr/bin/env node
 import { createInterface } from 'node:readline/promises';
-import { stdin, stdout } from 'node:process';
+import { stdin, stdout, stderr } from 'node:process';
 import { execFile } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { appendFile, writeFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
-import { EslmEngine } from './runtime/engine.mjs';
-import { EslmRuntime } from './runtime/runtime.mjs';
-import { HeuristicLanguageRuntime } from './runtime/heuristic-language-runtime.mjs';
-import { LanguageAgentAssistedRuntime } from './runtime/language-agent-assisted-runtime.mjs';
-import {
-  CodexLanguageNormalizer, DEFAULT_CODEX_NORMALIZATION_MODEL,
-} from './language/codex-normalizer.mjs';
+import { DEFAULT_CODEX_NORMALIZATION_MODEL } from './language/codex-normalizer.mjs';
 import {
   checkDocumentation, publishGeneratedHeuristicBenchmark, publishReport,
 } from './docs-reports.mjs';
@@ -25,13 +19,10 @@ import { readBatch } from './io.mjs';
 import { buildKnowledgeBases } from './kb-training.mjs';
 import { compileKnowledgeBase } from './kb/compiler.mjs';
 import {
-  KB_CATALOG, KB_CATALOG_PATH, loadKnowledgeBases, loadKnowledgeBase, mergeModels, registerKnowledgeBase,
+  KB_CATALOG, KB_CATALOG_PATH, loadKnowledgeBase, registerKnowledgeBase,
   registeredKnowledgeBases, summarizeKnowledgeBase, unregisterKnowledgeBase,
 } from './kbs.mjs';
-import {
-  PUBLIC_KB_CATALOG, loadPublicKnowledgeBases, publicKbStatuses, validatePublicKnowledgeBase,
-} from './public-kbs.mjs';
-import { createCoreModel } from './runtime/core-model.mjs';
+import { PUBLIC_KB_CATALOG, publicKbStatuses, validatePublicKnowledgeBase } from './public-kbs.mjs';
 import { PROJECT_ROOT, resolveProjectPath } from './paths.mjs';
 import { prepareTraining, validateGeneratedModel, writeCandidateSkeleton } from './training/packet.mjs';
 import { prepareAgentWorkspace, runCodexTraining, TRAINING_SKILLS } from './training/agent-runner.mjs';
@@ -42,56 +33,22 @@ import {
   interactiveResultText, interactiveSmoke, memoryText, modelText, profileText, strategiesText, traceText, workText,
 } from './interface/interactive-presenter.mjs';
 import { benchmarkCommand } from './interface/benchmark-command.mjs';
+import { researchCommand } from './interface/research-command.mjs';
 import {
   languageAgentNormalizationEnabled, withLanguageAgentNormalization, withWorkProfile,
-  withStrategySelection, workPolicyFromCliOptions,
+  withStrategySelection,
 } from './interface/cli-runtime-policy.mjs';
 import { interactiveCompletions } from './interface/interactive-completion.mjs';
 import { cliHelpText, cliStartupText } from './interface/cli-help.mjs';
+import {
+  createCliRuntime, selectedRuntimeKbIds,
+} from './interface/cli-runtime-composition.mjs';
+import { withLanguageAgentActivity } from './interface/language-agent-activity.mjs';
 const runFile = promisify(execFile);
 let writeOutput = (text) => stdout.write(text);
+let writeError = (text) => stderr.write(text);
 function printJson(value) { writeOutput(`${JSON.stringify(value, null, 2)}\n`); }
 function help() { writeOutput(cliHelpText(DEFAULT_CODEX_NORMALIZATION_MODEL)); }
-async function selectedRuntimeKbIds(value) {
-  if (!value) return [];
-  const registered = await registeredKnowledgeBases();
-  const known = new Set([...Object.keys(KB_CATALOG), ...Object.keys(PUBLIC_KB_CATALOG), ...registered.map((entry) => entry.kbId)]);
-  const requested = String(value).split(',').map((item) => item.trim().toLocaleLowerCase('en-US')).filter(Boolean);
-  const ids = requested.includes('all') ? [...known] : requested;
-  for (const id of ids) {
-    if (!known.has(id)) throw new Error(`Unknown knowledge base: ${id}`);
-  }
-  return [...new Set(ids)];
-}
-async function engineFor(options) {
-  const workPolicy = workPolicyFromCliOptions(options);
-  const base = await createCoreModel(options.model);
-  const selected = await selectedRuntimeKbIds(options.kb);
-  const publicIds = selected.filter((id) => PUBLIC_KB_CATALOG[id]);
-  const graphIds = selected.filter((id) => !PUBLIC_KB_CATALOG[id]);
-  const knowledgeBases = await loadKnowledgeBases(graphIds.join(','));
-  const core = new EslmEngine(mergeModels(base, knowledgeBases), {
-    profile: options.profile,
-    workPolicy,
-  });
-  const loaded = await loadPublicKnowledgeBases(publicIds, {
-    memoryMb: options['memory-mb'], memoryPolicy: options['memory-policy'],
-  });
-  const runtime = new HeuristicLanguageRuntime(
-    new EslmRuntime(core, loaded.providers, selected, loaded.memoryPlan, workPolicy),
-  );
-  if (!languageAgentNormalizationEnabled(options)) return runtime;
-  const timeoutMs = Number(options['language-agent-timeout-ms'] ?? options['codex-timeout-ms'] ?? 120_000);
-  if (!Number.isFinite(timeoutMs) || timeoutMs < 1_000 || timeoutMs > 600_000) {
-    throw new Error('--language-agent-timeout-ms must be between 1000 and 600000.');
-  }
-  return new LanguageAgentAssistedRuntime(runtime, new CodexLanguageNormalizer({
-    model: options['language-agent-model'] ?? options['codex-model'] ?? DEFAULT_CODEX_NORMALIZATION_MODEL,
-    command: options['language-agent-command'] ?? options['codex-command'], timeoutMs,
-    cache: !options['no-normalization-cache'],
-    onExternalInvocation: options.onLanguageAgentInvocation,
-  }));
-}
 function globExpression(value) {
   return new RegExp(`^${value.split('*').map((part) => part.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')).join('.*')}$`, 'iu');
 }
@@ -128,14 +85,12 @@ async function matchInteractiveKnowledgeBases(value, { includeQuick = true } = {
 
 async function chat(options) {
   const style = createTerminalStyle(options.color, stdout);
-  let runtimeOptions = {
-    ...withLanguageAgentNormalization(options, languageAgentNormalizationEnabled(options)),
-    onLanguageAgentInvocation: () => stdout.write(
-      `${style.dim('Thinking: interpreting with the configured Language Agent…')}\n`,
-    ),
-  };
+  let runtimeOptions = withLanguageAgentActivity(
+    withLanguageAgentNormalization(options, languageAgentNormalizationEnabled(options)),
+    (text) => stdout.write(text), style,
+  );
   let selected = await selectedRuntimeKbIds(options.kb ?? Object.keys(PUBLIC_KB_CATALOG).join(','));
-  let engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+  let engine = await createCliRuntime({ ...runtimeOptions, kb: selected.join(',') });
   const registeredIds = (await registeredKnowledgeBases()).map((entry) => entry.kbId);
   const completionKbIds = [...new Set([
     ...Object.keys(KB_CATALOG), ...Object.keys(PUBLIC_KB_CATALOG), ...registeredIds,
@@ -174,7 +129,7 @@ async function chat(options) {
         continue;
       }
       runtimeOptions = withWorkProfile(runtimeOptions, value);
-      engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+      engine = await createCliRuntime({ ...runtimeOptions, kb: selected.join(',') });
       stdout.write(`${workText(engine, style)}\n`);
       continue;
     }
@@ -186,7 +141,7 @@ async function chat(options) {
         continue;
       }
       runtimeOptions = withWorkProfile(runtimeOptions, undefined, value);
-      engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+      engine = await createCliRuntime({ ...runtimeOptions, kb: selected.join(',') });
       stdout.write(`${strategiesText(engine, style)}\n`);
       continue;
     }
@@ -194,7 +149,7 @@ async function chat(options) {
       const value = line.slice('/strategy '.length).trim();
       const candidateOptions = withStrategySelection(runtimeOptions, value === 'clear' ? undefined : value);
       try {
-        const candidateEngine = await engineFor({ ...candidateOptions, kb: selected.join(',') });
+        const candidateEngine = await createCliRuntime({ ...candidateOptions, kb: selected.join(',') });
         runtimeOptions = candidateOptions;
         engine = candidateEngine;
       } catch (error) {
@@ -213,7 +168,7 @@ async function chat(options) {
     }
     if (line === '/normalize on' || line === '/normalize off') {
       runtimeOptions = withLanguageAgentNormalization(runtimeOptions, line.endsWith(' on'));
-      engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+      engine = await createCliRuntime({ ...runtimeOptions, kb: selected.join(',') });
       stdout.write(line.endsWith(' on')
         ? `${style.yellow('Language Agent normalization enabled.')} The current adapter invokes Codex. Otherwise-unparsed input may leave the offline runtime boundary.\n`
         : `${style.green('Language Agent normalization disabled.')} The active path is offline and direct-symbolic.\n`);
@@ -224,7 +179,7 @@ async function chat(options) {
       if (['auto', 'eager', 'lazy'].includes(value)) runtimeOptions = { ...runtimeOptions, 'memory-policy': value };
       else if (/^\d+(?:\.\d+)?$/u.test(value)) runtimeOptions = { ...runtimeOptions, 'memory-mb': value, 'memory-policy': 'auto' };
       else { stdout.write(`${style.red('Expected a size in MiB or auto, eager, or lazy.')}\n`); continue; }
-      engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+      engine = await createCliRuntime({ ...runtimeOptions, kb: selected.join(',') });
       stdout.write(`${memoryText(engine, style)}\n`);
       continue;
     }
@@ -238,7 +193,7 @@ async function chat(options) {
     }
     if (line === '/smoke' || line.startsWith('/smoke ')) {
       const { count, seed } = interactiveCountAndSeed(line.slice('/smoke'.length), 4096);
-      const smokeEngine = await engineFor({
+      const smokeEngine = await createCliRuntime({
         kb: 'quick',
         'external-language-agent': false,
         'no-external-language-agent': true,
@@ -250,7 +205,7 @@ async function chat(options) {
       try {
         const requested = await matchInteractiveKnowledgeBases(line.slice('/load '.length));
         selected = [...new Set([...selected, ...requested])];
-        engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+        engine = await createCliRuntime({ ...runtimeOptions, kb: selected.join(',') });
         stdout.write(`${style.green('Loaded knowledge:')} ${selected.join(', ')}.\n`);
       } catch (error) { stdout.write(`${style.red(error.message)}\n`); }
       continue;
@@ -260,7 +215,7 @@ async function chat(options) {
       try {
         const removed = value === 'all' ? selected : await matchInteractiveKnowledgeBases(value);
         selected = selected.filter((id) => !removed.includes(id));
-        engine = await engineFor({ ...runtimeOptions, kb: selected.join(',') });
+        engine = await createCliRuntime({ ...runtimeOptions, kb: selected.join(',') });
         stdout.write(`${style.green('Loaded knowledge:')} ${selected.length > 0 ? selected.join(', ') : '(base model only)'}.\n`);
       } catch (error) { stdout.write(`${style.red(error.message)}\n`); }
       continue;
@@ -279,19 +234,23 @@ async function chat(options) {
 async function ask(args, options) {
   const text = args.join(' ');
   if (!text) throw new Error('ask requires a question.');
-  printJson(await (await engineFor(options)).ask(text));
+  const style = createTerminalStyle(options.color, stderr);
+  const runtimeOptions = withLanguageAgentActivity(options, writeError, style);
+  printJson(await (await createCliRuntime(runtimeOptions)).ask(text));
 }
 
 async function runBatch(options) {
   if (!options.input) throw new Error('run requires --input.');
   const inputPath = await resolveProjectPath(options.input);
   const records = await readBatch(inputPath);
-  const engine = await engineFor(options);
+  const style = createTerminalStyle(options.color, stderr);
+  const runtimeOptions = withLanguageAgentActivity(options, writeError, style);
+  const engine = await createCliRuntime(runtimeOptions);
   const outputs = [];
   for (const record of records) outputs.push({ id: record.id, ...await engine.ask(record.text ?? record.input ?? '') });
   const serialized = `${outputs.map((record) => JSON.stringify(record)).join('\n')}\n`;
   if (options.output) await writeFile(resolve(options.output), serialized, 'utf8');
-  else stdout.write(serialized);
+  else writeOutput(serialized);
 }
 
 async function train(args, options) {
@@ -339,7 +298,7 @@ async function evaluateCommand(options) {
   if (!options.suite) throw new Error('evaluate requires --suite.');
   const suite = await resolveProjectPath(options.suite);
   const publish = options.publish ? resolve(PROJECT_ROOT, 'docs/results/latest-evaluation.json') : undefined;
-  const report = await evaluate(await engineFor(options), suite, publish);
+  const report = await evaluate(await createCliRuntime(options), suite, publish);
   if (publish) await publishReport('evaluation');
   printJson(report);
 }
@@ -503,18 +462,24 @@ async function dispatch(arguments_) {
   if (command === 'corpus') return corpus(args, options);
   if (command === 'kb') return knowledgeBase(args, options);
   if (command === 'evaluate') return evaluateCommand(options);
-  if (command === 'benchmark') return benchmarkCommand(args, options, { engineFor, printJson });
+  if (command === 'benchmark') {
+    return benchmarkCommand(args, options, { engineFor: createCliRuntime, printJson });
+  }
+  if (command === 'research') return researchCommand(args, options, { printJson });
   if (command === 'docs') return docs(args);
   throw new Error(`Unknown command: ${command}`);
 }
 
 export async function main(arguments_ = process.argv.slice(2), io = {}) {
   const previousWriter = writeOutput;
+  const previousErrorWriter = writeError;
   writeOutput = io.write ?? previousWriter;
+  writeError = io.writeError ?? previousErrorWriter;
   try {
     return await dispatch(arguments_);
   } finally {
     writeOutput = previousWriter;
+    writeError = previousErrorWriter;
   }
 }
 

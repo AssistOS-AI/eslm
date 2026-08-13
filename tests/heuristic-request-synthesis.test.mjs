@@ -21,7 +21,7 @@ function grounding(entries, complete = true) {
   });
 }
 
-test('a requested report is shaped as cited sections without upgrading relevance to proof', () => {
+test('a requested report realizes coherent sentences without upgrading relevance to proof', () => {
   const plan = planHeuristicRequest('Write a short report about zorals.');
   const result = synthesizeHeuristicRequest(plan, grounding([
     entry('nonce-a', 'r1', 'A zoral is a mineral.', 'zoral', 'is_a', 'mineral', 9),
@@ -30,11 +30,16 @@ test('a requested report is shaped as cited sections without upgrading relevance
   ]));
   assert.equal(result.status, 'PARTIAL');
   assert.equal(result.answerAuthority, 'related-evidence-is-not-entailment');
-  assert.match(result.gaps[0], /bounded extractive draft/u);
-  assert.match(result.answer, /complete generative composition was not performed/u);
-  assert.match(result.answer, /^# Report: zorals/mu);
-  assert.match(result.answer, /A zoral is a mineral\. \[nonce-a@1; r1\]/u);
+  assert.equal(result.protocol, 'eslm-heuristic-request-synthesis-v2');
+  assert.equal(result.claimMode, 'grounded-symbolic-generation');
+  assert.match(result.gaps[0], /symbolic answer construction/u);
+  assert.match(result.answer, /^# Zorals/mu);
+  assert.match(result.answer, /A zoral is a mineral and has a blue surface\. \[1\]\[2\]/u);
+  assert.match(result.answer, /## Sources/u);
+  assert.match(result.answer, /nonce-a 1, r1/u);
   assert.doesNotMatch(result.answer, /A velin is quiet/u);
+  assert.ok(result.realization.strategyTrace.includes('strategy:result:claim-fusion@1'));
+  assert.equal(result.realization.coverage.evidenceRealized, 2);
   assert.equal(result.evidence.unrelatedEntriesOmitted, 1);
   assert.deepEqual(result.contributingKbVersions, [
     { kbId: 'nonce-a', version: '1' }, { kbId: 'nonce-b', version: '1' },
@@ -47,7 +52,7 @@ test('comparison output groups evidence and reports only explicit shared relatio
     entry('nonce', 'z1', 'Zorals have amber color.', 'zoral', 'has_color', 'amber'),
     entry('nonce', 'v1', 'Velins have cobalt color.', 'velin', 'has_color', 'cobalt'),
   ]));
-  assert.match(result.answer, /\| Topic \| Retrieved KB statement \| Source \|/u);
+  assert.match(result.answer, /\| Supported statement \| Evidence \|/u);
   assert.deepEqual(result.correlation.sharedRelations, ['has color']);
   assert.match(result.answer, /share these explicit relation labels: has color/u);
 });
@@ -57,39 +62,40 @@ test('explanation requests expose a causal gap instead of inventing a reason', (
   const result = synthesizeHeuristicRequest(plan, grounding([
     entry('nonce', 'z1', 'A zoral can move.', 'zoral', 'can', 'move'),
   ], false));
-  assert.match(result.answer, /No explicit causal or reason relation was retrieved/u);
-  assert.match(result.answer, /related-evidence search was incomplete/u);
+  assert.match(result.answer, /does not contain an explicit causal relation/u);
+  assert.match(result.answer, /evidence search was bounded and incomplete/u);
 });
 
-test('source summary is deterministic and expansion remains extractive', () => {
+test('source summary and expansion are deterministic coherent prose', () => {
   const summaryPlan = planHeuristicRequest(
     'Summarize this text: Zorals move. Zorals have amber shells. Velins rest. Zorals rest at noon.',
   );
   const first = synthesizeHeuristicRequest(summaryPlan, grounding([]));
   const second = synthesizeHeuristicRequest(summaryPlan, grounding([]));
   assert.deepEqual(first, second);
-  assert.match(first.answer, /## Supplied material/u);
+  assert.match(first.answer, /^Zorals move\. Zorals have amber shells\./u);
+  assert.doesNotMatch(first.answer, /Supplied material/u);
 
   const expansionPlan = planHeuristicRequest('Expand this text: A zoral moves. It rests.');
   const expansion = synthesizeHeuristicRequest(expansionPlan, grounding([]));
-  assert.match(expansion.answer, /- A zoral moves\./u);
-  assert.match(expansion.answer, /- It rests\./u);
+  assert.match(expansion.answer, /A zoral moves\. It rests\./u);
   assert.doesNotMatch(expansion.answer, /because/u);
 
   const tablePlan = planHeuristicRequest('Summarize "A borin glows." as a table.');
   const table = synthesizeHeuristicRequest(tablePlan, grounding([]));
-  assert.match(table.answer, /\| Supplied excerpt \| Origin \|/u);
+  assert.match(table.answer, /\| Supported statement \| Evidence \|/u);
   assert.match(table.answer, /\| A borin glows\. \| supplied material \|/u);
 });
 
-test('source-only summaries can use content-related KB evidence without marker-word topics', () => {
+test('source-only summaries do not mix retrieved facts into the supplied source', () => {
   const plan = planHeuristicRequest('Summarize this text: Penguins swim in cold seas.');
   assert.deepEqual(plan.selectedPlan.topics, []);
   const result = synthesizeHeuristicRequest(plan, grounding([
     entry('avian-source', 'penguin-swim', 'A penguin can swim.', 'penguin', 'can', 'swim'),
   ]));
   assert.equal(result.evidence.selected.length, 1);
-  assert.match(result.answer, /A penguin can swim\. \[avian-source@1; penguin-swim\]/u);
+  assert.equal(result.answer, 'Penguins swim in cold seas.');
+  assert.equal(result.realization.coverage.evidenceRejected, 1);
   assert.doesNotMatch(result.answer, /## this|## text|## following|## passage|## content/iu);
 });
 
@@ -115,9 +121,8 @@ test('source truncation is visible and never described as full sentence preserva
   const plan = planHeuristicRequest(`Summarize this text: ${'z'.repeat(1_007)}.`);
   const result = synthesizeHeuristicRequest(plan, grounding([]));
   assert.equal(result.sourceSummary.complete, false);
-  assert.match(result.answer, /quotes bounded excerpts/u);
-  assert.match(result.answer, /Coverage gaps/u);
-  assert.match(result.answer, /per-sentence excerpt cap/u);
+  assert.match(result.answer, /Evidence limits/u);
+  assert.match(result.answer, /Only bounded excerpts/u);
 });
 
 test('request-plan truncation is repeated in artifact coverage gaps', () => {
@@ -132,7 +137,7 @@ test('request-plan truncation is repeated in artifact coverage gaps', () => {
     entry('nonce', 'v1', 'A velin rests.', 'velin', 'can', 'rest'),
   ]));
   assert.ok(result.gaps.some((gap) => /operation-count-budget/u.test(gap)));
-  assert.match(result.answer, /Request planning was incomplete: operation-count-budget/u);
+  assert.match(result.answer, /request plan reached its operation budget/u);
 });
 
 test('multi-obligation synthesis executes and accounts for every operation in discourse order', () => {
@@ -153,12 +158,12 @@ test('multi-obligation synthesis executes and accounts for every operation in di
     [['topic:1'], ['topic:2', 'topic:3'], ['topic:4']]);
   assert.ok(result.operationArtifacts.every((artifact) =>
     artifact.evidence.selected.length > 0 && artifact.gaps.length > 0 && artifact.complete === false));
-  const first = result.answer.indexOf('## Obligation 1: Summarize — zorals');
-  const second = result.answer.indexOf('## Obligation 2: Compare — velins and tarins');
-  const third = result.answer.indexOf('## Obligation 3: Outline — quorims');
+  const first = result.answer.indexOf('## Summarize: zorals');
+  const second = result.answer.indexOf('## Compare: velins and tarins');
+  const third = result.answer.indexOf('## Outline: quorims');
   assert.ok(first >= 0 && first < second && second < third);
-  assert.match(result.answer, /## Aggregate artifact/u);
-  assert.match(result.answer, /\| Topic \| Retrieved KB statement \| Source \|/u);
+  assert.match(result.answer, /\| Supported statement \| Evidence \|/u);
+  assert.match(result.answer, /## Comparison/u);
   assert.deepEqual(result.evidence.selected.map((item) => item.entry.recordId),
     ['z1', 'v1', 't1', 'q1']);
 });
