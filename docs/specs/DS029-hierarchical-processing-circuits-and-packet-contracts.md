@@ -66,6 +66,10 @@ It is also the component identity row: each path item carries its semantic-level
 separate type caption or duplicated current-component title. Separate home and back buttons are not rendered. The
 short context over the graph states the exact component's
 responsibility, transformation or decision, and useful result rather than restating arrow or layout notation.
+Packet, witness, precondition, and strategy labels in this human-facing surface remove trailing protocol revisions
+such as `v1` and selector versions such as `@1.0.0`. Exact versioned identities remain unchanged in the descriptive
+catalog and generated validation projection; the explorer presents the stable concept without repeating revision
+metadata throughout cards, rails, hover labels, or information prose.
 
 Cards grow and shrink between explicit minimum and maximum widths. Connected desktop layouts place the `IN` rail,
 every internal component, and the `OUT` rail on one equal-track grid. Center intervals and visible edge-to-edge gaps

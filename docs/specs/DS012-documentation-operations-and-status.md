@@ -176,6 +176,12 @@ connected SVG path is recalculated. Parallel alternatives snap into a new non-ov
 while ordinary horizontally distributed components retain a bounded vertical offset. The explorer does not substitute
 a static architecture inventory table for the graph
 and links to the logical-processing chapter, where the engineering planes and exceptional paths are explained.
+
+Human-facing packet, witness, precondition, and strategy labels omit trailing protocol revision suffixes such as
+`v1` and selector versions such as `@1.0.0`. The checked-in catalog and generated projection retain those exact
+identities for validation and compatibility; the explorer does not repeat them in every card, rail, hover label, or
+information paragraph because revision metadata is not part of the conceptual reading path.
+
 `evaluation.html` is the stable development-evidence entry point and links the knowledge-base, benchmark, and RL
 dataset status views. `development/benchmarks.html` is the only page that renders the complete public benchmark
 dashboard. `status.html` shows capability and roadmap state, links to the evidence report, and does not embed a

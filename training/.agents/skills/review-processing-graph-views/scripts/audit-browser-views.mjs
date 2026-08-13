@@ -120,6 +120,12 @@ function browserAudit() {
       issues.push({ focus: `${focus.kind}:${focus.id}`, rule, details });
     }
 
+    function displayedRevisionNoise(root) {
+      const values = [root.textContent ?? '', ...[...root.querySelectorAll('[title]')]
+        .map((item) => item.getAttribute('title') ?? '')];
+      return values.find((value) => /(?:\bv\d+(?:\.\d+)*\b|@\d+(?:\.\d+)*)/iu.test(value)) ?? null;
+    }
+
     function auditCurrent(focus) {
       coverage[focus.kind] += 1;
       const stage = document.querySelector('[data-graph-stage]');
@@ -157,6 +163,23 @@ function browserAudit() {
       if (headerInfo.dataset.graphFocusKind !== focus.kind
         || headerInfo.dataset.graphFocusId !== focus.id) {
         addIssue(focus, 'focus-identity', `Rendered ${headerInfo.dataset.graphFocusKind}:${headerInfo.dataset.graphFocusId}.`);
+      }
+      const surfaceRevisionNoise = displayedRevisionNoise(header.parentElement);
+      if (surfaceRevisionNoise) {
+        addIssue(focus, 'visible-version-noise', surfaceRevisionNoise.slice(0, 160));
+      }
+      for (const button of header.parentElement.querySelectorAll(
+        '[data-graph-focus-info], [data-graph-info-kind], [data-graph-port-info]',
+      )) {
+        button.click();
+        const panel = header.parentElement.querySelector('.graph-info-panel:not([hidden])');
+        if (!panel) continue;
+        const panelRevisionNoise = displayedRevisionNoise(panel);
+        if (panelRevisionNoise) {
+          addIssue(focus, 'information-version-noise', `${button.getAttribute('aria-label')}: `
+            + panelRevisionNoise.slice(0, 160));
+        }
+        panel.querySelector('.graph-info-panel__close')?.click();
       }
       if (viewport.scrollWidth - viewport.clientWidth > 1
         || viewport.scrollHeight - viewport.clientHeight > 1) {

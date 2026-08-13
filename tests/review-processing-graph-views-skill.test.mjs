@@ -38,6 +38,8 @@ test('processing-graph view review skill is self-contained and requires semantic
   assert.match(browserAudit, /automatic-vertical-distribution/u);
   assert.match(browserAudit, /lineBoxOverlaps/u);
   assert.match(browserAudit, /monotonic-bezier-controls/u);
+  assert.match(browserAudit, /visible-version-noise/u);
+  assert.match(browserAudit, /information-version-noise/u);
   assert.match(browserAudit, /legend-only-view-context/u);
   assert.match(browserAudit, /duplicate-navigation-controls/u);
   assert.match(browserAudit, /large-information-dialog/u);

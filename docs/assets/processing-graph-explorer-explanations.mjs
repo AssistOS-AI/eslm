@@ -3,7 +3,9 @@ function sentenceCase(value) {
 }
 
 export function plainTypeLabel(value) {
-  return value.split(':').at(-1).replaceAll('-', ' ');
+  return value.split(':').at(-1)
+    .replace(/-v\d+(?:\.\d+)*$/iu, '')
+    .replaceAll('-', ' ');
 }
 
 export function plainList(values, empty = 'none') {
@@ -119,7 +121,7 @@ function strategyExplanation(view) {
   const strategy = view.detail;
   return {
     summary: `${sentenceCase(strategy.epistemicRole)} strategy at ${strategy.stage}.`,
-    explanation: `${view.label} exists as one exact, versioned implementation option for its owner node. `
+    explanation: `${view.label} exists as one reviewed implementation option for its owner node. `
       + strategyStageAction(strategy, view.label),
   };
 }

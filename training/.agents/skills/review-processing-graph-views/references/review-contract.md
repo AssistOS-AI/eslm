@@ -124,6 +124,11 @@ Every information panel must answer in concrete English:
 
 Reject text that merely says the item is visual, a leaf, a boundary, inspectable, or not hidden. Those facts may qualify an explanation but cannot replace operational content.
 
+Inspect every human-facing packet, witness, precondition, and strategy label for revision noise. Repeated trailing
+tokens such as `v1` and selector suffixes such as `@1.0.0` do not belong in cards, rails, hover labels, contexts, or
+information prose. Confirm separately that the catalog and generated projection still preserve the exact versioned
+machine identities.
+
 The short context inside the graph follows the same semantic standard at lower detail. It names why the selected
 view exists, what transformation or decision its owner performs, and what useful result leaves. Phrases that only say
 “selected circuit,” “typed arrows,” “parallel alternatives,” “one exact strategy,” or explain how to read the drawing

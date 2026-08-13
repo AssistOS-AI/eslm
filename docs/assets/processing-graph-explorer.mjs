@@ -52,6 +52,10 @@ function sentenceCase(value) {
   return value.replaceAll('-', ' ').replace(/^./u, (initial) => initial.toUpperCase());
 }
 
+function unversionedIdentity(value) {
+  return value.replace(/@\d+(?:\.\d+)*$/u, '');
+}
+
 function countText(value, singular, plural = `${singular}s`) {
   return `${value} ${value === 1 ? singular : plural}`;
 }
@@ -344,8 +348,8 @@ function nodeLeaf(view) {
     exact: detail.stageRef !== null,
   });
   appendInventoryRows(list, view.inventory);
-  appendDetailRow(list, 'Consumes', detail.inputPacketTypes);
-  appendDetailRow(list, 'Emits', detail.outputPacketTypes);
+  appendDetailRow(list, 'Consumes', detail.inputPacketTypes.map(plainTypeLabel), { exact: false });
+  appendDetailRow(list, 'Emits', detail.outputPacketTypes.map(plainTypeLabel), { exact: false });
   appendDetailRow(list, 'Finite resources', detail.resourceDimensions);
   appendDetailRow(list, 'Implementation owner', [detail.ownerModule]);
   const authority = [
@@ -377,7 +381,7 @@ function familyLeaf(view) {
   appendDetailRow(list, 'Exact family identity', [family.familyId]);
   appendInventoryRows(list, view.inventory);
   appendDetailRow(list, 'Mapped processing nodes', family.nodeIds);
-  appendDetailRow(list, 'Member strategies', family.memberIdentities);
+  appendDetailRow(list, 'Member strategies', family.memberIdentities.map(unversionedIdentity));
   section.append(list);
   return section;
 }
@@ -387,18 +391,18 @@ function strategyLeaf(view) {
   const copy = explainProcessingGraphView(view, projection);
   const section = detailShell(`${view.label} · strategy contract`, copy.summary, copy.explanation);
   const list = element('dl');
-  appendDetailRow(list, 'Exact identity', [strategy.identity]);
+  appendDetailRow(list, 'Strategy identity', [strategy.strategyId]);
   appendDetailRow(list, 'Stage', [strategy.stage]);
   appendDetailRow(list, 'Epistemic role', [strategy.epistemicRole]);
   appendDetailRow(list, 'Confidence meaning', [strategy.confidenceKind]);
   appendDetailRow(list, 'Correlation group', [strategy.correlationGroup]);
   appendDetailRow(list, 'Cost model', [strategy.costModel]);
   appendDetailRow(list, 'Finite budgets', strategy.budgetKeys);
-  appendDetailRow(list, 'Input types', strategy.inputTypes);
-  appendDetailRow(list, 'Output types', strategy.outputTypes);
-  appendDetailRow(list, 'Eligibility preconditions', strategy.preconditions);
+  appendDetailRow(list, 'Input types', strategy.inputTypes.map(plainTypeLabel), { exact: false });
+  appendDetailRow(list, 'Output types', strategy.outputTypes.map(plainTypeLabel), { exact: false });
+  appendDetailRow(list, 'Eligibility preconditions', strategy.preconditions.map(plainTypeLabel), { exact: false });
   appendDetailRow(list, 'Declared failures', strategy.failureClasses);
-  appendDetailRow(list, 'Witness', [strategy.witnessKind]);
+  appendDetailRow(list, 'Witness', [plainTypeLabel(strategy.witnessKind)], { exact: false });
   appendDetailRow(list, 'Answer authority', [strategy.answerAuthority]);
   appendDetailRow(list, 'Implementation state', [sentenceCase(strategy.implementationState)], { exact: false });
   section.append(list);
@@ -446,7 +450,7 @@ function boundaryPort(port, view) {
   const targetFocus = boundaryPortTarget(port, view);
   const card = element('article', {
     className: `graph-boundary-port graph-boundary-port--${port.direction}`,
-    title: `${port.label}: ${port.packetTypes.join(', ')}`,
+    title: `${port.label}: ${port.packetTypes.map(plainTypeLabel).join(', ')}`,
   });
   card.dataset.graphEntity = port.portId;
   const open = element(targetFocus === null ? 'div' : 'button', {
@@ -469,11 +473,12 @@ function boundaryPort(port, view) {
   open.append(direction, element('span', { className: 'graph-boundary-port__label', text: port.label }));
   const packets = element('span', { className: 'graph-boundary-port__packets' });
   for (const packetType of port.packetTypes.slice(0, 2)) {
-    packets.append(element('span', { text: plainTypeLabel(packetType), title: packetType }));
+    const label = plainTypeLabel(packetType);
+    packets.append(element('span', { text: label, title: label }));
   }
   if (port.packetTypes.length > 2) packets.append(element('span', {
     text: `+${port.packetTypes.length - 2}`,
-    title: port.packetTypes.slice(2).join(', '),
+    title: port.packetTypes.slice(2).map(plainTypeLabel).join(', '),
   }));
   const info = element('button', {
     className: 'graph-boundary-port__info',
@@ -508,7 +513,7 @@ function boundaryPortDetail(port, view) {
       'external-actor-system': 'Human operator or software client',
     }[port.externalEndpointKind] ?? 'External system'], { exact: false });
   }
-  appendDetailRow(list, 'Packet types', port.packetTypes);
+  appendDetailRow(list, 'Packet types', port.packetTypes.map(plainTypeLabel), { exact: false });
   appendDetailRow(list, 'Adjacent boundary', port.neighbourLabels, { exact: false });
   appendDetailRow(list, 'Catalog edges', port.edgeIds);
   section.append(list);
@@ -684,7 +689,7 @@ function pageControls(page, pageCount, itemCount) {
 
 function linkTitle(link) {
   return `${countText(link.edgeCount, 'typed edge')} · ${link.edgeKinds.join(', ')} · `
-    + `${link.packetTypes.join(', ')} · ${link.conditions.join(', ')}`;
+    + `${link.packetTypes.map(plainTypeLabel).join(', ')} · ${link.conditions.join(', ')}`;
 }
 
 function localRectangle(rect, stageRect, padding = 0) {
@@ -722,7 +727,7 @@ function freeBezierPath(segment) {
     + `${segment.control2.x} ${segment.control2.y} ${segment.end.x} ${segment.end.y}`;
 }
 
-function linkPath(fromRect, toRect, stageRect, _obstacleRects, _contextRect, laneOffset = 0) {
+function linkPath(fromRect, toRect, stageRect, laneOffset = 0) {
   const from = localRectangle(fromRect, stageRect);
   const to = localRectangle(toRect, stageRect);
   const fromCenter = { x: (from.left + from.right) / 2, y: (from.top + from.bottom) / 2 };
@@ -796,7 +801,6 @@ function drawLinks(stage, view, markerId) {
   const stageRect = stage.getBoundingClientRect();
   const entityByKey = new Map([...stage.querySelectorAll('[data-graph-entity]')]
     .map((item) => [item.dataset.graphEntity, item]));
-  const contextRect = stage.querySelector('.graph-stage-context')?.getBoundingClientRect() ?? null;
   svg.setAttribute('viewBox', `0 0 ${stageRect.width} ${stageRect.height}`);
   svg.replaceChildren();
   const definitions = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
@@ -837,10 +841,6 @@ function drawLinks(stage, view, markerId) {
       from.getBoundingClientRect(),
       to.getBoundingClientRect(),
       stageRect,
-      [...entityByKey.entries()]
-        .filter(([key]) => key !== link.from && key !== link.to)
-        .map(([, element]) => element.getBoundingClientRect()),
-      contextRect,
       laneOffset,
     );
     path.setAttribute('d', route.path);

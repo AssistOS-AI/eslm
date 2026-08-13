@@ -201,6 +201,9 @@ test('homepage processing graph exposes one catalog-derived semantic depth at a 
   );
   assert.equal(projected.format, HOMEPAGE_PROCESSING_GRAPH_PROJECTION_PROTOCOL);
   assert.deepEqual(HOMEPAGE_PROCESSING_GRAPH_PROJECTION, projected);
+  assert.ok(projected.packetTypes.some((packetType) => /-v\d+$/u.test(packetType)));
+  assert.ok(projected.packetTypes.every((packetType) =>
+    !/\bv\d+(?:\.\d+)*\b/iu.test(plainTypeLabel(packetType))));
 
   const rootView = buildProcessingGraphExplorerView(projected);
   assert.equal(rootView.label, 'ESLM processing graph');
