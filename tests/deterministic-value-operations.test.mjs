@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { frameEverydayTask } from '../src/language/everyday-task-framing.mjs';
-import { executeEverydayDeterministicOperation } from '../src/reasoning/everyday-deterministic-operations.mjs';
+import { frameBoundedOperation } from '../src/language/bounded-operation-framing.mjs';
+import { executeDeterministicValueOperation } from '../src/reasoning/deterministic-value-operations.mjs';
 
 function solve(text) {
-  const frame = frameEverydayTask(text);
+  const frame = frameBoundedOperation(text);
   assert.ok(frame, text);
-  return executeEverydayDeterministicOperation(frame);
+  return executeDeterministicValueOperation(frame);
 }
 
 test('scalar arithmetic and percentage operations replay changed numeric witnesses', () => {
@@ -34,8 +34,8 @@ test('renamed short problems and ordered entities do not depend on benchmark ide
 });
 
 test('unsupported sequences and unrelated questions remain outside the operation executor', () => {
-  const geometric = frameEverydayTask('Continue the number sequence with one number: 2, 4, 8, 16, ...');
+  const geometric = frameBoundedOperation('Continue the number sequence with one number: 2, 4, 8, 16, ...');
   assert.ok(geometric);
-  assert.equal(executeEverydayDeterministicOperation(geometric), undefined);
-  assert.equal(frameEverydayTask('Who discovered penicillin?'), undefined);
+  assert.equal(executeDeterministicValueOperation(geometric), undefined);
+  assert.equal(frameBoundedOperation('Who discovered penicillin?'), undefined);
 });

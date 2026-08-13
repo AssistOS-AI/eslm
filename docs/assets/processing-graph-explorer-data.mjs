@@ -47,8 +47,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "role": "Bound input, assess language, and establish typed meaning.",
       "childCircuitIds": [
         "circuit:runtime:language-direct",
-        "circuit:runtime:language-recovery",
-        "circuit:runtime:everyday-task-path"
+        "circuit:runtime:language-recovery"
       ],
       "nodeIds": [
         "node:runtime:request-ingress"
@@ -79,20 +78,6 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       ]
     },
     {
-      "circuitId": "circuit:runtime:everyday-task-path",
-      "parentCircuitId": "circuit:runtime:ingress-language",
-      "label": "Everyday task path",
-      "role": "Explicit task framing, bounded execution over supplied values or text, and grounded KB inspection.",
-      "childCircuitIds": [],
-      "nodeIds": [
-        "node:runtime:everyday-deterministic-executor",
-        "node:runtime:everyday-result-assembler",
-        "node:runtime:everyday-task-framer",
-        "node:runtime:grounded-knowledge-inspector",
-        "node:runtime:supplied-text-operator"
-      ]
-    },
-    {
       "circuitId": "circuit:runtime:request-session",
       "parentCircuitId": "circuit:runtime:request-cycle",
       "label": "Request and session",
@@ -100,6 +85,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "childCircuitIds": [],
       "nodeIds": [
         "node:runtime:request-force-gate",
+        "node:runtime:request-operation-framer",
         "node:runtime:request-plan-coordinator",
         "node:runtime:session-effect-gate",
         "node:runtime:session-snapshot",
@@ -127,6 +113,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
         "node:runtime:evidence-frontier-retriever",
         "node:runtime:exact-route-planner",
         "node:runtime:frontier-completeness-gate",
+        "node:runtime:grounded-knowledge-inspector",
         "node:runtime:knowledge-focus-coordinator",
         "node:runtime:package-scope-gate"
       ]
@@ -160,8 +147,10 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "role": "Capability-aware planning and bounded method execution.",
       "childCircuitIds": [],
       "nodeIds": [
+        "node:runtime:deterministic-value-executor",
         "node:runtime:method-executor",
-        "node:runtime:method-plan-coordinator"
+        "node:runtime:method-plan-coordinator",
+        "node:runtime:supplied-text-operator"
       ]
     },
     {
@@ -201,7 +190,8 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
         "node:runtime:document-assembly-coordinator",
         "node:runtime:result-construction-coordinator",
         "node:runtime:rhetorical-plan-builder",
-        "node:runtime:sentence-realization-coordinator"
+        "node:runtime:sentence-realization-coordinator",
+        "node:runtime:typed-operation-result-assembler"
       ]
     },
     {
@@ -1025,6 +1015,38 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       ]
     },
     {
+      "nodeId": "node:runtime:deterministic-value-executor",
+      "label": "Deterministic value executor",
+      "circuitId": "circuit:runtime:method-selection",
+      "kind": "process",
+      "stageRef": "runtime.reason.execute",
+      "role": "Executes declared arithmetic, percentage, unit, clock, sequence, grouping, remainder, mean, and strict-order operations with a replayable witness.",
+      "authority": "none",
+      "answerAuthority": "none",
+      "canVote": false,
+      "implementationState": "instrumented-local",
+      "ownerModule": "src/reasoning/deterministic-value-operations.mjs",
+      "inputPacketTypes": [
+        "packet:runtime:bounded-operation-frame"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:deterministic-value-result"
+      ],
+      "resourceDimensions": [
+        "resource:proof-bytes",
+        "resource:solver-nodes"
+      ],
+      "strategyFamilyIds": [],
+      "directStrategyIdentities": [],
+      "strategyIdentities": [],
+      "incomingEdgeIds": [
+        "edge:runtime:operation-frame-deterministic"
+      ],
+      "outgoingEdgeIds": [
+        "edge:runtime:deterministic-operation-result"
+      ]
+    },
+    {
       "nodeId": "node:runtime:direct-parser-gate",
       "label": "Direct parser gate",
       "circuitId": "circuit:runtime:language-direct",
@@ -1056,7 +1078,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
         "edge:runtime:language-direct"
       ],
       "outgoingEdgeIds": [
-        "edge:runtime:parser-everyday-frame"
+        "edge:runtime:parser-operation-frame"
       ]
     },
     {
@@ -1145,110 +1167,6 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "outgoingEdgeIds": [
         "edge:runtime:language-direct",
         "edge:runtime:language-rejected"
-      ]
-    },
-    {
-      "nodeId": "node:runtime:everyday-deterministic-executor",
-      "label": "Verified scalar and order executor",
-      "circuitId": "circuit:runtime:everyday-task-path",
-      "kind": "process",
-      "stageRef": "runtime.reason.execute",
-      "role": "Executes declared arithmetic, percentage, unit, clock, sequence, grouping, remainder, mean, and strict-order operations with a replayable witness.",
-      "authority": "none",
-      "answerAuthority": "none",
-      "canVote": false,
-      "implementationState": "instrumented-local",
-      "ownerModule": "src/reasoning/everyday-deterministic-operations.mjs",
-      "inputPacketTypes": [
-        "packet:runtime:everyday-task-frame"
-      ],
-      "outputPacketTypes": [
-        "packet:runtime:everyday-deterministic-result"
-      ],
-      "resourceDimensions": [
-        "resource:proof-bytes",
-        "resource:solver-nodes"
-      ],
-      "strategyFamilyIds": [],
-      "directStrategyIdentities": [],
-      "strategyIdentities": [],
-      "incomingEdgeIds": [
-        "edge:runtime:everyday-frame-numeric"
-      ],
-      "outgoingEdgeIds": [
-        "edge:runtime:everyday-numeric-result"
-      ]
-    },
-    {
-      "nodeId": "node:runtime:everyday-result-assembler",
-      "label": "Everyday result assembler",
-      "circuitId": "circuit:runtime:everyday-task-path",
-      "kind": "process",
-      "stageRef": "runtime.result.construct",
-      "role": "Builds a query-local runtime candidate with the exact frame, method, witness, provenance, and unresolved gap.",
-      "authority": "none",
-      "answerAuthority": "none",
-      "canVote": false,
-      "implementationState": "instrumented-local",
-      "ownerModule": "src/runtime/everyday-task-processing.mjs",
-      "inputPacketTypes": [
-        "packet:runtime:everyday-deterministic-result",
-        "packet:runtime:knowledge-inspection-result",
-        "packet:runtime:supplied-text-result"
-      ],
-      "outputPacketTypes": [
-        "packet:runtime:construction-candidate"
-      ],
-      "resourceDimensions": [
-        "resource:output-bytes",
-        "resource:proof-bytes"
-      ],
-      "strategyFamilyIds": [],
-      "directStrategyIdentities": [],
-      "strategyIdentities": [],
-      "incomingEdgeIds": [
-        "edge:runtime:everyday-knowledge-result",
-        "edge:runtime:everyday-numeric-result",
-        "edge:runtime:everyday-text-result"
-      ],
-      "outgoingEdgeIds": [
-        "edge:runtime:everyday-assemble-schema"
-      ]
-    },
-    {
-      "nodeId": "node:runtime:everyday-task-framer",
-      "label": "Everyday task framer",
-      "circuitId": "circuit:runtime:everyday-task-path",
-      "kind": "process",
-      "stageRef": "runtime.request.plan",
-      "role": "Recognizes explicit bounded operations and preserves their values, supplied text, constraints, and output shape.",
-      "authority": "none",
-      "answerAuthority": "none",
-      "canVote": false,
-      "implementationState": "instrumented-local",
-      "ownerModule": "src/language/everyday-task-framing.mjs",
-      "inputPacketTypes": [
-        "packet:runtime:direct-diagnostic"
-      ],
-      "outputPacketTypes": [
-        "packet:runtime:direct-diagnostic",
-        "packet:runtime:everyday-task-frame"
-      ],
-      "resourceDimensions": [
-        "resource:graph-nodes",
-        "resource:tokens"
-      ],
-      "strategyFamilyIds": [],
-      "directStrategyIdentities": [],
-      "strategyIdentities": [],
-      "incomingEdgeIds": [
-        "edge:runtime:parser-everyday-frame"
-      ],
-      "outgoingEdgeIds": [
-        "edge:runtime:everyday-frame-bypass",
-        "edge:runtime:everyday-frame-knowledge",
-        "edge:runtime:everyday-frame-numeric",
-        "edge:runtime:everyday-frame-text"
       ]
     },
     {
@@ -1510,7 +1428,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
     {
       "nodeId": "node:runtime:grounded-knowledge-inspector",
       "label": "Grounded knowledge inspector",
-      "circuitId": "circuit:runtime:everyday-task-path",
+      "circuitId": "circuit:runtime:knowledge-routing",
       "kind": "process",
       "stageRef": "runtime.knowledge.retrieve",
       "role": "Resolves a requested entity or class against loaded declarative KB facts and realizes only the facts actually found.",
@@ -1518,9 +1436,9 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "answerAuthority": "none",
       "canVote": false,
       "implementationState": "instrumented-local",
-      "ownerModule": "src/reasoning/everyday-knowledge-inspection.mjs",
+      "ownerModule": "src/reasoning/grounded-knowledge-inspection.mjs",
       "inputPacketTypes": [
-        "packet:runtime:everyday-task-frame"
+        "packet:runtime:bounded-operation-frame"
       ],
       "outputPacketTypes": [
         "packet:runtime:knowledge-inspection-result"
@@ -1534,10 +1452,10 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "directStrategyIdentities": [],
       "strategyIdentities": [],
       "incomingEdgeIds": [
-        "edge:runtime:everyday-frame-knowledge"
+        "edge:runtime:operation-frame-knowledge"
       ],
       "outgoingEdgeIds": [
-        "edge:runtime:everyday-knowledge-result"
+        "edge:runtime:knowledge-inspection-result"
       ]
     },
     {
@@ -1874,7 +1792,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "directStrategyIdentities": [],
       "strategyIdentities": [],
       "incomingEdgeIds": [
-        "edge:runtime:everyday-frame-bypass"
+        "edge:runtime:operation-frame-bypass"
       ],
       "outgoingEdgeIds": [
         "edge:runtime:request-force-direct",
@@ -1907,6 +1825,42 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "incomingEdgeIds": [],
       "outgoingEdgeIds": [
         "edge:runtime:ingress-snapshot"
+      ]
+    },
+    {
+      "nodeId": "node:runtime:request-operation-framer",
+      "label": "Request operation framer",
+      "circuitId": "circuit:runtime:request-session",
+      "kind": "process",
+      "stageRef": "runtime.request.plan",
+      "role": "Represents one admitted bounded operation, its request-supplied operands, and its output obligation without executing it.",
+      "authority": "none",
+      "answerAuthority": "none",
+      "canVote": false,
+      "implementationState": "instrumented-local",
+      "ownerModule": "src/language/bounded-operation-framing.mjs",
+      "inputPacketTypes": [
+        "packet:runtime:direct-diagnostic"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:bounded-operation-frame",
+        "packet:runtime:direct-diagnostic"
+      ],
+      "resourceDimensions": [
+        "resource:graph-nodes",
+        "resource:tokens"
+      ],
+      "strategyFamilyIds": [],
+      "directStrategyIdentities": [],
+      "strategyIdentities": [],
+      "incomingEdgeIds": [
+        "edge:runtime:parser-operation-frame"
+      ],
+      "outgoingEdgeIds": [
+        "edge:runtime:operation-frame-bypass",
+        "edge:runtime:operation-frame-deterministic",
+        "edge:runtime:operation-frame-knowledge",
+        "edge:runtime:operation-frame-supplied-text"
       ]
     },
     {
@@ -2012,7 +1966,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "strategyIdentities": [],
       "incomingEdgeIds": [
         "edge:runtime:construct-schema",
-        "edge:runtime:everyday-assemble-schema"
+        "edge:runtime:typed-operation-assemble-schema"
       ],
       "outgoingEdgeIds": [
         "edge:runtime:schema-commit",
@@ -2268,7 +2222,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
     {
       "nodeId": "node:runtime:supplied-text-operator",
       "label": "Supplied-text operator",
-      "circuitId": "circuit:runtime:everyday-task-path",
+      "circuitId": "circuit:runtime:method-selection",
       "kind": "process",
       "stageRef": "runtime.reason.execute",
       "role": "Classifies, extracts, corrects, or rewrites only the bounded text supplied in the request and records its supporting spans or cues.",
@@ -2276,9 +2230,9 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "answerAuthority": "none",
       "canVote": false,
       "implementationState": "instrumented-local",
-      "ownerModule": "src/reasoning/everyday-supplied-text-operations.mjs",
+      "ownerModule": "src/reasoning/supplied-text-operations.mjs",
       "inputPacketTypes": [
-        "packet:runtime:everyday-task-frame"
+        "packet:runtime:bounded-operation-frame"
       ],
       "outputPacketTypes": [
         "packet:runtime:supplied-text-result"
@@ -2292,10 +2246,46 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "directStrategyIdentities": [],
       "strategyIdentities": [],
       "incomingEdgeIds": [
-        "edge:runtime:everyday-frame-text"
+        "edge:runtime:operation-frame-supplied-text"
       ],
       "outgoingEdgeIds": [
-        "edge:runtime:everyday-text-result"
+        "edge:runtime:supplied-text-operation-result"
+      ]
+    },
+    {
+      "nodeId": "node:runtime:typed-operation-result-assembler",
+      "label": "Typed operation result assembler",
+      "circuitId": "circuit:runtime:grounded-response-construction",
+      "kind": "process",
+      "stageRef": "runtime.result.construct",
+      "role": "Builds a query-local runtime candidate with the exact frame, method, witness, provenance, and unresolved gap.",
+      "authority": "none",
+      "answerAuthority": "none",
+      "canVote": false,
+      "implementationState": "instrumented-local",
+      "ownerModule": "src/runtime/bounded-operation-processing.mjs",
+      "inputPacketTypes": [
+        "packet:runtime:deterministic-value-result",
+        "packet:runtime:knowledge-inspection-result",
+        "packet:runtime:supplied-text-result"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:construction-candidate"
+      ],
+      "resourceDimensions": [
+        "resource:output-bytes",
+        "resource:proof-bytes"
+      ],
+      "strategyFamilyIds": [],
+      "directStrategyIdentities": [],
+      "strategyIdentities": [],
+      "incomingEdgeIds": [
+        "edge:runtime:deterministic-operation-result",
+        "edge:runtime:knowledge-inspection-result",
+        "edge:runtime:supplied-text-operation-result"
+      ],
+      "outgoingEdgeIds": [
+        "edge:runtime:typed-operation-assemble-schema"
       ]
     },
     {
@@ -2714,67 +2704,11 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "condition": "candidate-constructed"
     },
     {
-      "edgeId": "edge:runtime:everyday-assemble-schema",
-      "from": "node:runtime:everyday-result-assembler",
-      "to": "node:runtime:result-schema-gate",
+      "edgeId": "edge:runtime:deterministic-operation-result",
+      "from": "node:runtime:deterministic-value-executor",
+      "to": "node:runtime:typed-operation-result-assembler",
       "kind": "data",
-      "packetType": "packet:runtime:construction-candidate",
-      "condition": "candidate-constructed"
-    },
-    {
-      "edgeId": "edge:runtime:everyday-frame-bypass",
-      "from": "node:runtime:everyday-task-framer",
-      "to": "node:runtime:request-force-gate",
-      "kind": "control",
-      "packetType": "packet:runtime:direct-diagnostic",
-      "condition": "no-supported-everyday-operation"
-    },
-    {
-      "edgeId": "edge:runtime:everyday-frame-knowledge",
-      "from": "node:runtime:everyday-task-framer",
-      "to": "node:runtime:grounded-knowledge-inspector",
-      "kind": "control",
-      "packetType": "packet:runtime:everyday-task-frame",
-      "condition": "knowledge-inspection-operation"
-    },
-    {
-      "edgeId": "edge:runtime:everyday-frame-numeric",
-      "from": "node:runtime:everyday-task-framer",
-      "to": "node:runtime:everyday-deterministic-executor",
-      "kind": "control",
-      "packetType": "packet:runtime:everyday-task-frame",
-      "condition": "deterministic-value-or-order-operation"
-    },
-    {
-      "edgeId": "edge:runtime:everyday-frame-text",
-      "from": "node:runtime:everyday-task-framer",
-      "to": "node:runtime:supplied-text-operator",
-      "kind": "control",
-      "packetType": "packet:runtime:everyday-task-frame",
-      "condition": "supplied-text-operation"
-    },
-    {
-      "edgeId": "edge:runtime:everyday-knowledge-result",
-      "from": "node:runtime:grounded-knowledge-inspector",
-      "to": "node:runtime:everyday-result-assembler",
-      "kind": "data",
-      "packetType": "packet:runtime:knowledge-inspection-result",
-      "condition": "inspection-complete-or-explicit-gap"
-    },
-    {
-      "edgeId": "edge:runtime:everyday-numeric-result",
-      "from": "node:runtime:everyday-deterministic-executor",
-      "to": "node:runtime:everyday-result-assembler",
-      "kind": "data",
-      "packetType": "packet:runtime:everyday-deterministic-result",
-      "condition": "operation-complete"
-    },
-    {
-      "edgeId": "edge:runtime:everyday-text-result",
-      "from": "node:runtime:supplied-text-operator",
-      "to": "node:runtime:everyday-result-assembler",
-      "kind": "data",
-      "packetType": "packet:runtime:supplied-text-result",
+      "packetType": "packet:runtime:deterministic-value-result",
       "condition": "operation-complete"
     },
     {
@@ -2834,6 +2768,14 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "condition": "request-bounded"
     },
     {
+      "edgeId": "edge:runtime:knowledge-inspection-result",
+      "from": "node:runtime:grounded-knowledge-inspector",
+      "to": "node:runtime:typed-operation-result-assembler",
+      "kind": "data",
+      "packetType": "packet:runtime:knowledge-inspection-result",
+      "condition": "inspection-complete-or-explicit-gap"
+    },
+    {
       "edgeId": "edge:runtime:language-direct",
       "from": "node:runtime:english-likelihood-gate",
       "to": "node:runtime:direct-parser-gate",
@@ -2850,9 +2792,41 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "condition": "likely-non-english"
     },
     {
-      "edgeId": "edge:runtime:parser-everyday-frame",
+      "edgeId": "edge:runtime:operation-frame-bypass",
+      "from": "node:runtime:request-operation-framer",
+      "to": "node:runtime:request-force-gate",
+      "kind": "control",
+      "packetType": "packet:runtime:direct-diagnostic",
+      "condition": "no-supported-bounded-operation"
+    },
+    {
+      "edgeId": "edge:runtime:operation-frame-deterministic",
+      "from": "node:runtime:request-operation-framer",
+      "to": "node:runtime:deterministic-value-executor",
+      "kind": "control",
+      "packetType": "packet:runtime:bounded-operation-frame",
+      "condition": "deterministic-value-or-order-operation"
+    },
+    {
+      "edgeId": "edge:runtime:operation-frame-knowledge",
+      "from": "node:runtime:request-operation-framer",
+      "to": "node:runtime:grounded-knowledge-inspector",
+      "kind": "control",
+      "packetType": "packet:runtime:bounded-operation-frame",
+      "condition": "knowledge-inspection-operation"
+    },
+    {
+      "edgeId": "edge:runtime:operation-frame-supplied-text",
+      "from": "node:runtime:request-operation-framer",
+      "to": "node:runtime:supplied-text-operator",
+      "kind": "control",
+      "packetType": "packet:runtime:bounded-operation-frame",
+      "condition": "supplied-text-operation"
+    },
+    {
+      "edgeId": "edge:runtime:parser-operation-frame",
       "from": "node:runtime:direct-parser-gate",
-      "to": "node:runtime:everyday-task-framer",
+      "to": "node:runtime:request-operation-framer",
       "kind": "data",
       "packetType": "packet:runtime:direct-diagnostic",
       "condition": "direct-answer-not-complete"
@@ -3040,6 +3014,22 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "kind": "data",
       "packetType": "packet:runtime:request-session-snapshot",
       "condition": "session-frozen"
+    },
+    {
+      "edgeId": "edge:runtime:supplied-text-operation-result",
+      "from": "node:runtime:supplied-text-operator",
+      "to": "node:runtime:typed-operation-result-assembler",
+      "kind": "data",
+      "packetType": "packet:runtime:supplied-text-result",
+      "condition": "operation-complete"
+    },
+    {
+      "edgeId": "edge:runtime:typed-operation-assemble-schema",
+      "from": "node:runtime:typed-operation-result-assembler",
+      "to": "node:runtime:result-schema-gate",
+      "kind": "data",
+      "packetType": "packet:runtime:construction-candidate",
+      "condition": "candidate-constructed"
     },
     {
       "edgeId": "edge:runtime:verification-gap",
@@ -5977,12 +5967,12 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
     "packet:research:transfer-decision",
     "packet:runtime:admitted-claim-ledger",
     "packet:runtime:assessed-evidence",
+    "packet:runtime:bounded-operation-frame",
     "packet:runtime:bounded-request",
     "packet:runtime:construction-candidate",
     "packet:runtime:construction-work-order",
+    "packet:runtime:deterministic-value-result",
     "packet:runtime:direct-diagnostic",
-    "packet:runtime:everyday-deterministic-result",
-    "packet:runtime:everyday-task-frame",
     "packet:runtime:evidence-admission",
     "packet:runtime:evidence-frontier",
     "packet:runtime:failure-eligibility",

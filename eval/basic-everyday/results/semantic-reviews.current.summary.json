@@ -1,0 +1,24 @@
+{
+  "format": "eslm-basic-eval-semantic-review-summary",
+  "generatedAt": "2026-08-13T12:04:45.676Z",
+  "policy": "eval/basic-everyday/semantic-review-policy.json",
+  "policyDigest": "sha256:845ec330477203dce5d2a6c98654292af6cd040b4a0b44a73f0c8cc41b573876",
+  "output": "eval/basic-everyday/results/semantic-reviews.current.jsonl",
+  "outputDigest": "sha256:1a4ecefe260f6a9a0e552ec08aa318c37f1ee415660e854d56aa227b490d49a5",
+  "profiles": {
+    "core-only": {
+      "resultDigest": "sha256:9e35e3e886663da8c10f4106aab0c1a843fa1beea90f52f20e4fdfe35354b814",
+      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+      "reviewed": 150,
+      "pass": 150,
+      "fail": 0
+    },
+    "real-kb": {
+      "resultDigest": "sha256:df533202206517a2329528e051a51f0e9fd946c63dd8ae621316b57ee1174aec",
+      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+      "reviewed": 46,
+      "pass": 33,
+      "fail": 13
+    }
+  }
+}

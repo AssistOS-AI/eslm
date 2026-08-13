@@ -116,9 +116,9 @@ function execute(frame) {
   return undefined;
 }
 
-export function executeEverydayDeterministicOperation(frame) {
-  if (!frame || frame.format !== 'eslm-everyday-task-frame') {
-    throw new TypeError('Everyday deterministic execution requires an everyday task frame.');
+export function executeDeterministicValueOperation(frame) {
+  if (!frame || frame.format !== 'eslm-bounded-operation-frame') {
+    throw new TypeError('Deterministic value execution requires a bounded operation frame.');
   }
   return execute(frame);
 }

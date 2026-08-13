@@ -5,9 +5,10 @@ import { createCoreModel } from '../src/runtime/core-model.mjs';
 import { EslmRuntime } from '../src/runtime/runtime.mjs';
 import { HeuristicLanguageRuntime } from '../src/runtime/heuristic-language-runtime.mjs';
 import { REGRESSION_SMOKE_SEED } from '../src/conversation-smoke.mjs';
+import { BASIC_EVAL_SMOKE_SEED, loadBasicEvalCases } from '../src/evaluation/basic-eval-catalog.mjs';
 import {
-  interactiveCountAndSeed, interactiveExamplePage, interactiveExamples, interactiveResultText,
-  interactiveSmoke, traceText,
+  interactiveBasicEvalSmoke, interactiveCountAndSeed, interactiveExamplePage, interactiveExamples,
+  interactiveResultText, interactiveSmoke, traceText,
 } from '../src/interface/interactive-presenter.mjs';
 
 const style = Object.freeze({
@@ -38,30 +39,44 @@ test('related KB records stay in trace and do not overwhelm the conversational a
   assert.match(trace, /Related records were not used as answer premises/u);
 });
 
-test('examples uses deterministic 24-case pages from the executable smoke catalog', () => {
+test('examples uses deterministic 24-case pages from Basic Eval and its structural controls', async () => {
   assert.deepEqual(interactiveCountAndSeed('', 4096), {
     count: 4096, seed: REGRESSION_SMOKE_SEED,
   });
   assert.deepEqual(interactiveExamplePage(''), {
-    page: 1, seed: REGRESSION_SMOKE_SEED, pageCount: 171,
+    page: 1, seed: BASIC_EVAL_SMOKE_SEED, pageCount: 43,
   });
   assert.deepEqual(interactiveExamplePage('2 review-seed'), {
-    page: 2, seed: 'review-seed', pageCount: 171,
+    page: 2, seed: 'review-seed', pageCount: 43,
   });
-  const first = interactiveExamples(style, 'review-seed', 1);
-  const second = interactiveExamples(style, 'review-seed', 2);
-  assert.match(first, /Page: 1 of 171/u);
-  assert.match(second, /Page: 2 of 171/u);
-  assert.equal((first.match(/Template:/gu) ?? []).length, 24);
-  assert.equal((second.match(/Template:/gu) ?? []).length, 24);
-  assert.match(first, /1,200 heuristic-language cases plus 2,896 core regressions/u);
-  for (const level of [
-    'answer-execution', 'candidate-selection', 'proposal-only', 'query-local-decomposition',
-    'request-execution', 'request-planning', 'safety-abstention', 'semantic-query-execution',
-  ]) assert.match(first, new RegExp(`\\[${level}\\]`, 'u'));
-  assert.match(first, /categorical-subalternation/u);
-  assert.match(first, /boolean-entailment-chain/u);
+  const first = await interactiveExamples(style, 'review-seed', 1);
+  const second = await interactiveExamples(style, 'review-seed', 2);
+  assert.match(first, /Page: 1 of 43/u);
+  assert.match(second, /Page: 2 of 43/u);
+  assert.equal((first.match(/Case: /gu) ?? []).length, 24);
+  assert.equal((second.match(/Case: /gu) ?? []).length, 24);
+  assert.match(first, /1,010 questions and controls/u);
+  assert.match(first, /1,000 development-visible English projections/u);
+  assert.match(first, /\[exact contract\]/u);
+  assert.match(first, /\[semantic review\]/u);
   assert.notEqual(first, second);
+});
+
+test('Basic Eval smoke scores source cases locally and keeps semantic results in review', async () => {
+  const cases = await loadBasicEvalCases();
+  const references = new Map(cases.map((item) => [item.prompt, item.reference.answer]));
+  const engine = { ask: async (prompt) => ({
+    status: 'SOLVED', answer: references.get(prompt), languageRoute: 'test-local', taskFrame: {},
+  }) };
+  const output = await interactiveBasicEvalSmoke({
+    'core-only': engine, 'quick-assisted': engine, 'real-kb': engine,
+  },
+    style, 'review-seed', 24);
+  assert.match(output, /Basic Eval smoke — 24 cases and controls/u);
+  assert.match(output, /Language Agent off/u);
+  assert.match(output, /0 fail/u);
+  assert.match(output, /review/u);
+  assert.match(output, /development-visible English conversions/u);
 });
 
 test('smoke output displays representative input, expected contract, and actual runtime response', async () => {
@@ -138,9 +153,9 @@ test('a short symbolic value is presented naturally without an internal processi
   assert.equal(output, 'Northwest.');
 });
 
-test('an everyday result is presented as the answer while its method remains available to trace', () => {
+test('a bounded operation result is presented as the answer while its method remains available to trace', () => {
   const result = {
-    status: 'SOLVED', answer: '51', languageRoute: 'everyday-task-executed',
+    status: 'SOLVED', answer: '51', languageRoute: 'bounded-operation-executed',
     values: [51], provenance: [{ method: 'verified-scalar-operation' }], usedKbVersions: [],
     reasoning: { method: 'verified-scalar-operation', witness: { result: 51 } },
   };

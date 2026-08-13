@@ -30,8 +30,9 @@ import { prepareAgentWorkspace, runCodexTraining, TRAINING_SKILLS } from './trai
 import { editDistance, parseArgs } from './util.mjs';
 import { createTerminalStyle } from './terminal-style.mjs';
 import {
-  interactiveCountAndSeed, interactiveExamplePage, interactiveExamples, interactiveHelp, interactiveKbText,
-  interactiveResultText, interactiveSmoke, memoryText, modelText, profileText, strategiesText, traceText, workText,
+  interactiveBasicEvalSmoke, interactiveCountAndSeed, interactiveExamplePage, interactiveExamples,
+  interactiveHelp, interactiveKbText, interactiveResultText, memoryText, modelText, profileText,
+  strategiesText, traceText, workText,
 } from './interface/interactive-presenter.mjs';
 import { benchmarkCommand } from './interface/benchmark-command.mjs';
 import { researchCommand } from './interface/research-command.mjs';
@@ -188,18 +189,24 @@ async function chat(options) {
     if (line === '/examples' || line.startsWith('/examples ')) {
       try {
         const { page, seed } = interactiveExamplePage(line.slice('/examples'.length));
-        stdout.write(`${interactiveExamples(style, seed, page)}\n`);
+        stdout.write(`${await interactiveExamples(style, seed, page)}\n`);
       } catch (error) { stdout.write(`${style.red(error.message)}\n`); }
       continue;
     }
     if (line === '/smoke' || line.startsWith('/smoke ')) {
-      const { count, seed } = interactiveCountAndSeed(line.slice('/smoke'.length), 4096);
-      const smokeEngine = await createCliRuntime({
-        kb: 'quick',
-        'external-language-agent': false,
-        'no-external-language-agent': true,
-      });
-      stdout.write(`${await interactiveSmoke(smokeEngine, ['quick'], style, seed, count)}\n`);
+      try {
+        const { count, seed } = interactiveCountAndSeed(line.slice('/smoke'.length), 1010,
+          'basic-eval-development');
+        const localOptions = { 'external-language-agent': false, 'no-external-language-agent': true };
+        const smokeEngines = {
+          'core-only': await createCliRuntime({ ...localOptions, kb: '' }),
+          'quick-assisted': await createCliRuntime({ ...localOptions, kb: 'quick' }),
+          'real-kb': await createCliRuntime({ ...localOptions,
+            kb: 'oewn-2025,geonames-2026,conceptnet-5.7.0-en,world-relations-1.0',
+            'memory-policy': 'lazy' }),
+        };
+        stdout.write(`${await interactiveBasicEvalSmoke(smokeEngines, style, seed, count)}\n`);
+      } catch (error) { stdout.write(`${style.red(error.message)}\n`); }
       continue;
     }
     if (line.startsWith('/load ')) {

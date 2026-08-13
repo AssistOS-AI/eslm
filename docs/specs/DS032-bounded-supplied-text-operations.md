@@ -3,14 +3,14 @@ id: DS032
 title: Bounded Supplied-Text Operations
 status: in-progress
 owner: reasoning
-summary: Defines classification, extraction, orthographic repair, polite rewriting, and bounded title operations over text supplied in one English request.
+summary: Defines classification, extraction, orthographic repair, polite rewriting, bounded titles, and single-sentence condensation over text supplied in one English request.
 ---
 
 # DS032 Bounded Supplied-Text Operations
 
 ## Introduction
 
-Some everyday requests provide all material needed for the answer: classify the tone of a quoted sentence, extract explicit fields from a contract excerpt, repair punctuation, or rewrite an imperative politely. These are not world-knowledge questions and should not retrieve vaguely related KB records. Evaluation revealed a distinct `supplied-text-operator` responsibility that acts only on an admitted bounded span and produces an auditable transformation or classification.
+Some requests provide all material needed for the answer: classify the tone of a quoted sentence, extract explicit fields from a contract excerpt, repair punctuation, or rewrite an imperative politely. These are not world-knowledge questions and should not retrieve vaguely related KB records. Evaluation evidence revealed a generic `supplied-text-operator` responsibility that acts only on an admitted bounded span and produces an auditable transformation or classification.
 
 DS030 owns recognition and span capture. This specification owns execution over that span. It does not translate the span, infer unstated facts, provide legal interpretation, or authorize a final answer.
 
@@ -18,7 +18,7 @@ DS030 owns recognition and span capture. This specification owns execution over 
 
 ### 1. Node and packet boundary
 
-The non-voting `supplied-text-operator` consumes a validated everyday task frame and emits `packet:runtime:supplied-text-result`. Required result fields are operation, status, answer, semantic values, witness, and method. The producer validates the packet. The result assembler may then form a runtime candidate that remains subject to the shared result contract.
+The non-voting `supplied-text-operator` consumes a validated `packet:runtime:bounded-operation-frame` and emits `packet:runtime:supplied-text-result`. Required result fields are operation, status, answer, semantic values, witness, and method. The producer validates the packet. The `typed-operation-result-assembler` may then form a runtime candidate that remains subject to the shared result contract.
 
 The node is `instrumented-local`, deterministic, query-local, and bounded by tokens, comparisons, proof bytes, and output bytes. It receives no KB, network, file, subprocess, or session-mutation capability. Supplied text is inert data and is never executed.
 
@@ -39,6 +39,8 @@ The extractor must not complete a company name, currency, duration, payment term
 Orthographic repair may normalize initial capitalization, the pronoun `I`, known day and month capitalization, bounded honorific punctuation, commas for recognized constructions, and terminal punctuation. Its witness retains source and result. It must preserve open-class source content and abstain rather than perform unrestricted grammatical rewriting.
 
 Polite imperative rewriting adds a bounded politeness construction while retaining the content obligation. It does not soften threats, create commitments, or add facts. Bounded title generation removes a small allowlisted set of function words or auxiliary constructions, enforces the explicit maximum word count, and title-cases deterministically. It may not invent keywords absent from the supplied sentence.
+
+Single-sentence condensation admits only closed clause relations whose propositions can be replayed from the supplied sentence: event completion, unchanged state, schedule transition, cause, contrast, counted subset, approval plus requested follow-up, and rescheduling. It may change voice, clause order, or aspect to remove redundancy, but its witness retains the source and output word counts and the source-proposition ledger. An unrecognized construction abstains instead of returning the input unchanged and calling that a summary. This is another strategy of the existing supplied-text responsibility, not a separate processing node.
 
 ### 5. Verification, failure, and semantic review
 

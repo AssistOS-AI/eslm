@@ -59,8 +59,8 @@ test('processing-graph view repository auditor passes its self-contained static 
   const report = JSON.parse(result.stdout);
   assert.equal(report.status, 'machine-checks-passed-semantic-review-required');
   assert.equal(report.inventory.circuits, 22);
-  assert.equal(report.inventory.nodes, 52);
-  assert.equal(report.inventory.edges, 79);
+  assert.equal(report.inventory.nodes, 57);
+  assert.equal(report.inventory.edges, 87);
   assert.equal(report.inventory.strategyFamilies, 6);
   assert.equal(report.inventory.strategies, 79);
   assert.equal(report.semanticReviewRequired, true);

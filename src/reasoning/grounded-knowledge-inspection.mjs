@@ -160,7 +160,7 @@ function listKnowledgeEntities(model, inputs) {
   };
 }
 
-export function executeEverydayKnowledgeInspection(frame, model) {
+export function executeGroundedKnowledgeInspection(frame, model) {
   if (!model || !Array.isArray(model.entities) || !Array.isArray(model.facts)) return undefined;
   if (frame.operation === 'knowledge-summary') return summarizeKnowledge(model, frame.inputs, frame.output);
   if (frame.operation === 'knowledge-entity-list') return listKnowledgeEntities(model, frame.inputs);

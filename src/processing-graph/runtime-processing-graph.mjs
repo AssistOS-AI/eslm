@@ -6,8 +6,6 @@ export const RUNTIME_PROCESSING_CIRCUITS = Object.freeze([
   ['circuit:runtime:ingress-language', 'circuit:runtime:request-cycle', 'Ingress and language', 'Bound input, assess language, and establish typed meaning.'],
   ['circuit:runtime:language-direct', 'circuit:runtime:ingress-language', 'Direct language path', 'English likelihood and direct parser authority.'],
   ['circuit:runtime:language-recovery', 'circuit:runtime:ingress-language', 'Language recovery path', 'Bounded alternatives, preservation, reparse, and selection.'],
-  ['circuit:runtime:everyday-task-path', 'circuit:runtime:ingress-language', 'Everyday task path',
-    'Explicit task framing, bounded execution over supplied values or text, and grounded KB inspection.'],
   ['circuit:runtime:request-session', 'circuit:runtime:request-cycle', 'Request and session', 'Request force, obligations, work, rollback, and session effects.'],
   ['circuit:runtime:knowledge-evidence', 'circuit:runtime:request-cycle', 'Knowledge and evidence', 'Focus, exact routing, retrieval, relevance, and admission.'],
   ['circuit:runtime:knowledge-routing', 'circuit:runtime:knowledge-evidence', 'Knowledge routing', 'Package scope, exact routes, and bounded frontiers.'],

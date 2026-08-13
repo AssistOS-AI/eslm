@@ -38,7 +38,7 @@ export const CORPUS_CATALOG = Object.freeze({
     id: 'conceptnet-5.7.0-en',
     priority: 3,
     title: 'ConceptNet 5.7 English assertions',
-    role: 'Everyday categories, properties, locations, purposes, capabilities, and causes',
+    role: 'Commonsense categories, properties, locations, purposes, capabilities, and causes',
     officialSource: 'https://conceptnet.s3.amazonaws.com/downloads/2019/edges/conceptnet-assertions-5.7.0.csv.gz',
     discoveredSourceBytes: 497963447,
     release: '5.7.0',
@@ -47,7 +47,7 @@ export const CORPUS_CATALOG = Object.freeze({
       'IsA', 'PartOf', 'HasA', 'UsedFor', 'CapableOf', 'AtLocation',
       'HasProperty', 'MadeOf', 'Causes', 'MotivatedByGoal', 'ReceivesAction',
     ],
-    initialProfiles: ['english-core', 'english-physical', 'english-everyday-actions'],
+    initialProfiles: ['english-core', 'english-physical', 'english-commonsense-actions'],
     ingestionStatus: 'source-verified-adapter-pending',
   }),
   'wikidata-thematic': source({

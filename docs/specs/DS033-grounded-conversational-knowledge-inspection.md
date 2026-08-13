@@ -10,7 +10,7 @@ summary: Defines natural entity summaries, bounded class listings, provenance, n
 
 ## Introduction
 
-A symbolic runtime should be able to answer “What do you know about Socrates?” without dumping unrelated lexical search hits, and it should be equally clear when it has no admitted fact. Everyday evaluation and direct operator feedback exposed a stable gap between exact declarative facts and conversational inspection. This specification defines the `grounded-knowledge-inspector` node that resolves a requested subject or class, selects only loaded model facts, and realizes a short natural answer with exact provenance.
+A symbolic runtime should be able to answer “What do you know about Socrates?” without dumping unrelated lexical search hits, and it should be equally clear when it has no admitted fact. Basic Eval and direct operator feedback exposed a stable gap between exact declarative facts and conversational inspection. This specification defines the generic `grounded-knowledge-inspector` node that resolves a requested subject or class, selects only loaded model facts, and realizes a short natural answer with exact provenance.
 
 The node is not a general web search, retrieval-confidence voter, biography generator, or substitute for proof. It cannot turn related KB evidence into an answer and cannot conceal a coverage gap behind fluent wording.
 
@@ -18,7 +18,7 @@ The node is not a general web search, retrieval-confidence voter, biography gene
 
 ### 1. Node and packet boundary
 
-The inspector consumes an everyday knowledge-inspection frame plus the already loaded declarative model and emits `packet:runtime:knowledge-inspection-result`. Required fields are operation, status, answer, values, witness, and method; knowledge-backed success additionally carries fact provenance and contributing KB identities. The producing node validates its packet before the everyday-result assembler constructs a runtime candidate.
+The inspector consumes an admitted `packet:runtime:bounded-operation-frame` plus the already loaded declarative model and emits `packet:runtime:knowledge-inspection-result`. Required fields are operation, status, answer, values, witness, and method; knowledge-backed success additionally carries fact provenance and contributing KB identities. The producing node validates its packet before the `typed-operation-result-assembler` constructs a runtime candidate.
 
 The node is a non-voting `process`, query-local, offline, and `instrumented-local`. It cannot load an unselected KB, call a provider outside the runtime's selected scope, use related-grounding output as answer evidence, mutate session facts, or authorize the final result.
 

@@ -47,7 +47,7 @@ test('the hierarchical processing graph catalogs 57 concrete nodes across three 
   assert.equal(receipt.checks.strategyStatesMatchResolvedDescriptors, true);
   assert.equal(receipt.checks.ownerPathsExcludedFromCatalogIdentity, true);
   assert.deepEqual(receipt.counts, {
-    circuits: 23,
+    circuits: 22,
     nodes: 57,
     edges: 87,
     packetTypes: 66,
@@ -92,7 +92,7 @@ test('inventory exposes deterministic zoom levels, states, kinds, stages, and ci
   assert.equal(inventory.circuits.find((item) =>
     item.circuitId === 'circuit:runtime:request-cycle').nestedNodeCount, 37);
   assert.equal(inventory.circuits.find((item) =>
-    item.circuitId === 'circuit:runtime:grounded-response-construction').nestedNodeCount, 5);
+    item.circuitId === 'circuit:runtime:grounded-response-construction').nestedNodeCount, 6);
   assert.equal(inventory.circuits.find((item) =>
     item.circuitId === 'circuit:compiler:knowledge-build').nestedNodeCount, 12);
   assert.equal(inventory.circuits.find((item) =>
@@ -139,6 +139,7 @@ test('grounded response construction is a concrete nested circuit with typed str
     'node:runtime:result-construction-coordinator',
     'node:runtime:rhetorical-plan-builder',
     'node:runtime:sentence-realization-coordinator',
+    'node:runtime:typed-operation-result-assembler',
   ]);
   assert.deepEqual(node(PROCESSING_GRAPH_CATALOG,
     'node:runtime:rhetorical-plan-builder').strategyRefs, [

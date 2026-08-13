@@ -97,7 +97,7 @@ test('logical architecture stays synchronized with the validated processing-grap
   assert.equal(validation.format, 'eslm-processing-graph-validation-receipt');
   assert.equal(validation.valid, true);
   assert.deepEqual(validation.counts, {
-    circuits: 23,
+    circuits: 22,
     nodes: 57,
     edges: 87,
     packetTypes: 66,

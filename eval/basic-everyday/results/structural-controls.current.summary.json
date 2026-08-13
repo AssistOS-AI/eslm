@@ -1,0 +1,62 @@
+{
+  "format": "eslm-basic-everyday-eval-summary",
+  "generatedAt": "2026-08-13T12:04:45.356Z",
+  "sourceDevelopmentDisclosure": "These independently authored controls are development-visible regression evidence over declared packages.",
+  "cases": "eval/basic-everyday/structural-controls.jsonl",
+  "output": "eval/basic-everyday/results/structural-controls.current.jsonl",
+  "resultDigest": "sha256:9c7d170d0ecc590fecec06221c33ff39f92c325ea39f92c1a5659e6aa9925658",
+  "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+  "caseManifestDigest": "sha256:c6b2266aae055bb97a6a3d134e8de91dcc0b0046101bdf38dcdc22d6805cfba1",
+  "profiles": {
+    "quick-assisted": {
+      "knowledgeBases": "quick"
+    }
+  },
+  "counts": {
+    "total": 10,
+    "pass": 10,
+    "fail": 0,
+    "review": 0,
+    "byProfile": {
+      "quick-assisted": {
+        "total": 10,
+        "pass": 10,
+        "fail": 0,
+        "review": 0
+      }
+    },
+    "byCategory": {
+      "grounded-capability": {
+        "total": 1,
+        "pass": 1,
+        "fail": 0,
+        "review": 0
+      },
+      "grounded-classification": {
+        "total": 2,
+        "pass": 2,
+        "fail": 0,
+        "review": 0
+      },
+      "multi-hop-inference": {
+        "total": 2,
+        "pass": 2,
+        "fail": 0,
+        "review": 0
+      },
+      "grounded-knowledge-summary": {
+        "total": 4,
+        "pass": 4,
+        "fail": 0,
+        "review": 0
+      },
+      "grounded-entity-inventory": {
+        "total": 1,
+        "pass": 1,
+        "fail": 0,
+        "review": 0
+      }
+    },
+    "byStage": {}
+  }
+}

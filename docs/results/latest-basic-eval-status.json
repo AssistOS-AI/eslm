@@ -1,0 +1,447 @@
+{
+  "format": "eslm-basic-eval-status",
+  "generatedAt": "2026-08-13T12:05:01.754Z",
+  "sourceDevelopmentDisclosure": "All converted source cases are development-visible and may influence implementation.",
+  "inventory": {
+    "sourceCases": 1000,
+    "structuralControls": 10,
+    "totalCasesAndControls": 1010,
+    "convertedCases": 1000,
+    "categories": 33,
+    "byCategory": {
+      "applied-calculation": 60,
+      "argument-critique": 10,
+      "calculation": 80,
+      "complex-everyday-task": 10,
+      "educational-explanation": 10,
+      "email-rewriting": 10,
+      "explanation": 30,
+      "extraction": 40,
+      "factual": 150,
+      "feedback-synthesis": 10,
+      "intent-classification": 30,
+      "logical-ordering": 40,
+      "numeric-sequence": 30,
+      "option-comparison": 10,
+      "percentages": 50,
+      "practical-advice": 30,
+      "practical-plan": 10,
+      "professional-communication": 10,
+      "rewriting": 30,
+      "sentiment-classification": 30,
+      "short-creative": 10,
+      "short-problem": 45,
+      "simple-classification": 20,
+      "structured-extraction": 10,
+      "structured-summarization": 10,
+      "study-plan": 10,
+      "summarization": 30,
+      "text-correction": 20,
+      "time": 15,
+      "title-generation": 20,
+      "translation": 60,
+      "vocabulary": 40,
+      "yes-no": 30
+    },
+    "byScoring": {
+      "exact": 535,
+      "semantic": 465
+    },
+    "profileAssignments": {
+      "core-only": 750,
+      "quick-assisted": 210,
+      "real-kb": 250
+    },
+    "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
+    "controlManifestDigest": "sha256:c6b2266aae055bb97a6a3d134e8de91dcc0b0046101bdf38dcdc22d6805cfba1"
+  },
+  "checkpoint": {
+    "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+    "allProfilesCurrent": true,
+    "currentProfileCount": 3,
+    "expectedProfileCount": 3
+  },
+  "profiles": [
+    {
+      "profileId": "core-only",
+      "generatedAt": "2026-08-13T12:04:32.518Z",
+      "current": true,
+      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+      "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
+      "resultDigest": "sha256:9e35e3e886663da8c10f4106aab0c1a843fa1beea90f52f20e4fdfe35354b814",
+      "counts": {
+        "total": 750,
+        "pass": 410,
+        "fail": 190,
+        "review": 150
+      },
+      "semanticReview": {
+        "current": true,
+        "reviewed": 150,
+        "pass": 150,
+        "fail": 0
+      },
+      "validated": {
+        "pass": 560,
+        "fail": 190,
+        "pendingReview": 0
+      },
+      "validatedPassPercent": 74.7,
+      "passPercent": 54.7,
+      "reviewPercent": 20,
+      "failureClusters": [
+        {
+          "stage": "parse",
+          "count": 168
+        },
+        {
+          "stage": "grounding",
+          "count": 22
+        }
+      ],
+      "byCategory": {
+        "structured-extraction": {
+          "total": 10,
+          "pass": 0,
+          "fail": 0,
+          "review": 10
+        },
+        "numeric-sequence": {
+          "total": 30,
+          "pass": 30,
+          "fail": 0,
+          "review": 0
+        },
+        "yes-no": {
+          "total": 30,
+          "pass": 30,
+          "fail": 0,
+          "review": 0
+        },
+        "calculation": {
+          "total": 80,
+          "pass": 80,
+          "fail": 0,
+          "review": 0
+        },
+        "intent-classification": {
+          "total": 30,
+          "pass": 30,
+          "fail": 0,
+          "review": 0
+        },
+        "professional-communication": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        },
+        "translation": {
+          "total": 60,
+          "pass": 0,
+          "fail": 60,
+          "review": 0
+        },
+        "sentiment-classification": {
+          "total": 30,
+          "pass": 30,
+          "fail": 0,
+          "review": 0
+        },
+        "short-problem": {
+          "total": 45,
+          "pass": 45,
+          "fail": 0,
+          "review": 0
+        },
+        "time": {
+          "total": 15,
+          "pass": 15,
+          "fail": 0,
+          "review": 0
+        },
+        "structured-summarization": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        },
+        "text-correction": {
+          "total": 20,
+          "pass": 0,
+          "fail": 0,
+          "review": 20
+        },
+        "extraction": {
+          "total": 40,
+          "pass": 0,
+          "fail": 0,
+          "review": 40
+        },
+        "percentages": {
+          "total": 50,
+          "pass": 50,
+          "fail": 0,
+          "review": 0
+        },
+        "rewriting": {
+          "total": 30,
+          "pass": 0,
+          "fail": 0,
+          "review": 30
+        },
+        "title-generation": {
+          "total": 20,
+          "pass": 0,
+          "fail": 0,
+          "review": 20
+        },
+        "study-plan": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        },
+        "logical-ordering": {
+          "total": 40,
+          "pass": 40,
+          "fail": 0,
+          "review": 0
+        },
+        "email-rewriting": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        },
+        "applied-calculation": {
+          "total": 60,
+          "pass": 60,
+          "fail": 0,
+          "review": 0
+        },
+        "argument-critique": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        },
+        "short-creative": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        },
+        "practical-plan": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        },
+        "summarization": {
+          "total": 30,
+          "pass": 0,
+          "fail": 0,
+          "review": 30
+        },
+        "practical-advice": {
+          "total": 30,
+          "pass": 0,
+          "fail": 30,
+          "review": 0
+        },
+        "feedback-synthesis": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        },
+        "option-comparison": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        },
+        "complex-everyday-task": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        }
+      }
+    },
+    {
+      "profileId": "quick-assisted",
+      "generatedAt": "2026-08-13T12:04:32.034Z",
+      "current": true,
+      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+      "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
+      "resultDigest": "sha256:21443476be84de69c86acefb4d47894c4ebbf96a5acd5654075cd9e3a8e2b91e",
+      "counts": {
+        "total": 210,
+        "pass": 0,
+        "fail": 210,
+        "review": 0
+      },
+      "semanticReview": {
+        "current": true,
+        "reviewed": 0,
+        "pass": 0,
+        "fail": 0
+      },
+      "validated": {
+        "pass": 0,
+        "fail": 210,
+        "pendingReview": 0
+      },
+      "validatedPassPercent": 0,
+      "passPercent": 0,
+      "reviewPercent": 0,
+      "failureClusters": [
+        {
+          "stage": "task-frame",
+          "count": 109
+        },
+        {
+          "stage": "parse",
+          "count": 92
+        },
+        {
+          "stage": "grounding",
+          "count": 9
+        }
+      ],
+      "byCategory": {
+        "factual": {
+          "total": 150,
+          "pass": 0,
+          "fail": 150,
+          "review": 0
+        },
+        "explanation": {
+          "total": 30,
+          "pass": 0,
+          "fail": 30,
+          "review": 0
+        },
+        "simple-classification": {
+          "total": 20,
+          "pass": 0,
+          "fail": 20,
+          "review": 0
+        },
+        "educational-explanation": {
+          "total": 10,
+          "pass": 0,
+          "fail": 10,
+          "review": 0
+        }
+      }
+    },
+    {
+      "profileId": "real-kb",
+      "generatedAt": "2026-08-13T12:04:38.485Z",
+      "current": true,
+      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+      "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
+      "resultDigest": "sha256:df533202206517a2329528e051a51f0e9fd946c63dd8ae621316b57ee1174aec",
+      "counts": {
+        "total": 250,
+        "pass": 44,
+        "fail": 160,
+        "review": 46
+      },
+      "semanticReview": {
+        "current": true,
+        "reviewed": 46,
+        "pass": 33,
+        "fail": 13
+      },
+      "validated": {
+        "pass": 77,
+        "fail": 173,
+        "pendingReview": 0
+      },
+      "validatedPassPercent": 30.8,
+      "passPercent": 17.6,
+      "reviewPercent": 18.4,
+      "failureClusters": [
+        {
+          "stage": "grounding",
+          "count": 94
+        },
+        {
+          "stage": "parse",
+          "count": 61
+        },
+        {
+          "stage": "reasoning",
+          "count": 4
+        },
+        {
+          "stage": "task-frame",
+          "count": 1
+        }
+      ],
+      "byCategory": {
+        "factual": {
+          "total": 150,
+          "pass": 44,
+          "fail": 106,
+          "review": 0
+        },
+        "explanation": {
+          "total": 30,
+          "pass": 0,
+          "fail": 30,
+          "review": 0
+        },
+        "vocabulary": {
+          "total": 40,
+          "pass": 0,
+          "fail": 3,
+          "review": 37
+        },
+        "simple-classification": {
+          "total": 20,
+          "pass": 0,
+          "fail": 20,
+          "review": 0
+        },
+        "educational-explanation": {
+          "total": 10,
+          "pass": 0,
+          "fail": 1,
+          "review": 9
+        }
+      }
+    }
+  ],
+  "preferredSourceOutcome": {
+    "profiles": [
+      "core-only",
+      "real-kb"
+    ],
+    "total": 1000,
+    "pass": 637,
+    "fail": 363,
+    "pendingReview": 0,
+    "passPercent": 63.7,
+    "meaning": "Each source case is counted once through its core-only or source-derived real-KB profile; QUICK is auxiliary development evidence."
+  },
+  "structuralControls": {
+    "current": true,
+    "generatedAt": "2026-08-13T12:04:45.356Z",
+    "counts": {
+      "total": 10,
+      "pass": 10,
+      "fail": 0,
+      "review": 0
+    }
+  },
+  "baseline": {
+    "sourceCases": 1000,
+    "status": "diagnostic-only",
+    "observation": "The original Romanian prompts all stopped at the English boundary; this is not a score for the converted English corpus."
+  }
+}

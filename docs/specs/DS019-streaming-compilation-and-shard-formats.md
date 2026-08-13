@@ -30,6 +30,8 @@ Repeated predicates, contexts, sources, roles, and strings use dictionary encodi
 
 Unary assertions require predicate-subject and subject-predicate views. Binary assertions normally require predicate-subject-object and predicate-object-subject views. Event records require event-type, event-role-filler, and filler-role-event views. Rules require indexes by head predicate, body dependency, and declared method family. Document packages additionally require lexical, mention, hierarchy, temporal, procedure-step, and provenance-span views.
 
+A lexical source whose entry records declare ordered senses, part of speech, and sense-specific relations must preserve that information in its exact lemma index. The Open English WordNet compiler stores the source entry order separately for each part of speech and retains antonym candidates grouped by the exact source sense that declared them. A flat, synset-file discovery order is not equivalent: it can select a surface associated with an unrelated noun, verb, adjective, or adverb sense even though every emitted edge is individually present in the source. Synset members remain the exact synonym evidence; an antonym group remains tied to its declaring sense rather than becoming an unordered lemma-wide bag.
+
 An index entry refers to the canonical record identity and the qualifiers needed to verify it. Multiple access paths do not create several logical facts. The compiler may omit a physical view only when the manifest declares that query shape unsupported or proves another exact path covers it.
 
 ### Shards and blocks
@@ -53,6 +55,8 @@ Each shard and block is verified before use. A missing shard, checksum mismatch,
 Acceptance executes sampled and adversarial queries against the canonical reference reader and compiled access paths. Results must agree on record identities, arguments, polarity, epistemic status, context, time, confidence policy, and provenance. Rule and event indexes additionally verify dependency and role completeness.
 
 The test set includes absent keys, extreme key ranges, ambiguous aliases, duplicates with different provenance, overlays, cyclic relations, large postings, and boundary blocks. A mismatch is a compiler defect; it cannot be waived as approximate retrieval.
+
+Lexical equivalence tests additionally replay definition, synonym, antonym, and taxonomy queries against entry-order and synset records. They change the requested part of speech, use an explicit infinitive marker, include polysemous adjectives, and verify that the compiled answer carries source provenance. A compiler that retains the edge but loses its sense or part-of-speech attachment fails equivalence.
 
 ### Portable implementation
 

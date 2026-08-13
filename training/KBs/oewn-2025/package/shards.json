@@ -105,8 +105,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/0.json",
     "recordCount": 134,
-    "compressedBytes": 3309,
-    "checksum": "sha256:b0cace7d066dcf31bf27e14fe4f5252b19bc4ae40c1a63e92c0dd586cec4294c",
+    "compressedBytes": 8287,
+    "checksum": "sha256:fb746ef73e7fdc1004de4e25ee95591a8590093cb9f9ae23c9c529c8486ae883",
     "dependencies": []
   },
   {
@@ -115,8 +115,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/a.json",
     "recordCount": 8860,
-    "compressedBytes": 303177,
-    "checksum": "sha256:0cd5cc73ebbdd2581d2fe7fe1189176194f8e1eafc746fd8d1de99aee0c2b3e7",
+    "compressedBytes": 644923,
+    "checksum": "sha256:b688d801b24ebc8c9d1e51d453f47b1d593a16c1c21e81765de54922a1f8674b",
     "dependencies": []
   },
   {
@@ -125,8 +125,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/b.json",
     "recordCount": 7744,
-    "compressedBytes": 269159,
-    "checksum": "sha256:9571795cfe16c2cec1f544d47560bf49970bbc6748009f9f1f99788dbaec886f",
+    "compressedBytes": 568245,
+    "checksum": "sha256:808591eb850ee0d08fd63e21408f884ed1a50b3a3bfc8a0eff633e0d00e5002e",
     "dependencies": []
   },
   {
@@ -135,8 +135,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/c.json",
     "recordCount": 12738,
-    "compressedBytes": 457981,
-    "checksum": "sha256:61197a14641b082306673b3c4b5708876a62f094031c5a2e94e0d9512b02c6e6",
+    "compressedBytes": 962123,
+    "checksum": "sha256:ec3f53ad72a9f9822cee2d8d84b5c2ff806e88c40660a3041173459d8842e2c2",
     "dependencies": []
   },
   {
@@ -145,8 +145,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/d.json",
     "recordCount": 6398,
-    "compressedBytes": 230472,
-    "checksum": "sha256:3598c3a405d36e20df74bd60b025cadde16effffaf3754362e125da8c0d21a75",
+    "compressedBytes": 503057,
+    "checksum": "sha256:48c77cd54bcffba37a5d0daee115a6ef4250a5f67cf20ee47f967b52c050f487",
     "dependencies": []
   },
   {
@@ -155,8 +155,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/e.json",
     "recordCount": 4682,
-    "compressedBytes": 164944,
-    "checksum": "sha256:d7613e4be22a71d9a6aa27aa0c55727985ae924f2dbe05c8bd0422bf09e5f9a8",
+    "compressedBytes": 352341,
+    "checksum": "sha256:73a7a075749c5fcbf4cdc6a663c26b1d0f9d9dfd530dd7bf4bc614083ac11af2",
     "dependencies": []
   },
   {
@@ -165,8 +165,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/f.json",
     "recordCount": 5361,
-    "compressedBytes": 193243,
-    "checksum": "sha256:02cc8486eabb074a1d1ce577092ba467903d3a41455d928497888eba33c269bc",
+    "compressedBytes": 411856,
+    "checksum": "sha256:128d67e135dc1ba38fe5d97202fa55d448a4ddf10ee849641970547e5974e45a",
     "dependencies": []
   },
   {
@@ -175,8 +175,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/g.json",
     "recordCount": 4395,
-    "compressedBytes": 151071,
-    "checksum": "sha256:b3d6a4453ecc42a3c864833dcec92c141886a0b8daded27dbb17ce278a33f986",
+    "compressedBytes": 317005,
+    "checksum": "sha256:f21d119cf340d26c7749dae2dabb48baa758ec2f561031c602e23bda74da6610",
     "dependencies": []
   },
   {
@@ -185,8 +185,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/h.json",
     "recordCount": 5078,
-    "compressedBytes": 173668,
-    "checksum": "sha256:5acbb6cdef4cea7c00cfeaa5d28b081f55c7616625aa5daaf472bc173c2ae5a0",
+    "compressedBytes": 370187,
+    "checksum": "sha256:3adc52c6103a9ab5f0113dc923b4ea243ae87b0b1c441e6c8d8ab8b2ee50e356",
     "dependencies": []
   },
   {
@@ -195,8 +195,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/i.json",
     "recordCount": 4280,
-    "compressedBytes": 154120,
-    "checksum": "sha256:e1fc96d9b25065f99f7b49560ddb70b4077d4b8bbda76973c455bc54c6ee629b",
+    "compressedBytes": 349698,
+    "checksum": "sha256:8b452704b319857b832a330b667320cd1bd34274efab6d7e80b549f88212bed3",
     "dependencies": []
   },
   {
@@ -205,8 +205,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/j.json",
     "recordCount": 1068,
-    "compressedBytes": 36799,
-    "checksum": "sha256:10fdcad8f1b610702b461b2f12ff7079d271318672afccf0d327f97b6f9b2771",
+    "compressedBytes": 77627,
+    "checksum": "sha256:bfa9f8f0ca8eed53ef667b7f8de571efba9682d72ee1437fb1a50227761e3224",
     "dependencies": []
   },
   {
@@ -215,8 +215,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/k.json",
     "recordCount": 1256,
-    "compressedBytes": 40979,
-    "checksum": "sha256:45746ba26ae94a5559f3bbd747183a0a83cb485b022781d5f36ea788b7c50b79",
+    "compressedBytes": 86433,
+    "checksum": "sha256:58ce394f053622d61b921cd27f441bf1b230a85c9ec2d5dcac0a7cae4473ef09",
     "dependencies": []
   },
   {
@@ -225,8 +225,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/l.json",
     "recordCount": 4818,
-    "compressedBytes": 166178,
-    "checksum": "sha256:b98dfb0a7e42068acf45472428e20ace3fd669c4dd8a97e7ffcfc712c53c6234",
+    "compressedBytes": 353183,
+    "checksum": "sha256:3ff8cc8609c2299793c23a6c43cfc948a6a1c4ce55553f1adddf24a31a11c3aa",
     "dependencies": []
   },
   {
@@ -235,8 +235,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/m.json",
     "recordCount": 7088,
-    "compressedBytes": 242530,
-    "checksum": "sha256:30765c85aadb82a1a2e44fe698d41d3e806029fe18d7def4b3b5e429a5cec5f7",
+    "compressedBytes": 509990,
+    "checksum": "sha256:890cb9a56e9f5aafb63338cf06f0771b384e9fa955f8b41dacbba33feb5c3f39",
     "dependencies": []
   },
   {
@@ -245,8 +245,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/n.json",
     "recordCount": 3117,
-    "compressedBytes": 105842,
-    "checksum": "sha256:e2910aa0450b6387598b2461248d74fcfd43747c42c753947ad3f48ff717aeb6",
+    "compressedBytes": 229682,
+    "checksum": "sha256:1d54b25f01f675e3512e180624d20b7aef5f5d2b5843519329fcd7b670a64c51",
     "dependencies": []
   },
   {
@@ -255,8 +255,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/o.json",
     "recordCount": 3083,
-    "compressedBytes": 106315,
-    "checksum": "sha256:c4f43d4b392e9117500e743e75b6be0a7f08017a4adb965d564b93b7821ec406",
+    "compressedBytes": 228499,
+    "checksum": "sha256:e9fb63eaf9c1b168ed71c2dc4f6b56dda37481a3f2fbebf916f272b0265ba680",
     "dependencies": []
   },
   {
@@ -265,8 +265,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/p.json",
     "recordCount": 10400,
-    "compressedBytes": 367770,
-    "checksum": "sha256:74a42085fe1d181e4df0eedf1f4fddcfd2ea38f6cdfd089c12b5cf69102b65db",
+    "compressedBytes": 772549,
+    "checksum": "sha256:86517cb9026a6ded824a3829e7475f148bfba7c350a3f9b5e8cbc90e95482d26",
     "dependencies": []
   },
   {
@@ -275,8 +275,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/q.json",
     "recordCount": 541,
-    "compressedBytes": 19629,
-    "checksum": "sha256:30de9929b729340b0847cd726affae7ab013b029cedd6694383ba2721551f522",
+    "compressedBytes": 41418,
+    "checksum": "sha256:438aaa47bc13bedc54d258404d3b5a75fed4fd7c37aad7f1c8c4658639ea85a1",
     "dependencies": []
   },
   {
@@ -285,8 +285,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/r.json",
     "recordCount": 5516,
-    "compressedBytes": 206298,
-    "checksum": "sha256:5803a7b04694781ead64d308723e6e5e79a7967511ceb66d13ab1df9222a4230",
+    "compressedBytes": 438779,
+    "checksum": "sha256:b29df6b2eada7fd455c7807843b15ade83a811bddae80b059a8aced4bfde1236",
     "dependencies": []
   },
   {
@@ -295,8 +295,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/s.json",
     "recordCount": 14422,
-    "compressedBytes": 520045,
-    "checksum": "sha256:72adb9f9568f2ffdefdd16e4d2fd3208c959d65acf1abd4d1fb0344bd6eb383a",
+    "compressedBytes": 1100087,
+    "checksum": "sha256:6c5402350d82f94f4b09bee5afd9175d3d369241e5eb5109f7fe08b77774995c",
     "dependencies": []
   },
   {
@@ -305,8 +305,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/t.json",
     "recordCount": 6705,
-    "compressedBytes": 235148,
-    "checksum": "sha256:8e817c796762a46b132ed5d766f400d77598328c5d6561a930b78305d968fee6",
+    "compressedBytes": 496036,
+    "checksum": "sha256:962e299795f9c1f15b15b6081f0d9592328aa467e0e86535def0ea1190840c49",
     "dependencies": []
   },
   {
@@ -315,8 +315,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/u.json",
     "recordCount": 3176,
-    "compressedBytes": 107617,
-    "checksum": "sha256:3ab9f0b715ee1d641f4aa74621ca9aacc32f14661c0033a7f5335ce99c3be91c",
+    "compressedBytes": 271416,
+    "checksum": "sha256:c94a6ea633dd2ff0d908544c716fdd67c497b6088ba9f73a98e623fc1856615d",
     "dependencies": []
   },
   {
@@ -325,8 +325,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/v.json",
     "recordCount": 2101,
-    "compressedBytes": 72091,
-    "checksum": "sha256:143d7137e386d4fdcdfdf3c6b81aa25370ef2fab584cd9f72e98c88a32e1c55f",
+    "compressedBytes": 150495,
+    "checksum": "sha256:1c4fc583f66ecd3fae40930d509fa2c4e71490894f744c95431752efeb0543c1",
     "dependencies": []
   },
   {
@@ -335,8 +335,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/w.json",
     "recordCount": 3401,
-    "compressedBytes": 119569,
-    "checksum": "sha256:66adee2b6681e01f58068107084afc3c4148b3546312be639fcf6fd07678b253",
+    "compressedBytes": 255251,
+    "checksum": "sha256:3f6e604de9f25e005bccbd125e0429e9b9f96e8df06589a1f39765d13a663c2a",
     "dependencies": []
   },
   {
@@ -345,8 +345,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/x.json",
     "recordCount": 163,
-    "compressedBytes": 4942,
-    "checksum": "sha256:52a7c75e975a4f0483e8fff4cae1ac671ee56f5456102921e9e49fe9d2af9fb9",
+    "compressedBytes": 9826,
+    "checksum": "sha256:db80637cfeb1f391d80972ed204dbdd0de69ff60251a4b18593fd0cc7510ad2b",
     "dependencies": []
   },
   {
@@ -355,8 +355,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/y.json",
     "recordCount": 459,
-    "compressedBytes": 15492,
-    "checksum": "sha256:9c9347718530b8197383452b86e714c7259277012bc2a4ace598337aac5c3aa2",
+    "compressedBytes": 32358,
+    "checksum": "sha256:590e5d5e6901c94980c029eb777823968e86581636cd342f96f59b687ad62f09",
     "dependencies": []
   },
   {
@@ -365,8 +365,8 @@
     "accessPath": "normalized-lemma",
     "dataRef": "lemmas/z.json",
     "recordCount": 327,
-    "compressedBytes": 10323,
-    "checksum": "sha256:3d7f43e24b1416b7e8f8701ca83b713650c28179a062fe107f29bda688e5c03e",
+    "compressedBytes": 21836,
+    "checksum": "sha256:f3b30085b4e0d4f58cd8b23538673f730d69d88379d5276e77818d93c61e599c",
     "dependencies": []
   }
 ]

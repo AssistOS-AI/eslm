@@ -183,5 +183,5 @@ test('CLI compiles canonical records without registering or executing them', asy
   ]);
   const result = parseCapturedJson(stdout);
   assert.equal(result.manifest.kbId, 'compiled-fixture');
-  assert.equal(result.manifest.canonicalSource.recordCount, 14);
+  assert.equal(result.manifest.canonicalSource.recordCount, 24);
 });

@@ -1,7 +1,7 @@
-import { frameEverydayTask } from '../language/everyday-task-framing.mjs';
-import { executeEverydayDeterministicOperation } from '../reasoning/everyday-deterministic-operations.mjs';
-import { executeEverydaySuppliedTextOperation } from '../reasoning/everyday-supplied-text-operations.mjs';
-import { executeEverydayKnowledgeInspection } from '../reasoning/everyday-knowledge-inspection.mjs';
+import { frameBoundedOperation } from '../language/bounded-operation-framing.mjs';
+import { executeDeterministicValueOperation } from '../reasoning/deterministic-value-operations.mjs';
+import { executeSuppliedTextOperation } from '../reasoning/supplied-text-operations.mjs';
+import { executeGroundedKnowledgeInspection } from '../reasoning/grounded-knowledge-inspection.mjs';
 import { assertRuntimeTextResultContract } from './result-contract.mjs';
 
 function cleanBase(direct) {
@@ -12,45 +12,45 @@ function cleanBase(direct) {
   return base;
 }
 
-export function processEverydayTask({ text, direct, model }) {
+export function processBoundedOperation({ text, direct, model }) {
   if (direct.status === 'SOLVED' || direct.status === 'DEFEASIBLE') return undefined;
-  const taskFrame = frameEverydayTask(text);
+  const taskFrame = frameBoundedOperation(text);
   if (!taskFrame) return undefined;
-  const execution = executeEverydayDeterministicOperation(taskFrame)
-    ?? executeEverydaySuppliedTextOperation(taskFrame)
-    ?? executeEverydayKnowledgeInspection(taskFrame, model);
+  const execution = executeDeterministicValueOperation(taskFrame)
+    ?? executeSuppliedTextOperation(taskFrame)
+    ?? executeGroundedKnowledgeInspection(taskFrame, model);
   if (!execution) return undefined;
   const solved = execution.status === 'SOLVED';
   return assertRuntimeTextResultContract({
     ...cleanBase(direct),
     status: execution.status,
     answer: execution.answer,
-    languageRoute: 'everyday-task-executed',
+    languageRoute: 'bounded-operation-executed',
     values: execution.values,
     provenance: execution.provenance ?? (solved
-      ? [{ method: execution.method ?? 'verified-everyday-deterministic-operation' }] : []),
+      ? [{ method: execution.method ?? 'verified-bounded-operation' }] : []),
     usedKbVersions: execution.usedKbVersions ?? [],
     consultedKbVersions: execution.consultedKbVersions ?? [],
     taskFrame: {
-      taskId: 'task:runtime:everyday-request',
+      taskId: 'task:runtime:bounded-operation-request',
       instructions: [`operation:${taskFrame.operation}`],
       assertions: [], constraints: [], goals: [taskFrame],
       contextStack: ['context:runtime:baseline'], outputContract: taskFrame.output,
-      languageRoute: 'everyday-task-executed',
+      languageRoute: 'bounded-operation-executed',
     },
     plan: {
-      methodId: `method:everyday:${execution.method ?? 'deterministic-operation'}`,
+      methodId: `method:bounded-operation:${execution.method ?? 'deterministic-operation'}`,
       requiredCapability: taskFrame.operation,
       steps: [{ operation: taskFrame.operation }],
     },
     reasoning: {
-      method: execution.method ?? 'verified-everyday-deterministic-operation',
+      method: execution.method ?? 'verified-bounded-operation',
       operation: taskFrame.operation,
       witness: execution.witness,
       verification: solved ? (execution.verification ?? 'replayable') : 'rejected',
       ...(execution.gap ? { gap: execution.gap } : {}),
     },
     unresolvedSubgoals: solved ? [] : [{ operation: taskFrame.operation, gap: execution.gap }],
-    episode: { ...direct.episode, transaction: 'everyday-request-query-local' },
+    episode: { ...direct.episode, transaction: 'bounded-operation-query-local' },
   });
 }

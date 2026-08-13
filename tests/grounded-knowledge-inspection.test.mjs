@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildKnowledgeBase } from '../src/kb-training.mjs';
 import { createCliRuntime } from '../src/interface/cli-runtime-composition.mjs';
-import { executeEverydayKnowledgeInspection } from '../src/reasoning/everyday-knowledge-inspection.mjs';
+import { executeGroundedKnowledgeInspection } from '../src/reasoning/grounded-knowledge-inspection.mjs';
 
 test('QUICK knowledge summaries state concrete admitted facts in connected English', async () => {
   await buildKnowledgeBase('quick');
@@ -21,7 +21,7 @@ test('knowledge summaries enforce their sentence bound and attribute only realiz
     id: `fact:nonce:${index}`, subject: 'entity:nonce:one', predicate: 'known_for', value,
     kbId: 'nonce-kb', kbVersion: '7', provenance: ['nonce-source'],
   }));
-  const result = executeEverydayKnowledgeInspection({
+  const result = executeGroundedKnowledgeInspection({
     operation: 'knowledge-summary', inputs: { subjectSurface: 'Nera' },
     output: { maximumSentences: 3 },
   }, { entities: [{ id: 'entity:nonce:one', names: ['Nera'] }], facts });

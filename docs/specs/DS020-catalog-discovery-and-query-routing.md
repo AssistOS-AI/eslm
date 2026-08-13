@@ -52,6 +52,8 @@ Cross-KB reasoning uses stable identifiers, explicit imports, and alignment reco
 
 Conflicting provider value sets remain separate and produce ambiguity unless a declared context or trust policy resolves them. Load order is never a conflict policy.
 
+An explicit lexical-relation request is routed to a provider only when that provider recognizes the operation and has the required exact lexical index. The present WordNet path strips an explicit English infinitive marker only as a part-of-speech cue, reads source-ordered senses for that part of speech, and returns one synonym or antonym backed by the selected synset or entry relation. It never chooses an answer from provider registration order. When an English lemma is polysemous and the prompt supplies no sense context, a source-backed relation can still require semantic review: provenance proves that the lexical relation exists, not that it matches the source question's intended sense.
+
 ### Exhaustive routing equivalence
 
 For a fixed package set and semantic resource bounds, exhaustive mode opens every shard that exact directories identify as potentially relevant. Lazy mode uses normal ordering and iterative expansion. Both must return the same records, semantic statuses, values, proofs, and provenance. A missing record caused by routing is a critical correctness defect, not an acceptable retrieval loss.
@@ -98,7 +100,7 @@ provenance or `usedKbVersions`.
 
 ### Present implementation boundary
 
-The current runtime implements exact loaded-model postings, role-focused bounded grounding terms, named work-profile
+The current runtime implements exact loaded-model postings, source-ordered part-of-speech-aware WordNet lexical relation lookup, role-focused bounded grounding terms, named work-profile
 limits, and grounding projections for the session overlay, Open English WordNet, ATOMIC exact events, GeoNames,
 ConceptNet, and the reviewed World Relations ontology. The broader always-resident multi-package catalog, conservative
 no-false-negative directory construction, general proof-frontier expansion, and exhaustive/lazy equivalence across

@@ -4,34 +4,41 @@
   <base href="../">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Everyday English evaluation and processing path — ESLM Documentation</title>
+  <title>Basic Eval status and processing evidence — ESLM Documentation</title>
   <link rel="stylesheet" href="assets/site.css">
   <script src="partials-loader.js" defer></script>
+  <script type="module" src="assets/basic-eval-status.mjs"></script>
 </head>
 <body>
 <div data-include="partials/header.html"></div>
 <main>
-<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Development / Everyday English evaluation</p>
-<h1>Everyday English evaluation and the bounded operation path</h1>
-<p class="lead">The Basic Everyday suite turns 1,000 development-visible Romanian proposals into traceable English evaluation cases, then measures what the offline symbolic runtime can actually frame, execute, ground, and express. The suite is a discovery instrument rather than a hidden-test claim: it records exact conversion lineage, separates core-only, QUICK-assisted, and real-KB profiles, and assigns each failure to the earliest missing processing boundary.</p>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Development / Basic Eval status</p>
+<h1>Basic Eval status and processing evidence</h1>
+<p class="lead">Basic Eval converts 1,000 development-visible Romanian proposals into traceable English cases and measures what the offline symbolic runtime can frame, execute, ground, and express. It is a discovery instrument, not an unseen-test claim: every result retains conversion lineage, profile boundaries, executable identity, and its earliest failed processing stage.</p>
+
+<h2>Current progress</h2>
+<div data-basic-eval-status data-source="results/latest-basic-eval-status.json">
+  <p>Loading the generated Basic Eval checkpoint…</p>
+</div>
+<p>The status cards are generated from the canonical case file, the three profile summaries, the semantic-review ledger, and the separate structural controls. A raw <code>review</code> is never counted as success. Only a decision bound to the exact result file enters the validated-pass or qualitative-fail totals; changed result bytes make that review stale. A stale profile remains visible and explicitly marked stale whenever its executable or case-manifest digest differs from current source.</p>
 
 <h2>What the evaluation is allowed to teach</h2>
 <p>The converted cases can expose repeated language shapes, operation semantics, missing evidence, realization problems, and overly mechanical failure presentation. They cannot authorize benchmark-specific branches or answer tables. A recurring, vocabulary-independent responsibility becomes a core proposal only after renamed, nonce, negative, and metamorphic controls. Missing world knowledge remains provenance-bearing KB data. A genuinely new processing node, coordination node, authority gate, or strategy family receives a separate contiguous DS before entering the runtime catalog.</p>
 <div class="table-wrap"><table><thead><tr><th>Evidence boundary</th><th>Meaning and permitted response</th></tr></thead><tbody>
 <tr><td>Converted development case</td><td>The English prompt retains the Romanian source identity and conversion mode. It may guide implementation, so its result is development evidence rather than unseen generalization.</td></tr>
 <tr><td>Exact machine score</td><td>Closed labels, finite numbers, times, spans, and other complete answer contracts can pass or fail deterministically after normalization and numeric-equivalence checks.</td></tr>
-<tr><td>Semantic review</td><td>Summaries, rewrites, advice, and other open-form answers first pass machine safety and required-concept checks, then remain <code>review</code> until a human judges correctness, completeness, grounding, instruction fit, and naturalness.</td></tr>
+<tr><td>Semantic review</td><td>Summaries, rewrites, advice, and other open-form answers first pass machine safety and required-concept checks, then remain <code>review</code> until a disclosed reviewer judges correctness, completeness, grounding, instruction fit, and naturalness. The digest-bound decision ledger, not the raw state, determines qualitative success.</td></tr>
 <tr><td>Architectural discovery</td><td>A repeated earliest-stage failure may justify a typed operation or stable node responsibility. It does not prove the proposed component is general, safe, or promoted.</td></tr>
 </tbody></table></div>
 
-<h2>The current five-node circuit</h2>
-<p>After the English boundary and direct parser decline to answer, the everyday framer may recognize one explicit operation. It routes the frame to exactly one of three typed executors. Each executor validates a distinct result packet; the assembler joins only their contract shape, not their evidence or authority. Unsupported requests continue into the ordinary request-planning and language-recovery circuit.</p>
+<h2>The generic bounded-operation path</h2>
+<p>After the English boundary and direct parser decline to answer, the request-operation framer may represent one explicit bounded operation. That responsibility belongs to request/session processing; deterministic value and supplied-text executors belong to method selection; declarative fact inspection belongs to knowledge routing; and typed result assembly belongs to response construction. These nodes exchange exact packets across the ordinary runtime graph instead of forming an evaluation-named side circuit. Unsupported requests continue into normal request planning and language recovery.</p>
 <div class="table-wrap"><table><thead><tr><th>Processing node</th><th>Concrete responsibility, output, and limit</th></tr></thead><tbody>
-<tr><td><code>everyday-task-framer</code><br>DS030</td><td>Represents finite operands, supplied spans, closed choices, constraints, and the requested output shape as <code>packet:runtime:everyday-task-frame</code>. It does not calculate, retrieve, translate, or answer.</td></tr>
-<tr><td><code>everyday-deterministic-executor</code><br>DS031</td><td>Runs exact arithmetic, percentage, conversion, clock, grouping, mean, sequence, or strict-order semantics and emits <code>packet:runtime:everyday-deterministic-result</code> with a replayable witness.</td></tr>
-<tr><td><code>supplied-text-operator</code><br>DS032</td><td>Classifies, extracts, repairs, or performs a constrained rewrite only over the span carried by the frame. It emits <code>packet:runtime:supplied-text-result</code> and cannot add external facts.</td></tr>
+<tr><td><code>request-operation-framer</code><br>DS030</td><td>Represents finite operands, supplied spans, closed choices, constraints, and the requested output shape as <code>packet:runtime:bounded-operation-frame</code>. It does not calculate, retrieve, translate, or answer.</td></tr>
+<tr><td><code>deterministic-value-executor</code><br>DS031</td><td>Runs exact arithmetic, percentage, conversion, clock, grouping, mean, sequence, or strict-order semantics and emits <code>packet:runtime:deterministic-value-result</code> with a replayable witness.</td></tr>
+<tr><td><code>supplied-text-operator</code><br>DS032</td><td>Classifies, extracts, repairs, condenses one admitted sentence, or performs a constrained rewrite only over the span carried by the frame. It emits <code>packet:runtime:supplied-text-result</code> and cannot add external facts.</td></tr>
 <tr><td><code>grounded-knowledge-inspector</code><br>DS033</td><td>Resolves a requested loaded entity or class, realizes only admitted declarative facts, and emits <code>packet:runtime:knowledge-inspection-result</code> with fact provenance or a natural explicit inability.</td></tr>
-<tr><td><code>everyday-result-assembler</code></td><td>Builds the query-local runtime candidate from one typed method result. It preserves method, witness, values, contributing KB identities, and gap state and cannot manufacture evidence.</td></tr>
+<tr><td><code>typed-operation-result-assembler</code></td><td>Builds the query-local runtime candidate from one typed method result. It preserves method, witness, values, contributing KB identities, and gap state and cannot manufacture evidence.</td></tr>
 </tbody></table></div>
 
 <h2>Request framing</h2>
@@ -47,7 +54,7 @@
 </tbody></table></div>
 
 <h2>Operations over supplied text</h2>
-<p>DS032 keeps request-provided material separate from external evidence. Option-conditioned intent classification scores only closed labels and generic word-boundary cues; a tie or zero score abstains. Sentiment is a bounded cue estimate, not a claim about a writer’s inner state. Extraction copies explicit spans into a declared shape and uses an explicit missing marker instead of filling likely values. Orthographic correction, polite rewriting, and title generation retain source content under narrow transformation rules and record their source-to-output witness.</p>
+<p>DS032 keeps request-provided material separate from external evidence. Option-conditioned intent classification scores only closed labels and generic word-boundary cues; a tie or zero score abstains. Sentiment is a bounded cue estimate, not a claim about a writer’s inner state. Extraction copies explicit spans into a declared shape and uses an explicit missing marker instead of filling likely values. Orthographic correction, polite rewriting, title generation, and single-sentence condensation retain source propositions under narrow transformation rules and record their source-to-output witness. Condensation must actually reduce or reorganize an admitted relation; echoing the source is not accepted merely because it remains factual.</p>
 <p>Exact labels and spans can use deterministic scoring. Open-form quality remains semantic review. A fluent string is not automatically a correct answer, and this node does not own professional correspondence, multi-paragraph synthesis, argument critique, unconstrained advice, or creative generation. If further evaluation establishes one of those as a stable constraint-aware process, its implementation begins with a separate DS.</p>
 
 <h2>Grounded conversational knowledge</h2>
@@ -61,19 +68,23 @@
 <tr><td><code>real-kb</code></td><td>Can normal source-derived packages, exact routing, and memory policy provide the necessary evidence without QUICK? This is the required direction for genuine knowledge coverage.</td></tr>
 </tbody></table></div>
 <p>Each result records the case-corpus digest, executable digest, selected profile, package-manifest digests, machine status, route, method, operation, answer, contributing and consulted KB identities, score state, and earliest failure. The runner does not silently invoke the external Language Agent. The checked-in report is a checkpoint artifact and becomes stale when source, cases, or package identities change.</p>
-<pre><code>npm run evaluate:everyday
+<p>Vocabulary cases use the source-derived real-KB profile rather than pretending synonym and antonym facts belong in generic core code. The WordNet compiler preserves source sense order, part of speech, and sense-specific antonym groups. That removes several mechanically valid but irrelevant first-edge answers. Provenance alone still does not disambiguate a context-free polysemous word, so responses that select the wrong intended sense remain qualitative failures rather than being credited as lexical success.</p>
+<pre><code>npm run evaluate:basic
+npm run evaluate:basic:controls
+npm run evaluate:basic:review
 node scripts/run-basic-everyday-eval.mjs --profile core-only \
   --output eval/basic-everyday/results/core-only.current.jsonl
 node scripts/run-basic-everyday-eval.mjs --profile quick-assisted \
   --output eval/basic-everyday/results/quick-assisted.current.jsonl
 node scripts/run-basic-everyday-eval.mjs --profile real-kb \
-  --output eval/basic-everyday/results/real-kb.current.jsonl</code></pre>
+  --output eval/basic-everyday/results/real-kb.current.jsonl
+npm run docs:basic-eval-status</code></pre>
 
 <h2>Known boundary and next discovery cycle</h2>
 <p>The Romanian source is preserved immutable research input; the current eval corpus is its English development projection. Translation tasks whose quoted payload remains Romanian cannot be claimed by the local English runtime. They require a separately evaluated Language Agent proposal or a future independently validated language profile. Vocabulary, factual, classification, professional communication, complex planning, advice, and creative cases remain distinct clusters rather than one misleading aggregate failure.</p>
 <p>The improvement loop is: validate conversion lineage; run the relevant profile; cluster the earliest failed node; decide KB, existing operation, new strategy, or genuinely new component; write the owning DS first when architecture is new; add renamed and metamorphic tests; run focused and regression suites; rerun the eval; and publish both gains and remaining gaps. Passing development cases is useful engineering evidence, not a claim of human-level language understanding.</p>
 
-<p class="related">Normative contracts: <a href="specsLoader.html?spec=DS030-everyday-request-framing-and-task-contracts.md">DS030 request framing</a>, <a href="specsLoader.html?spec=DS031-verified-deterministic-quantity-and-order-operations.md">DS031 deterministic operations</a>, <a href="specsLoader.html?spec=DS032-bounded-supplied-text-operations.md">DS032 supplied-text operations</a>, <a href="specsLoader.html?spec=DS033-grounded-conversational-knowledge-inspection.md">DS033 knowledge inspection</a>, and <a href="specsLoader.html?spec=DS004-knowledge-and-benchmark-learning.md">DS004 benchmark-guided learning</a>.</p>
+<p class="related">Normative contracts: <a href="specsLoader.html?spec=DS030-bounded-request-operation-framing.md">DS030 request framing</a>, <a href="specsLoader.html?spec=DS031-verified-deterministic-quantity-and-order-operations.md">DS031 deterministic operations</a>, <a href="specsLoader.html?spec=DS032-bounded-supplied-text-operations.md">DS032 supplied-text operations</a>, <a href="specsLoader.html?spec=DS033-grounded-conversational-knowledge-inspection.md">DS033 knowledge inspection</a>, and <a href="specsLoader.html?spec=DS004-knowledge-and-benchmark-learning.md">DS004 benchmark-guided learning</a>.</p>
 </main>
 <div data-include="partials/footer.html"></div>
 </body>

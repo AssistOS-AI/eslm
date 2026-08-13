@@ -51,7 +51,7 @@ The stable responsibility map is:
 | DS027 | trusted strategy descriptors, static registration, stage coordination, exact selection, arbitration, resources, receipts, and compiler extension boundaries |
 | DS028 | rights-aware dataset-guided discovery of processing-node, gate, strategy, edge, and packet hypotheses |
 | DS029 | exact hierarchical processing circuits, node catalog, typed packet families, guarded topology, and resource vocabulary |
-| DS030 | bounded English everyday-request framing and typed operation obligations |
+| DS030 | bounded English request-operation framing and typed operation obligations |
 | DS031 | verified deterministic quantity, time, sequence, grouping, mean, and strict-order operations |
 | DS032 | bounded classification, extraction, correction, and transformation over supplied text |
 | DS033 | grounded conversational inspection, listing, provenance, and natural abstention over loaded KB facts |

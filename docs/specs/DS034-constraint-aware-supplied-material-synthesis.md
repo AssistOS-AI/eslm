@@ -1,7 +1,7 @@
 ---
 id: DS034
 title: Constraint-Aware Supplied-Material Synthesis
-status: in-progress
+status: planned
 owner: result-construction
 summary: Defines bounded multi-sentence summaries, plans, critiques, transformations, thematic syntheses, and comparisons grounded only in supplied material and explicit constraints.
 ---
@@ -10,7 +10,7 @@ summary: Defines bounded multi-sentence summaries, plans, critiques, transformat
 
 ## Introduction
 
-Everyday evaluation contains requests that supply the relevant facts but require more than a single extracted field or sentence rewrite: organize project notes under named headings, allocate a finite study schedule, critique an argument in proportion to its evidence, group feedback, or compare options under a stated priority. DS032 intentionally stops before this boundary. This specification defines a separate `constraint-aware-synthesizer` processing node for bounded multi-sentence artifacts grounded in request-supplied material.
+Basic Eval contains requests that supply the relevant facts but require more than a single extracted field or sentence rewrite: organize project notes under named headings, allocate a finite schedule, critique an argument in proportion to its evidence, group feedback, or compare options under a stated priority. DS032 intentionally stops before this boundary. This specification records a proposed generic `constraint-aware-synthesizer` responsibility for bounded multi-sentence artifacts grounded in request-supplied material. It is not yet a DS029 catalog node or an executable runtime path.
 
 The node is not a general language model. It does not create domain advice from no evidence, browse for missing facts, translate non-English material, or infer hidden prices, deadlines, causes, frequencies, preferences, or guarantees. It admits only closed synthesis operations whose inputs, constraints, construction rule, and preservation witness can be validated.
 
@@ -18,9 +18,9 @@ The node is not a general language model. It does not create domain advice from 
 
 ### 1. Position and packet contract
 
-DS030 frames an eligible synthesis request after the local English boundary and direct parser decline to answer. The frame names one synthesis operation, preserves the supplied material, and closes the output constraints. The `constraint-aware-synthesizer` consumes `packet:runtime:everyday-task-frame` and emits `packet:runtime:constraint-aware-synthesis-result`. The everyday-result assembler accepts that result beside the DS031, DS032, and DS033 result packets.
+The proposed design would extend DS030 only after a source-neutral semantic frame has passed anti-overfitting review. Such a frame would name one synthesis operation, preserve the supplied material, and close the output constraints. The proposed `constraint-aware-synthesizer` would consume `packet:runtime:bounded-operation-frame` and emit `packet:runtime:constraint-aware-synthesis-result`; the `typed-operation-result-assembler` would accept that packet only after DS029 catalog promotion. The current runtime emits neither this frame family nor this result packet.
 
-The node is a non-voting `process`, query-local, offline, and `instrumented-local`. Its result contains operation, status, answer, semantic values, method, and a witness; a gap is optional. It has construction authority over wording and structure only. It has no parser, KB, proof, session, or final-answer authority.
+If implemented, the node is a non-voting `process`, query-local, offline, and initially `instrumented-local`. Its result contains operation, status, answer, semantic values, method, and a witness; a gap is optional. It has construction authority over wording and structure only. It has no parser, KB, proof, session, or final-answer authority.
 
 ### 2. Preservation ledger
 
@@ -31,7 +31,7 @@ Every frame separates four regions:
 - `limits` contains explicit minimum or maximum words, item counts, time, money, participants, and reserved intervals; and
 - `prohibitions` records constraints such as no invented facts, prices, deadlines, frequencies, destinations, guarantees, or reasons.
 
-The executor creates a preservation ledger that maps every output section or recommendation to supplied spans, explicit numerical constraints, or an allowlisted domain-neutral construction rule. The ledger records retained numbers and named options, omitted supplied elements, added connective or planning language, output words, and each checked prohibition. A required supplied value that disappears, an invented specific value, a violated count, or an unsupported conclusion rejects the candidate.
+The proposed executor creates a preservation ledger that maps every output section or recommendation to supplied spans, explicit numerical constraints, or an allowlisted domain-neutral construction rule. The ledger records retained numbers and named options, omitted supplied elements, added connective or planning language, output words, and each checked prohibition. A required supplied value that disappears, an invented specific value, a violated count, or an unsupported conclusion rejects the candidate.
 
 ### 3. Initial closed operations
 
@@ -45,17 +45,17 @@ The executor creates a preservation ledger that maps every output section or rec
 | Thematic feedback synthesis | Cluster only the enumerated comments by recurring subject terms, preserve positive and problem polarity, call a problem recurring only when at least two distinct comments support the same theme, and avoid population-frequency claims. |
 | Criterion-led option comparison | Preserve each option's declared costs, benefits, drawbacks, and unknowns; rank by the user's explicit priority; recommend exactly the requested number of options; refuse arithmetic over costs that were not supplied. |
 
-These are semantic operation contracts, not example identities. A new surface phrasing may map to an existing operation under DS030. A new synthesis responsibility with different evidence, state, authority, or failure semantics receives another DS rather than silently expanding this node.
+These are research contracts for candidate semantic operations, not implemented surface templates or example identities. No operation is promoted from a regex matching one evaluation prompt. Admission requires independently authored structurally equivalent requests, renamed domains, changed constraints, negative controls, and a representation that does not mention the evaluation category. A new synthesis responsibility with different evidence, state, authority, or failure semantics receives another DS rather than silently expanding this candidate node.
 
 ### 4. Domain-neutral construction rules
 
-The node may use closed rules that do not assert world facts: headings organize admitted sentences; a finite interval can be partitioned arithmetically; a final reserved interval cannot contain an excluded activity; a stated priority outranks a lower-priority criterion; two comments about the same explicitly named feature can establish recurrence within that supplied sample; and a universal or causal conclusion requires more support than one observation or temporal order alone.
+An eventual implementation may use closed rules that do not assert world facts: headings organize admitted sentences; a finite interval can be partitioned arithmetically; a final reserved interval cannot contain an excluded activity; a stated priority outranks a lower-priority criterion; two comments about the same explicitly named feature can establish recurrence within that supplied sample; and a universal or causal conclusion requires more support than one observation or temporal order alone.
 
 Rules that assert which food to serve, which medicine to take, which city to visit, what an item costs, what a person intended, or what an unmentioned stakeholder needs are domain content and are prohibited. Such requests need admitted KB evidence, a separate strategy, or an honest inability.
 
 ### 5. Bounds and termination
 
-Input remains under the DS030 64 KiB request limit. The node admits at most 32 supplied units, eight requested sections, 16 stages, 16 option attributes, four themes, and 1,000 output words, with the stricter user limit prevailing. Algorithms use deterministic scans, closed cue tables, finite arithmetic, and stable source order. There is no recursive generation, beam search, external model, corpus execution, or unbounded planning.
+The proposed input remains under the DS030 64 KiB request limit. The node would admit at most 32 supplied units, eight requested sections, 16 stages, 16 option attributes, four themes, and 1,000 output words, with the stricter user limit prevailing. Algorithms use deterministic scans, closed cue tables, finite arithmetic, and stable source order. There is no recursive generation, beam search, external model, corpus execution, or unbounded planning.
 
 If the minimum requested length cannot be reached without repetition or unsupported content, the node returns a shorter preservation-safe candidate only when the contract treats the minimum as a preference; otherwise it returns an explicit output-constraint gap. Maximum limits are categorical. Conflicting constraints, missing supplied material, ambiguous option priority, insufficient evidence for a recurring theme, or an impossible time allocation cause abstention or a typed gap.
 
@@ -67,13 +67,13 @@ Tests rename projects, topics, people, options, products, and features; vary eve
 
 ### 7. Boundary with existing construction
 
-DS022 and DS029's grounded response-construction circuit owns claim admission, rhetorical planning, sentence realization, document assembly, and schema validation for KB- or supplied-claim artifacts. The current DS034 node is an instrumented local shortcut for exact closed supplied-material operations discovered by evaluation. Its long-term migration target is not an opaque parallel generator: framing and the preservation ledger become an admitted construction work order, while generic section and comparison operations become reviewed construction strategies. Until that migration is complete, the separate node and packet make the real local behavior visible.
+DS022 and DS029's grounded response-construction circuit owns claim admission, rhetorical planning, sentence realization, document assembly, and schema validation for KB- or supplied-claim artifacts. DS034 does not currently add an opaque parallel generator. Its promotion target is the existing construction circuit: framing and the preservation ledger become an admitted construction work order, while generic section and comparison operations become reviewed construction strategies. A distinct node and packet may be promoted only if implementation evidence demonstrates a separate typed responsibility that the existing construction nodes cannot honestly own.
 
 ## Decisions & Questions
 
 ### Question #1: Why is this a new node rather than more DS032 rewrite cases?
 
-Response: DS032 transforms or classifies one bounded span. DS034 coordinates several supplied units, numerical and structural constraints, section obligations, and an evidence-preservation ledger into a multi-sentence artifact. That is a distinct input, resource, and failure boundary.
+Response: DS032 transforms or classifies one bounded span. The candidate described here coordinates several supplied units, numerical and structural constraints, section obligations, and an evidence-preservation ledger into a multi-sentence artifact. That may justify a distinct input, resource, and failure boundary, but promotion still requires a generic implementation and structural controls.
 
 ### Question #2: Can the node give ordinary practical advice?
 
@@ -85,4 +85,4 @@ Response: No. It means machine safety and preservation preconditions passed. A r
 
 ## Conclusion
 
-Constraint-aware supplied-material synthesis lets ESLM create useful short documents without pretending to possess unstated knowledge. Closed operations, explicit preservation ledgers, finite construction rules, and semantic review keep summaries, plans, critiques, feedback groupings, and comparisons grounded and inspectable.
+Constraint-aware supplied-material synthesis is a planned route toward useful short documents without pretending to possess unstated knowledge. It remains outside the executable catalog until closed operations, explicit preservation ledgers, finite construction rules, structural controls, and semantic review demonstrate a source-neutral implementation.

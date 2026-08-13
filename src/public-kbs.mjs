@@ -31,7 +31,7 @@ export const PUBLIC_KB_CATALOG = Object.freeze({
     estimatedEagerRssBytes: 48 * 1024 * 1024,
   }),
   'conceptnet-5.7.0-en': Object.freeze({
-    id: 'conceptnet-5.7.0-en', title: 'ConceptNet 5.7 English', role: 'public typed everyday relational knowledge',
+    id: 'conceptnet-5.7.0-en', title: 'ConceptNet 5.7 English', role: 'public typed commonsense relational knowledge',
     model: 'training/KBs/conceptnet-5.7.0-en/package/manifest.json', documentation: 'knowledge/knowledge-bases.html',
     defaultInteractive: true, benchmarkEligible: false, priority: 4,
     estimatedEagerRssBytes: 220 * 1024 * 1024,
@@ -149,11 +149,52 @@ class WordNetProvider {
 
   async synset(id) { return (await this.synsetData(id))[id]; }
 
-  async senses(lemma) {
-    const ids = (await this.lemmaData(lemma))[normalizedLemma(lemma)] ?? [];
+  async lexicalEntry(lemma) {
+    const entry = (await this.lemmaData(lemma))[normalizedLemma(lemma)];
+    if (Array.isArray(entry)) return { s: entry, p: {} };
+    return entry ?? { s: [], p: {} };
+  }
+
+  async senses(lemma, partOfSpeech) {
+    const entry = await this.lexicalEntry(lemma);
+    const ids = partOfSpeech ? (entry.p?.[partOfSpeech] ?? []) : entry.s;
     const senses = [];
     for (const id of ids) senses.push({ id, ...await this.synset(id) });
     return senses;
+  }
+
+  async lexicalRelation(lemmaSurface, relation) {
+    const infinitive = /^to\s+/iu.test(lemmaSurface);
+    const lemma = normalizedLemma(lemmaSurface).replace(/^to\s+/u, '');
+    const entry = await this.lexicalEntry(lemma);
+    const priority = infinitive ? ['v'] : ['a', 'r', 'n', 'v'];
+    if (relation === 'antonym') {
+      for (const partOfSpeech of priority) {
+        const firstSenseCandidates = entry.g?.[partOfSpeech]?.[0] ?? entry.a?.[partOfSpeech] ?? [];
+        const value = [...firstSenseCandidates]
+          .toSorted((left, right) => left.length - right.length || left.localeCompare(right))[0];
+        if (value) return { lemma, partOfSpeech, value, source: entry.p?.[partOfSpeech]?.[0] ?? lemma };
+      }
+      return undefined;
+    }
+    for (const partOfSpeech of priority) {
+      for (const sense of (await this.senses(lemma, partOfSpeech)).slice(0, 5)) {
+        const candidates = [];
+        for (const member of sense.m ?? []) {
+          const normalized = normalizedLemma(member);
+          if (normalized === lemma || normalized.startsWith(`${lemma}er`)
+            || normalized.startsWith(`${lemma}est`)) continue;
+          const memberEntry = await this.lexicalEntry(normalized);
+          candidates.push({ value: member, senses: memberEntry.p?.[partOfSpeech]?.length
+            ?? memberEntry.s.length, words: normalized.split(' ').length });
+        }
+        const value = candidates.toSorted((left, right) => left.words - right.words
+          || left.senses - right.senses || right.value.length - left.value.length
+          || left.value.localeCompare(right.value))[0]?.value;
+        if (value) return { lemma, partOfSpeech, value, source: sense.id };
+      }
+    }
+    return undefined;
   }
 
   async hypernymProof(left, right, maxDepth = 16) {
@@ -189,7 +230,7 @@ class WordNetProvider {
     const truncationReasons = [];
     let lookups = 0;
     for (const [termIndex, term] of request.terms.slice(0, maximumLookups).entries()) {
-      const senseIds = (await this.lemmaData(term))[normalizedLemma(term)] ?? [];
+      const senseIds = (await this.lexicalEntry(term)).s;
       lookups += 1;
       if (senseIds.length > maximumValues) truncationReasons.push('sense-value-budget');
       for (const [senseIndex, senseId] of senseIds.slice(0, maximumValues).entries()) {
@@ -243,7 +284,15 @@ class WordNetProvider {
 
   async ask(text) {
     const clean = conversationalQuestion(text);
-    let match = clean.match(/^(?:what does (.+?) mean|define (.+?)|what is the definition of (.+?)|give me a definition of (.+?)|what is meant by (.+?)|describe the word (.+?))\??$/iu);
+    let match = clean.match(/^give\s+(?:me\s+)?(?:a\s+)?suitable\s+(synonym|antonym)\s+for\s+[“"]?(.+?)[”"]?\??$/iu);
+    if (match) {
+      const relation = match[1].toLocaleLowerCase('en-US');
+      const candidate = await this.lexicalRelation(match[2], relation);
+      if (!candidate) return undefined;
+      return response(this, candidate.value, [candidate.value], candidate.source,
+        `oewn-2025:${candidate.partOfSpeech}`);
+    }
+    match = clean.match(/^(?:what does (.+?) mean|define (.+?)|what is the definition of (.+?)|give me a definition of (.+?)|what is meant by (.+?)|describe the word (.+?))\??$/iu);
     if (match) {
       const lemma = match.slice(1).find(Boolean);
       const senses = await this.senses(lemma);

@@ -1,7 +1,7 @@
-import { frameEverydaySuppliedTextTask } from './everyday-supplied-text-framing.mjs';
-import { frameEverydayConstraintSynthesis } from './everyday-constraint-framing.mjs';
+import { createHash } from 'node:crypto';
+import { frameSuppliedTextOperation } from './supplied-text-operation-framing.mjs';
 
-const MAXIMUM_EVERYDAY_INPUT_BYTES = 64 * 1024;
+const MAXIMUM_BOUNDED_OPERATION_INPUT_BYTES = 64 * 1024;
 
 function finiteNumber(surface) {
   const value = Number(surface.replaceAll(',', ''));
@@ -10,10 +10,18 @@ function finiteNumber(surface) {
 
 function frame(operation, inputs, output = {}) {
   return Object.freeze({
-    format: 'eslm-everyday-task-frame',
+    format: 'eslm-bounded-operation-frame',
     operation,
     inputs: Object.freeze(inputs),
     output: Object.freeze({ mode: 'direct', ...output }),
+  });
+}
+
+function bindSource(candidate, normalizedText) {
+  if (!candidate) return undefined;
+  return Object.freeze({
+    ...candidate,
+    sourceTextDigest: createHash('sha256').update(normalizedText, 'utf8').digest('hex'),
   });
 }
 
@@ -133,13 +141,13 @@ const FRAMERS = Object.freeze([
   knowledgeInspectionFrame,
 ]);
 
-export function frameEverydayTask(text) {
-  if (typeof text !== 'string') throw new TypeError('Everyday task input must be a string.');
-  if (Buffer.byteLength(text, 'utf8') > MAXIMUM_EVERYDAY_INPUT_BYTES) return undefined;
+export function frameBoundedOperation(text) {
+  if (typeof text !== 'string') throw new TypeError('Bounded operation input must be a string.');
+  if (Buffer.byteLength(text, 'utf8') > MAXIMUM_BOUNDED_OPERATION_INPUT_BYTES) return undefined;
   const normalized = text.normalize('NFC').replace(/[“”]/gu, '"').replace(/[’]/gu, "'").trim();
   for (const framer of FRAMERS) {
     const candidate = framer(normalized);
-    if (candidate) return candidate;
+    if (candidate) return bindSource(candidate, normalized);
   }
-  return frameEverydayConstraintSynthesis(normalized) ?? frameEverydaySuppliedTextTask(normalized);
+  return bindSource(frameSuppliedTextOperation(normalized), normalized);
 }

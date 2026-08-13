@@ -14,7 +14,7 @@
       "actual": "sha256:7db7d9d9d779d482c54366fabf92277988fb8b073d78dfb5a38c2836f3dbe958",
       "match": true
     },
-    "cases": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3"
+    "cases": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5"
   },
   "requiredCommands": [
     {
@@ -22,15 +22,15 @@
       "exitCode": 0,
       "valid": true,
       "caseCount": 1000,
-      "digest": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3",
+      "digest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
       "counts": {
         "pools": {
           "source-development": 1000
         },
         "profiles": {
-          "core-only": 790,
+          "core-only": 750,
           "quick-assisted": 210,
-          "real-kb": 210
+          "real-kb": 250
         },
         "scoring": {
           "exact": 535,

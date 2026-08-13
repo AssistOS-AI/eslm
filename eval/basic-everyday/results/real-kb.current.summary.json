@@ -1,28 +1,28 @@
 {
   "format": "eslm-basic-everyday-eval-summary",
-  "generatedAt": "2026-08-13T11:17:55.030Z",
+  "generatedAt": "2026-08-13T12:04:38.485Z",
   "sourceDevelopmentDisclosure": "Every source case is development-visible and may influence implementation.",
   "cases": "eval/basic-everyday/cases.jsonl",
   "output": "eval/basic-everyday/results/real-kb.current.jsonl",
-  "resultDigest": "sha256:e944ef44fc8bd90c3f7589fd0f760adcb94e36f696b457eefe1d84ba375f2860",
-  "executableDigest": "sha256:0d041098de697aed7c36f708710f87f816dfa0119beeb7dedd7c970f3a2d12ae",
-  "caseManifestDigest": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3",
+  "resultDigest": "sha256:df533202206517a2329528e051a51f0e9fd946c63dd8ae621316b57ee1174aec",
+  "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+  "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
   "profiles": {
     "real-kb": {
       "knowledgeBases": "oewn-2025,geonames-2026,conceptnet-5.7.0-en,world-relations-1.0"
     }
   },
   "counts": {
-    "total": 210,
+    "total": 250,
     "pass": 44,
-    "fail": 157,
-    "review": 9,
+    "fail": 160,
+    "review": 46,
     "byProfile": {
       "real-kb": {
-        "total": 210,
+        "total": 250,
         "pass": 44,
-        "fail": 157,
-        "review": 9
+        "fail": 160,
+        "review": 46
       }
     },
     "byCategory": {
@@ -37,6 +37,12 @@
         "pass": 0,
         "fail": 30,
         "review": 0
+      },
+      "vocabulary": {
+        "total": 40,
+        "pass": 0,
+        "fail": 3,
+        "review": 37
       },
       "simple-classification": {
         "total": 20,
@@ -54,7 +60,7 @@
     "byStage": {
       "grounding": 94,
       "reasoning": 4,
-      "parse": 58,
+      "parse": 61,
       "task-frame": 1
     }
   }

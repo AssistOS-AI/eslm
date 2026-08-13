@@ -52,6 +52,31 @@ test('ConceptNet declared-edge relations remain strict while defeasible families
   assert.equal(defeasible.reasoning.policy, 'defeasible-edge');
 });
 
+test('WordNet preserves source sense order and part of speech for singular lexical requests', async () => {
+  const provider = await loadPublicKnowledgeBase('oewn-2025', {
+    mode: 'lazy', cacheBytes: 32 * 1024 * 1024,
+  });
+  const verb = await provider.ask('Give a suitable synonym for “to finish”.');
+  assert.equal(verb.answer, 'complete');
+  const adjective = await provider.ask('Give a suitable synonym for difficult.');
+  assert.equal(adjective.answer, 'hard');
+  const adverb = await provider.ask('Give a suitable antonym for quickly.');
+  assert.equal(adverb.answer, 'slowly');
+});
+
+test('ConceptNet lexical-edge provenance omits empty optional identifiers', async () => {
+  const provider = await loadPublicKnowledgeBase('conceptnet-5.7.0-en', {
+    mode: 'lazy', cacheBytes: 16 * 1024 * 1024,
+  });
+  const antonym = await provider.ask('What is an antonym of difficult?');
+  assert.equal(antonym.reasoning.relation, 'Antonym');
+  assert.ok(antonym.values.length > 0);
+  assert.ok(antonym.provenance.every((item) => item.provenanceIds === undefined
+    || item.provenanceIds.every(Boolean)));
+  const renamed = await provider.ask('What is a synonym of challenging?');
+  assert.equal(renamed.reasoning.relation, 'Synonym');
+});
+
 test('public providers expose bounded related-evidence retrieval with source receipts', async () => {
   const cases = [
     ['oewn-2025', 'What is known about dogs?', 'dog'],

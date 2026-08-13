@@ -28,7 +28,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 20. Before acquiring, projecting, scaling, or consolidating a task-feedback, preference, trajectory, process-reward, or reinforcement-learning dataset, read `training/.agents/skills/rl-dataset-graph-discovery/SKILL.md` completely and run its source, cycle, bundle, log, and large-source admission validators as applicable.
 21. Before converting conversational examples into Basic Eval cases, diagnosing everyday-language result failures, or claiming improvement on that suite, read `training/.agents/skills/everyday-eval-discovery/SKILL.md` completely and run its corpus and result validators.
 22. Before changing or approving processing-graph explorer catalogs, views, explanations, navigation, legends, or layout, read `training/.agents/skills/review-processing-graph-views/SKILL.md` completely and audit semantic owners plus every reachable desktop and mobile view.
-23. For the implemented everyday-operation path, read DS030 through DS034 according to the affected responsibility: request framing, deterministic quantity/order execution, supplied-text operations, grounded conversational knowledge inspection, or constraint-aware supplied-material synthesis.
+23. For the implemented bounded-operation path, read DS030 through DS033 according to the affected responsibility: request framing, deterministic quantity/order execution, supplied-text operations, or grounded conversational knowledge inspection. DS034 is a planned supplied-material synthesis contract and is not an implemented graph path.
 
 # Current Skill Catalog
 
@@ -143,7 +143,8 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
   report distinguishes rows executed during assembly from stored receipts; it is not a rerun of every catalog row.
 - Frozen benchmark receipt audit: `npm run benchmark:receipts:audit`; require every audited checkpoint to be current
   with `node scripts/audit-benchmark-receipts.mjs --require-current`.
-- Interactive 4,096-case combined regression: run `node src/cli.mjs`, then `/smoke`; use `/examples` for a stratified representative view over all heuristic oracle levels and core groups.
+- Interactive Basic Eval: run `node src/cli.mjs`, then `/smoke`; use `/examples` for a stratified view over the 1,000 development-visible English source cases and the separate QUICK structural controls. The 4,096-case nonce/metamorphic regression remains in automated tests.
+- Basic Eval profiles and qualitative review: `npm run evaluate:basic`, `npm run evaluate:basic:controls`, and `npm run evaluate:basic:review`.
 - Documentation matrix/check: `npm run docs:matrix` and `npm run docs:check`
 - Internal release evidence: `docs:check` requires authored evaluation, authored benchmark, fixed generated heuristic,
   and generated five-seed JSON receipts from the current content-addressed executable checkpoint; it also requires

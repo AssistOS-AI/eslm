@@ -1,27 +1,27 @@
 {
   "format": "eslm-basic-everyday-eval-summary",
-  "generatedAt": "2026-08-13T11:17:30.515Z",
+  "generatedAt": "2026-08-13T12:04:32.518Z",
   "sourceDevelopmentDisclosure": "Every source case is development-visible and may influence implementation.",
   "cases": "eval/basic-everyday/cases.jsonl",
   "output": "eval/basic-everyday/results/core-only.current.jsonl",
-  "resultDigest": "sha256:af83ef4cf86e1fd0521fc1b1f25ac71c15bec76e72ee738824fd3a3545020375",
-  "executableDigest": "sha256:0d041098de697aed7c36f708710f87f816dfa0119beeb7dedd7c970f3a2d12ae",
-  "caseManifestDigest": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3",
+  "resultDigest": "sha256:9e35e3e886663da8c10f4106aab0c1a843fa1beea90f52f20e4fdfe35354b814",
+  "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+  "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
   "profiles": {
     "core-only": {
       "knowledgeBases": []
     }
   },
   "counts": {
-    "total": 790,
+    "total": 750,
     "pass": 410,
-    "fail": 230,
+    "fail": 190,
     "review": 150,
     "byProfile": {
       "core-only": {
-        "total": 790,
+        "total": 750,
         "pass": 410,
-        "fail": 230,
+        "fail": 190,
         "review": 150
       }
     },
@@ -122,12 +122,6 @@
         "fail": 0,
         "review": 20
       },
-      "vocabulary": {
-        "total": 40,
-        "pass": 0,
-        "fail": 40,
-        "review": 0
-      },
       "study-plan": {
         "total": 10,
         "pass": 0,
@@ -202,8 +196,8 @@
       }
     },
     "byStage": {
-      "parse": 207,
-      "grounding": 23
+      "parse": 168,
+      "grounding": 22
     }
   }
 }

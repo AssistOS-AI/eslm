@@ -15,15 +15,16 @@ async function readShard(path, expectedChecksum) {
 function variants(value) {
   const clean = normalizeConceptTerm(value).replace(/^(?:a|an|the)\s+/u, '');
   const values = new Set([clean]);
+  if (clean.startsWith('to ') && clean.length > 3) values.add(clean.slice(3));
   if (clean.endsWith('ies') && clean.length > 4) values.add(`${clean.slice(0, -3)}y`);
   if (clean.endsWith('es') && clean.length > 4) values.add(clean.slice(0, -2));
   if (clean.endsWith('s') && clean.length > 3) values.add(clean.slice(0, -1));
   return [...values];
 }
 
-function answer(provider, relation, subject, edges, direction) {
+function answer(provider, relation, subject, edges, direction, maximumValues = 12) {
   if (edges.length === 0) return undefined;
-  const selected = edges.slice(0, 12);
+  const selected = edges.slice(0, maximumValues);
   const values = selected.map((edge) => edge[0]);
   const policy = CONCEPTNET_RELATIONS[relation].inference;
   const status = policy === 'defeasible-edge' ? 'DEFEASIBLE' : 'SOLVED';
@@ -34,7 +35,10 @@ function answer(provider, relation, subject, edges, direction) {
       kbId: provider.manifest.kbId,
       kbVersion: provider.manifest.kbVersion,
       source: [`ConceptNet-5.7.0:${row}`], relation,
-      method: 'source-retrieval', weight: edge[1], provenanceIds: edge[2],
+      method: 'source-retrieval', weight: edge[1],
+      ...(edge[2].filter((value) => typeof value === 'string' && value.length > 0).length > 0
+        ? { provenanceIds: edge[2].filter((value) => typeof value === 'string' && value.length > 0) }
+        : {}),
     }))),
     reasoning: {
       methodId: 'method:core:indexed-lookup',
@@ -141,8 +145,9 @@ export class ConceptNetProvider {
     return all.sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]));
   }
 
-  async query(direction, relation, term) {
-    return answer(this, relation, normalizeConceptTerm(term), await this.relationEdges(direction, relation, term), direction);
+  async query(direction, relation, term, maximumValues) {
+    return answer(this, relation, normalizeConceptTerm(term),
+      await this.relationEdges(direction, relation, term), direction, maximumValues);
   }
 
   memorySnapshot() {
@@ -318,7 +323,8 @@ export class ConceptNetProvider {
     ];
     for (const [pattern, relation] of patterns) {
       const match = clean.match(pattern);
-      if (match) return this.query('forward', relation, match[1]);
+      if (match) return this.query('forward', relation, match[1],
+        ['Synonym', 'Antonym'].includes(relation) ? 1 : undefined);
     }
     const reverse = clean.match(/^what (?:is|are) (.+?) used by$/iu);
     return reverse ? this.query('reverse', 'UsedFor', reverse[1]) : undefined;

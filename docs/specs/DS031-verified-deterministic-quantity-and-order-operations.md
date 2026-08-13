@@ -10,7 +10,7 @@ summary: Defines exact finite arithmetic, quantity, time, sequence, grouping, me
 
 ## Introduction
 
-Everyday evaluation exposed a stable processing responsibility between task framing and result validation: execute a closed mathematical or order operation over values already present in a task frame. Treating these cases as KB retrieval gives the wrong authority model, while treating each wording as its own heuristic branch duplicates logic. This specification defines the `everyday-deterministic-executor` node and its exact method semantics.
+Basic Eval exposed a stable processing responsibility between task framing and result validation: execute a closed mathematical or order operation over values already present in a typed frame. Treating these cases as KB retrieval gives the wrong authority model, while treating each wording as its own heuristic branch duplicates logic. This specification defines the generic `deterministic-value-executor` node and its exact method semantics; neither the node nor its methods depend on the evaluation source.
 
 DS030 owns the English-to-task boundary. This specification begins with a validated semantic frame and ends with a typed deterministic result or explicit gap. It does not own parsing, world knowledge, rhetorical generation, or final result authority.
 
@@ -18,7 +18,7 @@ DS030 owns the English-to-task boundary. This specification begins with a valida
 
 ### 1. Node contract
 
-The executor consumes `packet:runtime:everyday-task-frame` only for an admitted operation in its capability set and emits `packet:runtime:everyday-deterministic-result`. The result contains operation, status, answer surface, semantic values, method identity, and a replayable witness; it may contain a typed gap. The producing node validates the packet before the downstream everyday-result assembler constructs a runtime candidate.
+The executor consumes `packet:runtime:bounded-operation-frame` only for an admitted operation in its capability set and emits `packet:runtime:deterministic-value-result`. The result contains operation, status, answer surface, semantic values, method identity, and a replayable witness; it may contain a typed gap. The producing node validates the packet before the downstream `typed-operation-result-assembler` constructs a runtime candidate.
 
 The node is deterministic, non-voting, query-local, and `instrumented-local`. It has no KB service, network service, session mutation, confidence vote, or answer authority. A successful witness supports the candidate; the normal result schema and runtime authority boundaries still apply.
 

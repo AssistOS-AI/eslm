@@ -4,7 +4,7 @@ function quoteValues(text) {
 
 function frame(operation, inputs, output = {}) {
   return Object.freeze({
-    format: 'eslm-everyday-task-frame', operation,
+    format: 'eslm-bounded-operation-frame', operation,
     inputs: Object.freeze(inputs), output: Object.freeze({ mode: 'direct', ...output }),
   });
 }
@@ -80,15 +80,24 @@ function title(text) {
   }) : undefined;
 }
 
+function singleSentenceSummary(text) {
+  if (!/^summari[sz]e\s+in\s+one\s+sentence\s*:/iu.test(text)) return undefined;
+  const supplied = quoteValues(text).at(-1)
+    ?? text.match(/^summari[sz]e\s+in\s+one\s+sentence\s*:\s*([\s\S]+)$/iu)?.[1]?.trim();
+  return supplied ? frame('single-sentence-condensation', { text: supplied }, {
+    kind: 'sentence', maximumSentences: 1, preserveMeaning: true,
+  }) : undefined;
+}
+
 const FRAMERS = Object.freeze([
   sentiment, intent, structuredExtraction, extraction, correction, politeRewrite, title,
+  singleSentenceSummary,
 ]);
 
-export function frameEverydaySuppliedTextTask(text) {
+export function frameSuppliedTextOperation(text) {
   for (const framer of FRAMERS) {
     const candidate = framer(text);
     if (candidate) return candidate;
   }
   return undefined;
 }
-

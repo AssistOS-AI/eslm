@@ -68,12 +68,12 @@
   "generated": {
     "directory": "training/KBs/oewn-2025/package",
     "files": 39,
-    "bytes": 23780925
+    "bytes": 28865403
   },
   "profile": {
-    "elapsedMilliseconds": 1305.392358,
-    "recordsPerSecond": 82365.27457900133,
-    "rssDeltaBytes": 292732928,
-    "heapUsedDeltaBytes": 205815800
+    "elapsedMilliseconds": 2367.012383,
+    "recordsPerSecond": 45423.92797444017,
+    "rssDeltaBytes": 430694400,
+    "heapUsedDeltaBytes": 267355760
   }
 }

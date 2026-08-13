@@ -1,12 +1,12 @@
 {
   "format": "eslm-basic-everyday-eval-summary",
-  "generatedAt": "2026-08-13T11:17:35.947Z",
+  "generatedAt": "2026-08-13T12:04:32.034Z",
   "sourceDevelopmentDisclosure": "Every source case is development-visible and may influence implementation.",
   "cases": "eval/basic-everyday/cases.jsonl",
   "output": "eval/basic-everyday/results/quick-assisted.current.jsonl",
-  "resultDigest": "sha256:490aca644d6285efd08a594c714646a1e4e9493ae35bd1b75c24bcbfdd5cda37",
-  "executableDigest": "sha256:0d041098de697aed7c36f708710f87f816dfa0119beeb7dedd7c970f3a2d12ae",
-  "caseManifestDigest": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3",
+  "resultDigest": "sha256:21443476be84de69c86acefb4d47894c4ebbf96a5acd5654075cd9e3a8e2b91e",
+  "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+  "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
   "profiles": {
     "quick-assisted": {
       "knowledgeBases": "quick"

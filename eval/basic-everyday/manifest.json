@@ -348,7 +348,7 @@
   },
   "candidate": {
     "casesPath": "candidate/cases.jsonl",
-    "casesDigest": "sha256:0ba6f0e1d34d1d35b3cd77e134b11ae6eb3709ebfc7112cd358cd6dd7b03a9c3",
+    "casesDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
     "caseCount": 1000,
     "pools": {
       "source-development": 1000
@@ -393,9 +393,9 @@
       "semantic": 465
     },
     "profileAssignments": {
-      "core-only": 790,
+      "core-only": 750,
       "quick-assisted": 210,
-      "real-kb": 210
+      "real-kb": 250
     },
     "conversionMethods": {
       "manual-reviewed": 300,
@@ -414,12 +414,12 @@
     },
     "real-kb": {
       "intent": "No QUICK; host-declared source-derived packages",
-      "caseAssignments": 210,
+      "caseAssignments": 250,
       "packageDigests": "not supplied; host run required"
     },
     "core-only": {
       "intent": "No domain KB; supplied-content and deterministic generic operations",
-      "caseAssignments": 790,
+      "caseAssignments": 750,
       "packageDigests": []
     }
   },

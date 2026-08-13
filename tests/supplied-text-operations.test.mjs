@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { frameEverydayTask } from '../src/language/everyday-task-framing.mjs';
-import { executeEverydaySuppliedTextOperation } from '../src/reasoning/everyday-supplied-text-operations.mjs';
+import { frameBoundedOperation } from '../src/language/bounded-operation-framing.mjs';
+import { executeSuppliedTextOperation } from '../src/reasoning/supplied-text-operations.mjs';
 
 function solve(text) {
-  const task = frameEverydayTask(text);
+  const task = frameBoundedOperation(text);
   assert.ok(task, text);
-  const result = executeEverydaySuppliedTextOperation(task);
+  const result = executeSuppliedTextOperation(task);
   assert.ok(result, text);
   return result;
 }
@@ -29,10 +29,18 @@ test('typed supplied-text extraction uses exact spans with renamed entities', ()
 
 test('orthographic, tone, and title operations retain bounded supplied content', () => {
   assert.equal(solve('Correct the capitalization and punctuation: “where does the train stop”').answer, 'Where does the train stop?');
+  assert.equal(solve('Correct the capitalization and punctuation: “what a useful result”').answer, 'What a useful result!');
+  assert.equal(solve('Correct the capitalization and punctuation: “good afternoon mr voss”').answer, 'Good afternoon, Mr. Voss.');
+  assert.equal(solve('Correct the capitalization and punctuation: “tomorrow we travel to norwick”').answer, 'Tomorrow we travel to Norwick.');
   assert.equal(solve('Rephrase more politely without changing the meaning: “Review the totals again.”').answer, 'Please review the totals again.');
+  assert.equal(solve('Rephrase more politely without changing the meaning: “I want an answer now.”').answer, 'Please send me an answer as soon as possible.');
+  assert.equal(solve('Rephrase more politely without changing the meaning: “You did not complete the checklist.”').answer,
+    'I noticed that the checklist is not yet complete; please finish it.');
   const title = solve('Turn the sentence into a title of no more than five words: “The archive is extending access during winter.”').answer;
   assert.ok(title.split(/\s+/u).length <= 5);
   assert.match(title, /Archive/iu);
+  const coordinated = solve('Turn the sentence into a title of no more than eight words: “The team completed testing and is preparing Friday’s launch.”').answer;
+  assert.equal(coordinated, "Testing Complete Before Friday's Launch");
 });
 
 test('structured extraction preserves missing fields rather than inventing values', () => {
@@ -40,4 +48,22 @@ test('structured extraction preserves missing fields rather than inventing value
   assert.match(result.answer, /\| company \| Northwind LLC \|/u);
   assert.match(result.answer, /\| payment_term_days \| unknown \|/u);
   assert.doesNotMatch(result.answer, /payable within/iu);
+});
+
+test('single-sentence condensation preserves propositions while changing surface form', () => {
+  assert.equal(solve('Summarize in one sentence: “The archive was restarted, and the index is operating normally again.”').answer,
+    'The index returned to normal operation after the archive restart.');
+  assert.equal(solve('Summarize in one sentence: “The grant remained unchanged, but the review deadline was extended by three days.”').answer,
+    'The grant is unchanged; the review deadline was extended by three days.');
+  assert.equal(solve('Summarize in one sentence: “Nine samples were received, five of which passed the second screening.”').answer,
+    'Five of nine samples passed the second screening.');
+  assert.equal(solve('Summarize in one sentence: “Winter’s meeting was moved to the same time on Thursday.”').answer,
+    'The meeting was rescheduled for Thursday at the same time.');
+});
+
+test('single-sentence condensation accepts unquoted supplied prose after the instruction', () => {
+  const result = solve('Summarize in one sentence: The router was restarted. The connection returned to normal operation.');
+  assert.equal(result.answer,
+    'The connection returned to normal operation after the router restart.');
+  assert.equal(result.method, 'bounded-single-sentence-condensation');
 });

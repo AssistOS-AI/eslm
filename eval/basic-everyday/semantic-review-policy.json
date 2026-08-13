@@ -1,0 +1,65 @@
+{
+  "format": "eslm-basic-eval-semantic-review-policy",
+  "reviewer": "Codex repository review",
+  "reviewerKind": "coding-agent-assisted-manual-review",
+  "rubric": [
+    "correctness",
+    "completeness",
+    "grounding",
+    "instructionFit",
+    "naturalness"
+  ],
+  "profiles": {
+    "core-only": {
+      "structured-extraction": {
+        "expectedCount": 10,
+        "decision": "pass",
+        "explanation": "Every table was compared with its converted reference and supplied excerpt; all requested fields, missing-value behavior, observations, and non-interpretation boundary are preserved."
+      },
+      "text-correction": {
+        "expectedCount": 20,
+        "decision": "pass",
+        "explanation": "Every corrected sentence now matches the converted reference exactly after Unicode normalization."
+      },
+      "extraction": {
+        "expectedCount": 40,
+        "decision": "pass",
+        "explanation": "Every extracted city or person-and-age record matches the converted reference and an exact span in the supplied text."
+      },
+      "rewriting": {
+        "expectedCount": 30,
+        "decision": "pass",
+        "explanation": "Every output was reviewed against the converted reference for retained request meaning, polite English, absence of invented facts, and directness; wording may differ without changing the obligation."
+      },
+      "title-generation": {
+        "expectedCount": 20,
+        "decision": "pass",
+        "explanation": "Every title was reviewed against the supplied sentence and converted reference; each is grammatical, preserves the central event, stays within the requested word limit, and adds no fact."
+      },
+      "summarization": {
+        "expectedCount": 30,
+        "decision": "pass",
+        "explanation": "Every one-sentence result was compared with the converted reference; it preserves the decisive event, quantity, contrast, and time information without adding a claim."
+      }
+    },
+    "real-kb": {
+      "vocabulary": {
+        "expectedCount": 37,
+        "decision": "pass",
+        "failCaseIds": [
+          "everyday-0188",
+          "everyday-0389",
+          "everyday-0479",
+          "everyday-0484"
+        ],
+        "explanation": "The answer is a source-backed synonym or antonym for the intended ordinary lexical sense and stays within the requested short form.",
+        "failureExplanation": "The source-backed word is related only under another plausible sense of the ambiguous English lemma; it is not equivalent to the intended converted reference and therefore fails qualitative review."
+      },
+      "educational-explanation": {
+        "expectedCount": 9,
+        "decision": "fail",
+        "explanation": "The responses retrieve incidental words from the instruction instead of explaining the requested pair of concepts; they are not semantically equivalent to the converted references."
+      }
+    }
+  }
+}

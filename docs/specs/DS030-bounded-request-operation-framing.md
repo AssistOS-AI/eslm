@@ -1,30 +1,30 @@
 ---
 id: DS030
-title: Everyday Request Framing and Task Contracts
+title: Bounded Request Operation Framing
 status: in-progress
 owner: language-runtime
-summary: Defines bounded English framing for explicit everyday operations without translation, answer authority, or benchmark-specific dispatch.
+summary: Defines a generic bounded English-to-operation frame without translation, execution, answer authority, or evaluation-specific dispatch.
 ---
 
-# DS030 Everyday Request Framing and Task Contracts
+# DS030 Bounded Request Operation Framing
 
 ## Introduction
 
-Many useful English requests are structurally simpler than unrestricted language but do not fit the original controlled-language assertion grammar. A percentage question, a request to extract an explicit field, and a request to describe a known entity require different executors, yet each first needs the same architectural decision: represent the requested operation, its supplied inputs, and its output obligation without answering it. This specification defines that responsibility as the `everyday-task-framer` processing node.
+Many useful English requests are structurally simpler than unrestricted language but do not fit the original controlled-language assertion grammar. A percentage question, a request to extract an explicit field, and a request to inspect a known entity require different executors, yet each first needs the same architectural decision: represent the requested operation, its supplied inputs, and its output obligation without answering it. This specification defines that responsibility as the `request-operation-framer` processing node.
 
-The node was discovered through development-visible everyday-request evaluation. The examples revealed a recurring source-neutral boundary rather than a need for one branch per prompt. This specification therefore admits semantic operation families and rejects dispatch on benchmark name, case identity, expected answer, source row, or copied entity constants. DS031 owns deterministic quantity and order execution, DS032 owns operations over request-supplied text, and DS033 owns grounded inspection of loaded declarative knowledge.
+Development-visible Basic Eval cases exposed this responsibility, but the evaluation source is not part of its identity or dispatch. The evidence revealed a recurring source-neutral boundary rather than a need for one branch per prompt. This specification therefore admits semantic operation families and rejects dispatch on benchmark name, category, case identity, expected answer, source row, or copied entity constants. DS031 owns deterministic quantity and order execution, DS032 owns operations over request-supplied text, and DS033 owns grounded inspection of loaded declarative knowledge.
 
 ## Core Content
 
 ### 1. Position and authority
 
-The framer runs only after the local English-likelihood boundary and direct controlled-language attempt have not already produced a `SOLVED` or `DEFEASIBLE` result. It consumes the direct diagnostic plus the original bounded request text and may emit `packet:runtime:everyday-task-frame`. If no admitted family matches, it emits no frame and the unchanged request-planning and recovery path remains eligible.
+The framer runs only after the local English-likelihood boundary and direct controlled-language attempt have not already produced a `SOLVED` or `DEFEASIBLE` result. It consumes the direct diagnostic plus the original bounded request text and may emit `packet:runtime:bounded-operation-frame`. If no admitted family matches, it emits no frame and the unchanged request-planning and recovery path remains eligible.
 
 The node is a deterministic `process`, not a parser authority gate, coordinator, reasoning method, or answer constructor. It cannot translate likely non-English input, repair an English-likelihood rejection, consult a KB, calculate a value, classify supplied content, select an answer, change session state, or turn recognition confidence into truth. Its current implementation is query-local and `instrumented-local`.
 
 ### 2. Closed frame
 
-The current frame format is `eslm-everyday-task-frame` with exactly these semantic regions:
+The current frame format is `eslm-bounded-operation-frame` with exactly these semantic regions:
 
 - `operation` is one allowlisted semantic operation identity;
 - `inputs` contains only finite parsed values, bounded supplied spans, explicit choices, or requested entity surfaces needed by that operation; and
@@ -66,7 +66,7 @@ Malformed explicit arithmetic, invalid clocks, ambiguous extraction spans, unsup
 
 ### Question #1: Why is this not part of the direct controlled-language parser?
 
-Response: The direct parser remains the strict semantic authority for its declarative grammar. Everyday framing represents explicit operator requests that use supplied values or text and then routes them to separately bounded methods. Keeping the seam visible prevents a growing collection of request templates from weakening assertion semantics.
+Response: The direct parser remains the strict semantic authority for its declarative grammar. Bounded operation framing represents explicit operator requests that use supplied values or text and then routes them to separately bounded methods. Keeping the seam visible prevents a growing collection of request templates from weakening assertion semantics.
 
 ### Question #2: May several frames compete?
 
@@ -78,4 +78,4 @@ Response: No. It records an operation obligation. The selected executor must val
 
 ## Conclusion
 
-The everyday-task framer turns a bounded subset of ordinary English requests into explicit typed work without pretending to solve them. Its closed operation vocabulary, strict bounds, English-only position, and anti-overfit controls let ESLM gain practical coverage while preserving the distinction between interpretation, execution, evidence, and authority.
+The request-operation framer turns a bounded subset of English requests into explicit typed work without pretending to solve them. Its closed operation vocabulary, strict bounds, English-only position, and anti-overfit controls let ESLM gain practical coverage while preserving the distinction between interpretation, execution, evidence, and authority.

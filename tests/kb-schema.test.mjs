@@ -10,9 +10,9 @@ test('QUICK canonical records satisfy the normative declarative schema', async (
   const path = `${PROJECT_ROOT}/training/KBs/quick/canonical/records.jsonl`;
   const records = parseJsonLines(await readFile(path, 'utf8'), path);
   const summary = validateCanonicalRecords(records);
-  assert.equal(summary.records, 14);
+  assert.equal(summary.records, 24);
   assert.equal(summary.provenanceIds.size, 1);
-  assert.deepEqual(validatePortableCandidate(records), { records: 14, provenance: 1 });
+  assert.deepEqual(validatePortableCandidate(records), { records: 24, provenance: 1 });
 });
 
 test('bAbI declarative policy satisfies both the trusted and portable constraint schema', async () => {

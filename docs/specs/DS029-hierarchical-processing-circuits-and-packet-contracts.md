@@ -129,7 +129,7 @@ nodes. A distinct node is justified only when it has a different typed input/out
 failure vocabulary, or resource owner. Decorative wrappers, source-family names, benchmark-specific solvers, and nodes
 that mix interpretation, retrieval, proof, and presentation are rejected.
 
-The exact current voting inventory contains eleven coordinators. Runtime voting is limited to
+The exact current catalog contains twelve coordinators, eleven of which may vote. Runtime voting is limited to
 `language-proposal-coordinator`, `interpretation-arbiter`, `request-plan-coordinator`,
 `knowledge-focus-coordinator`, `evidence-assessment-coordinator`, `method-plan-coordinator`, and
 the separate `sentence-realization-coordinator` and `document-assembly-coordinator`.
@@ -174,7 +174,7 @@ The root is `circuit:eslm:processing-graph`. It contains three planes that canno
 
 | Circuit family | Exact nested circuits and purpose |
 | --- | --- |
-| Runtime request cycle | `circuit:runtime:request-cycle` contains ingress/language, request/session, knowledge/evidence, reasoning/verification, and failure/result circuits. Language expands into `language-direct`, `language-recovery`, and the DS030–DS033 `everyday-task-path`; knowledge expands into `knowledge-routing` and `evidence-ranking`; reasoning expands into `method-selection` and `witness-authority`; failure/result expands into `grounded-response-construction`. |
+| Runtime request cycle | `circuit:runtime:request-cycle` contains ingress/language, request/session, knowledge/evidence, reasoning/verification, and failure/result circuits. Language expands into `language-direct` and `language-recovery`; knowledge expands into `knowledge-routing` and `evidence-ranking`; reasoning expands into `method-selection` and `witness-authority`; failure/result expands into `grounded-response-construction`. DS030–DS033 nodes are placed in these responsibility circuits rather than in an evaluation-named parallel path. |
 | Compiler knowledge build | `circuit:compiler:knowledge-build` contains `source-understanding`, `record-formation`, and `package-release`. Untrusted evidence becomes immutable knowledge only after rights, schema, provenance, safety, promotion, and equivalence gates. |
 | Research graph discovery | `circuit:research:graph-discovery` contains `evidence-projection`, `hypothesis-discovery`, and `promotion-boundary`. Dataset rows remain inert evidence; the sink emits proposals with no runtime, answer, proof, or promotion authority. |
 
@@ -191,20 +191,19 @@ resource lists live in the closed catalog and are validated against this groupin
 | --- | --- |
 | Direct language ingress | `request-ingress` bounds input; `english-likelihood-gate` routes English confidence without claiming a source language; `direct-parser-gate` accepts only a supported parsed interpretation. |
 | Language recovery | `language-proposal-coordinator` executes selected proposal strategies; `semantic-preservation-gate` prevents unlicensed meaning change; `parse-only-reparse-gate` inspects without retrieval or execution; `interpretation-arbiter` selects or reports ambiguity. |
-| Everyday task path | `everyday-task-framer` represents one explicit bounded operation under DS030; `everyday-deterministic-executor` performs the DS031 finite value or order method; `supplied-text-operator` performs a DS032 classification, extraction, or constrained transformation; `grounded-knowledge-inspector` performs the DS033 loaded-fact summary or listing; `everyday-result-assembler` creates a query-local candidate without adding answer evidence. The three execution branches emit separate typed result packets before joining the assembler. |
-| Request and session | `session-snapshot` captures rollback state and makes the named snapshot packet available to both work validation and the later session-effect boundary; `work-policy-gate` validates finite work; `request-force-gate` distinguishes a request from incidental artifact nouns; `request-plan-coordinator` builds ordered obligations; `session-effect-gate` consumes the request plan plus the snapshot and prevents speculative interpretation from mutating the session. |
-| Knowledge routing | `knowledge-focus-coordinator` derives typed semantic focus; `package-scope-gate` admits exact packages and versions; `exact-route-planner` schedules bounded providers or shards; `evidence-frontier-retriever` returns evidence plus search receipts; `frontier-completeness-gate` controls absence claims. |
+| Request and session | `session-snapshot` captures rollback state and makes the named snapshot packet available to both work validation and the later session-effect boundary; `work-policy-gate` validates finite work; `request-operation-framer` represents one explicit bounded operation under DS030 without executing it; `request-force-gate` distinguishes a request from incidental artifact nouns; `request-plan-coordinator` builds ordered obligations; `session-effect-gate` consumes the request plan plus the snapshot and prevents speculative interpretation from mutating the session. |
+| Knowledge routing | `knowledge-focus-coordinator` derives typed semantic focus; `package-scope-gate` admits exact packages and versions; `exact-route-planner` schedules bounded providers or shards; `evidence-frontier-retriever` returns evidence plus search receipts; `frontier-completeness-gate` controls absence claims; `grounded-knowledge-inspector` performs the DS033 loaded-fact summary or listing only over the selected declarative model. |
 | Evidence assessment | `evidence-assessment-coordinator` ranks relevance and answer-bridge potential; `evidence-admission-gate` rejects malformed, untrusted, or out-of-scope evidence. Relevance is not truth authority. |
-| Method selection and proof | `method-plan-coordinator` selects a capability-compatible method; `method-executor` returns a result plus witness; `witness-verification-gate` independently replays or validates the bounded witness. |
+| Method selection and proof | `method-plan-coordinator` selects a capability-compatible method; `method-executor` returns a result plus witness; `deterministic-value-executor` performs the DS031 finite value or order method; `supplied-text-operator` performs a DS032 classification, extraction, or constrained transformation; `witness-verification-gate` independently replays or validates the bounded witness. |
 | Failure and result | `failure-eligibility-gate` controls related-evidence fallback; `failure-grounder` emits a non-answer grounding bundle; `result-schema-gate` validates the closed public result; `session-commit-gate` commits or rolls back; `result-sink` emits the immutable result. |
-| Grounded response construction | `result-construction-coordinator` freezes the output contract, eligible evidence, and selected construction work; `claim-admission-gate` admits typed provenance-bound claims and records rejections; `rhetorical-plan-builder` assigns claims to sections; `sentence-realization-coordinator` selects source-summary, lexical-definition, typed-fact, or defeasible-relation sentence strategies; `document-assembly-coordinator` chooses fusion, comparison, gap, prose, section, outline, or table assembly and emits one construction candidate. |
+| Grounded response construction | `result-construction-coordinator` freezes the output contract, eligible evidence, and selected construction work; `claim-admission-gate` admits typed provenance-bound claims and records rejections; `rhetorical-plan-builder` assigns claims to sections; `sentence-realization-coordinator` selects source-summary, lexical-definition, typed-fact, or defeasible-relation sentence strategies; `document-assembly-coordinator` chooses fusion, comparison, gap, prose, section, outline, or table assembly; `typed-operation-result-assembler` turns one validated DS031, DS032, or DS033 result into a query-local construction candidate without adding evidence. |
 
 The construction subcircuit is generative in form and symbolic in authority. It creates new English sentences and
 document structure, but every factual sentence remains linked to an admitted supplied sentence or KB record. The
 claim gate may withhold a lexically related record; no downstream strategy may restore it, invent a bridge fact, or
-raise presentation confidence into proof confidence. Its five nodes make the difference between factual admission,
-rhetorical organization, sentence wording, and final formatting visible instead of hiding all four inside one
-“result construction” box.
+raise presentation confidence into proof confidence. Five nodes expose factual admission, rhetorical organization,
+sentence wording, and document formatting. The sixth, `typed-operation-result-assembler`, is a separate bounded join
+for already validated typed operation results; it does not bypass the downstream result-schema gate.
 
 The current checkpoint has one fully shared coordinated runtime node: the language proposal coordinator. The other
 runtime nodes are real instrumented-local seams. That is a migration ledger, not a judgment that only language matters.
@@ -254,7 +253,7 @@ The 66 current packets form four families:
 
 | Packet family | Named contents |
 | --- | --- |
-| Runtime | Bounded request, language assessment, proposal batch, vote and correlation ledgers, reparse and interpretation decisions, session snapshot, direct diagnostic, everyday task frame, separate deterministic, supplied-text, and knowledge-inspection results, general task frame, request plan, query focus, package scope, routing plan, evidence frontier, completeness and admission decisions, assessed evidence, method plan/result, verification decision, inability, grounding bundle, construction work order, admitted-claim ledger, rhetorical plan, grounded-sentence ledger, construction candidate, result validation, session commit, and public runtime result. |
+| Runtime | Bounded request, language assessment, proposal batch, vote and correlation ledgers, reparse and interpretation decisions, session snapshot, direct diagnostic, bounded operation frame, separate deterministic-value, supplied-text, and knowledge-inspection results, general task frame, request plan, query focus, package scope, routing plan, evidence frontier, completeness and admission decisions, assessed evidence, method plan/result, verification decision, inability, grounding bundle, construction work order, admitted-claim ledger, rhetorical plan, grounded-sentence ledger, construction candidate, result validation, session commit, and public runtime result. |
 | Compiler | Frozen and decoded source, source authorization, segments, record candidates, identity resolution, canonical records, validation decisions, promotion decision, package candidate, package validation, immutable package, and build gap. |
 | Research | Source status, episode and authorized-episode batches, projected episodes, structural features, hypotheses, neutrality and transfer decisions, scale progress, promotion proposal, and research gap. |
 | Shared coordination | `packet:shared:coordinator-receipt` records schedule and outcomes; `packet:shared:correlation-ledger` prevents copied or dependent strategies from multiplying confidence. |
@@ -333,11 +332,11 @@ three catalog digests and rejects:
   or an envelope with an unknown or absent required high-level semantic field; and
 - implementation-state claims that contradict the registered strategy inventory.
 
-At the current checkpoint the validated inventory is 57 nodes, 23 circuits, 87 edges, 66 packets with 66 exact packet
+At the current checkpoint the validated inventory is 57 nodes, 22 circuits, 87 edges, 66 packets with 66 exact packet
 contracts, 27 resource dimensions, all 79 built-in strategy identities, and all 17 DS027 stages. The state ledger is
 one `coordinated`, 49 `instrumented-local`, and seven `planned`. These counts are a release consistency check, not a
-permanent architectural limit. A semantic graph or packet-contract change updates this specification and its protocol
-or versioned identities before results are republished.
+permanent architectural limit. A semantic graph or packet-contract change updates this specification and its stable
+identities before results are republished.
 
 ### 12. Dataset-guided evolution without graph inflation
 

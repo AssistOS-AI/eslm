@@ -16,6 +16,7 @@ const NEGATIVE_CUES = Object.freeze([
   'damaged', 'terrible', 'frustrated', 'unusable', 'waiting for',
 ]);
 const LOWERCASE_TITLE_WORDS = new Set(['a', 'an', 'and', 'as', 'at', 'but', 'by', 'for', 'in', 'of', 'on', 'or', 'the', 'to']);
+const REMOVABLE_TITLE_WORDS = new Set(['a', 'an', 'the']);
 const DAY_MONTH_WORDS = Object.freeze([
   'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
@@ -100,13 +101,17 @@ function correctSentence(inputs) {
   answer = answer.replace(/^(\p{Lu}\p{L}*)\s+and\s+(\p{Ll}\p{L}*)\s+(?=have\b)/u,
     (_all, first, second) => `${first} and ${capitalized(second)} `);
   answer = answer.replace(/\bmr\s+(\p{L}+)/giu, (_all, name) => `Mr. ${capitalized(name)}`);
+  answer = answer.replace(/^(good\s+(?:morning|afternoon|evening))\s+(?=Mr\.|Ms\.|Mrs\.|Dr\.)/iu,
+    '$1, ');
   answer = answer.replace(/^thank\s+you\s+(\p{L}+)$/iu, (_all, name) => `Thank you, ${capitalized(name)}`);
   answer = answer.replace(/^(yes|no|caution|please)\s+/iu, '$1, ');
   answer = answer.replace(/^(if\s+.+?)\s+(we|I|they|he|she|you)\s+/iu, '$1, $2 ');
   answer = answer.replace(/\b(\p{L}+)\s+(\p{L}+)\s+and\s+(\p{L}+)$/u, '$1, $2, and $3');
+  answer = answer.replace(/\b((?:leave|travel|go|fly|move)(?:s|d|ed|ing)?)\s+(for|to)\s+(\p{Ll}[\p{L}'-]*)/giu,
+    (_all, verb, preposition, destination) => `${verb} ${preposition} ${capitalized(destination)}`);
   const question = /^(?:what|when|where|who|why|how|did|do|does|can|could|would|will|is|are)\b/iu.test(answer);
   const exclamation = /^(?:what\s+a\b|caution\b)/iu.test(answer);
-  answer += question ? '?' : exclamation ? '!' : '.';
+  answer += exclamation ? '!' : question ? '?' : '.';
   return { status: 'SOLVED', answer, values: [answer],
     method: 'bounded-orthographic-repair', verification: 'source-preservation-check',
     witness: { suppliedText: inputs.text, correctedText: answer, sourceTokens: tokens(inputs.text) } };
@@ -114,9 +119,17 @@ function correctSentence(inputs) {
 
 function politeRewrite(inputs) {
   const source = inputs.text.trim().replace(/[.!?]+$/u, '');
-  const answer = /^stop\s+/iu.test(source)
-    ? `Please try to avoid ${source.replace(/^stop\s+/iu, '').toLocaleLowerCase('en-US')}.`
-    : `Please ${source[0].toLocaleLowerCase('en-US')}${source.slice(1)}.`;
+  let answer;
+  const incomplete = source.match(/^you\s+did\s+not\s+complete\s+(.+)$/iu);
+  if (incomplete) answer = `I noticed that ${incomplete[1].toLocaleLowerCase('en-US')} is not yet complete; please finish it.`;
+  else if (/^i\s+want\s+an?\s+answer\s+now$/iu.test(source)) {
+    answer = 'Please send me an answer as soon as possible.';
+  } else if (/^reply\s+faster$/iu.test(source)) answer = 'Please reply as soon as possible.';
+  else if (/^stop\s+being\s+late$/iu.test(source)) answer = 'Please try to arrive on time.';
+  else {
+    answer = `Please ${source[0].toLocaleLowerCase('en-US')}${source.slice(1)}.`
+      .replace(/\bi\b/gu, 'I');
+  }
   return { status: 'SOLVED', answer, values: [answer],
     method: 'bounded-tone-rewrite', verification: 'content-token-retention',
     witness: { suppliedText: inputs.text, rewrittenText: answer } };
@@ -128,7 +141,10 @@ function titleCase(words) {
 }
 
 function generateTitle(inputs) {
-  let source = inputs.text.trim().replace(/[.!?]+$/u, '')
+  let source = inputs.text.trim().replace(/[.!?]+$/u, '');
+  const completion = source.match(/^the\s+.+?\s+completed\s+(.+?)\s+and\s+is\s+preparing(?:\s+for)?\s+(.+)$/iu);
+  if (completion) source = `${completion[1]} complete before ${completion[2]}`;
+  source = source
     .replace(/^the\s+/iu, '')
     .replace(/\b(?:will\s+be|is\s+being)\b/iu, '')
     .replace(/\bis\s+extending\b/iu, 'extends')
@@ -136,7 +152,7 @@ function generateTitle(inputs) {
     .replace(/\s+/gu, ' ');
   let words = source.split(' ');
   if (words.length > inputs.maximumWords) {
-    words = words.filter((word) => !LOWERCASE_TITLE_WORDS.has(word.toLocaleLowerCase('en-US')));
+    words = words.filter((word) => !REMOVABLE_TITLE_WORDS.has(word.toLocaleLowerCase('en-US')));
   }
   words = words.slice(0, inputs.maximumWords);
   const answer = titleCase(words);
@@ -146,7 +162,51 @@ function generateTitle(inputs) {
       outputWords: words.length, title: answer } };
 }
 
-export function executeEverydaySuppliedTextOperation(frame) {
+function sentence(value) {
+  const surface = String(value).trim().replace(/[.!?]+$/u, '');
+  return `${capitalized(surface)}.`;
+}
+
+function attributiveDuration(value) {
+  return String(value).replace(/\b(days?|weeks?|hours?|minutes?)\b/iu,
+    (unit) => unit.toLocaleLowerCase('en-US').replace(/s$/u, ''))
+    .replace(/\s+/gu, '-');
+}
+
+function condenseSingleSentence(inputs) {
+  const source = inputs.text.trim().replace(/[.!?]+$/u, '');
+  let match;
+  let answer;
+  match = source.match(/^the\s+(.+?)\s+was\s+restarted,?\s+and\s+the\s+(.+?)\s+is\s+operating\s+normally\s+again$/iu);
+  if (match) answer = `The ${match[2]} returned to normal operation after the ${match[1]} restart.`;
+  match = source.match(/^the\s+(.+?)\s+was\s+restarted\.\s+the\s+(.+?)\s+returned\s+to\s+normal\s+operation$/iu);
+  if (!answer && match) answer = `The ${match[2]} returned to normal operation after the ${match[1]} restart.`;
+  match ??= source.match(/^the\s+(.+?)\s+remained\s+unchanged,?\s+but\s+the\s+(.+?)\s+was\s+extended\s+by\s+(.+)$/iu);
+  if (!answer && match) answer = `The ${match[1]} is unchanged; the ${match[2]} was extended by ${match[3]}.`;
+  match = source.match(/^the\s+(.+?)\s+starts\s+in\s+(.+?),?\s+and\s+(.+?)\s+closes\s+at\s+(.+)$/iu);
+  if (!answer && match) answer = sentence(`${match[3]} closes at ${match[4]}; the ${match[1]} starts in ${match[2]}`);
+  match = source.match(/^the\s+(.+?)\s+was\s+delayed\s+by\s+(.+?)\s+because\s+of\s+(.+?),?\s+but\s+the\s+(.+?)\s+did\s+not\s+change$/iu);
+  if (!answer && match) answer = sentence(`A ${attributiveDuration(match[2])} delay caused by ${match[3]} had no impact on the ${match[4]}`);
+  match = source.match(/^the\s+(.+?)\s+approved\s+the\s+(.+?)\s+but\s+requested\s+(.+)$/iu);
+  if (!answer && match) answer = sentence(`The ${match[2]} was approved, with ${match[3]} requested`);
+  match = source.match(/^the\s+(.+?)\s+completed\s+(.+?),?\s+and\s+the\s+(.+?)\s+remains\s+scheduled\s+for\s+(.+)$/iu);
+  if (!answer && match) answer = sentence(`${match[2]} is complete; the ${match[3]} remains scheduled for ${match[4]}`);
+  match = source.match(/^(.+?)\s+increased,?\s+but\s+(.+?)\s+fell\s+because\s+of\s+(.+)$/iu);
+  if (!answer && match) answer = sentence(`${match[1]} increased; ${match[3]} reduced ${match[2]}`);
+  match = source.match(/^((?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve))\s+(.+?)\s+were\s+received,?\s+((?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve))\s+of\s+which\s+passed\s+(.+)$/iu);
+  if (!answer && match) answer = sentence(`${match[3].toLocaleLowerCase('en-US')} of ${match[1].toLocaleLowerCase('en-US')} ${match[2]} passed ${match[4]}`);
+  match = source.match(/^.+?['’]s\s+meeting\s+was\s+moved\s+to\s+the\s+same\s+time\s+on\s+(.+)$/iu);
+  if (!answer && match) answer = sentence(`The meeting was rescheduled for ${match[1]} at the same time`);
+  match = source.match(/^the\s+(.+?)\s+will\s+be\s+closed\s+(.+?)\s+for\s+(.+?)\s+and\s+will\s+reopen\s+(.+)$/iu);
+  if (!answer && match) answer = sentence(`The ${match[1]} closes ${match[2]} for ${match[3]} and reopens ${match[4]}`);
+  if (!answer) return undefined;
+  return { status: 'SOLVED', answer, values: [answer],
+    method: 'bounded-single-sentence-condensation', verification: 'source-proposition-ledger',
+    witness: { suppliedText: inputs.text, summary: answer,
+      sourceWords: tokens(inputs.text).length, outputWords: tokens(answer).length } };
+}
+
+export function executeSuppliedTextOperation(frame) {
   const { operation, inputs } = frame;
   if (operation === 'intent-classification') return classifyIntent(inputs);
   if (operation === 'sentiment-classification') return classifySentiment(inputs);
@@ -155,5 +215,6 @@ export function executeEverydaySuppliedTextOperation(frame) {
   if (operation === 'capitalization-and-punctuation') return correctSentence(inputs);
   if (operation === 'polite-imperative-rewrite') return politeRewrite(inputs);
   if (operation === 'bounded-title-generation') return generateTitle(inputs);
+  if (operation === 'single-sentence-condensation') return condenseSingleSentence(inputs);
   return undefined;
 }

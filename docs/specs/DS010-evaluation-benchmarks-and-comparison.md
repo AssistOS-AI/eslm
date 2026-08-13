@@ -56,6 +56,8 @@ Every evaluated case has a stable join identifier, label-free visible input, dec
 
 The scorer compares semantic values, assignments, paths, transitions, proofs, or strict preferences rather than terminal prose whenever the task permits. Exact string normalization is documented and deterministic. A semantic model grader is used only in a separately frozen protocol that records its exact model, prompt, inputs, outputs, and route; deterministic validators remain preferred.
 
+An open-form Basic Eval row that reaches `review` is not a pass. A reviewed decision is stored in a separate ledger that binds the exact result-file digest and records correctness, completeness, grounding, instruction fit, and naturalness. The review tool first replays category-specific machine guards for required concepts, forbidden claims, word limits, span fidelity, structure, and other closed obligations. A `pass` in that ledger means the answer was then inspected as a useful semantic response, not merely that it was non-empty or fluent. A `fail` remains visible beside deterministic failures. Changing any result bytes makes the corresponding review stale and removes it from validated totals until review is repeated. Review provenance states whether the decision came from a person, a disclosed coding-agent audit, or another frozen reviewer protocol; an unreviewed or stale semantic row remains pending and is never added to success.
+
 For forced-choice and other fixed-denominator tasks, three numbers are mandatory:
 
 - **end-to-end accuracy** is `correct / all eligible cases`; abstentions, missing predictions, resource limits, and
@@ -212,18 +214,47 @@ Horn rules, open-world behavior, state replacement, temporal predecessor, posses
 semantics, scalable Boolean entailment, and categorical logic. Both use nonce entities, concepts, predicates, objects,
 places, and values rather than copied public rows. The combined catalog therefore has 69 template identities.
 
-The test suite and `/smoke` execute the same catalog without Language Agent assistance or ordinary inability
-grounding. Heuristic-language cases call the complete local wrapper and the generated-suite typed oracle assessor;
-core, preference, and typed-task cases call their normal public engine boundaries. `/examples [PAGE] [SEED]` displays
-24 cases per page in a deterministic round-robin over heuristic oracle levels and core groups. That stratification is
-a display permutation only: all 4,096 cases remain present exactly once. `/smoke [COUNT] [SEED]` executes the selected
-deterministic size contract and prints one actual input, expected contract, and actual result per encountered template
-plus every failure. It also aggregates contract levels, observed routes, and observed statuses beside pass/fail totals.
-Comparing expectations without invoking the runtime or fabricating displayed answers invalidates the smoke result.
+Automated tests execute this complete catalog without Language Agent assistance or ordinary inability grounding.
+Heuristic-language cases call the complete local wrapper and the generated-suite typed oracle assessor; core,
+preference, and typed-task cases call their normal public engine boundaries. The interactive `/examples` and `/smoke`
+commands now expose the separate Basic Eval development suite described below, because those commands are intended for
+operator inspection of current English-answer quality. This change does not delete or shrink the 4,096-case nonce
+regression: it remains a mandatory automated anti-overfitting layer. Comparing expectations without invoking the
+runtime or fabricating displayed answers invalidates either regression result.
 
-Smoke proves regression preservation for these project-owned templates. Reusing the reviewed heuristic generator and
-oracle does not turn smoke into the separately frozen generated-development report, and neither establishes external
+The automated suite proves regression preservation for these project-owned templates. Reusing the reviewed heuristic generator and
+oracle does not turn it into the separately frozen generated-development report, and neither establishes external
 task selection, source validity, held-out generalization, or benchmark accuracy.
+
+### Basic Eval development suite and qualitative review
+
+Basic Eval contains 1,000 development-visible English projections of the assigned Romanian research proposals. Every
+row retains the immutable source locator and source identity, the reviewed conversion mode, one or more execution
+profiles, an exact or semantic scoring contract, and the earliest failed stage. Conversion is only corpus preparation:
+the English runtime must still produce an answer that is semantically equivalent to the source reference and useful in
+ordinary English. Source conversion count, raw machine state, and validated qualitative pass count are separate
+measurements.
+
+The `core-only` profile tests reusable framing and local methods without domain facts. `quick-assisted` uses the small
+authored QUICK package and is reported separately from source-derived evidence. `real-kb` uses only normal
+source-derived packages and is the required evidence direction for world knowledge. No profile invokes the Language
+Agent. Translation cases whose supplied payload is non-English remain an explicit local boundary; they cannot be
+silently credited to an English-only runtime.
+
+Ten independently authored structural controls exercise direct QUICK facts, multi-hop class inference, grounded
+multi-fact summaries, request paraphrase, and typed entity listing. They are not translations and do not enlarge the
+1,000-source denominator. `/examples [PAGE] [SEED]` interleaves source cases and controls in a deterministic stratified
+display. `/smoke [COUNT] [SEED]` executes the selected cases through their declared core, QUICK, or real-KB profile,
+prints representative actual answers and every bounded displayed failure, and reports raw exact pass, semantic review,
+and failure states. The separately stored semantic ledger supplies validated qualitative totals on the development
+status page; raw `review` is never shown as success.
+
+Repairs follow repeated failure clusters rather than individual answer identities. Missing reusable semantics belong
+in generic processing code only after renamed, nonce, reordered, and meaning-changing controls. Domain facts belong
+in provenance-bearing packages. A new stable responsibility, packet, authority, or resource boundary requires its own
+contiguous DS before catalog promotion. Every behavior change reruns the affected profile, the structural controls,
+and the automated nonce regression; all three source profiles are periodically rerun on one executable checkpoint so
+gains cannot hide cross-profile regressions.
 
 The default `evaluate` suite and `benchmark:authored` suite are small authored integration fixtures. Their generated
 HTML must show the case count, authored/internal regime, and `benchmarkComparable: false` beside any accuracy. A
@@ -405,11 +436,11 @@ separate because configuration alone is not execution.
 
 ### Question #6: Why does the generated-development report remain separate when `/smoke` reuses its shapes and oracle?
 
-Response: `/smoke` now protects the accepted language strategies and broader core behavior together, so its default
-catalog deliberately includes 1,200 fresh instantiations of every heuristic shape. The generated-development command
+Response: The automated nonce regression protects the accepted language strategies and broader core behavior together,
+and deliberately includes 1,200 fresh instantiations of every heuristic shape. The generated-development command
 still owns a separately frozen seed, suite and behavior identity, detailed technique/domain/target aggregates,
-failure clusters, representative failures, conclusions, and publishable machine receipt. Smoke owns interactive
-regression visibility and adds 2,896 core cases; it does not publish or merge the generated report's metric. Public
+failure clusters, representative failures, conclusions, and publishable machine receipt. Interactive `/smoke` owns
+Basic Eval answer-quality visibility and does not publish or merge the generated report's metric. Public
 and fresh benchmarks test independently defined distributions or held-out lifecycles. Within either project-owned
 use, semantic-query execution names a complete expected query shape; candidate selection names evidence that the
 intended structural alternative was chosen under the declared route and status, not a complete relation-shaped query

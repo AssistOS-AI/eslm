@@ -42,6 +42,7 @@ const startMemory = process.memoryUsage();
 const archiveBytes = await readFile(archive);
 const listing = await runFile('unzip', ['-Z1', archive], { maxBuffer: 1024 * 1024 });
 const files = listing.stdout.split(/\r?\n/u).filter((name) => name.endsWith('.json'));
+const entryFiles = files.filter((name) => name.startsWith('entries-'));
 const synsetFiles = files.filter((name) => !name.startsWith('entries-') && name !== 'frames.json');
 const synsetsByBucket = Object.fromEntries('0123456789'.split('').map((key) => [key, Object.create(null)]));
 const lemmasByBucket = Object.fromEntries(['0', ...'abcdefghijklmnopqrstuvwxyz'].map((key) => [key, Object.create(null)]));
@@ -74,6 +75,43 @@ for (const name of synsetFiles) {
       if (!Array.isArray(targets) || ['definition', 'example', 'members'].includes(relation)) continue;
       relationCounts[relation] = (relationCounts[relation] ?? 0) + targets.length;
     }
+  }
+}
+
+function normalizedLexeme(value) {
+  return String(value).normalize('NFKC').toLocaleLowerCase('en-US').replaceAll('_', ' ').trim();
+}
+
+function relationLemma(value) {
+  return normalizedLexeme(String(value).split('%')[0]);
+}
+
+for (const name of entryFiles) {
+  const parsed = JSON.parse(await unzipText(archive, name));
+  for (const [lemma, partOfSpeechEntries] of Object.entries(parsed)) {
+    const normalized = normalizedLexeme(lemma);
+    const byPartOfSpeech = {};
+    const antonymsByPartOfSpeech = {};
+    const antonymGroupsByPartOfSpeech = {};
+    for (const [partOfSpeech, entry] of Object.entries(partOfSpeechEntries)) {
+      const senses = entry.sense ?? [];
+      byPartOfSpeech[partOfSpeech] = [...new Set(senses.map((sense) => sense.synset).filter(Boolean))];
+      const antonyms = [...new Set(senses.flatMap((sense) => sense.antonym ?? [])
+        .map(relationLemma).filter(Boolean))];
+      if (antonyms.length > 0) antonymsByPartOfSpeech[partOfSpeech] = antonyms;
+      const antonymGroups = senses.map((sense) => [...new Set((sense.antonym ?? [])
+        .map(relationLemma).filter(Boolean))]).filter((values) => values.length > 0);
+      if (antonymGroups.length > 0) antonymGroupsByPartOfSpeech[partOfSpeech] = antonymGroups;
+    }
+    const orderedSenses = [...new Set(Object.values(byPartOfSpeech).flat())];
+    const bucket = lemmasByBucket[bucketForLemma(normalized)];
+    bucket[normalized] = {
+      s: orderedSenses.length > 0 ? orderedSenses : [...(bucket[normalized] ?? [])],
+      p: byPartOfSpeech,
+      ...(Object.keys(antonymsByPartOfSpeech).length > 0 ? { a: antonymsByPartOfSpeech } : {}),
+      ...(Object.keys(antonymGroupsByPartOfSpeech).length > 0
+        ? { g: antonymGroupsByPartOfSpeech } : {}),
+    };
   }
 }
 

@@ -2,10 +2,20 @@ import { performance } from 'node:perf_hooks';
 import { KB_CATALOG, loadKnowledgeBase, registeredKnowledgeBases, summarizeKnowledgeBase } from '../kbs.mjs';
 import { PUBLIC_KB_CATALOG, publicKbStatuses } from '../public-kbs.mjs';
 import {
-  REGRESSION_SMOKE_CATALOG_SIZE, REGRESSION_SMOKE_SEED, SMOKE_EXAMPLES_PER_PAGE,
-  regressionSmokeCases, stratifiedSmokeCases, summarizeSmokeCases,
+  REGRESSION_SMOKE_CATALOG_SIZE, REGRESSION_SMOKE_SEED,
+  regressionSmokeCases, summarizeSmokeCases,
 } from '../conversation-smoke.mjs';
 import { assessGeneratedHeuristicCase } from '../evaluation/generated-heuristic-benchmark.mjs';
+import {
+  BASIC_EVAL_EXAMPLES_PER_PAGE,
+  BASIC_EVAL_CASE_COUNT,
+  BASIC_EVAL_SMOKE_SEED,
+  BASIC_EVAL_SOURCE_CASE_COUNT,
+  basicEvalExamplePage,
+  basicEvalSmokeSelection,
+  executionProfileForBasicEvalCase,
+} from '../evaluation/basic-eval-catalog.mjs';
+import { scoreBasicEvalCase } from '../evaluation/basic-eval-scoring.mjs';
 import { strategyInventory } from '../strategy/strategy-inventory.mjs';
 
 export function interactiveHelp(style) {
@@ -29,8 +39,8 @@ export function interactiveHelp(style) {
   ${command('/strategy clear')}Clear exact execution allowlists.
   ${command('/normalize')}Show the external Language Agent normalization policy and state.
   ${command('/normalize on|off')}Enable or disable direct-first Language Agent assistance.
-  ${command('/examples [PAGE] [SEED]')}Show 24 stratified heuristic and core smoke cases.
-  ${command('/smoke [COUNT] [SEED]')}Execute the combined heuristic and core regression catalog.
+  ${command('/examples [PAGE] [SEED]')}Show 24 stratified Basic Eval cases and structural controls.
+  ${command('/smoke [COUNT] [SEED]')}Execute Basic Eval locally without a Language Agent.
   ${command('/trace')}Explain the sources and symbolic steps behind the last answer.
   ${command('/profile')}Show timing and memory measurements for the last answer.
   ${command('/clear')}Forget temporary conversation facts and references.
@@ -54,47 +64,85 @@ export function interactiveCountAndSeed(value, defaultCount, defaultSeed = REGRE
 export function interactiveExamplePage(value) {
   const parts = value.trim().split(/\s+/u).filter(Boolean);
   const page = /^\d+$/u.test(parts[0] ?? '') ? Number.parseInt(parts.shift(), 10) : 1;
-  const pageCount = Math.ceil(REGRESSION_SMOKE_CATALOG_SIZE / SMOKE_EXAMPLES_PER_PAGE);
+  const pageCount = Math.ceil(BASIC_EVAL_CASE_COUNT / BASIC_EVAL_EXAMPLES_PER_PAGE);
   if (!Number.isSafeInteger(page) || page < 1 || page > pageCount) {
     throw new Error(`Example page must be from 1 to ${pageCount}.`);
   }
-  return { page, seed: parts.join(' ') || REGRESSION_SMOKE_SEED, pageCount };
+  return { page, seed: parts.join(' ') || BASIC_EVAL_SMOKE_SEED, pageCount };
 }
 
-export function interactiveExamples(style, seed, page = 1) {
+export async function interactiveExamples(style, seed, page = 1) {
   const groups = new Map();
-  const all = regressionSmokeCases({ size: REGRESSION_SMOKE_CATALOG_SIZE, seed });
-  const displayOrder = stratifiedSmokeCases(all);
-  const start = (page - 1) * SMOKE_EXAMPLES_PER_PAGE;
-  const generated = displayOrder.slice(start, start + SMOKE_EXAMPLES_PER_PAGE);
-  const pageCount = Math.ceil(all.length / SMOKE_EXAMPLES_PER_PAGE);
-  for (const example of generated) {
-    groups.set(example.group, [...(groups.get(example.group) ?? []), example]);
+  const selection = await basicEvalExamplePage({ seed, page });
+  for (const example of selection.cases) {
+    groups.set(example.category, [...(groups.get(example.category) ?? []), example]);
   }
   const catalog = [...groups].map(([group, examples]) => {
     const rendered = examples.map((example) => {
-      const label = example.catalogKind === 'heuristic-language'
-        ? example.oracle.oracleLevel
-        : example.label ?? (example.expectedStatus === 'UNKNOWN' ? 'unknown by design' : 'core execution');
+      const label = example.scoring === 'exact' ? 'exact contract' : 'semantic review';
       const marker = `[${label}]`;
-      const colored = label === 'unsupported' ? style.red(marker)
-        : label === 'unknown by design' || label.includes('abstention') || label === 'proposal-only'
-          ? style.yellow(marker) : style.green(marker);
-      const context = example.catalogKind === 'heuristic-language'
-        ? `domain: ${example.domain}; complexity: ${example.complexity}; target: ${example.targetFamily}`
-        : `capability: ${example.group}`;
-      return `${colored} ${example.input}\n    Template: ${example.templateId}; ${context}; control: ${example.metamorphicRelation}.`;
+      const colored = example.scoring === 'exact' ? style.green(marker) : style.yellow(marker);
+      const profiles = example.profiles.join(', ');
+      return `${colored} ${example.prompt}\n    Case: ${example.id}; source: ${example.source.sourceId}; profile: ${profiles}; difficulty: ${example.difficulty}.`;
     });
     return `${style.bold(group)} (${examples.length})\n  ${rendered.join('\n  ')}`;
   }).join('\n\n');
   return `${style.bold('What this evidence means')}
 Seed: ${style.blue(seed)} — reuse it with /examples or /smoke.
-Page: ${style.green(`${page} of ${pageCount}`)} — ${generated.length} stratified cases shown, display positions ${start + 1}–${start + generated.length} of ${all.length}. Use ${style.blue(`/examples ${page === pageCount ? 1 : page + 1} ${seed}`)} for the next page.
-Current executable evidence: ${style.green('1,200 heuristic-language cases plus 2,896 core regressions')} covering all 43 DS022 technique shapes and eight contract levels alongside 26 direct, state, relation, preference, and typed-task templates.
-WordNet and ATOMIC checks are source-exposed integration evidence, ${style.yellow('not public benchmark scores')}.
-The ${style.blue('benchmark probe --benchmark all')} report includes every registered public and research row. A single-ID probe returns only that benchmark. Each row distinguishes current execution from stored receipt assembly and current from stale frozen dependencies; generated examples never substitute for those receipts.
+Page: ${style.green(`${page} of ${selection.pageCount}`)} — ${selection.cases.length} stratified cases shown from ${selection.total.toLocaleString('en-US')} questions and controls. Use ${style.blue(`/examples ${page === selection.pageCount ? 1 : page + 1} ${seed}`)} for the next page.
+The suite contains 1,000 development-visible English projections of the assigned Romanian proposals and 10 independently authored structural controls over QUICK. Exact cases have a closed machine oracle; open-form cases require semantic review. ${style.yellow('They are not unseen benchmark evidence.')} /smoke executes them with the external Language Agent disabled.
+The separate nonce and metamorphic regression catalog remains part of automated tests so changes that improve these examples cannot silently erase earlier symbolic capabilities.
 
 ${catalog}`;
+}
+
+function basicEvalExpected(testCase) {
+  if (testCase.scoring === 'exact') return testCase.reference.answer;
+  const required = testCase.reference.requiredConcepts ?? [];
+  return required.length > 0
+    ? `semantic review; must cover ${required.join(', ')}`
+    : 'semantic review for correctness, grounding, completeness, instruction fit, and naturalness';
+}
+
+export async function interactiveBasicEvalSmoke(engines, style, seed, count = BASIC_EVAL_CASE_COUNT) {
+  const cases = await basicEvalSmokeSelection({ seed, count });
+  const started = performance.now();
+  const lines = [style.bold(`Basic Eval smoke — ${count} cases and controls — seed ${seed} — Language Agent off`)];
+  const totals = { pass: 0, fail: 0, review: 0 };
+  const profileTotals = new Map();
+  const stageTotals = new Map();
+  const displayedCategories = new Set();
+  let displayedFailures = 0;
+  for (const testCase of cases) {
+    const profile = executionProfileForBasicEvalCase(testCase);
+    const engine = engines[profile];
+    if (!engine?.ask) throw new TypeError(`Missing Basic Eval runtime for ${profile}.`);
+    const result = await engine.ask(testCase.prompt, {}, { grounding: false });
+    const assessment = scoreBasicEvalCase(testCase, result);
+    totals[assessment.score.state] += 1;
+    increment(profileTotals, `${profile}/${assessment.score.state}`);
+    if (assessment.diagnosis.earliestStage) increment(stageTotals, assessment.diagnosis.earliestStage);
+    const shouldDisplay = !displayedCategories.has(testCase.category)
+      || (assessment.score.state === 'fail' && displayedFailures < 48);
+    if (!shouldDisplay) continue;
+    displayedCategories.add(testCase.category);
+    if (assessment.score.state === 'fail') displayedFailures += 1;
+    const marker = assessment.score.state === 'pass' ? style.green('PASS')
+      : assessment.score.state === 'review' ? style.yellow('REVIEW') : style.red('FAIL');
+    const answer = String(result.answer ?? '').replace(/\s+/gu, ' ').slice(0, 180);
+    lines.push(`${marker} [${testCase.id} · ${testCase.category} · ${profile}]\n`
+      + `     Input: ${testCase.prompt.replace(/\s+/gu, ' ').slice(0, 240)}\n`
+      + `     Expected: ${basicEvalExpected(testCase)}\n`
+      + `     Actual: ${result.status}; ${answer}${answer.length === 180 ? '…' : ''}`
+      + `${assessment.diagnosis.earliestStage ? `\n     Earliest gap: ${assessment.diagnosis.earliestStage}/${assessment.diagnosis.code}` : ''}`);
+  }
+  const elapsed = performance.now() - started;
+  lines.push('', `${style.bold('Summary')}: ${style.green(`${totals.pass} pass`)}, ${style.yellow(`${totals.review} review`)}, ${totals.fail ? style.red(`${totals.fail} fail`) : style.green('0 fail')} in ${elapsed.toFixed(1)} ms.`);
+  lines.push(style.dim(`Profile outcomes: ${renderCounts(profileTotals)}.`));
+  lines.push(style.dim(`Earliest failed stages: ${renderCounts(stageTotals) || 'none'}.`));
+  lines.push(style.dim(`${displayedCategories.size} categories are represented above; failures are capped in the display but all selected cases contribute to the summary.`));
+  lines.push(style.dim('Source prompts are development-visible English conversions; QUICK controls are separately authored. No external Language Agent is invoked.'));
+  return lines.join('\n');
 }
 
 function sameExpectedValues(actual, expected) {
@@ -272,7 +320,7 @@ export function interactiveResultText(result, original, style) {
       `Agent activity: ${activity}; symbolic status ${result.status}.`,
     ], result.answer));
   }
-  if (result.languageRoute === 'everyday-task-executed') {
+  if (result.languageRoute === 'bounded-operation-executed') {
     return coherentInteractiveAnswer(result.answer);
   }
   const details = [

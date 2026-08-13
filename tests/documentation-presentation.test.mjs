@@ -392,7 +392,7 @@ test('specification viewer preserves document structure and orientation aids', a
 test('GitHub Pages publication preserves every loader-addressable DS source', async () => {
   const publication = await validatePublishedSpecificationSources();
   assert.equal(publication.noJekyll, true);
-  assert.equal(publication.sources, 34);
+  assert.equal(publication.sources, 35);
   for (const target of publication.targets) {
     const rawUrl = new URL(
       `specs/${encodeURIComponent(target)}`,
