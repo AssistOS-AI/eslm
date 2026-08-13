@@ -31,7 +31,8 @@ Each suite declares which question it answers:
 - Did the primary status and abstention match the evidence?
 - When no answer was supported, did the grounding bundle expose related and non-misleading knowledge?
 - Did a multi-request plan cover every obligation in order?
-- Did the final extractive or verified artifact cite every factual claim and expose gaps?
+- Did the final grounded symbolic or derived-claim artifact admit and cite every factual claim, reproduce exactly, and
+  expose bounded-coverage gaps?
 - What time, memory, bytes, lookups, and external operator invocations were consumed?
 
 No single accuracy number answers all of them.
@@ -75,8 +76,9 @@ The report separates:
 - **grounded inability:** relevance, misleading-evidence rate, completeness-receipt accuracy, citation validity, and
   whether the bundle helped a blinded downstream formulation step;
 - **planning:** operation, polarity, constraint, topic, order, dependency, and obligation-completion agreement;
-- **synthesis:** source coverage, citation precision, claim-ledger validity, unsupported and contradictory claim rate,
-  schema compliance, and visible gaps;
+- **synthesis:** source coverage, admission and rejection accuracy, citation precision, claim-ledger validity,
+  rhetorical-plan coverage, sentence- and assembly-strategy trace validity, exact reproduction, unsupported and
+  contradictory claim rate, schema compliance, and visible gaps;
 - **resources:** wall time, CPU time, peak RSS, bytes opened, cache behavior, candidates, lookups, proof work, and
   external invocation count.
 
@@ -132,9 +134,10 @@ remain in fixed denominators.
 ### 7. Baselines and ablations
 
 Required comparisons include exact lookup, lexical retrieval, role-aware retrieval, frequency-only ranking,
-co-occurrence ranking, answer-bridge ranking, no retrieval, no heuristic recovery, direct CNL, extractive synthesis,
-and every promoted verified-synthesis layer. External LLM comparisons use identical visible evidence and record model,
-revision, prompt, decoding, tools, cost, and invocation policy.
+co-occurrence ranking, answer-bridge ranking, no retrieval, no heuristic recovery, direct CNL, exact source
+reproduction, the current bounded grounded symbolic constructor, and each promoted extension for general obligation
+planning, abstractive claim derivation, or verified cross-claim discourse. External LLM comparisons use identical
+visible evidence and record model, revision, prompt, decoding, tools, cost, and invocation policy.
 
 Strategy experiments add exact single-strategy and leave-one-out ablations inside each eligible stage. Language
 families are compared by accepted meaning and protected-operator safety; focus and relevance strategies by retrieval
@@ -168,7 +171,8 @@ nearby fact from disguising an unsupported answer.
 ### Question #2: Why include a downstream formulation track?
 
 Response: The intended bundle can ground a human or language model after ESLM abstains. Measuring that use directly is
-more honest than claiming that the symbolic runtime itself generated the downstream prose.
+more honest than attributing the downstream consumer's wording or added claims to ESLM's bounded source-grounded
+constructor.
 
 ### Question #3: How should product metrics be combined for release?
 
@@ -191,4 +195,5 @@ renaming, grouped splits, independent verification, and the declared resource po
 
 Realistic product evidence follows the complete path from wording to interpretation, retrieval, reasoning, answer,
 grounded inability, and shaped artifact. Layered metrics and protected grouped splits make progress visible without
-turning solver conformance, lexical similarity, or downstream language generation into inflated end-to-end claims.
+turning solver conformance, lexical similarity, or consumer-added language generation into inflated end-to-end
+claims.

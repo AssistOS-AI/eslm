@@ -102,7 +102,8 @@ language, request/session, knowledge/evidence, reasoning/verification, and failu
 construction expands again into work coordination, claim admission, rhetorical planning, sentence realization,
 document assembly, schema validation, and session commit. The compiler and RL-discovery circuits use the same node,
 packet, resource, and authority vocabulary without sharing runtime authority. The complete live map and every named
-strategy are shown on the documentation home page; machine identities remain available in technical status receipts.
+strategy are reachable through the progressive documentation-home explorer, one fitted semantic depth at a time;
+machine identities remain available in technical status receipts.
 
 Every question produces `eslm-runtime-result-v1`. Read `status` and `answer` first. `values`, normalized input, parsed
 query, task frame, plan, provenance, and reasoning are stage-dependent and can be absent after an early `UNPARSED`.
@@ -138,12 +139,14 @@ failure grounding remain local owners. Ordinary method planning and witness veri
 processing-node envelopes, but all four stages remain non-selectable until their executors genuinely cross the shared
 coordinator boundary.
 
-The general CLI discloses its assisted default. Immediately before a real external invocation, interactive, one-shot
-`ask`, and batch `run` modes emit exactly one
-`Thinking: interpreting with the configured Language Agent…` line. One-shot and batch modes write it to standard error,
-so JSON and JSONL standard output remain valid. Direct execution, the explicit local profile, and cache hits remain
-silent; a cached result stays attributed to the assisted route without claiming a new external call. Translation is
-only an untrusted proposal: without an independent reviewed source-language preservation profile, open-class
+The general CLI discloses its assisted default. Every interactive result uses a muted
+`Thinking · symbolic processing` summary followed by a clean `Answer`; this local presentation is distinct from
+external-agent activity. Immediately before a real external invocation, interactive, one-shot `ask`, and batch `run`
+modes emit exactly one `Thinking: interpreting with the configured Language Agent…` line. One-shot and batch modes
+write that activity line to standard error, so JSON and JSONL standard output remain valid. The explicit local profile
+and cache hits emit no external-invocation line; a cached result stays attributed to the assisted route without
+claiming a new external call. Translation is only an untrusted proposal: without an independent reviewed
+source-language preservation profile, open-class
 cross-language equivalence remains
 `UNVERIFIED_NORMALIZATION` even when the proposed English parses.
 

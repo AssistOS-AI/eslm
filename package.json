@@ -29,6 +29,7 @@
     "kb:build": "node src/cli.mjs kb build all",
     "kb:validate": "node src/cli.mjs kb validate all",
     "test:kbs:random": "node scripts/test-source-kbs.mjs --cases 100 --output docs/results/latest-kb-random-tests.json",
+    "docs:graph-catalog": "node docs/assets/generate-logical-processing-catalog.mjs",
     "docs:matrix": "node src/spec-matrix.mjs",
     "docs:check": "node src/cli.mjs docs check",
     "source:size": "node scripts/check-source-sizes.mjs",

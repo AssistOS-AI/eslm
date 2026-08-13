@@ -85,10 +85,12 @@ The current direct frontend is a bounded deterministic collection of token, sent
 and task-frame compilers. It handles the documented controlled forms and several explicit task projections. This
 implemented kernel provides exact semantics for its accepted constructions while the chart/feature architecture and
 the full Section 4 Semantic IR inventory remain staged acceptance targets. DS022 extends the operator path around this
-kernel with bounded local recovery and extractive request construction. Common explicit summary, explanation,
+kernel with bounded local recovery and grounded symbolic request construction. Common explicit summary, explanation,
 comparison, outline, essay, report, article, document, table, list, and paragraph requests can therefore produce a
-cited `PARTIAL` artifact even though nested scope, implicit relations, broad causal explanation, and verified
-abstractive prose require further accepted language and synthesis mechanisms.
+cited, coherently shaped `PARTIAL` artifact. A non-voting gate admits provenance-bound claims; a rhetorical plan orders
+them; four typed sentence strategies and seven discourse or format strategies realize the document; and the result
+contract reproduces it exactly from the plan and admitted evidence. Nested scope, general claim derivation,
+unrestricted prose generation, audience adaptation, and unsupported causal explanation remain outside this slice.
 
 The implemented ingress function `assessEnglishLikelihood(text, options?)` returns the closed
 `eslm-english-likelihood-v1` receipt with classification `likely-english`, `likely-non-english`, or `indeterminate`,
@@ -160,8 +162,8 @@ For every failed or partially accepted input, the front-end must expose the long
 
 The front-end must report whether an input was rejected by the English-only gate, directly parsed, handled by an
 explicit symbolic task adapter, accepted through deterministic local approximation, left ambiguous among local
-interpretations, understood as an artifact request without supported source material, handled by extractive request
-synthesis, accepted after a Language Agent simplification or independently verified translation proposal, rejected by
+interpretations, understood as an artifact request without supported source material, handled by grounded symbolic
+request synthesis, accepted after a Language Agent simplification or independently verified translation proposal, rejected by
 host proposal validation, failed in the external process, or left unparsed. Route names include
 `english-language-gate-rejected`, `direct-symbolic`, `direct-symbolic-task-adapter`,
 `heuristic-cnl-approximated`, `heuristic-cnl-ambiguous`, `heuristic-request-planned`,
@@ -228,11 +230,15 @@ articles, quantifiers, auxiliaries, copulas, conjunctions, and style words while
 not make the input parsed, does not become Semantic IR, and is not included in Language Agent feedback. For ordinary
 inability it cannot change the primary status, answer provenance, or answer-contributing KB versions.
 
-An explicit DS022 document-style request is a separate operation rather than failure-answer substitution. Its
-extractive synthesis method may select sentences from user-supplied material and cited source claims from the grounding
-bundle, organize them under the requested bounded shape, and return `PARTIAL`. Only the selected records become answer
-provenance and `usedKbVersions`; unselected related records retain `answerSupported: false`, and relevance is never
-described as a deductive proof.
+An explicit DS022 document-style request is a separate operation rather than failure-answer substitution. Its grounded
+symbolic synthesis method selects bounded user-supplied sentences and candidate KB records, then subjects every
+candidate to non-voting claim admission. A rhetorical plan and the registered sentence and assembly strategies can
+create new English wording, citations, sections, prose, outlines, or tables only from admitted material. The result
+contract must reproduce every claim, citation, paragraph, section, strategy trace, and final byte sequence from the
+closed plan and admitted evidence. It returns `PARTIAL` because bounded evidence and output work do not establish
+complete coverage, not because the runtime merely copies a bag of sentences. Only records supporting realized claims
+become answer provenance and `usedKbVersions`; rejected or unselected related records retain the non-answer boundary,
+and neither relevance nor presentation confidence is described as a deductive proof.
 
 Story continuation records use a separate explicit task adapter because a four-sentence context plus candidate endings
 is already a machine-declared selection task. Each sentence is compiled into a bounded narrative event frame with

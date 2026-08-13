@@ -1,0 +1,47 @@
+# Validation
+
+- Exemple totale: **1000**
+- Fișiere benchmark: **100**
+- Short: **900**
+- Medium: **90**
+- Long: **10**
+- Evaluare exactă: **535**
+- Evaluare semantică: **465**
+- Prompt maxim: **144 cuvinte**
+- Răspuns de referință maxim: **256 cuvinte**
+- Prompturi unice: **1000 / 1000**
+
+## Categorii
+- `factual`: 150
+- `calcul`: 80
+- `traducere`: 60
+- `calcul_aplicat`: 60
+- `procente`: 50
+- `problemă_scurtă`: 45
+- `extracție`: 40
+- `vocabular`: 40
+- `ordine_logică`: 40
+- `șir_numeric`: 30
+- `da_nu`: 30
+- `clasificare_intenție`: 30
+- `clasificare_sentiment`: 30
+- `rescriere`: 30
+- `explicație`: 30
+- `sumarizare`: 30
+- `sfat_practic`: 30
+- `corectare_text`: 20
+- `generare_titlu`: 20
+- `clasificare_simplă`: 20
+- `timp`: 15
+- `extracție_structurată`: 10
+- `comunicare_profesională`: 10
+- `sumarizare_structurată`: 10
+- `plan_învățare`: 10
+- `rescriere_email`: 10
+- `critică_argument`: 10
+- `creativ_scurt`: 10
+- `plan_practic`: 10
+- `sinteză_feedback`: 10
+- `comparare_opțiuni`: 10
+- `explicație_educațională`: 10
+- `task_complex_cotidian`: 10

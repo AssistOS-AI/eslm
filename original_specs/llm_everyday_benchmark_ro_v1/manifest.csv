@@ -1,0 +1,1001 @@
+id,file,position,category,domain,length_class,difficulty,eval_mode,prompt_words,reference_answer_words,expected_min_words,expected_max_words,source_id
+RO-001-01,cases/benchmark_001.md,1,factual,astronomie,short,easy,exact,6,1,1,9,S0422
+RO-001-02,cases/benchmark_001.md,2,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M043
+RO-001-03,cases/benchmark_001.md,3,șir_numeric,logică,short,easy,exact,10,1,1,1,S0341
+RO-001-04,cases/benchmark_001.md,4,da_nu,logică,short,easy,exact,17,1,1,1,S0296
+RO-001-05,cases/benchmark_001.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0044
+RO-001-06,cases/benchmark_001.md,6,clasificare_intenție,customer support,short,easy,exact,15,1,1,3,S0712
+RO-001-07,cases/benchmark_001.md,7,comunicare_profesională,muncă,short,easy,semantic,10,16,3,30,S0900
+RO-001-08,cases/benchmark_001.md,8,traducere,limbă,short,easy,semantic,6,5,2,15,S0578
+RO-001-09,cases/benchmark_001.md,9,clasificare_sentiment,clasificare,short,easy,exact,19,1,1,1,S0682
+RO-001-10,cases/benchmark_001.md,10,factual,fizică,short,easy,semantic,3,7,1,15,S0489
+RO-002-01,cases/benchmark_002.md,1,da_nu,logică,short,easy,exact,10,1,1,1,S0299
+RO-002-02,cases/benchmark_002.md,2,clasificare_intenție,customer support,short,easy,exact,16,1,1,3,S0740
+RO-002-03,cases/benchmark_002.md,3,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0181
+RO-002-04,cases/benchmark_002.md,4,timp,raționament temporal,short,easy,exact,22,2,1,4,S0174
+RO-002-05,cases/benchmark_002.md,5,factual,geografie,short,easy,exact,4,1,1,4,S0414
+RO-002-06,cases/benchmark_002.md,6,traducere,limbă,short,easy,semantic,8,5,2,15,S0544
+RO-002-07,cases/benchmark_002.md,7,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M003
+RO-002-08,cases/benchmark_002.md,8,corectare_text,limbă,short,easy,semantic,9,5,2,15,S0635
+RO-002-09,cases/benchmark_002.md,9,factual,economie,short,easy,semantic,3,9,1,17,S0512
+RO-002-10,cases/benchmark_002.md,10,factual,biologie,short,easy,semantic,4,8,1,16,S0465
+RO-003-01,cases/benchmark_003.md,1,da_nu,logică,short,easy,exact,17,1,1,1,S0306
+RO-003-02,cases/benchmark_003.md,2,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0649
+RO-003-03,cases/benchmark_003.md,3,șir_numeric,logică,short,easy,exact,10,1,1,1,S0363
+RO-003-04,cases/benchmark_003.md,4,traducere,limbă,short,easy,semantic,8,3,2,15,S0522
+RO-003-05,cases/benchmark_003.md,5,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0132
+RO-003-06,cases/benchmark_003.md,6,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M045
+RO-003-07,cases/benchmark_003.md,7,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0122
+RO-003-08,cases/benchmark_003.md,8,rescriere,comunicare,short,easy,semantic,11,8,4,22,S0777
+RO-003-09,cases/benchmark_003.md,9,factual,geografie,short,easy,exact,4,1,1,4,S0378
+RO-003-10,cases/benchmark_003.md,10,traducere,limbă,short,easy,semantic,7,3,2,15,S0545
+RO-004-01,cases/benchmark_004.md,1,generare_titlu,transformare text,short,easy,semantic,24,4,2,8,S0815
+RO-004-02,cases/benchmark_004.md,2,factual,geografie,short,easy,exact,4,1,1,4,S0395
+RO-004-03,cases/benchmark_004.md,3,rescriere,comunicare,short,easy,semantic,14,8,4,22,S0793
+RO-004-04,cases/benchmark_004.md,4,factual,chimie,short,easy,exact,7,1,1,9,S0463
+RO-004-05,cases/benchmark_004.md,5,explicație,explicații,short,easy,semantic,7,12,10,55,S0859
+RO-004-06,cases/benchmark_004.md,6,vocabular,limbă,short,easy,semantic,6,1,1,3,S0607
+RO-004-07,cases/benchmark_004.md,7,timp,raționament temporal,short,easy,exact,15,2,1,4,S0182
+RO-004-08,cases/benchmark_004.md,8,factual,limbă,short,easy,semantic,4,13,1,21,S0507
+RO-004-09,cases/benchmark_004.md,9,plan_învățare,învățare,medium,medium,semantic,62,125,100,260,M027
+RO-004-10,cases/benchmark_004.md,10,calcul,matematică,short,easy,exact,4,1,1,3,S0048
+RO-005-01,cases/benchmark_005.md,1,vocabular,limbă,short,easy,semantic,7,2,1,3,S0589
+RO-005-02,cases/benchmark_005.md,2,factual,fizică,short,easy,exact,4,1,1,9,S0457
+RO-005-03,cases/benchmark_005.md,3,ordine_logică,logică,short,easy,exact,20,1,1,2,S0282
+RO-005-04,cases/benchmark_005.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0065
+RO-005-05,cases/benchmark_005.md,5,vocabular,limbă,short,easy,semantic,6,2,1,3,S0595
+RO-005-06,cases/benchmark_005.md,6,rescriere_email,comunicare,medium,medium,semantic,64,56,56,150,M056
+RO-005-07,cases/benchmark_005.md,7,factual,geografie,short,easy,exact,4,1,1,4,S0420
+RO-005-08,cases/benchmark_005.md,8,da_nu,logică,short,easy,exact,10,1,1,1,S0307
+RO-005-09,cases/benchmark_005.md,9,procente,matematică,short,easy,exact,5,1,1,4,S0085
+RO-005-10,cases/benchmark_005.md,10,șir_numeric,logică,short,easy,exact,17,1,1,1,S0368
+RO-006-01,cases/benchmark_006.md,1,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0335
+RO-006-02,cases/benchmark_006.md,2,vocabular,limbă,short,easy,semantic,6,1,1,3,S0605
+RO-006-03,cases/benchmark_006.md,3,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0331
+RO-006-04,cases/benchmark_006.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0068
+RO-006-05,cases/benchmark_006.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0063
+RO-006-06,cases/benchmark_006.md,6,timp,raționament temporal,short,easy,exact,22,2,1,4,S0138
+RO-006-07,cases/benchmark_006.md,7,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0118
+RO-006-08,cases/benchmark_006.md,8,calcul,matematică,short,easy,exact,4,1,1,3,S0032
+RO-006-09,cases/benchmark_006.md,9,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0238
+RO-006-10,cases/benchmark_006.md,10,critică_argument,logică,medium,medium,semantic,43,68,68,180,M039
+RO-007-01,cases/benchmark_007.md,1,calcul_aplicat,matematică,short,easy,exact,14,2,1,5,S0196
+RO-007-02,cases/benchmark_007.md,2,factual,geografie,short,easy,exact,7,1,1,9,S0484
+RO-007-03,cases/benchmark_007.md,3,șir_numeric,logică,short,easy,exact,10,1,1,1,S0348
+RO-007-04,cases/benchmark_007.md,4,rescriere,comunicare,short,easy,semantic,15,8,4,22,S0798
+RO-007-05,cases/benchmark_007.md,5,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0645
+RO-007-06,cases/benchmark_007.md,6,plan_învățare,învățare,medium,medium,semantic,62,161,100,260,M029
+RO-007-07,cases/benchmark_007.md,7,factual,geografie,short,easy,exact,5,1,1,4,S0396
+RO-007-08,cases/benchmark_007.md,8,procente,matematică,short,easy,exact,12,1,1,4,S0113
+RO-007-09,cases/benchmark_007.md,9,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0246
+RO-007-10,cases/benchmark_007.md,10,corectare_text,limbă,short,easy,semantic,8,4,2,15,S0630
+RO-008-01,cases/benchmark_008.md,1,problemă_scurtă,raționament cantitativ,short,easy,exact,25,1,1,5,S0185
+RO-008-02,cases/benchmark_008.md,2,plan_învățare,învățare,medium,medium,semantic,63,149,100,260,M022
+RO-008-03,cases/benchmark_008.md,3,creativ_scurt,creativ,short,easy,semantic,10,7,2,18,S0890
+RO-008-04,cases/benchmark_008.md,4,generare_titlu,transformare text,short,easy,semantic,22,5,2,8,S0819
+RO-008-05,cases/benchmark_008.md,5,calcul,matematică,short,easy,exact,11,1,1,3,S0064
+RO-008-06,cases/benchmark_008.md,6,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0207
+RO-008-07,cases/benchmark_008.md,7,clasificare_intenție,customer support,short,easy,exact,19,1,1,3,S0734
+RO-008-08,cases/benchmark_008.md,8,ordine_logică,logică,short,easy,exact,20,1,1,2,S0278
+RO-008-09,cases/benchmark_008.md,9,factual,tehnologie,short,easy,semantic,6,14,1,22,S0514
+RO-008-10,cases/benchmark_008.md,10,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0339
+RO-009-01,cases/benchmark_009.md,1,ordine_logică,logică,short,easy,exact,27,1,1,2,S0283
+RO-009-02,cases/benchmark_009.md,2,creativ_scurt,creativ,short,easy,semantic,11,3,2,18,S0885
+RO-009-03,cases/benchmark_009.md,3,șir_numeric,logică,short,easy,exact,17,1,1,1,S0366
+RO-009-04,cases/benchmark_009.md,4,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M090
+RO-009-05,cases/benchmark_009.md,5,factual,tehnologie,short,easy,semantic,6,9,1,17,S0498
+RO-009-06,cases/benchmark_009.md,6,sumarizare,transformare text,short,easy,semantic,21,8,5,20,S0756
+RO-009-07,cases/benchmark_009.md,7,șir_numeric,logică,short,easy,exact,17,1,1,1,S0355
+RO-009-08,cases/benchmark_009.md,8,factual,geografie,short,easy,exact,7,1,1,9,S0479
+RO-009-09,cases/benchmark_009.md,9,factual,geografie,short,easy,exact,4,1,1,4,S0400
+RO-009-10,cases/benchmark_009.md,10,explicație,explicații,short,easy,semantic,7,10,10,55,S0870
+RO-010-01,cases/benchmark_010.md,1,explicație,explicații,short,easy,semantic,8,12,10,55,S0879
+RO-010-02,cases/benchmark_010.md,2,generare_titlu,transformare text,short,easy,semantic,23,4,2,8,S0814
+RO-010-03,cases/benchmark_010.md,3,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0222
+RO-010-04,cases/benchmark_010.md,4,traducere,limbă,short,easy,semantic,7,6,2,15,S0570
+RO-010-05,cases/benchmark_010.md,5,generare_titlu,transformare text,short,easy,semantic,17,4,2,8,S0805
+RO-010-06,cases/benchmark_010.md,6,procente,matematică aplicată,short,easy,exact,12,3,1,5,S0116
+RO-010-07,cases/benchmark_010.md,7,calcul_aplicat,matematică,short,easy,exact,8,2,1,5,S0213
+RO-010-08,cases/benchmark_010.md,8,clasificare_sentiment,clasificare,short,easy,exact,17,1,1,1,S0684
+RO-010-09,cases/benchmark_010.md,9,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M048
+RO-010-10,cases/benchmark_010.md,10,calcul,matematică,short,easy,exact,4,1,1,3,S0009
+RO-011-01,cases/benchmark_011.md,1,factual,literatură,short,easy,exact,4,2,1,10,S0439
+RO-011-02,cases/benchmark_011.md,2,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0647
+RO-011-03,cases/benchmark_011.md,3,timp,raționament temporal,short,easy,exact,15,2,1,4,S0190
+RO-011-04,cases/benchmark_011.md,4,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M007
+RO-011-05,cases/benchmark_011.md,5,corectare_text,limbă,short,easy,semantic,7,3,2,15,S0639
+RO-011-06,cases/benchmark_011.md,6,sfat_practic,viață cotidiană,short,easy,semantic,10,12,12,60,S0846
+RO-011-07,cases/benchmark_011.md,7,factual,geografie,short,easy,exact,4,1,1,4,S0380
+RO-011-08,cases/benchmark_011.md,8,factual,general,short,easy,semantic,4,9,1,17,S0515
+RO-011-09,cases/benchmark_011.md,9,procente,matematică aplicată,short,easy,exact,12,3,1,5,S0100
+RO-011-10,cases/benchmark_011.md,10,procente,matematică,short,easy,exact,5,1,1,4,S0103
+RO-012-01,cases/benchmark_012.md,1,traducere,limbă,short,easy,semantic,9,5,2,15,S0547
+RO-012-02,cases/benchmark_012.md,2,ordine_logică,logică,short,easy,exact,20,1,1,2,S0268
+RO-012-03,cases/benchmark_012.md,3,calcul_aplicat,matematică,short,easy,exact,8,1,1,5,S0249
+RO-012-04,cases/benchmark_012.md,4,vocabular,limbă,short,easy,semantic,6,1,1,3,S0601
+RO-012-05,cases/benchmark_012.md,5,da_nu,logică,short,easy,exact,10,1,1,1,S0300
+RO-012-06,cases/benchmark_012.md,6,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0191
+RO-012-07,cases/benchmark_012.md,7,calcul,matematică,short,easy,exact,4,1,1,3,S0073
+RO-012-08,cases/benchmark_012.md,8,șir_numeric,logică,short,easy,exact,15,1,1,1,S0369
+RO-012-09,cases/benchmark_012.md,9,ordine_logică,logică,short,easy,exact,20,1,1,2,S0281
+RO-012-10,cases/benchmark_012.md,10,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M044
+RO-013-01,cases/benchmark_013.md,1,vocabular,limbă,short,easy,semantic,7,2,1,3,S0614
+RO-013-02,cases/benchmark_013.md,2,corectare_text,limbă,short,easy,semantic,6,2,2,15,S0622
+RO-013-03,cases/benchmark_013.md,3,generare_titlu,transformare text,short,easy,semantic,22,4,2,8,S0817
+RO-013-04,cases/benchmark_013.md,4,factual,fizică,short,easy,exact,5,1,1,9,S0460
+RO-013-05,cases/benchmark_013.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0021
+RO-013-06,cases/benchmark_013.md,6,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M050
+RO-013-07,cases/benchmark_013.md,7,clasificare_sentiment,clasificare,short,easy,exact,27,1,1,1,S0695
+RO-013-08,cases/benchmark_013.md,8,traducere,limbă,short,easy,semantic,8,3,2,15,S0538
+RO-013-09,cases/benchmark_013.md,9,rescriere,comunicare,short,easy,semantic,18,8,4,22,S0787
+RO-013-10,cases/benchmark_013.md,10,sumarizare,transformare text,short,easy,semantic,23,7,5,20,S0768
+RO-014-01,cases/benchmark_014.md,1,sumarizare,transformare text,short,easy,semantic,21,11,5,20,S0767
+RO-014-02,cases/benchmark_014.md,2,clasificare_intenție,customer support,short,easy,exact,19,1,1,3,S0735
+RO-014-03,cases/benchmark_014.md,3,rescriere,comunicare,short,easy,semantic,15,10,4,22,S0794
+RO-014-04,cases/benchmark_014.md,4,traducere,limbă,short,easy,semantic,9,5,2,15,S0535
+RO-014-05,cases/benchmark_014.md,5,ordine_logică,logică,short,easy,exact,27,1,1,2,S0285
+RO-014-06,cases/benchmark_014.md,6,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0137
+RO-014-07,cases/benchmark_014.md,7,comunicare_profesională,muncă,short,easy,semantic,16,14,3,30,S0891
+RO-014-08,cases/benchmark_014.md,8,generare_titlu,transformare text,short,easy,semantic,15,4,2,8,S0808
+RO-014-09,cases/benchmark_014.md,9,sinteză_feedback,analiză text,medium,medium,semantic,81,100,100,230,M071
+RO-014-10,cases/benchmark_014.md,10,sumarizare,transformare text,short,easy,semantic,18,8,5,20,S0741
+RO-015-01,cases/benchmark_015.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0050
+RO-015-02,cases/benchmark_015.md,2,calcul,matematică,short,easy,exact,4,1,1,3,S0017
+RO-015-03,cases/benchmark_015.md,3,rescriere,comunicare,short,easy,semantic,17,8,4,22,S0788
+RO-015-04,cases/benchmark_015.md,4,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M042
+RO-015-05,cases/benchmark_015.md,5,șir_numeric,logică,short,easy,exact,10,1,1,1,S0343
+RO-015-06,cases/benchmark_015.md,6,factual,geografie,short,easy,exact,4,1,1,4,S0391
+RO-015-07,cases/benchmark_015.md,7,ordine_logică,logică,short,easy,exact,20,1,1,2,S0272
+RO-015-08,cases/benchmark_015.md,8,factual,geografie,short,easy,exact,4,1,1,4,S0389
+RO-015-09,cases/benchmark_015.md,9,factual,artă,short,easy,exact,5,3,1,11,S0444
+RO-015-10,cases/benchmark_015.md,10,rescriere,comunicare,short,easy,semantic,10,6,4,22,S0776
+RO-016-01,cases/benchmark_016.md,1,calcul,matematică,short,easy,exact,11,1,1,3,S0071
+RO-016-02,cases/benchmark_016.md,2,ordine_logică,logică,short,easy,exact,20,1,1,2,S0254
+RO-016-03,cases/benchmark_016.md,3,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0659
+RO-016-04,cases/benchmark_016.md,4,clasificare_intenție,customer support,short,easy,exact,14,1,1,3,S0714
+RO-016-05,cases/benchmark_016.md,5,procente,matematică,short,easy,exact,5,1,1,4,S0129
+RO-016-06,cases/benchmark_016.md,6,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M047
+RO-016-07,cases/benchmark_016.md,7,ordine_logică,logică,short,easy,exact,20,1,1,2,S0269
+RO-016-08,cases/benchmark_016.md,8,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0211
+RO-016-09,cases/benchmark_016.md,9,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0163
+RO-016-10,cases/benchmark_016.md,10,traducere,limbă,short,easy,semantic,6,4,2,15,S0562
+RO-017-01,cases/benchmark_017.md,1,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M041
+RO-017-02,cases/benchmark_017.md,2,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0148
+RO-017-03,cases/benchmark_017.md,3,da_nu,logică,short,easy,exact,17,1,1,1,S0312
+RO-017-04,cases/benchmark_017.md,4,factual,geografie,short,easy,exact,4,1,1,4,S0408
+RO-017-05,cases/benchmark_017.md,5,traducere,limbă,short,easy,semantic,8,4,2,15,S0543
+RO-017-06,cases/benchmark_017.md,6,sumarizare,transformare text,short,easy,semantic,19,8,5,20,S0766
+RO-017-07,cases/benchmark_017.md,7,factual,geografie,short,easy,exact,4,1,1,4,S0407
+RO-017-08,cases/benchmark_017.md,8,creativ_scurt,creativ,short,easy,semantic,8,3,2,18,S0882
+RO-017-09,cases/benchmark_017.md,9,corectare_text,limbă,short,easy,semantic,7,3,2,15,S0634
+RO-017-10,cases/benchmark_017.md,10,șir_numeric,logică,short,easy,exact,10,1,1,1,S0362
+RO-018-01,cases/benchmark_018.md,1,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0325
+RO-018-02,cases/benchmark_018.md,2,factual,statistică,short,easy,semantic,3,10,1,18,S0520
+RO-018-03,cases/benchmark_018.md,3,rescriere_email,comunicare,medium,medium,semantic,64,56,56,150,M059
+RO-018-04,cases/benchmark_018.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0080
+RO-018-05,cases/benchmark_018.md,5,factual,geografie,short,easy,exact,5,3,1,4,S0412
+RO-018-06,cases/benchmark_018.md,6,șir_numeric,logică,short,easy,exact,10,1,1,1,S0351
+RO-018-07,cases/benchmark_018.md,7,da_nu,logică,short,easy,exact,10,1,1,1,S0316
+RO-018-08,cases/benchmark_018.md,8,clasificare_sentiment,clasificare,short,easy,exact,26,1,1,1,S0696
+RO-018-09,cases/benchmark_018.md,9,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0653
+RO-018-10,cases/benchmark_018.md,10,ordine_logică,logică,short,easy,exact,20,1,1,2,S0262
+RO-019-01,cases/benchmark_019.md,1,procente,matematică,short,easy,exact,5,1,1,4,S0099
+RO-019-02,cases/benchmark_019.md,2,factual,civică,short,easy,semantic,4,13,1,21,S0468
+RO-019-03,cases/benchmark_019.md,3,rescriere,comunicare,short,easy,semantic,16,10,4,22,S0800
+RO-019-04,cases/benchmark_019.md,4,vocabular,limbă,short,easy,semantic,6,1,1,3,S0603
+RO-019-05,cases/benchmark_019.md,5,calcul_aplicat,matematică,short,easy,exact,8,2,1,5,S0245
+RO-019-06,cases/benchmark_019.md,6,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0156
+RO-019-07,cases/benchmark_019.md,7,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0234
+RO-019-08,cases/benchmark_019.md,8,vocabular,limbă,short,easy,semantic,6,1,1,3,S0585
+RO-019-09,cases/benchmark_019.md,9,ordine_logică,logică,short,easy,exact,20,1,1,2,S0266
+RO-019-10,cases/benchmark_019.md,10,critică_argument,logică,medium,medium,semantic,41,67,67,180,M034
+RO-020-01,cases/benchmark_020.md,1,comunicare_profesională,muncă,short,easy,semantic,7,13,3,30,S0896
+RO-020-02,cases/benchmark_020.md,2,șir_numeric,logică,short,easy,exact,15,1,1,1,S0365
+RO-020-03,cases/benchmark_020.md,3,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0171
+RO-020-04,cases/benchmark_020.md,4,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0332
+RO-020-05,cases/benchmark_020.md,5,traducere,limbă,short,easy,semantic,7,3,2,15,S0536
+RO-020-06,cases/benchmark_020.md,6,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M020
+RO-020-07,cases/benchmark_020.md,7,timp,raționament temporal,short,easy,exact,15,2,1,4,S0154
+RO-020-08,cases/benchmark_020.md,8,calcul,matematică,short,easy,exact,4,1,1,3,S0078
+RO-020-09,cases/benchmark_020.md,9,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0677
+RO-020-10,cases/benchmark_020.md,10,traducere,limbă,short,easy,semantic,8,5,2,15,S0546
+RO-021-01,cases/benchmark_021.md,1,factual,geografie,short,easy,exact,4,1,1,4,S0388
+RO-021-02,cases/benchmark_021.md,2,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0230
+RO-021-03,cases/benchmark_021.md,3,factual,fizică,short,easy,exact,5,1,1,9,S0486
+RO-021-04,cases/benchmark_021.md,4,vocabular,limbă,short,easy,semantic,6,1,1,3,S0611
+RO-021-05,cases/benchmark_021.md,5,factual,limbă,short,easy,semantic,4,11,1,19,S0469
+RO-021-06,cases/benchmark_021.md,6,calcul_aplicat,matematică,short,easy,exact,12,2,1,5,S0220
+RO-021-07,cases/benchmark_021.md,7,sinteză_feedback,analiză text,medium,medium,semantic,86,100,100,230,M079
+RO-021-08,cases/benchmark_021.md,8,problemă_scurtă,raționament cantitativ,short,easy,exact,25,1,1,5,S0189
+RO-021-09,cases/benchmark_021.md,9,sumarizare,transformare text,short,easy,semantic,21,9,5,20,S0763
+RO-021-10,cases/benchmark_021.md,10,timp,raționament temporal,short,easy,exact,15,2,1,4,S0166
+RO-022-01,cases/benchmark_022.md,1,calcul_aplicat,matematică,short,easy,exact,8,2,1,5,S0209
+RO-022-02,cases/benchmark_022.md,2,explicație,explicații,short,easy,semantic,6,13,10,55,S0855
+RO-022-03,cases/benchmark_022.md,3,factual,literatură,short,easy,exact,5,2,1,10,S0441
+RO-022-04,cases/benchmark_022.md,4,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0155
+RO-022-05,cases/benchmark_022.md,5,factual,economie,short,easy,exact,3,3,1,11,S0456
+RO-022-06,cases/benchmark_022.md,6,factual,geografie,short,easy,exact,4,1,1,4,S0374
+RO-022-07,cases/benchmark_022.md,7,factual,geografie,short,easy,exact,4,1,1,4,S0416
+RO-022-08,cases/benchmark_022.md,8,problemă_scurtă,raționament cantitativ,short,easy,exact,19,1,1,5,S0179
+RO-022-09,cases/benchmark_022.md,9,timp,raționament temporal,short,easy,exact,15,2,1,4,S0134
+RO-022-10,cases/benchmark_022.md,10,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M049
+RO-023-01,cases/benchmark_023.md,1,procente,matematică,short,easy,exact,5,1,1,4,S0123
+RO-023-02,cases/benchmark_023.md,2,clasificare_sentiment,clasificare,short,easy,exact,19,1,1,1,S0686
+RO-023-03,cases/benchmark_023.md,3,ordine_logică,logică,short,easy,exact,20,1,1,2,S0264
+RO-023-04,cases/benchmark_023.md,4,sumarizare,transformare text,short,easy,semantic,15,8,5,20,S0745
+RO-023-05,cases/benchmark_023.md,5,procente,matematică aplicată,short,easy,exact,17,2,1,5,S0104
+RO-023-06,cases/benchmark_023.md,6,rescriere,comunicare,short,easy,semantic,16,8,4,22,S0783
+RO-023-07,cases/benchmark_023.md,7,rescriere,comunicare,short,easy,semantic,18,8,4,22,S0789
+RO-023-08,cases/benchmark_023.md,8,sfat_practic,viață cotidiană,short,easy,semantic,12,14,12,60,S0843
+RO-023-09,cases/benchmark_023.md,9,rescriere,comunicare,short,easy,semantic,10,10,4,22,S0774
+RO-023-10,cases/benchmark_023.md,10,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M018
+RO-024-01,cases/benchmark_024.md,1,șir_numeric,logică,short,easy,exact,10,1,1,1,S0347
+RO-024-02,cases/benchmark_024.md,2,factual,astronomie,short,easy,exact,7,1,1,9,S0423
+RO-024-03,cases/benchmark_024.md,3,calcul_aplicat,matematică,short,easy,exact,12,2,1,5,S0240
+RO-024-04,cases/benchmark_024.md,4,factual,geografie,short,easy,exact,8,1,1,9,S0483
+RO-024-05,cases/benchmark_024.md,5,rescriere_email,comunicare,medium,medium,semantic,57,56,56,150,M051
+RO-024-06,cases/benchmark_024.md,6,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0210
+RO-024-07,cases/benchmark_024.md,7,calcul,matematică,short,easy,exact,4,1,1,3,S0054
+RO-024-08,cases/benchmark_024.md,8,factual,geografie,short,easy,exact,8,2,1,10,S0453
+RO-024-09,cases/benchmark_024.md,9,generare_titlu,transformare text,short,easy,semantic,24,4,2,8,S0816
+RO-024-10,cases/benchmark_024.md,10,factual,geografie,short,easy,exact,4,1,1,4,S0417
+RO-025-01,cases/benchmark_025.md,1,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0198
+RO-025-02,cases/benchmark_025.md,2,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0106
+RO-025-03,cases/benchmark_025.md,3,calcul_aplicat,matematică,short,easy,exact,14,2,1,5,S0204
+RO-025-04,cases/benchmark_025.md,4,sfat_practic,viață cotidiană,short,easy,semantic,9,14,12,60,S0830
+RO-025-05,cases/benchmark_025.md,5,clasificare_intenție,customer support,short,easy,exact,21,1,1,3,S0729
+RO-025-06,cases/benchmark_025.md,6,șir_numeric,logică,short,easy,exact,10,1,1,1,S0360
+RO-025-07,cases/benchmark_025.md,7,rescriere_email,comunicare,medium,medium,semantic,57,56,56,150,M053
+RO-025-08,cases/benchmark_025.md,8,clasificare_intenție,customer support,short,easy,exact,18,1,1,3,S0728
+RO-025-09,cases/benchmark_025.md,9,calcul,matematică,short,easy,exact,4,1,1,3,S0058
+RO-025-10,cases/benchmark_025.md,10,sumarizare,transformare text,short,easy,semantic,25,7,5,20,S0758
+RO-026-01,cases/benchmark_026.md,1,factual,fizică,short,easy,exact,5,1,1,9,S0458
+RO-026-02,cases/benchmark_026.md,2,sfat_practic,viață cotidiană,short,easy,semantic,11,16,12,60,S0822
+RO-026-03,cases/benchmark_026.md,3,explicație,explicații,short,easy,semantic,7,14,10,55,S0864
+RO-026-04,cases/benchmark_026.md,4,procente,matematică aplicată,short,easy,exact,12,3,1,5,S0108
+RO-026-05,cases/benchmark_026.md,5,ordine_logică,logică,short,easy,exact,20,1,1,2,S0253
+RO-026-06,cases/benchmark_026.md,6,sumarizare,transformare text,short,easy,semantic,16,11,5,20,S0747
+RO-026-07,cases/benchmark_026.md,7,factual,limbă,short,easy,semantic,4,7,1,15,S0470
+RO-026-08,cases/benchmark_026.md,8,factual,geografie,short,easy,exact,4,1,1,4,S0392
+RO-026-09,cases/benchmark_026.md,9,explicație,explicații,short,easy,semantic,8,20,10,55,S0867
+RO-026-10,cases/benchmark_026.md,10,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M085
+RO-027-01,cases/benchmark_027.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0042
+RO-027-02,cases/benchmark_027.md,2,șir_numeric,logică,short,easy,exact,10,1,1,1,S0354
+RO-027-03,cases/benchmark_027.md,3,explicație_educațională,învățare,medium,medium,semantic,29,77,77,190,M067
+RO-027-04,cases/benchmark_027.md,4,calcul_aplicat,matematică,short,easy,exact,8,1,1,5,S0217
+RO-027-05,cases/benchmark_027.md,5,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0215
+RO-027-06,cases/benchmark_027.md,6,sfat_practic,viață cotidiană,short,easy,semantic,14,16,12,60,S0832
+RO-027-07,cases/benchmark_027.md,7,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0651
+RO-027-08,cases/benchmark_027.md,8,ordine_logică,logică,short,easy,exact,20,1,1,2,S0284
+RO-027-09,cases/benchmark_027.md,9,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0183
+RO-027-10,cases/benchmark_027.md,10,ordine_logică,logică,short,easy,exact,20,1,1,2,S0255
+RO-028-01,cases/benchmark_028.md,1,rescriere,comunicare,short,easy,semantic,17,6,4,22,S0781
+RO-028-02,cases/benchmark_028.md,2,creativ_scurt,creativ,short,easy,semantic,10,3,2,18,S0883
+RO-028-03,cases/benchmark_028.md,3,rescriere,comunicare,short,easy,semantic,15,8,4,22,S0792
+RO-028-04,cases/benchmark_028.md,4,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0675
+RO-028-05,cases/benchmark_028.md,5,factual,geografie,short,easy,exact,4,1,1,4,S0402
+RO-028-06,cases/benchmark_028.md,6,traducere,limbă,short,easy,semantic,8,4,2,15,S0539
+RO-028-07,cases/benchmark_028.md,7,procente,matematică,short,easy,exact,5,1,1,4,S0119
+RO-028-08,cases/benchmark_028.md,8,ordine_logică,logică,short,easy,exact,20,1,1,2,S0280
+RO-028-09,cases/benchmark_028.md,9,critică_argument,logică,medium,medium,semantic,42,65,65,180,M033
+RO-028-10,cases/benchmark_028.md,10,calcul_aplicat,matematică,short,easy,exact,14,2,1,5,S0216
+RO-029-01,cases/benchmark_029.md,1,da_nu,logică,short,easy,exact,10,1,1,1,S0297
+RO-029-02,cases/benchmark_029.md,2,traducere,limbă,short,easy,semantic,7,3,2,15,S0576
+RO-029-03,cases/benchmark_029.md,3,corectare_text,limbă,short,easy,semantic,8,4,2,15,S0640
+RO-029-04,cases/benchmark_029.md,4,vocabular,limbă,short,easy,semantic,6,1,1,3,S0586
+RO-029-05,cases/benchmark_029.md,5,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0657
+RO-029-06,cases/benchmark_029.md,6,sfat_practic,viață cotidiană,short,easy,semantic,14,10,10,60,S0824
+RO-029-07,cases/benchmark_029.md,7,explicație_educațională,învățare,medium,medium,semantic,29,78,78,190,M070
+RO-029-08,cases/benchmark_029.md,8,traducere,limbă,short,easy,semantic,7,6,2,15,S0558
+RO-029-09,cases/benchmark_029.md,9,calcul,matematică,short,easy,exact,4,1,1,3,S0001
+RO-029-10,cases/benchmark_029.md,10,corectare_text,limbă,short,easy,semantic,6,2,2,15,S0625
+RO-030-01,cases/benchmark_030.md,1,ordine_logică,logică,short,easy,exact,20,1,1,2,S0277
+RO-030-02,cases/benchmark_030.md,2,corectare_text,limbă,short,easy,semantic,10,6,2,15,S0633
+RO-030-03,cases/benchmark_030.md,3,ordine_logică,logică,short,easy,exact,20,1,1,2,S0279
+RO-030-04,cases/benchmark_030.md,4,vocabular,limbă,short,easy,semantic,7,2,1,3,S0600
+RO-030-05,cases/benchmark_030.md,5,plan_învățare,învățare,medium,medium,semantic,63,149,100,260,M028
+RO-030-06,cases/benchmark_030.md,6,clasificare_sentiment,clasificare,short,easy,exact,21,1,1,1,S0708
+RO-030-07,cases/benchmark_030.md,7,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0642
+RO-030-08,cases/benchmark_030.md,8,procente,matematică aplicată,short,easy,exact,19,2,1,5,S0102
+RO-030-09,cases/benchmark_030.md,9,calcul,matematică,short,easy,exact,4,1,1,3,S0037
+RO-030-10,cases/benchmark_030.md,10,traducere,limbă,short,easy,semantic,7,5,2,15,S0580
+RO-031-01,cases/benchmark_031.md,1,ordine_logică,logică,short,easy,exact,20,1,1,2,S0276
+RO-031-02,cases/benchmark_031.md,2,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0327
+RO-031-03,cases/benchmark_031.md,3,explicație,explicații,short,easy,semantic,7,13,10,55,S0877
+RO-031-04,cases/benchmark_031.md,4,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0321
+RO-031-05,cases/benchmark_031.md,5,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M009
+RO-031-06,cases/benchmark_031.md,6,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0139
+RO-031-07,cases/benchmark_031.md,7,șir_numeric,logică,short,easy,exact,10,1,1,1,S0367
+RO-031-08,cases/benchmark_031.md,8,timp,raționament temporal,short,easy,exact,15,2,1,4,S0170
+RO-031-09,cases/benchmark_031.md,9,da_nu,logică,short,easy,exact,10,1,1,1,S0303
+RO-031-10,cases/benchmark_031.md,10,sfat_practic,viață cotidiană,short,easy,semantic,10,13,12,60,S0837
+RO-032-01,cases/benchmark_032.md,1,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0194
+RO-032-02,cases/benchmark_032.md,2,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M087
+RO-032-03,cases/benchmark_032.md,3,clasificare_sentiment,clasificare,short,easy,exact,24,1,1,1,S0694
+RO-032-04,cases/benchmark_032.md,4,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0141
+RO-032-05,cases/benchmark_032.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0045
+RO-032-06,cases/benchmark_032.md,6,explicație,explicații,short,easy,semantic,7,16,10,55,S0858
+RO-032-07,cases/benchmark_032.md,7,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0243
+RO-032-08,cases/benchmark_032.md,8,vocabular,limbă,short,easy,semantic,6,1,1,3,S0587
+RO-032-09,cases/benchmark_032.md,9,sfat_practic,viață cotidiană,short,easy,semantic,12,12,12,60,S0845
+RO-032-10,cases/benchmark_032.md,10,corectare_text,limbă,short,easy,semantic,8,4,2,15,S0623
+RO-033-01,cases/benchmark_033.md,1,șir_numeric,logică,short,easy,exact,10,1,1,1,S0357
+RO-033-02,cases/benchmark_033.md,2,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M017
+RO-033-03,cases/benchmark_033.md,3,calcul,matematică,short,easy,exact,11,1,1,3,S0079
+RO-033-04,cases/benchmark_033.md,4,factual,civică,short,easy,semantic,4,12,1,20,S0506
+RO-033-05,cases/benchmark_033.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0003
+RO-033-06,cases/benchmark_033.md,6,clasificare_intenție,customer support,short,easy,exact,14,1,1,3,S0719
+RO-033-07,cases/benchmark_033.md,7,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0206
+RO-033-08,cases/benchmark_033.md,8,calcul,matematică,short,easy,exact,4,1,1,3,S0010
+RO-033-09,cases/benchmark_033.md,9,sumarizare,transformare text,short,easy,semantic,23,11,5,20,S0757
+RO-033-10,cases/benchmark_033.md,10,ordine_logică,logică,short,easy,exact,20,1,1,2,S0257
+RO-034-01,cases/benchmark_034.md,1,clasificare_sentiment,clasificare,short,easy,exact,24,1,1,1,S0702
+RO-034-02,cases/benchmark_034.md,2,factual,geografie,short,easy,exact,4,1,1,4,S0418
+RO-034-03,cases/benchmark_034.md,3,da_nu,logică,short,easy,exact,10,1,1,1,S0311
+RO-034-04,cases/benchmark_034.md,4,da_nu,logică,short,easy,exact,10,1,1,1,S0314
+RO-034-05,cases/benchmark_034.md,5,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0203
+RO-034-06,cases/benchmark_034.md,6,calcul,matematică,short,easy,exact,4,1,1,3,S0020
+RO-034-07,cases/benchmark_034.md,7,clasificare_intenție,customer support,short,easy,exact,14,2,1,3,S0713
+RO-034-08,cases/benchmark_034.md,8,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0140
+RO-034-09,cases/benchmark_034.md,9,sinteză_feedback,analiză text,medium,medium,semantic,86,100,100,230,M080
+RO-034-10,cases/benchmark_034.md,10,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0176
+RO-035-01,cases/benchmark_035.md,1,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0334
+RO-035-02,cases/benchmark_035.md,2,factual,geografie,short,easy,exact,4,1,1,4,S0372
+RO-035-03,cases/benchmark_035.md,3,clasificare_intenție,customer support,short,easy,exact,19,1,1,3,S0721
+RO-035-04,cases/benchmark_035.md,4,corectare_text,limbă,short,easy,semantic,7,3,2,15,S0629
+RO-035-05,cases/benchmark_035.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0023
+RO-035-06,cases/benchmark_035.md,6,creativ_scurt,creativ,short,easy,semantic,8,2,2,18,S0887
+RO-035-07,cases/benchmark_035.md,7,rescriere,comunicare,short,easy,semantic,15,6,4,22,S0791
+RO-035-08,cases/benchmark_035.md,8,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M005
+RO-035-09,cases/benchmark_035.md,9,comunicare_profesională,muncă,short,easy,semantic,11,8,3,30,S0898
+RO-035-10,cases/benchmark_035.md,10,procente,matematică,short,easy,exact,5,1,1,4,S0109
+RO-036-01,cases/benchmark_036.md,1,șir_numeric,logică,short,easy,exact,10,1,1,1,S0350
+RO-036-02,cases/benchmark_036.md,2,clasificare_intenție,customer support,short,easy,exact,20,1,1,3,S0732
+RO-036-03,cases/benchmark_036.md,3,calcul,matematică,short,easy,exact,4,1,1,3,S0051
+RO-036-04,cases/benchmark_036.md,4,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M011
+RO-036-05,cases/benchmark_036.md,5,vocabular,limbă,short,easy,semantic,6,1,1,3,S0593
+RO-036-06,cases/benchmark_036.md,6,factual,istorie,short,easy,exact,9,1,1,9,S0447
+RO-036-07,cases/benchmark_036.md,7,calcul,matematică,short,easy,exact,4,1,1,3,S0041
+RO-036-08,cases/benchmark_036.md,8,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0648
+RO-036-09,cases/benchmark_036.md,9,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0159
+RO-036-10,cases/benchmark_036.md,10,rescriere,comunicare,short,easy,semantic,18,13,4,22,S0785
+RO-037-01,cases/benchmark_037.md,1,sumarizare,transformare text,short,easy,semantic,15,7,5,20,S0750
+RO-037-02,cases/benchmark_037.md,2,clasificare_sentiment,clasificare,short,easy,exact,18,1,1,1,S0689
+RO-037-03,cases/benchmark_037.md,3,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M006
+RO-037-04,cases/benchmark_037.md,4,clasificare_sentiment,clasificare,short,easy,exact,23,1,1,1,S0709
+RO-037-05,cases/benchmark_037.md,5,traducere,limbă,short,easy,semantic,6,5,2,15,S0563
+RO-037-06,cases/benchmark_037.md,6,timp,raționament temporal,short,easy,exact,15,2,1,4,S0146
+RO-037-07,cases/benchmark_037.md,7,factual,biologie,short,easy,semantic,4,10,1,18,S0503
+RO-037-08,cases/benchmark_037.md,8,corectare_text,limbă,short,easy,semantic,8,4,2,15,S0636
+RO-037-09,cases/benchmark_037.md,9,sfat_practic,viață cotidiană,short,easy,semantic,12,12,12,60,S0836
+RO-037-10,cases/benchmark_037.md,10,factual,geografie,short,easy,exact,4,1,1,4,S0397
+RO-038-01,cases/benchmark_038.md,1,factual,economie,short,easy,semantic,3,7,1,15,S0513
+RO-038-02,cases/benchmark_038.md,2,rescriere,comunicare,short,easy,semantic,17,6,4,22,S0786
+RO-038-03,cases/benchmark_038.md,3,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0167
+RO-038-04,cases/benchmark_038.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0030
+RO-038-05,cases/benchmark_038.md,5,traducere,limbă,short,easy,semantic,6,4,2,15,S0566
+RO-038-06,cases/benchmark_038.md,6,da_nu,logică,short,easy,exact,10,1,1,1,S0301
+RO-038-07,cases/benchmark_038.md,7,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M089
+RO-038-08,cases/benchmark_038.md,8,da_nu,logică,short,easy,exact,10,1,1,1,S0291
+RO-038-09,cases/benchmark_038.md,9,factual,geografie,short,easy,exact,9,1,1,9,S0450
+RO-038-10,cases/benchmark_038.md,10,procente,matematică aplicată,short,easy,exact,12,3,1,5,S0126
+RO-039-01,cases/benchmark_039.md,1,șir_numeric,logică,short,easy,exact,10,1,1,1,S0361
+RO-039-02,cases/benchmark_039.md,2,calcul,matematică,short,easy,exact,4,1,1,3,S0055
+RO-039-03,cases/benchmark_039.md,3,ordine_logică,logică,short,easy,exact,20,1,1,2,S0287
+RO-039-04,cases/benchmark_039.md,4,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0664
+RO-039-05,cases/benchmark_039.md,5,clasificare_sentiment,clasificare,short,easy,exact,26,1,1,1,S0691
+RO-039-06,cases/benchmark_039.md,6,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M004
+RO-039-07,cases/benchmark_039.md,7,rescriere,comunicare,short,easy,semantic,10,8,4,22,S0772
+RO-039-08,cases/benchmark_039.md,8,traducere,limbă,short,easy,semantic,7,4,2,15,S0524
+RO-039-09,cases/benchmark_039.md,9,vocabular,limbă,short,easy,semantic,6,1,1,3,S0581
+RO-039-10,cases/benchmark_039.md,10,generare_titlu,transformare text,short,easy,semantic,26,6,2,8,S0820
+RO-040-01,cases/benchmark_040.md,1,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0086
+RO-040-02,cases/benchmark_040.md,2,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M008
+RO-040-03,cases/benchmark_040.md,3,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0110
+RO-040-04,cases/benchmark_040.md,4,calcul_aplicat,matematică,short,easy,exact,13,2,1,5,S0235
+RO-040-05,cases/benchmark_040.md,5,factual,geografie,short,easy,semantic,4,10,1,18,S0475
+RO-040-06,cases/benchmark_040.md,6,factual,statistică,short,easy,semantic,4,11,1,19,S0519
+RO-040-07,cases/benchmark_040.md,7,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0322
+RO-040-08,cases/benchmark_040.md,8,factual,limbă,short,easy,semantic,4,12,1,20,S0472
+RO-040-09,cases/benchmark_040.md,9,sumarizare,transformare text,short,easy,semantic,14,8,5,20,S0746
+RO-040-10,cases/benchmark_040.md,10,traducere,limbă,short,easy,semantic,7,5,2,15,S0534
+RO-041-01,cases/benchmark_041.md,1,factual,economie,short,easy,exact,4,1,1,9,S0454
+RO-041-02,cases/benchmark_041.md,2,explicație_educațională,învățare,medium,medium,semantic,29,78,78,190,M065
+RO-041-03,cases/benchmark_041.md,3,traducere,limbă,short,easy,semantic,5,2,2,15,S0551
+RO-041-04,cases/benchmark_041.md,4,traducere,limbă,short,easy,semantic,5,5,2,15,S0579
+RO-041-05,cases/benchmark_041.md,5,clasificare_intenție,customer support,short,easy,exact,13,2,1,3,S0717
+RO-041-06,cases/benchmark_041.md,6,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0152
+RO-041-07,cases/benchmark_041.md,7,traducere,limbă,short,easy,semantic,8,6,2,15,S0541
+RO-041-08,cases/benchmark_041.md,8,rescriere,comunicare,short,easy,semantic,10,6,4,22,S0771
+RO-041-09,cases/benchmark_041.md,9,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0092
+RO-041-10,cases/benchmark_041.md,10,calcul,matematică,short,easy,exact,4,1,1,3,S0056
+RO-042-01,cases/benchmark_042.md,1,ordine_logică,logică,short,easy,exact,20,1,1,2,S0289
+RO-042-02,cases/benchmark_042.md,2,rescriere,comunicare,short,easy,semantic,10,8,4,22,S0778
+RO-042-03,cases/benchmark_042.md,3,procente,matematică aplicată,short,easy,exact,12,3,1,5,S0082
+RO-042-04,cases/benchmark_042.md,4,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M002
+RO-042-05,cases/benchmark_042.md,5,sumarizare,transformare text,short,easy,semantic,22,8,5,20,S0755
+RO-042-06,cases/benchmark_042.md,6,da_nu,logică,short,easy,exact,10,1,1,1,S0308
+RO-042-07,cases/benchmark_042.md,7,procente,matematică,short,easy,exact,5,1,1,4,S0083
+RO-042-08,cases/benchmark_042.md,8,calcul,matematică,short,easy,exact,4,1,1,3,S0057
+RO-042-09,cases/benchmark_042.md,9,sumarizare,transformare text,short,easy,semantic,19,6,5,20,S0762
+RO-042-10,cases/benchmark_042.md,10,factual,economie,short,easy,exact,5,2,1,10,S0455
+RO-043-01,cases/benchmark_043.md,1,factual,geografie,short,easy,exact,4,1,1,4,S0371
+RO-043-02,cases/benchmark_043.md,2,factual,geografie,short,easy,exact,4,1,1,4,S0411
+RO-043-03,cases/benchmark_043.md,3,factual,geografie,short,easy,exact,4,1,1,4,S0399
+RO-043-04,cases/benchmark_043.md,4,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0671
+RO-043-05,cases/benchmark_043.md,5,sinteză_feedback,analiză text,medium,medium,semantic,85,100,100,230,M078
+RO-043-06,cases/benchmark_043.md,6,da_nu,logică,short,easy,exact,10,1,1,1,S0305
+RO-043-07,cases/benchmark_043.md,7,vocabular,limbă,short,easy,semantic,6,1,1,3,S0606
+RO-043-08,cases/benchmark_043.md,8,calcul_aplicat,matematică,short,easy,exact,7,2,1,5,S0228
+RO-043-09,cases/benchmark_043.md,9,procente,matematică,short,easy,exact,5,1,1,4,S0105
+RO-043-10,cases/benchmark_043.md,10,vocabular,limbă,short,easy,semantic,6,1,1,3,S0612
+RO-044-01,cases/benchmark_044.md,1,vocabular,limbă,short,easy,semantic,7,2,1,3,S0598
+RO-044-02,cases/benchmark_044.md,2,factual,geografie,short,easy,exact,4,1,1,4,S0383
+RO-044-03,cases/benchmark_044.md,3,timp,raționament temporal,short,easy,exact,15,2,1,4,S0142
+RO-044-04,cases/benchmark_044.md,4,explicație,explicații,short,easy,semantic,9,13,10,55,S0873
+RO-044-05,cases/benchmark_044.md,5,plan_învățare,învățare,medium,medium,semantic,63,168,100,260,M023
+RO-044-06,cases/benchmark_044.md,6,factual,securitate,short,easy,semantic,6,10,1,18,S0494
+RO-044-07,cases/benchmark_044.md,7,ordine_logică,logică,short,easy,exact,20,1,1,2,S0252
+RO-044-08,cases/benchmark_044.md,8,factual,geografie,short,easy,exact,4,1,1,4,S0386
+RO-044-09,cases/benchmark_044.md,9,traducere,limbă,short,easy,semantic,6,4,2,15,S0555
+RO-044-10,cases/benchmark_044.md,10,vocabular,limbă,short,easy,semantic,6,1,1,3,S0610
+RO-045-01,cases/benchmark_045.md,1,clasificare_intenție,customer support,short,easy,exact,14,1,1,3,S0715
+RO-045-02,cases/benchmark_045.md,2,factual,artă,short,easy,semantic,4,6,1,14,S0474
+RO-045-03,cases/benchmark_045.md,3,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0114
+RO-045-04,cases/benchmark_045.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0036
+RO-045-05,cases/benchmark_045.md,5,traducere,limbă,short,easy,semantic,7,4,2,15,S0529
+RO-045-06,cases/benchmark_045.md,6,factual,geografie,short,easy,exact,5,1,1,4,S0410
+RO-045-07,cases/benchmark_045.md,7,factual,biologie,short,easy,exact,10,1,1,9,S0437
+RO-045-08,cases/benchmark_045.md,8,ordine_logică,logică,short,easy,exact,20,1,1,2,S0256
+RO-045-09,cases/benchmark_045.md,9,explicație_educațională,învățare,medium,medium,semantic,31,77,77,190,M064
+RO-045-10,cases/benchmark_045.md,10,da_nu,logică,short,easy,exact,17,1,1,1,S0313
+RO-046-01,cases/benchmark_046.md,1,da_nu,logică,short,easy,exact,10,1,1,1,S0310
+RO-046-02,cases/benchmark_046.md,2,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0172
+RO-046-03,cases/benchmark_046.md,3,traducere,limbă,short,easy,semantic,7,5,2,15,S0565
+RO-046-04,cases/benchmark_046.md,4,explicație_educațională,învățare,medium,medium,semantic,29,71,71,190,M062
+RO-046-05,cases/benchmark_046.md,5,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0242
+RO-046-06,cases/benchmark_046.md,6,sumarizare,transformare text,short,easy,semantic,23,9,5,20,S0753
+RO-046-07,cases/benchmark_046.md,7,clasificare_sentiment,clasificare,short,easy,exact,25,1,1,1,S0705
+RO-046-08,cases/benchmark_046.md,8,vocabular,limbă,short,easy,semantic,7,2,1,3,S0590
+RO-046-09,cases/benchmark_046.md,9,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0323
+RO-046-10,cases/benchmark_046.md,10,creativ_scurt,creativ,short,easy,semantic,9,10,2,18,S0884
+RO-047-01,cases/benchmark_047.md,1,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0670
+RO-047-02,cases/benchmark_047.md,2,da_nu,logică,short,easy,exact,10,1,1,1,S0293
+RO-047-03,cases/benchmark_047.md,3,clasificare_intenție,customer support,short,easy,exact,18,1,1,3,S0730
+RO-047-04,cases/benchmark_047.md,4,plan_învățare,învățare,medium,medium,semantic,62,143,100,260,M025
+RO-047-05,cases/benchmark_047.md,5,procente,matematică,short,easy,exact,12,1,1,4,S0095
+RO-047-06,cases/benchmark_047.md,6,traducere,limbă,short,easy,semantic,7,5,2,15,S0560
+RO-047-07,cases/benchmark_047.md,7,explicație,explicații,short,easy,semantic,8,10,10,55,S0862
+RO-047-08,cases/benchmark_047.md,8,procente,matematică,short,easy,exact,5,1,1,4,S0107
+RO-047-09,cases/benchmark_047.md,9,factual,geografie,short,easy,exact,4,1,1,4,S0375
+RO-047-10,cases/benchmark_047.md,10,clasificare_intenție,customer support,short,easy,exact,16,1,1,3,S0738
+RO-048-01,cases/benchmark_048.md,1,generare_titlu,transformare text,short,easy,semantic,22,4,2,8,S0818
+RO-048-02,cases/benchmark_048.md,2,ordine_logică,logică,short,easy,exact,20,1,1,2,S0286
+RO-048-03,cases/benchmark_048.md,3,clasificare_intenție,customer support,short,easy,exact,22,1,1,3,S0722
+RO-048-04,cases/benchmark_048.md,4,factual,fizică,short,easy,semantic,3,5,1,13,S0501
+RO-048-05,cases/benchmark_048.md,5,vocabular,limbă,short,easy,semantic,6,1,1,3,S0591
+RO-048-06,cases/benchmark_048.md,6,vocabular,limbă,short,easy,semantic,7,2,1,3,S0615
+RO-048-07,cases/benchmark_048.md,7,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0662
+RO-048-08,cases/benchmark_048.md,8,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0340
+RO-048-09,cases/benchmark_048.md,9,vocabular,limbă,short,easy,semantic,6,1,1,3,S0596
+RO-048-10,cases/benchmark_048.md,10,sinteză_feedback,analiză text,medium,medium,semantic,86,100,100,230,M073
+RO-049-01,cases/benchmark_049.md,1,ordine_logică,logică,short,easy,exact,20,1,1,2,S0260
+RO-049-02,cases/benchmark_049.md,2,factual,general,short,easy,semantic,4,11,1,19,S0516
+RO-049-03,cases/benchmark_049.md,3,factual,biologie,short,easy,exact,9,1,1,9,S0434
+RO-049-04,cases/benchmark_049.md,4,vocabular,limbă,short,easy,semantic,6,1,1,3,S0616
+RO-049-05,cases/benchmark_049.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0002
+RO-049-06,cases/benchmark_049.md,6,rescriere_email,comunicare,medium,medium,semantic,57,56,56,150,M052
+RO-049-07,cases/benchmark_049.md,7,factual,fizică,short,easy,exact,5,1,1,9,S0459
+RO-049-08,cases/benchmark_049.md,8,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0214
+RO-049-09,cases/benchmark_049.md,9,traducere,limbă,short,easy,semantic,9,7,2,15,S0532
+RO-049-10,cases/benchmark_049.md,10,sfat_practic,viață cotidiană,short,easy,semantic,10,12,12,60,S0829
+RO-050-01,cases/benchmark_050.md,1,factual,geografie,short,easy,semantic,3,13,1,21,S0478
+RO-050-02,cases/benchmark_050.md,2,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0330
+RO-050-03,cases/benchmark_050.md,3,traducere,limbă,short,easy,semantic,9,4,2,15,S0550
+RO-050-04,cases/benchmark_050.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0077
+RO-050-05,cases/benchmark_050.md,5,rescriere,comunicare,short,easy,semantic,16,8,4,22,S0797
+RO-050-06,cases/benchmark_050.md,6,comunicare_profesională,muncă,short,easy,semantic,10,11,3,30,S0893
+RO-050-07,cases/benchmark_050.md,7,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0250
+RO-050-08,cases/benchmark_050.md,8,sinteză_feedback,analiză text,medium,medium,semantic,87,100,100,230,M075
+RO-050-09,cases/benchmark_050.md,9,factual,geografie,short,easy,exact,8,2,1,10,S0449
+RO-050-10,cases/benchmark_050.md,10,traducere,limbă,short,easy,semantic,6,4,2,15,S0553
+RO-051-01,cases/benchmark_051.md,1,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0661
+RO-051-02,cases/benchmark_051.md,2,traducere,limbă,short,easy,semantic,8,6,2,15,S0527
+RO-051-03,cases/benchmark_051.md,3,sfat_practic,viață cotidiană,short,easy,semantic,12,13,12,60,S0838
+RO-051-04,cases/benchmark_051.md,4,factual,geografie,short,easy,exact,4,1,1,4,S0377
+RO-051-05,cases/benchmark_051.md,5,da_nu,logică,short,easy,exact,17,1,1,1,S0318
+RO-051-06,cases/benchmark_051.md,6,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M082
+RO-051-07,cases/benchmark_051.md,7,șir_numeric,logică,short,easy,exact,10,1,1,1,S0353
+RO-051-08,cases/benchmark_051.md,8,factual,fizică,short,easy,exact,9,1,1,9,S0462
+RO-051-09,cases/benchmark_051.md,9,șir_numeric,logică,short,easy,exact,10,1,1,1,S0342
+RO-051-10,cases/benchmark_051.md,10,factual,astronomie,short,easy,exact,5,2,1,10,S0425
+RO-052-01,cases/benchmark_052.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0016
+RO-052-02,cases/benchmark_052.md,2,calcul_aplicat,matematică,short,easy,exact,8,1,1,5,S0241
+RO-052-03,cases/benchmark_052.md,3,corectare_text,limbă,short,easy,semantic,6,2,2,15,S0624
+RO-052-04,cases/benchmark_052.md,4,timp,raționament temporal,short,easy,exact,15,2,1,4,S0178
+RO-052-05,cases/benchmark_052.md,5,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0646
+RO-052-06,cases/benchmark_052.md,6,calcul_aplicat,matematică,short,easy,exact,14,2,1,5,S0232
+RO-052-07,cases/benchmark_052.md,7,generare_titlu,transformare text,short,easy,semantic,22,3,2,8,S0812
+RO-052-08,cases/benchmark_052.md,8,factual,artă,short,easy,semantic,5,13,1,21,S0510
+RO-052-09,cases/benchmark_052.md,9,plan_învățare,învățare,medium,medium,semantic,64,135,100,260,M021
+RO-052-10,cases/benchmark_052.md,10,factual,chimie,short,easy,exact,6,1,1,9,S0426
+RO-053-01,cases/benchmark_053.md,1,sumarizare,transformare text,short,easy,semantic,24,8,5,20,S0759
+RO-053-02,cases/benchmark_053.md,2,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M013
+RO-053-03,cases/benchmark_053.md,3,calcul_aplicat,matematică,short,easy,exact,8,2,1,5,S0205
+RO-053-04,cases/benchmark_053.md,4,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0199
+RO-053-05,cases/benchmark_053.md,5,calcul_aplicat,matematică,short,easy,exact,8,1,1,5,S0233
+RO-053-06,cases/benchmark_053.md,6,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0680
+RO-053-07,cases/benchmark_053.md,7,factual,geografie,short,easy,exact,6,1,1,4,S0387
+RO-053-08,cases/benchmark_053.md,8,calcul,matematică,short,easy,exact,4,1,1,3,S0031
+RO-053-09,cases/benchmark_053.md,9,vocabular,limbă,short,easy,semantic,6,1,1,3,S0618
+RO-053-10,cases/benchmark_053.md,10,clasificare_sentiment,clasificare,short,easy,exact,17,1,1,1,S0687
+RO-054-01,cases/benchmark_054.md,1,factual,geografie,short,easy,semantic,3,11,1,19,S0476
+RO-054-02,cases/benchmark_054.md,2,calcul_aplicat,matematică,short,easy,exact,8,1,1,5,S0221
+RO-054-03,cases/benchmark_054.md,3,explicație_educațională,învățare,medium,medium,semantic,29,79,79,190,M066
+RO-054-04,cases/benchmark_054.md,4,factual,limbă,short,easy,semantic,4,12,1,20,S0471
+RO-054-05,cases/benchmark_054.md,5,generare_titlu,transformare text,short,easy,semantic,15,4,2,8,S0807
+RO-054-06,cases/benchmark_054.md,6,șir_numeric,logică,short,easy,exact,17,1,1,1,S0349
+RO-054-07,cases/benchmark_054.md,7,factual,general,short,easy,semantic,4,14,1,22,S0517
+RO-054-08,cases/benchmark_054.md,8,vocabular,limbă,short,easy,semantic,6,1,1,3,S0592
+RO-054-09,cases/benchmark_054.md,9,sfat_practic,viață cotidiană,short,easy,semantic,11,13,12,60,S0848
+RO-054-10,cases/benchmark_054.md,10,traducere,limbă,short,easy,semantic,7,7,2,15,S0577
+RO-055-01,cases/benchmark_055.md,1,explicație,explicații,short,easy,semantic,7,10,10,55,S0880
+RO-055-02,cases/benchmark_055.md,2,corectare_text,limbă,short,easy,semantic,7,3,2,15,S0632
+RO-055-03,cases/benchmark_055.md,3,sfat_practic,viață cotidiană,short,easy,semantic,9,13,12,60,S0828
+RO-055-04,cases/benchmark_055.md,4,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0165
+RO-055-05,cases/benchmark_055.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0024
+RO-055-06,cases/benchmark_055.md,6,sumarizare,transformare text,short,easy,semantic,14,6,5,20,S0744
+RO-055-07,cases/benchmark_055.md,7,factual,tehnologie,short,easy,semantic,6,11,1,19,S0492
+RO-055-08,cases/benchmark_055.md,8,vocabular,limbă,short,easy,semantic,6,1,1,3,S0594
+RO-055-09,cases/benchmark_055.md,9,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0654
+RO-055-10,cases/benchmark_055.md,10,rescriere_email,comunicare,medium,medium,semantic,64,56,56,150,M057
+RO-056-01,cases/benchmark_056.md,1,clasificare_intenție,customer support,short,easy,exact,21,1,1,3,S0725
+RO-056-02,cases/benchmark_056.md,2,factual,literatură,short,easy,exact,6,1,1,9,S0442
+RO-056-03,cases/benchmark_056.md,3,clasificare_sentiment,clasificare,short,easy,exact,26,1,1,1,S0692
+RO-056-04,cases/benchmark_056.md,4,clasificare_sentiment,clasificare,short,easy,exact,16,1,1,1,S0688
+RO-056-05,cases/benchmark_056.md,5,factual,astronomie,short,easy,exact,8,1,1,9,S0424
+RO-056-06,cases/benchmark_056.md,6,procente,matematică,short,easy,exact,5,1,1,4,S0089
+RO-056-07,cases/benchmark_056.md,7,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0151
+RO-056-08,cases/benchmark_056.md,8,explicație,explicații,short,easy,semantic,7,13,10,55,S0869
+RO-056-09,cases/benchmark_056.md,9,da_nu,logică,short,easy,exact,10,1,1,1,S0319
+RO-056-10,cases/benchmark_056.md,10,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M010
+RO-057-01,cases/benchmark_057.md,1,procente,matematică aplicată,short,easy,exact,19,3,1,5,S0084
+RO-057-02,cases/benchmark_057.md,2,factual,biologie,short,easy,exact,6,1,1,9,S0480
+RO-057-03,cases/benchmark_057.md,3,calcul_aplicat,matematică,short,easy,exact,8,2,1,5,S0225
+RO-057-04,cases/benchmark_057.md,4,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0175
+RO-057-05,cases/benchmark_057.md,5,șir_numeric,logică,short,easy,exact,10,1,1,1,S0364
+RO-057-06,cases/benchmark_057.md,6,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0679
+RO-057-07,cases/benchmark_057.md,7,factual,meteorologie,short,easy,exact,5,1,1,9,S0487
+RO-057-08,cases/benchmark_057.md,8,critică_argument,logică,medium,medium,semantic,41,69,69,180,M035
+RO-057-09,cases/benchmark_057.md,9,clasificare_sentiment,clasificare,short,easy,exact,24,1,1,1,S0697
+RO-057-10,cases/benchmark_057.md,10,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0202
+RO-058-01,cases/benchmark_058.md,1,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0676
+RO-058-02,cases/benchmark_058.md,2,traducere,limbă,short,easy,semantic,7,4,2,15,S0530
+RO-058-03,cases/benchmark_058.md,3,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0133
+RO-058-04,cases/benchmark_058.md,4,vocabular,limbă,short,easy,semantic,6,1,1,3,S0609
+RO-058-05,cases/benchmark_058.md,5,critică_argument,logică,medium,medium,semantic,42,68,68,180,M037
+RO-058-06,cases/benchmark_058.md,6,șir_numeric,logică,short,easy,exact,10,1,1,1,S0344
+RO-058-07,cases/benchmark_058.md,7,calcul_aplicat,matematică,short,easy,exact,7,2,1,5,S0212
+RO-058-08,cases/benchmark_058.md,8,vocabular,limbă,short,easy,semantic,7,2,1,3,S0599
+RO-058-09,cases/benchmark_058.md,9,clasificare_sentiment,clasificare,short,easy,exact,25,1,1,1,S0699
+RO-058-10,cases/benchmark_058.md,10,traducere,limbă,short,easy,semantic,7,5,2,15,S0567
+RO-059-01,cases/benchmark_059.md,1,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0227
+RO-059-02,cases/benchmark_059.md,2,sumarizare,transformare text,short,easy,semantic,20,8,5,20,S0765
+RO-059-03,cases/benchmark_059.md,3,factual,civică,short,easy,semantic,4,9,1,17,S0467
+RO-059-04,cases/benchmark_059.md,4,șir_numeric,logică,short,easy,exact,17,1,1,1,S0352
+RO-059-05,cases/benchmark_059.md,5,factual,securitate,short,easy,semantic,3,14,1,22,S0495
+RO-059-06,cases/benchmark_059.md,6,procente,matematică aplicată,short,easy,exact,19,3,1,5,S0120
+RO-059-07,cases/benchmark_059.md,7,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0168
+RO-059-08,cases/benchmark_059.md,8,corectare_text,limbă,short,easy,semantic,7,3,2,15,S0638
+RO-059-09,cases/benchmark_059.md,9,explicație_educațională,învățare,medium,medium,semantic,29,77,77,190,M069
+RO-059-10,cases/benchmark_059.md,10,calcul,matematică,short,easy,exact,4,1,1,3,S0038
+RO-060-01,cases/benchmark_060.md,1,traducere,limbă,short,easy,semantic,8,4,2,15,S0537
+RO-060-02,cases/benchmark_060.md,2,factual,biologie,short,easy,exact,7,1,1,9,S0435
+RO-060-03,cases/benchmark_060.md,3,șir_numeric,logică,short,easy,exact,10,1,1,1,S0370
+RO-060-04,cases/benchmark_060.md,4,factual,geografie,short,easy,exact,4,1,1,4,S0419
+RO-060-05,cases/benchmark_060.md,5,extracție_structurată,documente,medium,medium,semantic,59,34,34,150,M046
+RO-060-06,cases/benchmark_060.md,6,da_nu,logică,short,easy,exact,10,1,1,1,S0315
+RO-060-07,cases/benchmark_060.md,7,da_nu,logică,short,easy,exact,10,1,1,1,S0309
+RO-060-08,cases/benchmark_060.md,8,traducere,limbă,short,easy,semantic,7,5,2,15,S0571
+RO-060-09,cases/benchmark_060.md,9,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0098
+RO-060-10,cases/benchmark_060.md,10,da_nu,logică,short,easy,exact,10,1,1,1,S0294
+RO-061-01,cases/benchmark_061.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0012
+RO-061-02,cases/benchmark_061.md,2,explicație_educațională,învățare,medium,medium,semantic,29,82,82,190,M061
+RO-061-03,cases/benchmark_061.md,3,șir_numeric,logică,short,easy,exact,10,1,1,1,S0346
+RO-061-04,cases/benchmark_061.md,4,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0337
+RO-061-05,cases/benchmark_061.md,5,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0145
+RO-061-06,cases/benchmark_061.md,6,factual,biologie,short,easy,exact,6,1,1,9,S0481
+RO-061-07,cases/benchmark_061.md,7,clasificare_sentiment,clasificare,short,easy,exact,22,1,1,1,S0703
+RO-061-08,cases/benchmark_061.md,8,explicație,explicații,short,easy,semantic,7,13,10,55,S0868
+RO-061-09,cases/benchmark_061.md,9,timp,raționament temporal,short,easy,exact,15,2,1,4,S0158
+RO-061-10,cases/benchmark_061.md,10,factual,economie,short,easy,semantic,4,9,1,17,S0511
+RO-062-01,cases/benchmark_062.md,1,generare_titlu,transformare text,short,easy,semantic,16,4,2,8,S0804
+RO-062-02,cases/benchmark_062.md,2,rescriere_email,comunicare,medium,medium,semantic,64,56,56,150,M060
+RO-062-03,cases/benchmark_062.md,3,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0641
+RO-062-04,cases/benchmark_062.md,4,factual,istorie,short,easy,exact,9,1,1,9,S0448
+RO-062-05,cases/benchmark_062.md,5,traducere,limbă,short,easy,semantic,8,5,2,15,S0561
+RO-062-06,cases/benchmark_062.md,6,factual,geografie,short,easy,exact,6,1,1,9,S0451
+RO-062-07,cases/benchmark_062.md,7,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0663
+RO-062-08,cases/benchmark_062.md,8,vocabular,limbă,short,easy,semantic,7,2,1,3,S0613
+RO-062-09,cases/benchmark_062.md,9,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0669
+RO-062-10,cases/benchmark_062.md,10,vocabular,limbă,short,easy,semantic,6,1,1,3,S0604
+RO-063-01,cases/benchmark_063.md,1,procente,matematică,short,easy,exact,5,1,1,4,S0091
+RO-063-02,cases/benchmark_063.md,2,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0326
+RO-063-03,cases/benchmark_063.md,3,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0329
+RO-063-04,cases/benchmark_063.md,4,traducere,limbă,short,easy,semantic,8,4,2,15,S0552
+RO-063-05,cases/benchmark_063.md,5,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0652
+RO-063-06,cases/benchmark_063.md,6,sinteză_feedback,analiză text,medium,medium,semantic,85,100,100,230,M076
+RO-063-07,cases/benchmark_063.md,7,sfat_practic,viață cotidiană,short,easy,semantic,13,16,12,60,S0842
+RO-063-08,cases/benchmark_063.md,8,ordine_logică,logică,short,easy,exact,20,1,1,2,S0274
+RO-063-09,cases/benchmark_063.md,9,problemă_scurtă,raționament cantitativ,short,easy,exact,25,1,1,5,S0153
+RO-063-10,cases/benchmark_063.md,10,factual,biologie,short,easy,exact,9,1,1,9,S0482
+RO-064-01,cases/benchmark_064.md,1,sumarizare,transformare text,short,easy,semantic,17,8,5,20,S0749
+RO-064-02,cases/benchmark_064.md,2,ordine_logică,logică,short,easy,exact,20,1,1,2,S0261
+RO-064-03,cases/benchmark_064.md,3,clasificare_intenție,customer support,short,easy,exact,11,1,1,3,S0720
+RO-064-04,cases/benchmark_064.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0070
+RO-064-05,cases/benchmark_064.md,5,factual,securitate,short,easy,semantic,3,11,1,19,S0496
+RO-064-06,cases/benchmark_064.md,6,explicație,explicații,short,easy,semantic,7,8,8,55,S0876
+RO-064-07,cases/benchmark_064.md,7,explicație_educațională,învățare,medium,medium,semantic,30,75,75,190,M063
+RO-064-08,cases/benchmark_064.md,8,calcul,matematică,short,easy,exact,4,1,1,3,S0015
+RO-064-09,cases/benchmark_064.md,9,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0668
+RO-064-10,cases/benchmark_064.md,10,vocabular,limbă,short,easy,semantic,7,2,1,3,S0588
+RO-065-01,cases/benchmark_065.md,1,corectare_text,limbă,short,easy,semantic,8,4,2,15,S0631
+RO-065-02,cases/benchmark_065.md,2,traducere,limbă,short,easy,semantic,6,6,2,15,S0564
+RO-065-03,cases/benchmark_065.md,3,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0161
+RO-065-04,cases/benchmark_065.md,4,sfat_practic,viață cotidiană,short,easy,semantic,7,14,12,60,S0840
+RO-065-05,cases/benchmark_065.md,5,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0173
+RO-065-06,cases/benchmark_065.md,6,traducere,limbă,short,easy,semantic,8,7,2,15,S0568
+RO-065-07,cases/benchmark_065.md,7,generare_titlu,transformare text,short,easy,semantic,24,5,2,8,S0811
+RO-065-08,cases/benchmark_065.md,8,factual,chimie,short,easy,exact,5,1,1,9,S0429
+RO-065-09,cases/benchmark_065.md,9,clasificare_intenție,customer support,short,easy,exact,19,2,1,3,S0733
+RO-065-10,cases/benchmark_065.md,10,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M019
+RO-066-01,cases/benchmark_066.md,1,clasificare_intenție,customer support,short,easy,exact,21,1,1,3,S0724
+RO-066-02,cases/benchmark_066.md,2,factual,geografie,short,easy,exact,4,2,1,4,S0415
+RO-066-03,cases/benchmark_066.md,3,calcul_aplicat,matematică,short,easy,exact,8,2,1,5,S0201
+RO-066-04,cases/benchmark_066.md,4,calcul_aplicat,matematică,short,easy,exact,13,2,1,5,S0231
+RO-066-05,cases/benchmark_066.md,5,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0336
+RO-066-06,cases/benchmark_066.md,6,calcul,matematică,short,easy,exact,4,1,1,3,S0043
+RO-066-07,cases/benchmark_066.md,7,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0090
+RO-066-08,cases/benchmark_066.md,8,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M081
+RO-066-09,cases/benchmark_066.md,9,da_nu,logică,short,easy,exact,10,1,1,1,S0295
+RO-066-10,cases/benchmark_066.md,10,calcul,matematică,short,easy,exact,4,1,1,3,S0035
+RO-067-01,cases/benchmark_067.md,1,explicație,explicații,short,easy,semantic,7,15,10,55,S0851
+RO-067-02,cases/benchmark_067.md,2,clasificare_sentiment,clasificare,short,easy,exact,22,1,1,1,S0704
+RO-067-03,cases/benchmark_067.md,3,sfat_practic,viață cotidiană,short,easy,semantic,12,13,12,60,S0827
+RO-067-04,cases/benchmark_067.md,4,calcul_aplicat,matematică,short,easy,exact,8,2,1,5,S0237
+RO-067-05,cases/benchmark_067.md,5,critică_argument,logică,medium,medium,semantic,41,69,69,180,M036
+RO-067-06,cases/benchmark_067.md,6,comunicare_profesională,muncă,short,easy,semantic,8,11,3,30,S0894
+RO-067-07,cases/benchmark_067.md,7,factual,biologie,short,easy,exact,8,1,1,9,S0436
+RO-067-08,cases/benchmark_067.md,8,calcul,matematică,short,easy,exact,4,1,1,3,S0033
+RO-067-09,cases/benchmark_067.md,9,factual,istorie,short,easy,exact,7,1,1,9,S0445
+RO-067-10,cases/benchmark_067.md,10,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0674
+RO-068-01,cases/benchmark_068.md,1,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0169
+RO-068-02,cases/benchmark_068.md,2,factual,geografie,short,easy,exact,4,1,1,4,S0379
+RO-068-03,cases/benchmark_068.md,3,factual,geografie,short,easy,exact,4,1,1,4,S0385
+RO-068-04,cases/benchmark_068.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0006
+RO-068-05,cases/benchmark_068.md,5,sfat_practic,viață cotidiană,short,easy,semantic,10,12,12,60,S0825
+RO-068-06,cases/benchmark_068.md,6,timp,raționament temporal,short,easy,exact,15,2,1,4,S0162
+RO-068-07,cases/benchmark_068.md,7,calcul,matematică,short,easy,exact,4,1,1,3,S0046
+RO-068-08,cases/benchmark_068.md,8,sumarizare,transformare text,short,easy,semantic,16,9,5,20,S0743
+RO-068-09,cases/benchmark_068.md,9,sumarizare_structurată,muncă,medium,medium,semantic,86,78,78,180,M001
+RO-068-10,cases/benchmark_068.md,10,procente,matematică,short,easy,exact,5,1,1,4,S0121
+RO-069-01,cases/benchmark_069.md,1,clasificare_intenție,customer support,short,easy,exact,17,1,1,3,S0731
+RO-069-02,cases/benchmark_069.md,2,calcul,matematică,short,easy,exact,4,1,1,3,S0025
+RO-069-03,cases/benchmark_069.md,3,ordine_logică,logică,short,easy,exact,20,1,1,2,S0263
+RO-069-04,cases/benchmark_069.md,4,timp,raționament temporal,short,easy,exact,15,2,1,4,S0150
+RO-069-05,cases/benchmark_069.md,5,factual,fizică,short,easy,exact,8,1,1,9,S0461
+RO-069-06,cases/benchmark_069.md,6,factual,muzică,short,easy,exact,10,1,1,9,S0473
+RO-069-07,cases/benchmark_069.md,7,ordine_logică,logică,short,easy,exact,20,1,1,2,S0258
+RO-069-08,cases/benchmark_069.md,8,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0672
+RO-069-09,cases/benchmark_069.md,9,plan_învățare,învățare,medium,medium,semantic,64,175,100,260,M026
+RO-069-10,cases/benchmark_069.md,10,factual,tehnologie,short,easy,semantic,6,8,1,16,S0497
+RO-070-01,cases/benchmark_070.md,1,factual,biologie,short,easy,semantic,4,9,1,17,S0464
+RO-070-02,cases/benchmark_070.md,2,factual,geografie,short,easy,semantic,3,13,1,21,S0477
+RO-070-03,cases/benchmark_070.md,3,generare_titlu,transformare text,short,easy,semantic,19,6,2,8,S0810
+RO-070-04,cases/benchmark_070.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0022
+RO-070-05,cases/benchmark_070.md,5,ordine_logică,logică,short,easy,exact,20,1,1,2,S0273
+RO-070-06,cases/benchmark_070.md,6,sumarizare,transformare text,short,easy,semantic,22,8,5,20,S0769
+RO-070-07,cases/benchmark_070.md,7,factual,geografie,short,easy,exact,4,2,1,4,S0405
+RO-070-08,cases/benchmark_070.md,8,sinteză_feedback,analiză text,medium,medium,semantic,86,100,100,230,M074
+RO-070-09,cases/benchmark_070.md,9,creativ_scurt,creativ,short,easy,semantic,8,11,2,18,S0888
+RO-070-10,cases/benchmark_070.md,10,sfat_practic,viață cotidiană,short,easy,semantic,18,13,12,60,S0821
+RO-071-01,cases/benchmark_071.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0028
+RO-071-02,cases/benchmark_071.md,2,sumarizare,transformare text,short,easy,semantic,25,8,5,20,S0751
+RO-071-03,cases/benchmark_071.md,3,calcul_aplicat,matematică,short,easy,exact,7,2,1,5,S0224
+RO-071-04,cases/benchmark_071.md,4,clasificare_intenție,customer support,short,easy,exact,14,1,1,3,S0716
+RO-071-05,cases/benchmark_071.md,5,calcul_aplicat,matematică,short,easy,exact,14,2,1,5,S0236
+RO-071-06,cases/benchmark_071.md,6,calcul_aplicat,matematică,short,easy,exact,12,2,1,5,S0248
+RO-071-07,cases/benchmark_071.md,7,corectare_text,limbă,short,easy,semantic,8,4,2,15,S0626
+RO-071-08,cases/benchmark_071.md,8,factual,geografie,short,easy,exact,4,1,1,4,S0398
+RO-071-09,cases/benchmark_071.md,9,da_nu,logică,short,easy,exact,10,1,1,1,S0298
+RO-071-10,cases/benchmark_071.md,10,sinteză_feedback,analiză text,medium,medium,semantic,88,100,100,230,M072
+RO-072-01,cases/benchmark_072.md,1,plan_învățare,învățare,medium,medium,semantic,63,130,100,260,M030
+RO-072-02,cases/benchmark_072.md,2,procente,matematică,short,easy,exact,5,1,1,4,S0081
+RO-072-03,cases/benchmark_072.md,3,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0149
+RO-072-04,cases/benchmark_072.md,4,da_nu,logică,short,easy,exact,17,1,1,1,S0302
+RO-072-05,cases/benchmark_072.md,5,clasificare_intenție,customer support,short,easy,exact,11,1,1,3,S0718
+RO-072-06,cases/benchmark_072.md,6,vocabular,limbă,short,easy,semantic,6,1,1,3,S0620
+RO-072-07,cases/benchmark_072.md,7,factual,geografie,short,easy,exact,4,1,1,4,S0373
+RO-072-08,cases/benchmark_072.md,8,factual,chimie,short,easy,semantic,4,12,1,20,S0499
+RO-072-09,cases/benchmark_072.md,9,calcul,matematică,short,easy,exact,4,1,1,3,S0076
+RO-072-10,cases/benchmark_072.md,10,ordine_logică,logică,short,easy,exact,20,1,1,2,S0275
+RO-073-01,cases/benchmark_073.md,1,critică_argument,logică,medium,medium,semantic,36,64,64,180,M031
+RO-073-02,cases/benchmark_073.md,2,factual,geografie,short,easy,exact,4,1,1,9,S0452
+RO-073-03,cases/benchmark_073.md,3,calcul,matematică,short,easy,exact,4,1,1,3,S0061
+RO-073-04,cases/benchmark_073.md,4,factual,fizică,short,easy,semantic,3,10,1,18,S0490
+RO-073-05,cases/benchmark_073.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0049
+RO-073-06,cases/benchmark_073.md,6,corectare_text,limbă,short,easy,semantic,8,4,2,15,S0637
+RO-073-07,cases/benchmark_073.md,7,explicație,explicații,short,easy,semantic,9,10,10,55,S0878
+RO-073-08,cases/benchmark_073.md,8,factual,tehnologie,short,easy,semantic,5,11,1,19,S0491
+RO-073-09,cases/benchmark_073.md,9,factual,literatură,short,easy,exact,5,3,1,11,S0440
+RO-073-10,cases/benchmark_073.md,10,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0124
+RO-074-01,cases/benchmark_074.md,1,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0678
+RO-074-02,cases/benchmark_074.md,2,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0160
+RO-074-03,cases/benchmark_074.md,3,generare_titlu,transformare text,short,easy,semantic,17,4,2,8,S0806
+RO-074-04,cases/benchmark_074.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0059
+RO-074-05,cases/benchmark_074.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0034
+RO-074-06,cases/benchmark_074.md,6,rescriere_email,comunicare,medium,medium,semantic,57,56,56,150,M055
+RO-074-07,cases/benchmark_074.md,7,clasificare_intenție,customer support,short,easy,exact,21,1,1,3,S0726
+RO-074-08,cases/benchmark_074.md,8,factual,meteorologie,short,easy,exact,11,1,1,9,S0488
+RO-074-09,cases/benchmark_074.md,9,generare_titlu,transformare text,short,easy,semantic,15,3,2,8,S0802
+RO-074-10,cases/benchmark_074.md,10,sfat_practic,viață cotidiană,short,easy,semantic,13,12,12,60,S0826
+RO-075-01,cases/benchmark_075.md,1,explicație,explicații,short,easy,semantic,7,10,10,55,S0853
+RO-075-02,cases/benchmark_075.md,2,calcul_aplicat,matematică,short,easy,exact,8,1,1,5,S0229
+RO-075-03,cases/benchmark_075.md,3,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0338
+RO-075-04,cases/benchmark_075.md,4,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0184
+RO-075-05,cases/benchmark_075.md,5,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0324
+RO-075-06,cases/benchmark_075.md,6,rescriere_email,comunicare,medium,medium,semantic,64,56,56,150,M058
+RO-075-07,cases/benchmark_075.md,7,traducere,limbă,short,easy,semantic,7,3,2,15,S0549
+RO-075-08,cases/benchmark_075.md,8,factual,geografie,short,easy,exact,4,1,1,4,S0409
+RO-075-09,cases/benchmark_075.md,9,calcul,matematică,short,easy,exact,4,1,1,3,S0060
+RO-075-10,cases/benchmark_075.md,10,sumarizare,transformare text,short,easy,semantic,21,6,5,20,S0752
+RO-076-01,cases/benchmark_076.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0004
+RO-076-02,cases/benchmark_076.md,2,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0655
+RO-076-03,cases/benchmark_076.md,3,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0136
+RO-076-04,cases/benchmark_076.md,4,problemă_scurtă,raționament cantitativ,short,easy,exact,19,1,1,5,S0147
+RO-076-05,cases/benchmark_076.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0062
+RO-076-06,cases/benchmark_076.md,6,calcul,matematică,short,easy,exact,4,1,1,3,S0018
+RO-076-07,cases/benchmark_076.md,7,calcul,matematică,short,easy,exact,4,1,1,3,S0074
+RO-076-08,cases/benchmark_076.md,8,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0666
+RO-076-09,cases/benchmark_076.md,9,critică_argument,logică,medium,medium,semantic,43,67,67,180,M038
+RO-076-10,cases/benchmark_076.md,10,vocabular,limbă,short,easy,semantic,6,1,1,3,S0608
+RO-077-01,cases/benchmark_077.md,1,problemă_scurtă,raționament cantitativ,short,easy,exact,25,1,1,5,S0157
+RO-077-02,cases/benchmark_077.md,2,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0643
+RO-077-03,cases/benchmark_077.md,3,critică_argument,logică,medium,medium,semantic,42,68,68,180,M040
+RO-077-04,cases/benchmark_077.md,4,sfat_practic,viață cotidiană,short,easy,semantic,7,12,12,60,S0849
+RO-077-05,cases/benchmark_077.md,5,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0128
+RO-077-06,cases/benchmark_077.md,6,generare_titlu,transformare text,short,easy,semantic,17,5,2,8,S0801
+RO-077-07,cases/benchmark_077.md,7,explicație,explicații,short,easy,semantic,6,12,10,55,S0863
+RO-077-08,cases/benchmark_077.md,8,creativ_scurt,creativ,short,easy,semantic,8,8,2,18,S0886
+RO-077-09,cases/benchmark_077.md,9,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0088
+RO-077-10,cases/benchmark_077.md,10,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0112
+RO-078-01,cases/benchmark_078.md,1,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M084
+RO-078-02,cases/benchmark_078.md,2,factual,chimie,short,easy,semantic,4,10,1,18,S0500
+RO-078-03,cases/benchmark_078.md,3,procente,matematică,short,easy,exact,5,1,1,4,S0087
+RO-078-04,cases/benchmark_078.md,4,factual,fizică,short,easy,exact,10,2,1,10,S0430
+RO-078-05,cases/benchmark_078.md,5,clasificare_sentiment,clasificare,short,easy,exact,24,1,1,1,S0693
+RO-078-06,cases/benchmark_078.md,6,ordine_logică,logică,short,easy,exact,20,1,1,2,S0251
+RO-078-07,cases/benchmark_078.md,7,șir_numeric,logică,short,easy,exact,10,1,1,1,S0345
+RO-078-08,cases/benchmark_078.md,8,calcul,matematică,short,easy,exact,4,1,1,3,S0047
+RO-078-09,cases/benchmark_078.md,9,șir_numeric,logică,short,easy,exact,10,1,1,1,S0358
+RO-078-10,cases/benchmark_078.md,10,traducere,limbă,short,easy,semantic,6,4,2,15,S0556
+RO-079-01,cases/benchmark_079.md,1,clasificare_sentiment,clasificare,short,easy,exact,17,1,1,1,S0690
+RO-079-02,cases/benchmark_079.md,2,clasificare_sentiment,clasificare,short,easy,exact,17,1,1,1,S0683
+RO-079-03,cases/benchmark_079.md,3,calcul,matematică,short,easy,exact,4,1,1,3,S0067
+RO-079-04,cases/benchmark_079.md,4,calcul,matematică,short,easy,exact,11,1,1,3,S0007
+RO-079-05,cases/benchmark_079.md,5,calcul,matematică,short,easy,exact,11,1,1,3,S0072
+RO-079-06,cases/benchmark_079.md,6,sfat_practic,viață cotidiană,short,easy,semantic,15,10,10,60,S0844
+RO-079-07,cases/benchmark_079.md,7,vocabular,limbă,short,easy,semantic,6,1,1,3,S0583
+RO-079-08,cases/benchmark_079.md,8,clasificare_sentiment,clasificare,short,easy,exact,24,1,1,1,S0700
+RO-079-09,cases/benchmark_079.md,9,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M083
+RO-079-10,cases/benchmark_079.md,10,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0096
+RO-080-01,cases/benchmark_080.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0066
+RO-080-02,cases/benchmark_080.md,2,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0673
+RO-080-03,cases/benchmark_080.md,3,factual,geografie,short,easy,exact,4,3,1,4,S0413
+RO-080-04,cases/benchmark_080.md,4,sfat_practic,viață cotidiană,short,easy,semantic,12,10,10,60,S0834
+RO-080-05,cases/benchmark_080.md,5,rescriere_email,comunicare,medium,medium,semantic,57,56,56,150,M054
+RO-080-06,cases/benchmark_080.md,6,traducere,limbă,short,easy,semantic,7,4,2,15,S0542
+RO-080-07,cases/benchmark_080.md,7,rescriere,comunicare,short,easy,semantic,15,6,4,22,S0796
+RO-080-08,cases/benchmark_080.md,8,traducere,limbă,short,easy,semantic,8,4,2,15,S0523
+RO-080-09,cases/benchmark_080.md,9,șir_numeric,logică,short,easy,exact,17,1,1,1,S0356
+RO-080-10,cases/benchmark_080.md,10,clasificare_intenție,customer support,short,easy,exact,20,2,1,3,S0727
+RO-081-01,cases/benchmark_081.md,1,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0195
+RO-081-02,cases/benchmark_081.md,2,sfat_practic,viață cotidiană,short,easy,semantic,13,13,12,60,S0847
+RO-081-03,cases/benchmark_081.md,3,factual,geografie,short,easy,exact,4,1,1,4,S0404
+RO-081-04,cases/benchmark_081.md,4,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0187
+RO-081-05,cases/benchmark_081.md,5,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M014
+RO-081-06,cases/benchmark_081.md,6,factual,geografie,short,easy,exact,4,1,1,4,S0384
+RO-081-07,cases/benchmark_081.md,7,vocabular,limbă,short,easy,semantic,6,1,1,3,S0584
+RO-081-08,cases/benchmark_081.md,8,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0135
+RO-081-09,cases/benchmark_081.md,9,factual,fizică,short,easy,exact,9,2,1,10,S0431
+RO-081-10,cases/benchmark_081.md,10,traducere,limbă,short,easy,semantic,7,3,2,15,S0540
+RO-082-01,cases/benchmark_082.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0014
+RO-082-02,cases/benchmark_082.md,2,explicație,explicații,short,easy,semantic,6,10,10,55,S0865
+RO-082-03,cases/benchmark_082.md,3,factual,geografie,short,easy,exact,4,1,1,4,S0394
+RO-082-04,cases/benchmark_082.md,4,ordine_logică,logică,short,easy,exact,20,1,1,2,S0290
+RO-082-05,cases/benchmark_082.md,5,ordine_logică,logică,short,easy,exact,20,1,1,2,S0288
+RO-082-06,cases/benchmark_082.md,6,traducere,limbă,short,easy,semantic,7,5,2,15,S0575
+RO-082-07,cases/benchmark_082.md,7,factual,geografie,short,easy,exact,10,1,1,9,S0485
+RO-082-08,cases/benchmark_082.md,8,explicație,explicații,short,easy,semantic,7,11,10,55,S0860
+RO-082-09,cases/benchmark_082.md,9,calcul,matematică,short,easy,exact,4,1,1,3,S0008
+RO-082-10,cases/benchmark_082.md,10,sinteză_feedback,analiză text,medium,medium,semantic,84,100,100,230,M077
+RO-083-01,cases/benchmark_083.md,1,clasificare_sentiment,clasificare,short,easy,exact,23,1,1,1,S0698
+RO-083-02,cases/benchmark_083.md,2,sumarizare,transformare text,short,easy,semantic,22,7,5,20,S0760
+RO-083-03,cases/benchmark_083.md,3,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0094
+RO-083-04,cases/benchmark_083.md,4,calcul,matematică,short,easy,exact,4,1,1,3,S0029
+RO-083-05,cases/benchmark_083.md,5,factual,astronomie,short,easy,exact,9,1,1,9,S0421
+RO-083-06,cases/benchmark_083.md,6,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M012
+RO-083-07,cases/benchmark_083.md,7,factual,civică,short,easy,semantic,4,13,1,21,S0505
+RO-083-08,cases/benchmark_083.md,8,procente,matematică,short,easy,exact,5,1,1,4,S0115
+RO-083-09,cases/benchmark_083.md,9,traducere,limbă,short,easy,semantic,7,6,2,15,S0528
+RO-083-10,cases/benchmark_083.md,10,clasificare_sentiment,clasificare,short,easy,exact,24,1,1,1,S0701
+RO-084-01,cases/benchmark_084.md,1,creativ_scurt,creativ,short,easy,semantic,8,3,2,18,S0889
+RO-084-02,cases/benchmark_084.md,2,critică_argument,logică,medium,medium,semantic,42,67,67,180,M032
+RO-084-03,cases/benchmark_084.md,3,rescriere,comunicare,short,easy,semantic,11,10,4,22,S0780
+RO-084-04,cases/benchmark_084.md,4,traducere,limbă,short,easy,semantic,7,4,2,15,S0557
+RO-084-05,cases/benchmark_084.md,5,sumarizare,transformare text,short,easy,semantic,18,7,5,20,S0748
+RO-084-06,cases/benchmark_084.md,6,traducere,limbă,short,easy,semantic,8,7,2,15,S0573
+RO-084-07,cases/benchmark_084.md,7,clasificare_simplă,biologie,short,easy,exact,13,1,1,1,S0328
+RO-084-08,cases/benchmark_084.md,8,rescriere,comunicare,short,easy,semantic,16,13,4,22,S0795
+RO-084-09,cases/benchmark_084.md,9,factual,biologie,short,easy,exact,6,1,1,9,S0433
+RO-084-10,cases/benchmark_084.md,10,ordine_logică,logică,short,easy,exact,27,1,1,2,S0271
+RO-085-01,cases/benchmark_085.md,1,procente,matematică aplicată,short,easy,exact,12,2,1,5,S0130
+RO-085-02,cases/benchmark_085.md,2,sfat_practic,viață cotidiană,short,easy,semantic,14,14,12,60,S0833
+RO-085-03,cases/benchmark_085.md,3,traducere,limbă,short,easy,semantic,8,4,2,15,S0533
+RO-085-04,cases/benchmark_085.md,4,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0667
+RO-085-05,cases/benchmark_085.md,5,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M015
+RO-085-06,cases/benchmark_085.md,6,clasificare_intenție,customer support,short,easy,exact,19,1,1,3,S0736
+RO-085-07,cases/benchmark_085.md,7,factual,biologie,short,easy,semantic,3,12,1,20,S0504
+RO-085-08,cases/benchmark_085.md,8,explicație,explicații,short,easy,semantic,8,18,10,55,S0856
+RO-085-09,cases/benchmark_085.md,9,sfat_practic,viață cotidiană,short,easy,semantic,13,12,12,60,S0835
+RO-085-10,cases/benchmark_085.md,10,clasificare_sentiment,clasificare,short,easy,exact,20,1,1,1,S0685
+RO-086-01,cases/benchmark_086.md,1,rescriere,comunicare,short,easy,semantic,9,8,4,22,S0773
+RO-086-02,cases/benchmark_086.md,2,comparare_opțiuni,decizie,medium,medium,semantic,84,102,102,230,M016
+RO-086-03,cases/benchmark_086.md,3,calcul_aplicat,matematică,short,easy,exact,7,2,1,5,S0192
+RO-086-04,cases/benchmark_086.md,4,factual,fizică,short,easy,semantic,4,6,1,14,S0502
+RO-086-05,cases/benchmark_086.md,5,generare_titlu,transformare text,short,easy,semantic,15,5,2,8,S0809
+RO-086-06,cases/benchmark_086.md,6,calcul_aplicat,matematică,short,easy,exact,12,2,1,5,S0244
+RO-086-07,cases/benchmark_086.md,7,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0660
+RO-086-08,cases/benchmark_086.md,8,calcul_aplicat,matematică,short,easy,exact,13,2,1,5,S0247
+RO-086-09,cases/benchmark_086.md,9,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0131
+RO-086-10,cases/benchmark_086.md,10,factual,biologie,short,easy,exact,14,1,1,9,S0432
+RO-087-01,cases/benchmark_087.md,1,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M086
+RO-087-02,cases/benchmark_087.md,2,sfat_practic,viață cotidiană,short,easy,semantic,9,12,12,60,S0839
+RO-087-03,cases/benchmark_087.md,3,calcul,matematică,short,easy,exact,4,1,1,3,S0013
+RO-087-04,cases/benchmark_087.md,4,traducere,limbă,short,easy,semantic,8,5,2,15,S0531
+RO-087-05,cases/benchmark_087.md,5,factual,biologie,short,easy,semantic,5,6,1,14,S0466
+RO-087-06,cases/benchmark_087.md,6,clasificare_sentiment,clasificare,short,easy,exact,19,1,1,1,S0681
+RO-087-07,cases/benchmark_087.md,7,explicație,explicații,short,easy,semantic,6,14,10,55,S0866
+RO-087-08,cases/benchmark_087.md,8,explicație,explicații,short,easy,semantic,6,21,10,55,S0852
+RO-087-09,cases/benchmark_087.md,9,factual,tehnologie,short,easy,exact,3,3,1,11,S0493
+RO-087-10,cases/benchmark_087.md,10,explicație,explicații,short,easy,semantic,7,10,10,55,S0872
+RO-088-01,cases/benchmark_088.md,1,procente,matematică,short,easy,exact,12,1,1,4,S0127
+RO-088-02,cases/benchmark_088.md,2,plan_practic,viață cotidiană,medium,medium,semantic,68,95,95,230,M088
+RO-088-03,cases/benchmark_088.md,3,sfat_practic,viață cotidiană,short,easy,semantic,10,14,12,60,S0850
+RO-088-04,cases/benchmark_088.md,4,explicație,explicații,short,easy,semantic,8,15,10,55,S0871
+RO-088-05,cases/benchmark_088.md,5,calcul_aplicat,matematică,short,easy,exact,8,1,1,5,S0197
+RO-088-06,cases/benchmark_088.md,6,procente,matematică,short,easy,exact,5,1,1,4,S0093
+RO-088-07,cases/benchmark_088.md,7,factual,geografie,short,easy,exact,4,1,1,4,S0376
+RO-088-08,cases/benchmark_088.md,8,procente,matematică,short,easy,exact,5,1,1,4,S0125
+RO-088-09,cases/benchmark_088.md,9,calcul_aplicat,matematică,short,easy,exact,7,2,1,5,S0200
+RO-088-10,cases/benchmark_088.md,10,calcul,matematică,short,easy,exact,4,1,1,3,S0053
+RO-089-01,cases/benchmark_089.md,1,procente,matematică,short,easy,exact,5,1,1,4,S0097
+RO-089-02,cases/benchmark_089.md,2,traducere,limbă,short,easy,semantic,6,4,2,15,S0554
+RO-089-03,cases/benchmark_089.md,3,corectare_text,limbă,short,easy,semantic,8,4,2,15,S0627
+RO-089-04,cases/benchmark_089.md,4,sumarizare,transformare text,short,easy,semantic,19,6,5,20,S0764
+RO-089-05,cases/benchmark_089.md,5,sfat_practic,viață cotidiană,short,easy,semantic,16,13,12,60,S0831
+RO-089-06,cases/benchmark_089.md,6,explicație_educațională,învățare,medium,medium,semantic,29,77,77,190,M068
+RO-089-07,cases/benchmark_089.md,7,calcul_aplicat,matematică,short,easy,exact,12,2,1,5,S0208
+RO-089-08,cases/benchmark_089.md,8,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0218
+RO-089-09,cases/benchmark_089.md,9,sumarizare,transformare text,short,easy,semantic,14,6,5,20,S0742
+RO-089-10,cases/benchmark_089.md,10,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0658
+RO-090-01,cases/benchmark_090.md,1,factual,geografie,short,easy,exact,4,1,1,4,S0381
+RO-090-02,cases/benchmark_090.md,2,comunicare_profesională,muncă,short,easy,semantic,11,13,3,30,S0892
+RO-090-03,cases/benchmark_090.md,3,rescriere,comunicare,short,easy,semantic,18,10,4,22,S0790
+RO-090-04,cases/benchmark_090.md,4,plan_învățare,învățare,medium,medium,semantic,63,130,100,260,M024
+RO-090-05,cases/benchmark_090.md,5,da_nu,logică,short,easy,exact,10,1,1,1,S0304
+RO-090-06,cases/benchmark_090.md,6,comunicare_profesională,muncă,short,easy,semantic,8,12,3,30,S0897
+RO-090-07,cases/benchmark_090.md,7,factual,geografie,short,easy,exact,4,2,1,4,S0401
+RO-090-08,cases/benchmark_090.md,8,ordine_logică,logică,short,easy,exact,20,1,1,2,S0265
+RO-090-09,cases/benchmark_090.md,9,procente,matematică,short,easy,exact,12,1,1,4,S0111
+RO-090-10,cases/benchmark_090.md,10,clasificare_sentiment,clasificare,short,easy,exact,22,1,1,1,S0707
+RO-091-01,cases/benchmark_091.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0027
+RO-091-02,cases/benchmark_091.md,2,traducere,limbă,short,easy,semantic,7,4,2,15,S0559
+RO-091-03,cases/benchmark_091.md,3,generare_titlu,transformare text,short,easy,semantic,23,5,2,8,S0813
+RO-091-04,cases/benchmark_091.md,4,da_nu,logică,short,easy,exact,10,1,1,1,S0317
+RO-091-05,cases/benchmark_091.md,5,ordine_logică,logică,short,easy,exact,20,1,1,2,S0270
+RO-091-06,cases/benchmark_091.md,6,vocabular,limbă,short,easy,semantic,6,1,1,3,S0582
+RO-091-07,cases/benchmark_091.md,7,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,108,246,246,850,L10
+RO-091-08,cases/benchmark_091.md,8,explicație,explicații,short,easy,semantic,8,16,10,55,S0861
+RO-091-09,cases/benchmark_091.md,9,calcul_aplicat,matematică,short,easy,exact,15,1,1,5,S0226
+RO-091-10,cases/benchmark_091.md,10,traducere,limbă,short,easy,semantic,6,4,2,15,S0569
+RO-092-01,cases/benchmark_092.md,1,șir_numeric,logică,short,easy,exact,10,1,1,1,S0359
+RO-092-02,cases/benchmark_092.md,2,problemă_scurtă,raționament cantitativ,short,easy,exact,12,1,1,5,S0143
+RO-092-03,cases/benchmark_092.md,3,clasificare_sentiment,clasificare,short,easy,exact,24,1,1,1,S0706
+RO-092-04,cases/benchmark_092.md,4,sumarizare,transformare text,short,easy,semantic,20,7,5,20,S0770
+RO-092-05,cases/benchmark_092.md,5,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,102,255,255,850,L09
+RO-092-06,cases/benchmark_092.md,6,factual,geografie,short,easy,exact,4,1,1,4,S0390
+RO-092-07,cases/benchmark_092.md,7,explicație,explicații,short,easy,semantic,7,7,7,55,S0854
+RO-092-08,cases/benchmark_092.md,8,calcul_aplicat,matematică,short,easy,exact,13,2,1,5,S0239
+RO-092-09,cases/benchmark_092.md,9,traducere,limbă,short,easy,semantic,7,3,2,15,S0526
+RO-092-10,cases/benchmark_092.md,10,calcul,matematică,short,easy,exact,4,1,1,3,S0039
+RO-093-01,cases/benchmark_093.md,1,sumarizare,transformare text,short,easy,semantic,21,6,5,20,S0754
+RO-093-02,cases/benchmark_093.md,2,rescriere,comunicare,short,easy,semantic,11,8,4,22,S0779
+RO-093-03,cases/benchmark_093.md,3,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0188
+RO-093-04,cases/benchmark_093.md,4,explicație,explicații,short,easy,semantic,7,12,10,55,S0874
+RO-093-05,cases/benchmark_093.md,5,corectare_text,limbă,short,easy,semantic,6,2,2,15,S0621
+RO-093-06,cases/benchmark_093.md,6,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,91,241,241,850,L06
+RO-093-07,cases/benchmark_093.md,7,creativ_scurt,creativ,short,easy,semantic,10,3,2,18,S0881
+RO-093-08,cases/benchmark_093.md,8,factual,geografie,short,easy,exact,4,1,1,4,S0382
+RO-093-09,cases/benchmark_093.md,9,factual,chimie,short,easy,exact,5,1,1,9,S0427
+RO-093-10,cases/benchmark_093.md,10,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0164
+RO-094-01,cases/benchmark_094.md,1,vocabular,limbă,short,easy,semantic,6,1,1,3,S0619
+RO-094-02,cases/benchmark_094.md,2,da_nu,logică,short,easy,exact,17,1,1,1,S0320
+RO-094-03,cases/benchmark_094.md,3,comunicare_profesională,muncă,short,easy,semantic,6,10,3,30,S0895
+RO-094-04,cases/benchmark_094.md,4,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,97,230,230,850,L05
+RO-094-05,cases/benchmark_094.md,5,calcul,matematică,short,easy,exact,4,1,1,3,S0052
+RO-094-06,cases/benchmark_094.md,6,corectare_text,limbă,short,easy,semantic,7,3,2,15,S0628
+RO-094-07,cases/benchmark_094.md,7,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0223
+RO-094-08,cases/benchmark_094.md,8,traducere,limbă,short,easy,semantic,7,5,2,15,S0572
+RO-094-09,cases/benchmark_094.md,9,explicație,explicații,short,easy,semantic,8,15,10,55,S0875
+RO-094-10,cases/benchmark_094.md,10,procente,matematică,short,easy,exact,5,1,1,4,S0117
+RO-095-01,cases/benchmark_095.md,1,calcul,matematică,short,easy,exact,4,1,1,3,S0026
+RO-095-02,cases/benchmark_095.md,2,calcul,matematică,short,easy,exact,4,1,1,3,S0040
+RO-095-03,cases/benchmark_095.md,3,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,121,238,238,850,L03
+RO-095-04,cases/benchmark_095.md,4,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0144
+RO-095-05,cases/benchmark_095.md,5,problemă_scurtă,raționament cantitativ,short,easy,exact,15,1,1,5,S0180
+RO-095-06,cases/benchmark_095.md,6,factual,muzică,short,easy,semantic,5,8,1,16,S0509
+RO-095-07,cases/benchmark_095.md,7,calcul,matematică,short,easy,exact,4,1,1,3,S0019
+RO-095-08,cases/benchmark_095.md,8,factual,chimie,short,easy,exact,5,1,1,9,S0428
+RO-095-09,cases/benchmark_095.md,9,factual,geografie,short,easy,exact,6,1,1,4,S0403
+RO-095-10,cases/benchmark_095.md,10,factual,geografie,short,easy,exact,4,1,1,4,S0406
+RO-096-01,cases/benchmark_096.md,1,rescriere,comunicare,short,easy,semantic,17,10,4,22,S0784
+RO-096-02,cases/benchmark_096.md,2,clasificare_intenție,customer support,short,easy,exact,12,1,1,3,S0711
+RO-096-03,cases/benchmark_096.md,3,traducere,limbă,short,easy,semantic,5,2,2,15,S0521
+RO-096-04,cases/benchmark_096.md,4,extracție,informații structurate,short,easy,semantic,15,1,1,8,S0665
+RO-096-05,cases/benchmark_096.md,5,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,144,256,256,850,L01
+RO-096-06,cases/benchmark_096.md,6,calcul,matematică,short,easy,exact,4,1,1,3,S0069
+RO-096-07,cases/benchmark_096.md,7,problemă_scurtă,raționament cantitativ,short,easy,exact,18,1,1,5,S0177
+RO-096-08,cases/benchmark_096.md,8,explicație,explicații,short,easy,semantic,7,12,10,55,S0857
+RO-096-09,cases/benchmark_096.md,9,clasificare_intenție,customer support,short,easy,exact,19,1,1,3,S0739
+RO-096-10,cases/benchmark_096.md,10,clasificare_intenție,customer support,short,easy,exact,18,2,1,3,S0737
+RO-097-01,cases/benchmark_097.md,1,procente,matematică,short,easy,exact,5,1,1,4,S0101
+RO-097-02,cases/benchmark_097.md,2,clasificare_intenție,customer support,short,easy,exact,21,2,1,3,S0723
+RO-097-03,cases/benchmark_097.md,3,clasificare_simplă,biologie,short,easy,exact,20,1,1,1,S0333
+RO-097-04,cases/benchmark_097.md,4,factual,istorie,short,easy,exact,12,1,1,9,S0446
+RO-097-05,cases/benchmark_097.md,5,traducere,limbă,short,easy,semantic,7,3,2,15,S0525
+RO-097-06,cases/benchmark_097.md,6,calcul_aplicat,matematică,short,easy,exact,8,1,1,5,S0193
+RO-097-07,cases/benchmark_097.md,7,clasificare_sentiment,clasificare,short,easy,exact,22,1,1,1,S0710
+RO-097-08,cases/benchmark_097.md,8,vocabular,limbă,short,easy,semantic,6,1,1,3,S0617
+RO-097-09,cases/benchmark_097.md,9,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,113,219,219,850,L08
+RO-097-10,cases/benchmark_097.md,10,factual,artă,short,easy,exact,5,3,1,11,S0443
+RO-098-01,cases/benchmark_098.md,1,timp,raționament temporal,short,easy,exact,15,2,1,4,S0186
+RO-098-02,cases/benchmark_098.md,2,rescriere,comunicare,short,easy,semantic,11,13,4,22,S0775
+RO-098-03,cases/benchmark_098.md,3,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,116,235,235,850,L02
+RO-098-04,cases/benchmark_098.md,4,rescriere,comunicare,short,easy,semantic,16,8,4,22,S0799
+RO-098-05,cases/benchmark_098.md,5,rescriere,comunicare,short,easy,semantic,17,8,4,22,S0782
+RO-098-06,cases/benchmark_098.md,6,calcul,matematică,short,easy,exact,4,1,1,3,S0005
+RO-098-07,cases/benchmark_098.md,7,calcul,matematică,short,easy,exact,4,1,1,3,S0075
+RO-098-08,cases/benchmark_098.md,8,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0644
+RO-098-09,cases/benchmark_098.md,9,vocabular,limbă,short,easy,semantic,6,1,1,3,S0597
+RO-098-10,cases/benchmark_098.md,10,factual,biologie,short,easy,exact,9,1,1,9,S0438
+RO-099-01,cases/benchmark_099.md,1,ordine_logică,logică,short,easy,exact,20,1,1,2,S0259
+RO-099-02,cases/benchmark_099.md,2,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0656
+RO-099-03,cases/benchmark_099.md,3,sfat_practic,viață cotidiană,short,easy,semantic,15,14,12,60,S0823
+RO-099-04,cases/benchmark_099.md,4,factual,știință,short,easy,semantic,4,10,1,18,S0518
+RO-099-05,cases/benchmark_099.md,5,extracție,informații structurate,short,easy,semantic,17,4,1,8,S0650
+RO-099-06,cases/benchmark_099.md,6,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,131,226,226,850,L04
+RO-099-07,cases/benchmark_099.md,7,sumarizare,transformare text,short,easy,semantic,23,8,5,20,S0761
+RO-099-08,cases/benchmark_099.md,8,traducere,limbă,short,easy,semantic,7,5,2,15,S0574
+RO-099-09,cases/benchmark_099.md,9,factual,geografie,short,easy,exact,5,1,1,4,S0393
+RO-099-10,cases/benchmark_099.md,10,traducere,limbă,short,easy,semantic,8,4,2,15,S0548
+RO-100-01,cases/benchmark_100.md,1,task_complex_cotidian,decizie și sinteză,long,medium-hard,semantic,90,214,214,850,L07
+RO-100-02,cases/benchmark_100.md,2,comunicare_profesională,muncă,short,easy,semantic,9,11,3,30,S0899
+RO-100-03,cases/benchmark_100.md,3,vocabular,limbă,short,easy,semantic,6,1,1,3,S0602
+RO-100-04,cases/benchmark_100.md,4,ordine_logică,logică,short,easy,exact,20,1,1,2,S0267
+RO-100-05,cases/benchmark_100.md,5,sfat_practic,viață cotidiană,short,easy,semantic,19,13,12,60,S0841
+RO-100-06,cases/benchmark_100.md,6,da_nu,logică,short,easy,exact,10,1,1,1,S0292
+RO-100-07,cases/benchmark_100.md,7,generare_titlu,transformare text,short,easy,semantic,16,5,2,8,S0803
+RO-100-08,cases/benchmark_100.md,8,calcul,matematică,short,easy,exact,4,1,1,3,S0011
+RO-100-09,cases/benchmark_100.md,9,calcul_aplicat,matematică,short,easy,exact,6,2,1,5,S0219
+RO-100-10,cases/benchmark_100.md,10,factual,limbă,short,easy,semantic,4,10,1,18,S0508

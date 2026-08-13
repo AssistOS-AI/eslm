@@ -122,10 +122,12 @@ failure, and it never runs after an exhausted primary resource budget unless a s
 
 DS022 also defines an explicit artifact-request route that is distinct from ordinary failure recovery. When the
 request planner recognizes a summary, explanation, comparison, outline, essay, report, article, or document before
-retrieval, bounded construction may select source-addressable document records, copy their statements into a cited
-`PARTIAL` artifact, and list the selected packages in `usedKbVersions`. Those citations support only the source claims
-actually copied. They do not establish an inferred narrative, causal bridge, or complete answer, and unselected
-grounding records remain outside answer provenance.
+retrieval, bounded construction may propose source-addressable document records to a non-voting claim gate. A
+rhetorical plan, typed sentence realization, and format-aware assembly can then create a cited `PARTIAL` artifact only
+from admitted claims and list only packages that support realized claims in `usedKbVersions`. Those citations support
+the exact admitted source claims, even when deterministic realization changes their wording. They do not establish an
+inferred narrative, causal bridge, or complete answer, and rejected or unselected grounding records remain outside
+answer provenance.
 
 ### 10. Document build pipeline
 
@@ -159,10 +161,12 @@ Absent required document premises return `MISSING_KNOWLEDGE` with the searched s
 completed applicable search in which available knowledge neither entails nor contradicts the target. A missing
 transformation remains `NO_APPLICABLE_METHOD`.
 
-A DS022 extractive document draft instead returns `PARTIAL`. Selected KB records used in the rendered artifact enter
-top-level provenance as source claims; copied user material retains its source-span receipt inside the request and
-synthesis records. Any attached grounding bundle remains `answerSupported: false`. A downstream reader can therefore
-trace copied material without confusing citation coverage with proof of the requested document's overall argument.
+A DS022 grounded symbolic document artifact instead returns `PARTIAL`. Selected KB records used for realized claims
+enter top-level provenance as source claims; supplied user sentences retain their source-span receipt inside the
+request and synthesis records. The claim ledger distinguishes realized from rejected candidates, the rhetorical and
+paragraph ledgers expose organization, and the result contract exactly reproduces the final artifact. Any attached
+grounding bundle remains `answerSupported: false`. A downstream reader can therefore trace every factual sentence
+without confusing coherent realization or citation coverage with proof of the requested document's overall argument.
 
 ### 12. Security and review invariants
 
@@ -179,9 +183,11 @@ runtime. Source strings remain normalized index data and never become JavaScript
 The present repository implements canonical KB records, compiled packages, several public-source indexes,
 query-directed shard loading, bounded caches, proof-bearing core methods, provenance, and a generic failure-time
 grounding bundle over canonical facts, the session overlay, and selected public providers. DS022 additionally
-implements request planning and extractive `PARTIAL` construction over supplied text and those currently searchable
-records. This is a bounded record-selection and citation foundation; it does not yet search book-scale span indexes or
-compile a general book or manual. The next document stage should use a small legally distributable
+implements request planning and grounded symbolic `PARTIAL` construction over supplied text and those currently
+searchable records. Its non-voting claim admission, rhetorical plan, four sentence strategies, seven assembly
+strategies, and exact reproduction make this more than record copying, while its closed evidence boundary prevents it
+from inventing facts. It still does not search book-scale span indexes, derive general abstractive claims, or compile a
+general book or manual. The next document stage should use a small legally distributable
 technical source with definitions, procedures, temporal changes, and cross-section questions, then demonstrate
 complete source retention, stable compilation, eager/lazy equivalence, derived answers with citations, and useful
 grounding for deliberately unanswerable or partially supported requests.
@@ -206,8 +212,8 @@ Response: Events reference stable participant concepts or entities through typed
 
 Response: For an inferred answer, only when a registered method uses the corresponding record in the proof. A span
 returned solely by failure-time grounding is cited as a related record inside the bundle and is explicitly not answer
-provenance. On the separate DS022 request-synthesis route, a selected span may instead be attribution for the exact
-source claim copied into a `PARTIAL` artifact, but it still is not proof of a broader explanation or conclusion.
+provenance. On the separate DS022 request-synthesis route, an admitted span may instead attribute the exact source
+claim realized in a `PARTIAL` artifact, but it still is not proof of a broader explanation or conclusion.
 
 ### Question #5: Why do source-specific adapters converge on one canonical record boundary?
 

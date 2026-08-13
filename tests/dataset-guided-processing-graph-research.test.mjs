@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import test from 'node:test';
 import { PROJECT_ROOT } from '../src/paths.mjs';
+import { processingGraphValidationReceipt } from '../src/processing-graph/index.mjs';
 
 async function projectFile(path) {
   return readFile(join(PROJECT_ROOT, path), 'utf8');
@@ -165,6 +166,7 @@ test('research documentation preserves protocol order, authority, and current-ve
 });
 
 test('processing-graph research page separates measured stages from promotion authority', async () => {
+  const validation = processingGraphValidationReceipt();
   const [page, horizons, header, home, matrix] = await Promise.all([
     projectFile('docs/research/processing-graph-research.html'),
     projectFile('docs/research/research-horizons.html'),
@@ -173,7 +175,10 @@ test('processing-graph research page separates measured stages from promotion au
     projectFile('docs/specs/matrix.md'),
   ]);
   assert.match(page, /Current foundation:<\/strong>/u);
-  assert.match(page, /No research artifact has changed the 48-node catalog or runtime behavior/u);
+  assert.match(page, new RegExp(
+    `No research artifact has changed the ${validation.counts.nodes}-node catalog or runtime behavior`,
+    'u',
+  ));
   assert.match(page, /eslm-research-episode-v1/u);
   assert.match(page, /RL and task feedback/u);
   assert.match(page, /Reasoning task benchmarks/u);
@@ -191,9 +196,9 @@ test('processing-graph research page separates measured stages from promotion au
     '14 machine hypotheses', 'four source-neutral decisions', '2,220 trees',
     '518 validation trees', '19,854 admitted training-visible episodes', '8,192',
     'rl-dataset-graph-discovery',
-    '5534952eb6b2ab83d5c8ae3d0e15eda4dd69745a75f0e2abbea81f9ff5bf0348',
-    '818bf942f5ba39797b0114e417936e2eadeed2e585842c5d23e3930cb513fd08',
-    '1c6dba91b6ed603db1153708bedaabdba72db15eaa9d5ce835c52bd863d52609',
+    validation.catalogDigest.replace('sha256:', ''),
+    validation.topologyDigest.replace('sha256:', ''),
+    validation.packetContractDigest.replace('sha256:', ''),
   ]) assert.ok(page.includes(value), value);
   assert.match(page, /Current<\/code> requires the complete live identity chain/u);
   assert.match(page, /Historical<\/code> preserves what one frozen execution measured/u);

@@ -26,6 +26,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 18. For dataset-guided discovery of processing nodes, authority gates, strategies, edges, or protocol fields, read `docs/specs/DS028-dataset-guided-processing-graph-discovery-research.md` completely and preserve its rights, split, inert-data, contamination, and promotion boundaries.
 19. For exact hierarchical circuit, node, edge, packet, authority, implementation-state, or resource-vocabulary changes, read `docs/specs/DS029-hierarchical-processing-circuits-and-packet-contracts.md` completely. Keep descriptive catalog state distinct from execution receipts and DS028 research hypotheses.
 20. Before acquiring, projecting, scaling, or consolidating a task-feedback, preference, trajectory, process-reward, or reinforcement-learning dataset, read `training/.agents/skills/rl-dataset-graph-discovery/SKILL.md` completely and run its source, cycle, bundle, log, and large-source admission validators as applicable.
+21. Before changing or approving processing-graph explorer catalogs, views, explanations, navigation, legends, or layout, read `training/.agents/skills/review-processing-graph-views/SKILL.md` completely and audit semantic owners plus every reachable desktop and mobile view.
 
 # Current Skill Catalog
 
@@ -39,6 +40,7 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - `core-change-guardian`: challenges generic-core proposals for domain leakage, unsoundness, hidden policy, and regressions.
 - `kb-compiler-quality-auditor`: checks package structure, hashes, safety constraints, provenance, and deterministic compilation.
 - `rl-dataset-graph-discovery`: freezes and projects rights-cleared task-feedback or trajectory datasets, runs bounded multi-method structural discovery, consolidates node/strategy/gate/edge/packet hypotheses, and audits phased large-source admission without learning answers or runtime policy.
+- `review-processing-graph-views`: audits every explorer view against catalog identities, executable owners, implementation states, explanations, navigation, line semantics, equal-spacing geometry, and desktop/mobile browser evidence.
 
 # Repository Rules
 
@@ -172,5 +174,6 @@ This repository develops an Executable Symbolic Language Model (ESLM): a determi
 - Hierarchical processing-circuit catalog and packet contracts: `docs/specs/DS029-hierarchical-processing-circuits-and-packet-contracts.md`
 - Processing-graph discovery ledger: `processing_graph_discoveries.md`
 - RL/task-feedback dataset discovery skill: `training/.agents/skills/rl-dataset-graph-discovery/`
+- Processing-graph view and code synchronization audit: `training/.agents/skills/review-processing-graph-views/`
 - Source, adapter, corpus, routing, and cache gates: `docs/specs/DS016-source-identity-license-and-access.md` through `docs/specs/DS021-memory-budgets-and-shard-caches.md`
 - Archived research source, never current authority: `original_specs/`

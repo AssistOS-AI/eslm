@@ -58,10 +58,12 @@ request-intent planning, bounded result construction, role-focused grounding, sh
 This list assigns ownership; it does not claim that every mechanism is implemented.
 
 At the present checkpoint, `src` contains bounded deterministic language compilers and the DS022 confidence-voted
-recovery ensemble rather than a general chart parser, a request-intent planner with bounded extractive `PARTIAL`
-construction plus a single-goal reasoning skeleton rather than general AND/OR planning, positive Horn reasoning and
-several finite typed methods rather than every listed logic, and provider-specific retrieval/caches rather than the
-complete future catalog. DS003, DS008, DS015, DS020, and DS022 state those exact boundaries. Documentation must not
+recovery ensemble rather than a general chart parser, a request-intent planner with bounded grounded symbolic
+`PARTIAL` construction plus a single-goal reasoning skeleton rather than general AND/OR planning, positive Horn
+reasoning and several finite typed methods rather than every listed logic, and provider-specific retrieval/caches
+rather than the complete future catalog. The construction path has an executable non-voting claim gate, rhetorical
+plan, typed sentence realization, format-aware document assembly, and exact reproduction; it is not a latent or
+general prose generator. DS003, DS008, DS015, DS020, and DS022 state those exact boundaries. Documentation must not
 infer an executor from the appearance of a mechanism in this ownership list.
 
 A new mechanism belongs in the trusted layer when its behavior is independent of the vocabulary and topic of the benchmark. Passive-voice semantic-role inversion, quantifier scope, temporal state supersession, unification, backtracking and proof search are representative examples.
@@ -153,8 +155,12 @@ If the primary path cannot establish an answer, a bounded related-evidence phase
 indexes under DS009, DS020, and the exact DS022 work policy. This remains trusted generic retrieval in `src`; source
 facts and lexical neighborhoods remain KB data. Ordinary failure grounding cannot execute KB content, change the
 primary status, or pass evidence into the DS013 language-only normalizer. A separately identified DS022 artifact
-request may select related records as cited source claims in a `PARTIAL` extractive result; that route is construction,
-not a proof method, and records every selected contributor without upgrading relevance to truth.
+request may instead admit related records as provenance-bound claims in a `PARTIAL` grounded symbolic result. Its
+non-voting claim gate records rejection as well as admission; one rhetorical strategy orders sections; four sentence
+strategies realize supplied sentences, lexical definitions, typed facts, and explicitly causal defeasible relations;
+and seven assembly strategies handle claim fusion, comparison, gaps, prose, sections, outlines, and tables. The result
+contract reproduces the artifact exactly from the plan and admitted evidence. This route is construction, not a proof
+method: it cannot restore a rejected claim, invent a bridge, or upgrade relevance to truth.
 
 ### Capability descriptors
 

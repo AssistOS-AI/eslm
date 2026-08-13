@@ -135,9 +135,10 @@ through that refactor.
 ### Processing-graph research operations
 
 The operator workflow has four non-interchangeable contracts. An approved
-`eslm-rl-dataset-discovery-plan-v1` is validated before analysis and is the only artifact with
-training-projection analysis-admission authority. An `eslm-processing-graph-research-analysis-v5` then records exact
-machine work, lineage, hypotheses, omissions, and completeness. A repository-maintainer supplies a separate
+`eslm-rl-dataset-discovery-plan-v2` is validated before analysis and is the only artifact with
+training-projection analysis-admission authority. An `eslm-processing-graph-research-analysis-v6` then records exact
+machine work, high-cardinality replay and evidence ledgers, hypotheses, omissions, and completeness. A
+repository-maintainer supplies a separate
 `eslm-processing-graph-consolidation-review-v1` that maps real machine-hypothesis identities to reviewed candidates.
 Only after that review may the host seal an `eslm-rl-dataset-discovery-cycle-v3`, which binds the plan and analysis,
 copies the analysis-derived per-split declared, available, visited, selected, and analyzed counts, accounts for every
@@ -145,13 +146,14 @@ machine hypothesis exactly once, and records consolidation with
 `decisionScope: research-consolidation-only`. Plan, analysis, review, and cycle all have `none` answer, runtime, proof,
 and promotion authority. Running analysis is not consolidation, and sealing a cycle is not promotion.
 
-`research graph status` is a read-only governance projection, not a research execution command. It validates exactly
-five published historical artifacts: the two-source pilot analysis, the published large-source readiness gate, the
-source-local large-source analysis, the bounded combined analysis, and the source-status receipt. It also loads the
-three current source manifests, verifies each present cache against its exact byte length and SHA-256 identity, and
-recomputes the current pilot admission, large-source admission, combined registry, and large-source readiness gates.
-The bounded three-source analysis is also compared with its own approved pre-analysis plan and combined admission
-receipt; concatenating two source registries is not a substitute for that plan-bound gate.
+`research graph status` is a read-only governance projection, not a research execution command. It validates the
+published pilot and scale snapshots as complete chains: three compact public research receipts, their three approved
+plans and three sealed cycles, the large-source readiness receipt, the source-status receipt, and the two atomic
+publication snapshots that bind those exact artifact bytes. It also loads the three current source manifests,
+verifies each present cache against its exact byte length and SHA-256 identity, and recomputes the current pilot,
+large-source, and combined admission gates, combined registry, and large-source readiness gate. The bounded
+three-source public receipt is compared with its own approved pre-analysis plan and combined admission receipt;
+concatenating two source registries is not a substitute for that plan-bound gate.
 Cache verification may hash the frozen source bytes, but status does not parse source rows, rebuild a projection, run
 discovery strategies, replace a receipt, or alter the runtime or processing-graph catalog.
 `research graph status --publish` is rejected rather than treated as a no-op or publication request.
@@ -171,8 +173,16 @@ registry drift, projection drift, or readiness drift therefore remains visible e
 said complete. Malformed historical receipts, malformed manifests, and unsupported protocols remain command errors.
 
 `research graph pilot` and `research graph scale` execute bounded deterministic research but do not publish unless
-`--publish` is present. Pilot publication replaces only the named pilot receipt. Scale publication replaces only the
-named source-local, combined, source-status, and readiness receipts produced by that run. The scale runner admits the
+`--publish` is present. The full `eslm-processing-graph-research-analysis-v6` remains the diagnostic execution record.
+Publication derives a bounded `eslm-processing-graph-research-public-receipt-v1` from that validated analysis; the
+compact receipt preserves the plan, implementation, baseline, registry, coverage, work, technique, hypothesis,
+omission, completeness, handoff, and authority summaries, binds the full-analysis receipt digest, and marks its replay
+state `diagnostic-export-only`. It omits the high-cardinality episode, feature, metamorphic, and proposal replay
+ledgers and is capped at five MiB, so it is a publication view rather than a replacement analysis authority.
+
+Pilot publication atomically replaces its named compact receipt, plan, cycle, and publication snapshot. Scale
+publication atomically replaces the source-local and combined compact receipts, their plans and cycles, readiness,
+source status, and the scale publication snapshot. The scale runner admits the
 large source only at the exact `large-corpus` stage and only through a content-bound
 `eslm-rl-large-source-preflight-v1` receipt. That preflight binds the current implementation, baseline graph, producer
 script bytes and command, a recursively enumerated content identity for every repository-local module in the
@@ -186,7 +196,7 @@ analyzer state. The parent records all four process exit codes and samples each 
 Hand-authored readiness booleans or memory values cannot substitute for this
 receipt. Running or publishing research never grants answer, proof, runtime, catalog, or promotion authority.
 
-The sealing operation accepts one already approved plan, one validated analysis-v5 receipt, and one explicit human
+The sealing operation accepts one already approved plan, one validated full analysis-v6 receipt, and one explicit human
 review artifact, and writes one cycle-v3 receipt. It refuses a changed plan, registry, baseline graph, split accounting, work policy,
 analysis identity, invented machine hypothesis, duplicate mapping, missing decision, or review outside DS028 and
 DS029. Sealing does not rerun analysis and does not publish or alter the processing graph. Bundle validation is a
@@ -234,11 +244,13 @@ records in top-level provenance. Related, rejected, or merely retrieved groundin
 
 Human-readable output may be concise, but a machine-readable result must be available for benchmark evaluation and agent diagnostics.
 
-For a planned synthesis result, interactive output has two explicit visual regions. A dimmed
-`Thinking · symbolic processing` region reports the request plan, output contract, evidence admission, exact
-construction-strategy path, construction confidence, and authority boundary. A normal `Answer` region then contains
-only the coherent user-facing document. This thinking region is an inspectable deterministic execution summary, not
-private chain-of-thought and not additional evidence.
+Every interactive result has two explicit visual regions. A dimmed `Thinking · symbolic processing` region reports
+the visible deterministic route, status, method, evidence accounting, and authority boundary. Language recovery also
+names the accepted CNL and votes; planned synthesis names the request plan, output contract, five construction nodes,
+selected sentence and assembly strategies, and construction confidence. A normal `Answer` region contains only the
+coherent user-facing response. A bare symbolic value such as `northwest` is presented as the sentence “The symbolic
+result is ‘northwest’.” Machine JSON preserves the original typed answer and values. The thinking region is an
+inspectable execution summary, not private chain-of-thought and not additional evidence.
 
 When the runtime cannot answer but returns ordinary related KB records, one-shot JSON keeps the primary `answer`
 unchanged and serializes `grounding` separately. Interactive output prints the primary status and answer first, then a
@@ -452,7 +464,7 @@ Response: Historical receipts answer what a particular frozen execution measured
 rights, source admission, registry composition, projection identity, and readiness answer whether that execution is
 still admissible now. Reporting only the historical copy would let a tombstoned source, changed split, replaced
 projection, or stale preflight continue to look current. Re-running analysis inside a status command would hide the
-same distinction and create an expensive mutation boundary. The v2 result therefore preserves both evidence classes
+same distinction and create an expensive mutation boundary. The v3 result therefore preserves both evidence classes
 and marks drift as `blocked`, `withdrawn`, or `superseded` without pretending that the old execution never occurred.
 
 ## Conclusion

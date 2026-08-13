@@ -3,7 +3,7 @@ id: DS012
 title: Documentation, Generated Status, and Repository Operations
 status: in-progress
 owner: repository
-summary: Defines specification ownership, non-redundant HTML information architecture, generated empirical status, readable layout, diagram use, canonical checks, and change-locality requirements.
+summary: Defines specification ownership, non-redundant HTML information architecture, generated empirical status, readable layout, semantically code-synchronized diagrams, canonical checks, and change-locality requirements.
 ---
 
 # DS012 Documentation, Generated Status, and Repository Operations
@@ -99,10 +99,83 @@ through the ordinary path, and only its receipts establish that fact.
 ### Navigation and page layout
 
 The site uses one shared header navigation and breadcrumbs. The home page is a short “start here” view: project
-identity and actual boundary, one visually dominant three-to-five-node request-processing graph, layered prose naming
-the envelopes exchanged at each boundary, a compact evidence warning and link to the current report, and a
-two-dimensional sitemap. It does not substitute an architecture inventory table for the graph; the graph links to the
-logical-processing architecture where the four engineering planes and exceptional paths are explained.
+identity and actual boundary, one visually dominant progressive processing-graph explorer, a compact evidence warning
+and link to the current report, and a two-dimensional sitemap. The explorer must begin with the three authority-separated
+system planes and reveal exactly one semantic depth at a time. The root renders runtime request processing, knowledge
+build, and inert graph-discovery research as three vertical rows. Every circuit view applies the same rule when visible
+siblings have no direct typed edge: independent components stack vertically as separate modules regardless of their
+count. Each module spans the graph width from its real exterior
+`IN` rail through one plane card to its real exterior `OUT` rail. The page states why the rows are independent: runtime
+answers callers, knowledge build publishes immutable declarative packages, and research emits inert proposals for
+manual review. No line or row order may imply that one plane executes or feeds the next.
+
+Selecting a circuit, processing node, strategy family, or exact strategy moves the camera into that component. One
+breadcrumb integrated into the selected-component header restores every ancestor; the explorer does not duplicate it
+with separate home or back buttons. That breadcrumb is the component identity row: every ancestor and the current
+component carry their real semantic-level or processing-role icon, and no second type label such as `System plane`
+or repeated title occupies a separate header section. The header uses separate
+color-coded words, not unexplained initials, for immediate circuits, scoped processing nodes, and scoped strategies.
+It also reports the scoped source, process, coordinator, authority-gate, and sink populations using the same icons and
+colors as the cards and legend. Overview cards contain only the real identity, semantic-level or processing-role icon,
+compact `C / N / S` structure, role counts, implementation-state mark, entry affordance, and an `i` control. Their
+widths grow and shrink within explicit minimum and maximum bounds. A connected desktop row places the `IN` rail,
+every internal component, and the `OUT` rail in one equal-track grid; both center-to-center intervals and visible
+box-edge gaps are equal, including the gaps adjacent to the outer rails. As the visible track count grows, every box
+uses the same larger horizontal inset so arrow segments retain a visible minimum; the renderer never shortens only
+selected nodes or applies a different spacing regime to boundary rails. Narrow screens use a legible single central column rather
+than compressing several cards into unreadable slivers.
+
+On a crowded connected desktop row, internal cards use three repeating safe vertical lanes. The first eligible card
+occupies the highest available position below the context label, the second occupies the lowest available position
+above the stage edge, and the third stays midway between those limits; later cards repeat top, bottom, and middle.
+Exactly three internal cards are the compact exception: the third returns to the highest lane, producing top, bottom,
+top. Two internal cards use top and bottom. Only rows with four or more cards introduce the middle lane.
+This distribution maximizes initial line separation without changing horizontal track centers, edge direction,
+topology, or processing order. The drag handle overrides the automatic lane on that card and remains strictly vertical.
+Every connection is one independent monotonic cubic Bézier curve directly between its source and target box. Its two
+control points stay inside the source-to-target span and preserve a natural tangent into the arrowhead. The renderer
+does not group connectors into shared corridors, search alternative arcs, introduce intermediate route points, or
+expose rectangular elbows. Safe vertical lanes and vertical drag remain the mechanisms for reducing incidental
+line-on-box overlap without distorting a connector into a loop.
+
+The short context inside each view explains the selected component rather than the drawing notation. It names the
+component's concrete responsibility, the transformation or decision performed at that boundary, and the useful typed
+result. Generic phrases about a selected circuit, solid arrows, parallel layout, pages, or an exact strategy belong in
+the legend and cannot replace view-specific semantic context.
+
+Solid green arrowheaded lines are aggregated typed catalog flows. Solid blue arrowheaded lines cross a selected
+circuit boundary, dashed orange lines describe a real strategy implementation envelope, and solid purple lanes show
+opposed aggregate paths. The four colors must remain visibly distinct in both the drawn graph and its legend.
+Opposed aggregate flows use nearby separate lanes so neither direction is hidden. Their dedicated legend entry explains
+that opposed aggregate arrows can summarize different
+exact acyclic node paths crossing the same two circuit groups in opposite directions; they do not assert an exact
+reciprocal node-edge pair or execution cycle. Hover information names each direction's real edges, packets, kinds, and
+conditions. Catalog containment is navigated through cards and breadcrumbs and is explained in the graph-guide dialog;
+it is not drawn as an execution edge or pseudo-node. Every `IN` and `OUT` rail names its real exterior
+neighbor and packet types, carries the icon of the component it actually connects to, and has an `i` explanation of
+why the boundary exists and what happens there. A rail that represents an exact node in another catalog circuit has
+a navigation arrow and opens that node with its real breadcrumb. A human actor uses the human icon; an application,
+storage system, source-acquisition process, or dataset adapter uses the software-container icon; the CLI/library
+boundary uses the combined operator/client icon. These terminal exterior endpoints have no navigation arrow, do
+nothing when their bodies are selected, and their `i` explanations state the concrete exterior action and that no
+catalog target exists. Every component view has both `IN` and `OUT`. When a source has no catalog predecessor or a
+sink has no catalog successor, the corresponding rail represents that concrete actor or software interaction rather
+than a decorative placeholder or invented processing node.
+
+Complete packet, resource, authority, owner, implementation-state, connection, reuse, precondition, witness, and
+failure details open through the `i` controls in one information overlay inside the visualization. The overlay is the
+only explorer region that may need internal vertical scrolling. A leaf remains the real component between its declared
+ports and does not append a second detail block below the graph. Strategy families show at most six exact strategy
+cards per page. The graph viewport itself has no horizontal or vertical scrolling, optical zoom, or fixed oversized
+canvas. A separate `?` control in the header opens one graph-guide dialog containing navigation instructions, the
+compact legend, and prose defining every symbol; these blocks are not repeated below the diagram. Component `i`
+controls continue to open exact semantic contracts. Both dialog kinds occupy most of the available viewport, avoid a
+nested short scroll region, and scroll internally only when their content exceeds that large surface. The guide reuses
+the exact graph icons, colors, arrow styles, and implementation-state marks. Cards expose a keyboard-accessible vertical drag handle; while a card moves, every
+connected SVG path is recalculated. Parallel alternatives snap into a new non-overlapping vertical order on release,
+while ordinary horizontally distributed components retain a bounded vertical offset. The explorer does not substitute
+a static architecture inventory table for the graph
+and links to the logical-processing chapter, where the engineering planes and exceptional paths are explained.
 `evaluation.html` is the stable development-evidence entry point and links the knowledge-base, benchmark, and RL
 dataset status views. `development/benchmarks.html` is the only page that renders the complete public benchmark
 dashboard. `status.html` shows capability and roadmap state, links to the evidence report, and does not embed a
@@ -129,9 +202,12 @@ larger labels for acceptance-critical nodes. The shared visual grammar uses thre
 trusted process, and result or acceptance outcome—plus at most one exceptional/gap style when a diagram needs it. A
 short centered caption names the relationship shown; explanatory detail follows in ordinary left-aligned paragraphs,
 not in a long centered caption. That prose explains every node, edge, trust boundary, exceptional path, and limit.
-Dense graphs are split into several focused diagrams or replaced with prose and tables. The home-page graph is an
-orientation device rather than a complete inventory: its explanation names the request, Semantic IR and task frame,
-evidence frontier and method result, witness, and runtime-result envelopes, then delegates protocol details to the
+Dense static graphs are split into several focused diagrams or replaced with prose and tables. The home-page explorer
+is the deliberate exception to a static three-to-five-node diagram: it projects the complete catalog through a bounded
+camera that renders only one immediate level. The page must not repeat that explorer as a sequence of separately
+maintained Mermaid diagrams. Completeness means that every catalogued circuit, node, strategy, and visible edge is
+reachable through navigation and tested against the source catalogs; it does not mean that all details are rendered
+simultaneously. The explanation delegates the exact packet catalog and full normative inventory to the
 logical-processing architecture.
 
 ### Generated status and empirical values
@@ -213,6 +289,14 @@ describes the required gate and links the generated status rather than copying a
 ### Repository-owned skills
 
 Repository-owned training and audit skills under `training/.agents/skills/` remain self-contained. Their exact catalog is maintained in `AGENTS.md`, training documentation, and tests rather than repeated here. A skill carries its own references, scripts, schemas, and templates, imports no host source internally, receives only authorized evidence, and produces untrusted candidates or audit receipts.
+
+The repository-owned `review-processing-graph-views` skill is mandatory for explorer changes. Its static auditor checks
+regenerability, catalog and explanation coverage, owner-path existence, legend semantics, and focused tests without
+importing target source into the skill. Its browser auditor enters every reachable circuit, node, family, and exact
+strategy at desktop and narrow widths and checks two-sided boundaries, vertical disconnected modules, equal horizontal
+center intervals and visible gaps, information controls, terminal behavior, arrow attachment, overlap, and graph-area
+overflow. Those checks remain insufficient for semantic approval until the reviewer compares every projected owner
+with current executable transformations, authority, failures, resource bounds, and implementation state.
 
 Imported maintenance skills under `.agents/skills/` remain read-only during product work. Host documentation describes their role only where it affects repository operations; it does not create product DS files for imported skills.
 
@@ -303,6 +387,23 @@ distinguish navigation hubs from technical chapters at a glance. One-level folde
 deep URL hierarchy, while the common root-relative base preserves shared assets and navigation. Canonical repository
 links move immediately; the eight marked root redirects preserve only established external landing URLs and cannot
 become a second editable copy of any chapter.
+
+### Question #11: Why does a crowded graph use top, bottom, and middle lanes?
+
+Response: Using the safe vertical extremes first creates the largest initial separation between adjacent paths. With
+exactly three cards, returning the third to the top usually produces a cleaner final handoff than consuming a third
+lane. From four cards onward, the middle lane uses the remaining unobstructed corridor before the sequence repeats. The lanes affect presentation
+only. Exact horizontal order, edge direction, packet meaning, and execution semantics continue to come from the
+catalog, while vertical-only drag lets a reviewer resolve a case-specific crossing without rewriting that topology.
+
+### Question #12: Why are breadcrumbs and semantic context part of the component header?
+
+Response: The selected component, its ancestor path, and its immediate purpose are one orientation surface. Separate
+home and back buttons repeat the same navigation while consuming graph space. Likewise, a context title that explains
+arrows repeats the legend instead of helping a reader understand the language-processing responsibility. Keeping one
+header breadcrumb and one operational context makes every depth both smaller and more intelligible. Detailed reading
+instructions and the symbol glossary live behind the adjacent guide control, so they remain available without
+permanently extending the page below the diagram.
 
 ## Conclusion
 

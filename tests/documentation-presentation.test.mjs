@@ -432,8 +432,8 @@ test('operator documentation exposes research graph commands and DS029 without w
   for (const page of [agents, cli, training]) assert.ok(page.includes(sealCommand), sealCommand);
   for (const page of [cli, training]) {
     for (const protocol of [
-      'eslm-rl-dataset-discovery-plan-v1',
-      'eslm-processing-graph-research-analysis-v5',
+      'eslm-rl-dataset-discovery-plan-v2',
+      'eslm-processing-graph-research-analysis-v6',
       'eslm-processing-graph-consolidation-review-v1',
       'eslm-rl-dataset-discovery-cycle-v3',
       'eslm-processing-graph-research-status-v3',

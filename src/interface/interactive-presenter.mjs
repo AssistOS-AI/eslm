@@ -186,6 +186,23 @@ export async function interactiveSmoke(engine, selected, style, seed, count = RE
   return lines.join('\n');
 }
 
+function coherentInteractiveAnswer(value) {
+  const surface = String(value ?? '').trim();
+  if (!surface) return 'No answer was produced.';
+  if (surface.includes('\n') || /^(?:#|[-*]\s|\|)/u.test(surface) || /[.!?][”’"']?$/u.test(surface)) {
+    return surface;
+  }
+  if (surface.split(/\s+/u).length <= 4) return `The symbolic result is “${surface}”.`;
+  return `${surface}.`;
+}
+
+function processingAnswer(style, details, answer) {
+  const muted = style.gray ?? style.dim;
+  const thinking = [style.bold(muted('Thinking · symbolic processing')),
+    ...details.map((detail) => muted(`  ${detail}`))].join('\n');
+  return `${thinking}\n\n${style.bold('Answer')}\n${coherentInteractiveAnswer(answer)}`;
+}
+
 export function interactiveResultText(result, original, style) {
   const appendGrounding = (primary) => {
     if (!result.grounding) return primary;
@@ -216,10 +233,12 @@ export function interactiveResultText(result, original, style) {
     const confidence = Number.isFinite(assessment?.confidence)
       ? ` Confidence ${assessment.confidence.toFixed(3)} at threshold ${assessment.threshold.toFixed(3)}.`
       : '';
-    return `${style.status(result.status, `[${result.status}]`)} ${style.yellow('English language check did not accept this input.')}
-  ${assessment?.diagnostic ?? 'The input is likely not English.'}${confidence}
-  Translate the request to English, or leave the Language Agent enabled to request an auditable translation proposal.
-  No parser, heuristic interpretation, KB lookup, or session update ran.`;
+    return processingAnswer(style, [
+      `English language gate: ${assessment?.diagnostic ?? 'The input is likely not English.'}${confidence}`,
+      'Execution boundary: no parser, heuristic interpretation, KB lookup, or session update ran.',
+      `Status: ${result.status}.`,
+    ], result.answer
+      ?? 'Translate the request to English, or leave the Language Agent enabled to request an auditable translation proposal.');
   }
   if (result.languageRoute === 'heuristic-request-synthesis') {
     const plan = result.requestPlanning.selectedPlan;
@@ -229,62 +248,73 @@ export function interactiveResultText(result, original, style) {
     const rejected = realization?.coverage?.evidenceRejected ?? 0;
     const strategyNames = (realization?.strategyTrace ?? []).map((identity) =>
       identity.replace(/^strategy:result:/u, '').replace(/@\d+$/u, '')).join(' → ');
-    const muted = style.gray ?? style.dim;
-    const processing = `${style.bold('Thinking · symbolic processing')}
-  Request plan coordinator: ${operations}; ${plan.subrequests.length} bounded subrequests; confidence ${plan.confidence.toFixed(3)} (${plan.confidenceBand}).
-  Output contract: ${plan.outputContract.length} ${plan.outputContract.artifact}, ${plan.outputContract.format}.
-  Evidence admission: ${realized} KB claim(s) realized; ${rejected} related claim(s) withheld from the answer.
-  Construction circuit: ${strategyNames || 'no realization strategy receipt'}.
-  Construction confidence: ${Number(realization?.confidence ?? 0).toFixed(3)}; status ${result.status}.
-  Authority boundary: citations support wording; relevance alone does not become proof.`;
-    return `${muted(processing)}
-
-${style.bold('Answer')}
-${result.answer}`;
+    return processingAnswer(style, [
+      `Request plan coordinator: ${operations}; ${plan.subrequests.length} bounded subrequests; confidence ${plan.confidence.toFixed(3)} (${plan.confidenceBand}).`,
+      `Output contract: ${plan.outputContract.length} ${plan.outputContract.artifact}, ${plan.outputContract.format}.`,
+      `Evidence admission: ${realized} KB claim(s) realized; ${rejected} related claim(s) withheld from the answer.`,
+      'Processing nodes: Result construction coordinator → Claim admission gate → Rhetorical plan builder → Sentence realization coordinator → Document assembly coordinator → Result schema gate.',
+      `Selected strategies: ${strategyNames || 'no realization strategy receipt'}.`,
+      `Construction confidence: ${Number(realization?.confidence ?? 0).toFixed(3)}; status ${result.status}.`,
+      'Authority boundary: citations support wording; relevance alone does not become proof.',
+    ], result.answer);
   }
   if (result.languageRoute === 'heuristic-cnl-approximated') {
     const candidate = result.approximation.selectedCandidate;
     const families = candidate.supportingFamilies.join(', ');
-    return appendGrounding(`${style.blue('Local heuristic interpretation accepted')} — no Language Agent
-  Original: ${original}
-  Interpreted CNL: ${candidate.text}
-  Confidence: ${candidate.confidence.toFixed(3)} (${candidate.confidenceBand}); votes: ${families}.
-  Session effects: query-local and discarded after this result.
-  Symbolic result: ${style.status(result.status, `[${result.status}]`)} ${result.answer}`);
+    return appendGrounding(processingAnswer(style, [
+      'Language route: local heuristic interpretation; no Language Agent.',
+      `Original: ${original}`,
+      `Interpreted CNL: ${candidate.text}`,
+      `Confidence: ${candidate.confidence.toFixed(3)} (${candidate.confidenceBand}); votes: ${families}.`,
+      `Session effects: query-local and discarded after this result; status ${result.status}.`,
+    ], result.answer));
   }
   if (result.languageRoute === 'heuristic-cnl-ambiguous') {
     const reparses = result.approximation.reparses.filter((item) => item.acceptedSemanticIr);
-    return appendGrounding(`${style.yellow('Local heuristic interpretations remain ambiguous')}
-  Original: ${original}
-${reparses.slice(0, 4).map((item) => `  ${item.rank}. ${item.text} — ${item.status}; confidence ${item.confidence.toFixed(3)}`).join('\n')}
-  No candidate was committed. Use ${style.blue('/trace')} for votes and reparse outcomes.`);
+    return appendGrounding(processingAnswer(style, [
+      'Language route: local heuristic interpretations remain ambiguous.',
+      `Original: ${original}`,
+      ...reparses.slice(0, 4).map((item) =>
+        `${item.rank}. ${item.text} — ${item.status}; confidence ${item.confidence.toFixed(3)}.`),
+      'No candidate was committed; /trace exposes votes and reparse outcomes.',
+    ], result.answer ?? 'I found several plausible interpretations and need the request clarified.'));
   }
   if (result.languageRoute === 'language-agent-normalized') {
     const operation = result.normalization.candidate.operation === 'translation' ? 'Translation' : 'Simplification';
     const cache = result.normalization.cacheHit ? ' (validated cache hit)' : '';
     const activity = `${result.normalization.proposalCount ?? 1}/${result.normalization.proposalLimit ?? 3} proposal slots; ${result.normalization.externalInvocations ?? 0} external invocation(s)`;
-    return appendGrounding(`${style.yellow(`Language Agent ${operation.toLocaleLowerCase('en-US')} accepted${cache}`)}\n  Original: ${original}\n  ${operation}: ${result.normalization.candidate.normalizedEnglish}\n  Agent activity: ${activity}\n  Symbolic result: ${style.status(result.status, `[${result.status}]`)} ${result.answer}`);
+    return appendGrounding(processingAnswer(style, [
+      `Language Agent ${operation.toLocaleLowerCase('en-US')} accepted${cache}.`,
+      `Original: ${original}`,
+      `${operation}: ${result.normalization.candidate.normalizedEnglish}`,
+      `Agent activity: ${activity}; symbolic status ${result.status}.`,
+    ], result.answer));
   }
-  const lines = [`${style.status(result.status, `[${result.status}]`)} ${result.answer}`];
+  const details = [
+    `Route: ${result.languageRoute ?? 'direct-symbolic'}; status ${result.status}.`,
+    `Method: ${result.reasoning?.method ?? result.plan?.methodId ?? 'bounded symbolic execution'}.`,
+    `Evidence: ${(result.provenance ?? []).length} answer premise(s); ${(result.usedKbVersions ?? []).length} contributing KB version(s).`,
+    'Authority boundary: the displayed wording does not change the machine result status.',
+  ];
   if (result.approximation && result.approximation.status !== 'accepted-reparse') {
     const reparses = result.approximation.reparses ?? [];
-    lines.push(style.yellow(`Local heuristics: ${result.approximation.status}; ${result.approximation.candidates?.length ?? 0} candidate(s), ${reparses.length} symbolic reparse(s).`));
+    details.push(`Local heuristics: ${result.approximation.status}; ${result.approximation.candidates?.length ?? 0} candidate(s), ${reparses.length} symbolic reparse(s).`);
   }
   if (result.normalization?.attempted && result.normalization.status !== 'accepted') {
     const operation = result.normalization.candidate?.operation ?? result.normalization.requestedOperation ?? 'normalization';
-    lines.push(style.red(`Language Agent ${operation} ${result.normalization.status}.`));
-    lines.push(`  Original: ${original}`);
+    details.push(`Language Agent ${operation} ${result.normalization.status}.`);
+    details.push(`Original: ${original}`);
     if (result.normalization.candidate?.normalizedEnglish) {
-      lines.push(`  Proposed English: ${result.normalization.candidate.normalizedEnglish}`);
+      details.push(`Proposed English: ${result.normalization.candidate.normalizedEnglish}`);
     }
     if (Number.isInteger(result.normalization.proposalCount)) {
-      lines.push(`  Agent activity: ${result.normalization.proposalCount}/${result.normalization.proposalLimit ?? 3} proposal slots; ${result.normalization.externalInvocations ?? 0} external invocation(s).`);
+      details.push(`Agent activity: ${result.normalization.proposalCount}/${result.normalization.proposalLimit ?? 3} proposal slots; ${result.normalization.externalInvocations ?? 0} external invocation(s).`);
     }
-    lines.push(`  Reason: ${result.normalization.diagnostic
+    details.push(`Reason: ${result.normalization.diagnostic
       ?? result.normalization.validation?.errors?.join('; ')
       ?? `the second symbolic parse returned ${result.normalization.reparseStatus ?? 'an unsupported result'}`}`);
   }
-  return appendGrounding(lines.join('\n'));
+  return appendGrounding(processingAnswer(style, details, result.answer));
 }
 
 function formatBytes(bytes) {

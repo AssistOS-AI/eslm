@@ -299,25 +299,31 @@ function assembleAnswer(plan, operationResults, claims, citations, limitSentence
     if (heading) lines.push(`## ${heading}`, '');
     if (artifact.outputContract.format === 'table') {
       lines.push('| Supported statement | Evidence |', '|---|---|');
+      const renderedRows = [];
       for (const claim of operationClaims) {
         const marker = claim.citationNumber ? `[${claim.citationNumber}]` : 'supplied material';
-        lines.push(`| ${claim.sentence.replaceAll('|', '\\|')} | ${marker} |`);
+        const row = `| ${claim.sentence.replaceAll('|', '\\|')} | ${marker} |`;
+        renderedRows.push(row);
+        lines.push(row);
       }
       paragraphs.push(Object.freeze({
         paragraphId: `paragraph:${paragraphs.length + 1}`, sectionId,
         strategyId: RESULT_REALIZATION_STRATEGIES.tableAssembly,
         claimIds: Object.freeze(operationClaims.map((claim) => claim.claimId)),
-        surface: operationClaims.map((claim) => claim.sentence).join(' '),
+        surface: renderedRows.join('\n'),
       }));
     } else if (['outline', 'bullets'].includes(artifact.outputContract.format)) {
+      const renderedItems = [];
       for (const claim of operationClaims) {
-        lines.push(`- ${claim.sentence}${claim.citationNumber ? ` [${claim.citationNumber}]` : ''}`);
+        const item = `- ${claim.sentence}${claim.citationNumber ? ` [${claim.citationNumber}]` : ''}`;
+        renderedItems.push(item);
+        lines.push(item);
       }
       paragraphs.push(Object.freeze({
         paragraphId: `paragraph:${paragraphs.length + 1}`, sectionId,
         strategyId: RESULT_REALIZATION_STRATEGIES.outlineAssembly,
         claimIds: Object.freeze(operationClaims.map((claim) => claim.claimId)),
-        surface: operationClaims.map((claim) => claim.sentence).join(' '),
+        surface: renderedItems.join('\n'),
       }));
     } else {
       const prose = proseForClaims(operationClaims);

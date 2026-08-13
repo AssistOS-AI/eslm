@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Processing Graph Views"
+  short_description: "Audit diagram semantics against current code"
+  default_prompt: "Use $review-processing-graph-views to audit every processing-graph view against the current catalogs, renderer, and executable evidence."

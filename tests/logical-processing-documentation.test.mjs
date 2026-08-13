@@ -14,8 +14,14 @@ import { HOMEPAGE_PROCESSING_GRAPH_PROJECTION } from
   '../docs/assets/processing-graph-explorer-data.mjs';
 import {
   buildHomepageProcessingGraphProjection,
+  buildProcessingGraphExplorerView,
   HOMEPAGE_PROCESSING_GRAPH_PROJECTION_PROTOCOL,
 } from '../docs/assets/processing-graph-explorer-model.mjs';
+import {
+  explainBoundaryPort,
+  explainProcessingGraphView,
+  plainTypeLabel,
+} from '../docs/assets/processing-graph-explorer-explanations.mjs';
 
 async function projectFile(path) {
   return readFile(join(PROJECT_ROOT, path), 'utf8');
@@ -70,15 +76,15 @@ test('logical architecture separates four planes and distinguishes coordination 
   assert.match(page, /Research consolidation precedes promotion/u);
   assert.match(page, /still stops before the non-voting transfer and promotion gates/u);
   for (const protocol of [
-    'eslm-rl-dataset-discovery-plan-v1',
-    'eslm-processing-graph-research-analysis-v5',
+    'eslm-rl-dataset-discovery-plan-v2',
+    'eslm-processing-graph-research-analysis-v6',
     'eslm-processing-graph-consolidation-review-v1',
     'eslm-rl-dataset-discovery-cycle-v3',
   ]) assert.match(page, new RegExp(protocol, 'u'));
-  assert.match(page, /complete analysis-v5 records 69,467 typed actions and 41,670 dependencies/u);
+  assert.match(page, /complete analysis-v6 records 69,467 typed actions and 41,670 dependencies/u);
   assert.match(page, /Sixteen validated training-projection shards admit 2,220 trees/u);
   assert.match(page, /approved combined plan admits 19,854 training-visible episodes/u);
-  assert.match(page, /Final visited work, omissions, events, votes, hypotheses, and cycle decisions belong to analysis-v5 and cycle-v3/u);
+  assert.match(page, /Final visited work, omissions, events, votes, hypotheses, and cycle decisions belong to analysis-v6 and cycle-v3/u);
   assert.match(page, /historical or superseded receipt remains evidence for its old identity/u);
   assert.doesNotMatch(page, /2,341|19,975|analysis-v2|Current v2 receipt/iu);
 });
@@ -135,10 +141,12 @@ test('logical architecture stays synchronized with the validated processing-grap
 
 test('logical architecture publishes every exact packet contract and policy dimension', async () => {
   const page = await projectFile('docs/architecture/logical-processing-architecture.html');
+  const contractCount = PROCESSING_GRAPH_PACKET_CONTRACT_CATALOG.contracts.length;
   const section = page.match(
-    /<h3>Packet-contract catalog · 58 closed semantic envelopes<\/h3>([\s\S]*?)<h3>Zoom 3/u,
+    new RegExp(`<h3>Packet-contract catalog · ${contractCount} closed semantic envelopes<\\/h3>`
+      + '([\\s\\S]*?)<h3>Zoom 3', 'u'),
   )?.[1] ?? '';
-  assert.equal((section.match(/<tr><td><code>packet:/gu) ?? []).length, 58);
+  assert.equal((section.match(/<tr><td><code>packet:/gu) ?? []).length, contractCount);
   assert.match(section, /unknown names fail before semantic-owner validation/u);
   for (const contract of PROCESSING_GRAPH_PACKET_CONTRACT_CATALOG.contracts) {
     const start = section.indexOf(`<tr><td><code>${contract.packetType}</code>`);
@@ -181,7 +189,7 @@ test('logical architecture publishes every exact built-in strategy identity and 
   }
 });
 
-test('homepage starts with a complete live-catalog projection and successive zooms', async () => {
+test('homepage processing graph exposes one catalog-derived semantic depth at a time', async () => {
   const [home, css, renderer] = await Promise.all([
     projectFile('docs/index.html'),
     projectFile('docs/assets/site.css'),
@@ -193,59 +201,270 @@ test('homepage starts with a complete live-catalog projection and successive zoo
   );
   assert.equal(projected.format, HOMEPAGE_PROCESSING_GRAPH_PROJECTION_PROTOCOL);
   assert.deepEqual(HOMEPAGE_PROCESSING_GRAPH_PROJECTION, projected);
+
+  const rootView = buildProcessingGraphExplorerView(projected);
+  assert.equal(rootView.label, 'ESLM processing graph');
+  assert.deepEqual(rootView.inventory, {
+    subcomponentCount: 3,
+    descendantCircuitCount: PROCESSING_GRAPH_CATALOG.circuits.length - 1,
+    processingNodeCount: PROCESSING_GRAPH_CATALOG.nodes.length,
+    strategyCount: BUILTIN_STRATEGY_CATALOG.strategies.length,
+    kindCounts: {
+      source: 3,
+      process: 12,
+      coordinator: 12,
+      'authority-gate': 22,
+      sink: 3,
+    },
+  });
+  assert.deepEqual(rootView.items.map((item) => item.label), [
+    'Runtime request cycle',
+    'Knowledge build',
+    'Graph discovery research',
+  ]);
+  assert.ok(rootView.items.every((item) => item.entityKind === 'circuit'));
+  assert.equal(rootView.inputPorts.length, 3);
+  assert.equal(rootView.outputPorts.length, 3);
+  assert.ok([...rootView.inputPorts, ...rootView.outputPorts]
+    .every((port) => port.externalEndpoint && port.navigationNodeIds.length === 0
+      && ['external-actor', 'external-system', 'external-actor-system']
+        .includes(port.externalEndpointKind)));
+  assert.equal(rootView.links.filter((link) => link.linkKind === 'boundary-flow').length, 6);
+  assert.ok(PROCESSING_GRAPH_CATALOG.edges.every((edge) => !PROCESSING_GRAPH_CATALOG.edges
+    .some((candidate) => candidate.from === edge.to && candidate.to === edge.from)),
+  'exact processing nodes must not have reciprocal edge pairs');
+
+  const runtimeView = buildProcessingGraphExplorerView(projected, {
+    kind: 'circuit',
+    id: 'circuit:runtime:request-cycle',
+  });
+  assert.deepEqual(runtimeView.items.map((item) => item.label), [
+    'Ingress and language',
+    'Request and session',
+    'Knowledge and evidence',
+    'Reasoning and verification',
+    'Failure and result',
+  ]);
+  assert.ok(runtimeView.links.some((link) => link.linkKind === 'flow' && link.edgeCount > 1));
+
+  const ingressView = buildProcessingGraphExplorerView(projected, {
+    kind: 'circuit',
+    id: 'circuit:runtime:ingress-language',
+  });
+  const workPolicyPort = ingressView.inputPorts.find((port) =>
+    port.navigationNodeIds.includes('node:runtime:work-policy-gate'));
+  assert.deepEqual(workPolicyPort.navigationNodeKinds, ['authority-gate']);
+  assert.equal(workPolicyPort.externalEndpoint, false);
+  assert.ok(ingressView.inputPorts.some((port) => port.externalEndpoint
+    && port.label === 'CLI operator or library client'));
+
+  const languageNodeView = buildProcessingGraphExplorerView(projected, {
+    kind: 'node',
+    id: 'node:runtime:language-proposal-coordinator',
+  });
+  assert.equal(languageNodeView.inventory.strategyCount, 24);
+  assert.equal(languageNodeView.items.length, 1);
+  assert.equal(languageNodeView.items[0].entityKind, 'family');
+  assert.equal(languageNodeView.breadcrumbs.at(-1).label, 'Language proposal coordinator');
+  const familyView = buildProcessingGraphExplorerView(projected, {
+    kind: 'family',
+    id: languageNodeView.items[0].id,
+    parentNodeId: 'node:runtime:language-proposal-coordinator',
+  });
+  assert.equal(familyView.items.length, 24);
+  assert.ok(familyView.items.every((item) => item.entityKind === 'strategy'));
+  assert.equal(familyView.inputPorts.length, 1);
+  assert.equal(familyView.outputPorts.length, 1);
+  assert.deepEqual(familyView.outputPorts[0].navigationNodeIds,
+    ['node:runtime:language-proposal-coordinator']);
+  assert.equal(familyView.outputPorts[0].label, 'Candidate handoff');
+  const strategyView = buildProcessingGraphExplorerView(projected, {
+    kind: 'strategy',
+    id: familyView.items[0].id,
+    parentFamilyId: languageNodeView.items[0].id,
+    parentNodeId: 'node:runtime:language-proposal-coordinator',
+  });
+  assert.equal(strategyView.items.length, 0);
+  assert.equal(strategyView.inputPorts.length, 1);
+  assert.equal(strategyView.outputPorts.length, 1);
+  assert.deepEqual(strategyView.reusedByNodes.map((node) => node.nodeId),
+    ['node:runtime:language-proposal-coordinator']);
+
+  const sourceView = buildProcessingGraphExplorerView(projected, {
+    kind: 'node', id: 'node:runtime:request-ingress',
+  });
+  assert.equal(sourceView.inputPorts.length, 1);
+  assert.equal(sourceView.inputPorts[0].externalEndpoint, true);
+  assert.equal(sourceView.inputPorts[0].externalEndpointKind, 'external-actor-system');
+  assert.equal(sourceView.links[0].linkKind, 'boundary-flow');
+  assert.equal(sourceView.outputPorts.length, 1);
+
+  const reachableCircuits = new Set([projected.rootCircuitId]);
+  const reachableNodes = new Set();
+  const reachableStrategies = new Set();
+  const reachableEdges = new Set();
+  for (const circuit of projected.circuits) {
+    const view = buildProcessingGraphExplorerView(projected, { kind: 'circuit', id: circuit.circuitId });
+    for (const item of view.items) {
+      if (item.entityKind === 'circuit') reachableCircuits.add(item.id);
+      if (item.entityKind === 'node') reachableNodes.add(item.id);
+    }
+  }
+  for (const node of projected.nodes) {
+    const view = buildProcessingGraphExplorerView(projected, { kind: 'node', id: node.nodeId });
+    for (const item of view.items) {
+      if (item.entityKind === 'strategy') reachableStrategies.add(item.id);
+      if (item.entityKind === 'family') {
+        const family = buildProcessingGraphExplorerView(projected, {
+          kind: 'family', id: item.id, parentNodeId: node.nodeId,
+        });
+        for (const strategy of family.items) reachableStrategies.add(strategy.id);
+      }
+    }
+    for (const edge of [...view.incomingEdges, ...view.outgoingEdges]) reachableEdges.add(edge.edgeId);
+  }
+  for (const view of [
+    ...projected.circuits.map((circuit) => buildProcessingGraphExplorerView(projected, {
+      kind: 'circuit', id: circuit.circuitId,
+    })),
+    ...projected.nodes.map((node) => buildProcessingGraphExplorerView(projected, {
+      kind: 'node', id: node.nodeId,
+    })),
+    ...projected.strategyFamilies.map((family) => buildProcessingGraphExplorerView(projected, {
+      kind: 'family', id: family.familyId,
+    })),
+    ...projected.strategies.map((strategy) => buildProcessingGraphExplorerView(projected, {
+      kind: 'strategy', id: strategy.identity,
+    })),
+  ]) {
+    assert.ok(view.inputPorts.length > 0, `${view.label} input boundary`);
+    assert.ok(view.outputPorts.length > 0, `${view.label} output boundary`);
+    assert.ok([...view.inputPorts, ...view.outputPorts]
+      .filter((port) => port.externalEndpoint)
+      .every((port) => ['external-actor', 'external-system', 'external-actor-system']
+        .includes(port.externalEndpointKind)), `${view.label} exterior kind`);
+  }
+  assert.deepEqual([...reachableCircuits].toSorted(), projected.circuits.map((item) => item.circuitId).toSorted());
+  assert.deepEqual([...reachableNodes].toSorted(), projected.nodes.map((item) => item.nodeId).toSorted());
+  assert.deepEqual([...reachableStrategies].toSorted(),
+    projected.strategies.map((item) => item.identity).toSorted());
+  assert.deepEqual([...reachableEdges].toSorted(), projected.edges.map((item) => item.edgeId).toSorted());
+
   assert.match(home, /data-processing-graph-explorer/u);
   assert.match(home, /data-graph-viewport/u);
-  assert.match(home, /The first view is the map, not a summary of it/u);
-  assert.match(home, /Complete nested catalog: runtime, compiler, and inert research planes/u);
-  assert.equal((home.match(/<figure class="diagram/gu) ?? []).length, 7);
-  for (const level of [
-    'Zoom 1 · root circuit',
-    'Zoom 2 · runtime request cycle',
-    'Zoom 3 · direct language and recovery',
-    'Zoom 4 · evidence frontier',
-    'Zoom 5 · coordinator interior',
-    'Zoom 6 · grounded response construction',
-    'Zoom 7 · validation, commit, and emission',
-  ]) assert.match(home, new RegExp(level, 'u'));
+  assert.match(home, /purpose-built symbolic language and Executable Symbolic Language Model concepts/u);
+  assert.match(home, /Explore this developing vision/u);
+  assert.doesNotMatch(home, /Start here: current system, evidence, and scope/u);
+  assert.doesNotMatch(home, /<h2[^>]*>Explore the processing graph<\/h2>/u);
+  assert.match(home, /One fitted semantic depth at a time/u);
+  assert.match(home, /breadcrumb/u);
+  assert.match(home, /solid green arrows are typed catalog flows/iu);
+  assert.match(home, /Human actor/u);
+  assert.match(home, /Software boundary/u);
+  assert.match(home, /Operator or client/u);
+  assert.match(home, /Drag any component/u);
+  assert.match(home, /one direct, monotonic cubic Bézier curve/u);
+  assert.match(home, /exactly three use top → bottom → top/iu);
+  assert.match(home, /A leaf keeps its real component between concrete input and output interactions/iu);
+  assert.match(home, /Opposed aggregate paths · no exact cycle/u);
+  assert.match(home, /contains no reciprocal exact-node edge pair/u);
+  assert.doesNotMatch(home + renderer, /This is a leaf\. Its full contract appears below\./u);
+  assert.equal((home.match(/<figure class="diagram/gu) ?? []).length, 0);
+  assert.doesNotMatch(home, /Successive zooms|Zoom [1-7] ·/u);
   for (const label of ['ESLM processing graph', 'Runtime request cycle', 'Knowledge build',
     'Graph discovery research', 'Language proposal coordinator', 'Witness verification gate',
     'Result construction coordinator', 'Result schema gate', 'Session commit gate',
-    'Runtime result sink']) assert.match(home + renderer, new RegExp(label, 'u'));
-  assert.match(home, /grammatical-spelling@1/u);
-  assert.match(home, /relative-clause-extraction@1/u);
-  assert.match(home, /Per-strategy resource envelopes/u);
-  assert.match(home, /confidence:language-interpretation/u);
-  assert.match(home, /correlation:language:/u);
-  assert.match(home, /Resource spend and concurrency add no confidence/u);
-  assert.match(home, /separate evidence-admission gate/u);
-  assert.match(home, /only path here with verified answer authority/u);
-  assert.match(home, /strategies realize admitted content/u);
-  for (const nodeId of [
-    'node:runtime:result-construction-coordinator',
-    'node:runtime:claim-admission-gate',
-    'node:runtime:rhetorical-plan-builder',
-    'node:runtime:sentence-realization-coordinator',
-    'node:runtime:document-assembly-coordinator',
-  ]) assert.match(home, new RegExp(nodeId, 'u'));
+    'Runtime result sink']) assert.match(JSON.stringify(projected) + renderer, new RegExp(label, 'u'));
   for (const identity of BUILTIN_STRATEGY_CATALOG.strategies
     .filter((strategy) => strategy.stage === 'runtime.result.construct')
     .map((strategy) => `${strategy.strategyId}@${strategy.version}`)) {
     assert.ok(HOMEPAGE_PROCESSING_GRAPH_PROJECTION.strategies
       .some((strategy) => strategy.identity === identity), identity);
   }
-  assert.match(home, /answerSupported: false/u);
-  assert.match(home, /non-executable hypotheses for manual review; they have no runtime or promotion authority/iu);
+  assert.match(home, /non-authoritative process/iu);
   assert.doesNotMatch(home, /sha256:|\b\d+ (?:nodes|circuits|strateg(?:y|ies)|typed edges|packet types)\b/iu);
-  assert.match(renderer, /node\.strategyIdentities/u);
-  assert.match(renderer, /strategy\.budgetKeys/u);
-  assert.match(renderer, /strategy\.confidenceKind/u);
-  assert.match(renderer, /strategy\.correlationGroup/u);
-  assert.match(renderer, /node\.resourceDimensions/u);
-  assert.match(css, /\.graph-explorer__viewport[^}]*overflow:auto/u);
-  assert.match(css, /\.graph-explorer__canvas[^}]*min-width/u);
-  assert.match(css, /--graph-zoom/u);
-  assert.match(css, /\.architecture-state-key/u);
-  assert.match(css, /\.architecture-zoom/u);
+  assert.match(renderer, /buildProcessingGraphExplorerView/u);
+  assert.match(renderer, /graphEnterKind/u);
+  assert.match(renderer, /graph-camera__breadcrumbs/u);
+  assert.match(renderer, /graph-camera__header/u);
+  assert.match(renderer, /graph-boundary-port/u);
+  assert.match(renderer, /PAGE_SIZE = 6/u);
+  assert.match(renderer, /drawLinks/u);
+  assert.match(renderer, /applyAutomaticVerticalDistribution/u);
+  assert.match(renderer, /installVerticalDragging/u);
+  assert.match(renderer, /safe-lane-cycle/u);
+  assert.match(renderer, /reciprocal-flow/u);
+  assert.match(renderer, /directSiblingLinks\.length === 0/u);
+  assert.match(renderer, /freeBezierSegment/u);
+  assert.match(renderer, /simple-bezier/u);
+  assert.doesNotMatch(renderer, /shortestOrthogonalRoute|intermediateWaypoints/u);
+  assert.match(renderer, /Proposes \$\{outputs\} for \$\{owners\}/u);
+  assert.doesNotMatch(renderer, /ONE SELECTED CIRCUIT|SOLID ARROWS ARE TYPED HANDOFFS|ONE EXACT STRATEGY/u);
+  assert.doesNotMatch(home + renderer, /data-graph-(?:home|back)|graph-explorer__toolbar/u);
+  assert.match(renderer, /--graph-box-inset/u);
+  assert.match(renderer, /external-actor-system/u);
+  assert.match(renderer, /dataset\.graphPortEnterKind/u);
+  assert.match(renderer, /graph-camera__stage--parallel/u);
+  assert.match(renderer, /marker-end/u);
+  assert.match(renderer, /detail\.resourceDimensions/u);
+  assert.match(renderer, /reusedByNodes/u);
+  assert.match(css, /\.graph-explorer__viewport[^}]*overflow:visible/u);
+  assert.match(css, /\.graph-camera__stage[^}]*position:relative/u);
+  assert.match(css, /\.graph-camera__edges[^}]*position:absolute/u);
+  assert.match(css, /\.graph-camera__edge--boundary-flow/u);
+  assert.match(css, /\.graph-camera__edge--implementation-flow/u);
+  assert.match(css, /\.graph-camera__edge--reciprocal-flow/u);
+  for (const color of ['#007a45', '#165dcc', '#c45100', '#922a9b']) {
+    assert.match(renderer + css, new RegExp(color, 'iu'));
+  }
+  assert.match(css, /repeat\(var\(--graph-track-count,3\),minmax\(0,1fr\)\)/u);
+  assert.match(css, /\.graph-entity-icon--external-actor/u);
+  assert.match(css, /\.graph-entity-icon--external-system/u);
+  assert.match(css, /\.graph-node-card--plane/u);
+  assert.match(css, /\.graph-node-card--circuit-group/u);
+  assert.match(css, /\.graph-leaf/u);
+});
+
+test('every explorer entity and boundary receives concrete English explanation text', () => {
+  const projected = buildHomepageProcessingGraphProjection(
+    PROCESSING_GRAPH_CATALOG,
+    BUILTIN_STRATEGY_CATALOG,
+  );
+  const views = [
+    ...projected.circuits.map((circuit) => buildProcessingGraphExplorerView(projected, {
+      kind: 'circuit', id: circuit.circuitId,
+    })),
+    ...projected.nodes.map((node) => buildProcessingGraphExplorerView(projected, {
+      kind: 'node', id: node.nodeId,
+    })),
+    ...projected.strategyFamilies.map((family) => buildProcessingGraphExplorerView(projected, {
+      kind: 'family', id: family.familyId,
+    })),
+    ...projected.strategies.map((strategy) => buildProcessingGraphExplorerView(projected, {
+      kind: 'strategy', id: strategy.identity,
+    })),
+  ];
+  const explanations = new Set();
+  for (const view of views) {
+    const copy = explainProcessingGraphView(view, projected);
+    assert.ok(copy.summary.length >= 20, `${view.label} summary`);
+    assert.ok(copy.explanation.length >= 180, `${view.label} explanation`);
+    assert.ok(copy.explanation.includes(view.label) || copy.explanation.includes(view.role), view.label);
+    assert.doesNotMatch(copy.summary + copy.explanation,
+      /This is a leaf|full contract appears below|no hidden processing step is implied/iu);
+    assert.ok(!explanations.has(copy.explanation), `duplicate explanation: ${view.label}`);
+    explanations.add(copy.explanation);
+    for (const port of [...view.inputPorts, ...view.outputPorts]) {
+      const portCopy = explainBoundaryPort(port, view);
+      assert.ok(portCopy.summary.length >= 20, `${view.label} ${port.direction} summary`);
+      assert.ok(portCopy.explanation.length >= 120, `${view.label} ${port.direction} explanation`);
+      assert.ok(portCopy.explanation.includes(portCopy.connectedLabel));
+      assert.ok(port.packetTypes.some((packetType) =>
+        portCopy.explanation.includes(plainTypeLabel(packetType))), `${view.label} ${port.portId}`);
+    }
+  }
+  assert.equal(views.length, projected.circuits.length + projected.nodes.length
+    + projected.strategyFamilies.length + projected.strategies.length);
 });
 
 test('research diagrams use protocol-neutral role labels while prose names current receipts', async () => {
@@ -258,8 +477,8 @@ test('research diagrams use protocol-neutral role labels while prose names curre
     assert.match(page, /R --> C\[Sealed cycle\]/u);
     assert.doesNotMatch(page, /Machine analysis v\d|Sealed cycle v\d/u);
   }
-  assert.match(research, /Analysis-v5 visited all 17,634 admitted episodes/u);
-  assert.doesNotMatch(research, /Analysis-v4/u);
+  assert.match(research, /Analysis-v6 visited all 17,634 admitted episodes/u);
+  assert.doesNotMatch(research, /Analysis-v5/u);
 });
 
 test('primary technical chapters link to the logical processing model', async () => {
@@ -269,6 +488,35 @@ test('primary technical chapters link to the logical processing model', async ()
     'reasoning/reasoning-methods.html', 'evaluation.html', 'operations/cli.html',
   ]) {
     assert.match(await projectFile(`docs/${file}`), /logical-processing-architecture\.html/u, file);
+  }
+});
+
+test('CLI chapter documents the shared interactive processing and answer presentation', async () => {
+  const page = await projectFile('docs/operations/cli.html');
+  for (const phrase of [
+    'Thinking · symbolic processing',
+    'route, status, method, evidence count, and authority boundary',
+    'five-node construction circuit',
+    'selected sentence and assembly strategies',
+    'A clean <em>Answer</em> block follows',
+    'the JSON result retains the original typed <code>answer</code> and <code>values</code>',
+    'standard error',
+    'a cache hit emits no live-invocation line',
+  ]) assert.ok(page.includes(phrase), phrase);
+  assert.doesNotMatch(page, /Direct local execution, disabled assistance, and cache hits stay silent/u);
+});
+
+test('human architecture chapters describe grounded symbolic generation, not an extractive baseline', async () => {
+  for (const path of [
+    'docs/architecture/logical-processing-architecture.html',
+    'docs/architecture/strategy-architecture.html',
+    'docs/language/heuristic-language.html',
+    'docs/research/research-horizons.html',
+  ]) {
+    const page = await projectFile(path);
+    assert.match(page, /grounded symbolic|grounded response/iu, path);
+    assert.doesNotMatch(page, /extractive construction|current construction is extractive|cited extractive drafts/iu,
+      path);
   }
 });
 

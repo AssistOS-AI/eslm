@@ -1,6 +1,6 @@
 {
   "format": "eslm-generated-heuristic-benchmark-report-v1",
-  "createdAt": "2026-08-12T20:42:16.306Z",
+  "createdAt": "2026-08-13T07:30:22.947Z",
   "evidenceRegime": "internal-generated-development",
   "benchmarkComparable": false,
   "claimScope": "heuristic-strategy-development-and-regression-only",
@@ -41,18 +41,18 @@
         ],
         "includedExtension": ".mjs"
       },
-      "digest": "c7006419690d621b12019e4ed7503220562499b359ceaca749f664a73a5a40d2",
-      "files": 187,
+      "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
+      "files": 244,
       "runtime": {
         "node": "v22.23.1",
         "platform": "linux",
         "architecture": "x64"
       }
     },
-    "wallMilliseconds": 5853.430445,
-    "startRssBytes": 91103232,
-    "endRssBytes": 144908288,
-    "sampledPeakRssBytes": 137146368
+    "wallMilliseconds": 6571.781186,
+    "startRssBytes": 93237248,
+    "endRssBytes": 152154112,
+    "sampledPeakRssBytes": 146468864
   },
   "workPolicy": {
     "format": "eslm-work-policy-v1",
@@ -99,7 +99,7 @@
     "mode": "runtime-work-policy",
     "catalog": {
       "format": "eslm-builtin-strategy-catalog-v1",
-      "digest": "sha256:9f44d779f0a9ada195cc511aea7d5d02c45ba27a010ebe7e5fcd273e425883f3"
+      "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
     },
     "selection": {
       "source": "eslm-work-policy-v1",
@@ -2979,7 +2979,7 @@
       }
     ],
     "adapterLocal": null,
-    "configurationDigest": "sha256:4d852fe2f85a93fe6d0102d04c4c604125c85083376108cbd427996d32cee4a9"
+    "configurationDigest": "sha256:b67a9726719cf17bb41957cee45114e98b05a2c8c879636daeb182142e658dea"
   },
   "total": 1200,
   "passed": 1200,

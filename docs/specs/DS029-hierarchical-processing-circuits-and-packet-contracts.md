@@ -33,21 +33,81 @@ continuity, uncontrolled feedback, or concurrent mutation. For one request or co
 authority edges form a finite directed acyclic execution. Exceptional and rollback edges return typed gaps or restore a
 host-owned snapshot; they do not create an unbounded loop. Repeated requests create new graph instances.
 
-The graph has four complementary zoom levels:
+The graph explorer has five complementary semantic camera positions:
 
-1. **Complete system map** exposes every current circuit, node, strategy attachment, and nested boundary in one
-   scrollable, searchable projection of the machine catalog. It is the orientation source, not a tiny unreadable SVG.
-2. **Macro-circuit view** expands runtime request handling, compiler knowledge construction, and research graph
-   discovery into nested circuits.
-3. **Node-contract view** shows each stable responsibility, its packets, resources, authority, strategies, normal
-   successor, and exceptional successor.
-4. **Coordinator-interior view** shows eligible strategies receiving preallocated work, producing typed candidates and
-   receipts, being grouped by correlation, and entering a deterministic arbiter. A separate authority gate validates
-   the selected effect. Strategy support can raise confidence; it cannot authorize truth.
+1. **System view** exposes only runtime request processing, knowledge build, and inert graph-discovery research. The
+   three planes are vertical rows with their own real `IN → plane → OUT` contracts. Runtime answers a caller, build
+   publishes immutable declarative packages, and research emits non-executable proposals for manual review; no
+   cross-plane execution edge is invented.
+2. **Circuit view** exposes only the selected circuit's immediate child circuits and direct processing nodes. Typed
+   catalog edges are aggregated between the components visible at that depth. When siblings have no direct edge, each
+   is shown as a separate vertical `IN → component → OUT` module with its own real exterior boundary contract,
+   regardless of how many such siblings exist. The view says why the modules are separate.
+3. **Processing-node view** exposes one stable responsibility and its attached strategy families or direct exact
+   strategies. If no strategy is registered, the solid input/output line is the node's own packet contract rather than
+   a fictitious implementation envelope.
+4. **Strategy-family view** exposes one real catalog family and at most six exact reviewed alternatives per page.
+   Family membership does not imply that every member executes or has answer authority.
+5. **Exact-strategy view** exposes one reviewed implementation contract, its confidence and correlation meanings,
+   budget, preconditions, failures, witness, answer authority, implementation state, and every processing node that
+   reuses it.
 
-Focused diagrams below the complete map keep three to five primary nodes and may omit secondary edges for readability;
-the complete explorer and machine catalog may not. A page that says “processing node” without naming its input,
-output, authority, work, and failure boundary is incomplete engineering documentation.
+The selected-component header spells out color-coded immediate-circuit, scoped-node, and scoped-strategy counts and
+uses the same five role icons as the graph. Individual cards retain compact `C / N / S` structure and role counts.
+Every card and every real boundary rail has a separate `i` control whose plain-English explanation names the component,
+the concrete action, the reason for the boundary, the exact typed packet, the upstream or downstream responsibility,
+and the authority limit. Complete contracts appear only in that in-graph overlay, not in a repeated block below a leaf.
+An exterior endpoint is typed visually as a human actor, software container or application, or combined CLI
+operator/library client. It is terminal and non-navigable, and its information panel explains the concrete external
+operation. Only a rail backed by exactly one adjacent catalog node shows a navigation arrow and opens
+that node's real breadcrumb. A family or strategy owner-envelope rail may similarly navigate to its exact owner node.
+The breadcrumb is integrated into this selected-component header and is the only visible ancestor-navigation control.
+It is also the component identity row: each path item carries its semantic-level or processing-role icon, with no
+separate type caption or duplicated current-component title. Separate home and back buttons are not rendered. The
+short context over the graph states the exact component's
+responsibility, transformation or decision, and useful result rather than restating arrow or layout notation.
+
+Cards grow and shrink between explicit minimum and maximum widths. Connected desktop layouts place the `IN` rail,
+every internal component, and the `OUT` rail on one equal-track grid. Center intervals and visible edge-to-edge gaps
+must be equal across the complete row rather than changing beside the boundary rails. Crowded rows increase one
+shared horizontal inset for every box, including IN and OUT, until a visible minimum arrow segment is restored; box
+width reduction is uniform rather than node-specific. Narrow layouts use one legible
+central column. Boundary rails remain at the appropriate outer edges. Every view has both sides: when a source has no
+catalog predecessor, its input rail names the concrete actor or software system supplying the admitted representation;
+when a sink has no catalog successor, its output rail names the concrete recipient. Such rails are terminal exterior
+interactions, not fabricated processing nodes.
+On a crowded connected desktop row, the renderer uses three repeating safe vertical lanes. The first eligible card is
+placed at the highest safe position below the context label, the second at the lowest safe position above the stage
+edge, and the third midway between those limits; subsequent cards repeat top, bottom, and middle. Exactly three cards
+instead use top, bottom, and top, while two cards use top and bottom. The middle lane begins only when at least four
+cards are visible. This visual
+distribution reduces line-on-box overlap without changing horizontal tracks, graph topology, or execution order. A
+manual drag replaces the automatic lane for that card and changes only its vertical position.
+Each edge uses one independent monotonic cubic Bézier curve directly between its source and target. Both control
+points remain inside the source-to-target span, so the line cannot reverse into a loop and the arrowhead receives a
+stable incoming tangent. The renderer does not merge lines into shared corridors, search alternative arcs, or add
+intermediate route points, rectangular elbows, or right-angle turns. Safe vertical lanes and vertical drag reduce
+incidental line-on-box overlap. Source, target, direction, packet aggregation, and edge semantics remain unchanged.
+Typed catalog flow is solid green, circuit-boundary flow is solid blue, an implementation envelope is dashed orange,
+and opposed aggregate paths are solid purple. Drawn paths, arrowhead markers, and the guide-dialog legend use the same four
+visibly distinct encodings. Opposed aggregate arrows occupy separate nearby lanes. The graph viewport does not use horizontal or vertical scrolling or
+optical scaling; only a long information overlay may scroll internally. Breadcrumbs retain the complete ancestor path,
+so a reader can move into as many nested levels as the catalog defines and return without losing orientation.
+Containment is a catalog/navigation relation explained in the guide dialog, not an executable pseudo-node or arrow.
+Every component has a bounded vertical drag handle, and connected paths follow it. In a parallel-alternative view the
+component snaps into a new non-overlapping vertical order on release, preserving the meaning of fan-out and fan-in.
+Completeness means that every exact circuit, node, strategy attachment, and edge remains reachable and
+source-synchronized; it does not mean that the browser renders the full inventory simultaneously. The dedicated static
+catalog remains the exhaustive audit view. A page that says “processing node” without making its input, output,
+authority, work, and failure boundary reachable is incomplete engineering documentation.
+
+Opposed arrows between two visible aggregate circuit cards do not by themselves assert a graph cycle. The explorer
+may aggregate distinct exact node paths whose circuit memberships cross the same group boundary in opposite directions,
+as request/session work gates enable language recovery before language diagnostics and interpretation return to later
+request planning. The catalog must still contain no exact reciprocal node pair, and its normal data and authority paths
+must remain acyclic. Such a projection uses nearby directed lanes, line hover details for every exact edge, and a legend
+entry that says explicitly that the aggregate opposition is not an exact cycle. Its purple color distinguishes that
+aggregate visual condition from an ordinary green catalog packet path; color never creates a new edge kind.
 
 ### 2. Five node kinds
 
@@ -307,10 +367,14 @@ ledger cannot register a node, strategy, edge, packet field, nested circuit, exe
 
 ### 13. Documentation and evaluation consequences
 
-The documentation home page presents the complete nested catalog as a bounded scrollable explorer, followed by
-successive three-to-five-node focused zooms of the same graph. The dedicated architecture page exposes the same current catalog and distinguishes current execution from planned research. Source status and
-research pages report acquired, projected, analyzed, incomplete, and promoted states separately. Diagrams are views of
-the same catalog, not independent architecture claims.
+The documentation home page presents the catalog through a bounded progressive explorer that shows one semantic depth
+at a time. It must not follow the explorer with a second sequence of static zoom diagrams that restates the same graph.
+The dedicated architecture page exposes the same current catalog as an exhaustive audit view and distinguishes current
+execution from planned research. Source status and research pages report acquired, projected, analyzed, incomplete,
+and promoted states separately. Every interactive card, header count, boundary rail, edge, information overlay, and
+leaf contract is a projection of the same catalog rather than an independent architecture claim. The home page also
+provides a prose glossary for containment, typed flow, circuit boundaries, implementation envelopes, all circuit and
+node icons, and all implementation-state marks; the glossary uses the same visual encoding as the graph.
 
 Tests and evaluations attach failures to the earliest node contract, edge, packet, resource, or gate that failed.
 Strategy-family coverage is not node success; a proposal-only case is not interpretation execution; a planned node is
@@ -381,6 +445,23 @@ a packet, edge, or strategy instead.
 Response: They share the processing-node, packet, resource, and authority vocabulary, which makes the whole system
 auditable at one conceptual level. Their authority remains strictly separate: compiler candidates are not packages,
 and research hypotheses are not runtime policy.
+
+### Question #9: Why does the home page reveal one graph depth at a time?
+
+Response: Rendering the complete hierarchy, every node contract, and every strategy simultaneously preserves data but
+destroys orientation. A progressive camera keeps the first view small, preserves exact hierarchy and typed flows, and
+makes context available through each component's information control. The three root planes are stacked because they
+share a vocabulary but not an execution pipeline, and each root row names its own real exterior contract. Dynamic card
+widths, edge rails, a one-column narrow layout, bounded strategy-family pages, catalog-derived counts, breadcrumbs, and
+exhaustive reachability retain completeness without crowding the home page or turning it into a static audit table.
+
+### Question #10: Why is the automatic vertical order top, bottom, then middle?
+
+Response: The two safe extremes maximize separation for the first adjacent paths. An exact three-card row returns to
+the top because that compact arc usually leaves the final handoff clearer; at four or more cards, the middle position
+uses the remaining corridor before the three-lane sequence repeats. This is a deterministic projection rule, not processing
+order or a catalog edge. Horizontal tracks retain semantic order, while a bounded vertical-only drag can override one
+card when a particular aggregate view still has a crossing.
 
 ## Conclusion
 

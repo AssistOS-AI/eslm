@@ -106,7 +106,14 @@ Every benchmark row identifies two separate classifications. Its **measured trac
 generic solver, but it is not direct natural-language coverage. Reports may show both the adapter or solver result and
 an independent raw-language diagnostic; they must not replace the latter with the former.
 
-Reliability measurements separate correct abstention from accidental failure: `UNKNOWN`, `AMBIGUOUS`, `UNDERDETERMINED`, `INCONSISTENT_CONTEXT`, `NO_APPLICABLE_METHOD`, `RESOURCE_LIMIT`, and `UNPARSED` retain their meanings. A heuristic proof exposed as `DEFEASIBLE` is scored under that public status, and an extractive artifact is scored as `PARTIAL`, never as a strict answer. Efficiency measurements include elapsed time, peak application memory where measurable, loaded bytes, shard and cache activity, search nodes, package size, exact work-policy profile and overrides, heuristic work counts, and deterministic replay. Updateability measurements cover changed records, changed compiled bytes, affected answers, unaffected-answer stability, and provenance.
+Reliability measurements separate correct abstention from accidental failure: `UNKNOWN`, `AMBIGUOUS`,
+`UNDERDETERMINED`, `INCONSISTENT_CONTEXT`, `NO_APPLICABLE_METHOD`, `RESOURCE_LIMIT`, and `UNPARSED` retain their
+meanings. A heuristic proof exposed as `DEFEASIBLE` is scored under that public status, and a grounded symbolic
+construction artifact is scored as `PARTIAL`, never as a strict answer. Its coherent wording and exact reproduction do
+not establish exhaustive evidence coverage or proof. Efficiency measurements include elapsed time, peak application
+memory where measurable, loaded bytes, shard and cache activity, search nodes, package size, exact work-policy profile
+and overrides, heuristic work counts, and deterministic replay. Updateability measurements cover changed records,
+changed compiled bytes, affected answers, unaffected-answer stability, and provenance.
 
 Strategy measurements distinguish catalog presence, selection, eligibility, execution, abstention, invalid output,
 resource exhaustion, and contribution. Reports group those states by canonical stage and exact strategy identity and
@@ -333,10 +340,13 @@ Scoring separates five layers:
    completeness calibration.
 3. **Attribution for ordinary inability:** KB/version identity, citation validity, provenance reachability, derived
    witness validity, and the invariant that ordinary failure grounding never appears in answer provenance.
-4. **Deterministic request construction:** explicit intent precision and recall, subrequest and dependency validity,
-   output-contract adherence, selected-record relevance, citation coverage, unsupported-claim rate, and the invariant
-   that the route remains `PARTIAL`. Only selected source claims may enter its provenance and `usedKbVersions`; the
-   scorer checks that every rendered KB statement has such an attribution and that no uncited factual bridge appears.
+4. **Deterministic grounded construction:** explicit intent precision and recall, subrequest and dependency validity,
+   output-contract adherence, claim admission and rejection, rhetorical-plan coverage, selected-record relevance,
+   sentence- and assembly-strategy trace validity, citation coverage, unsupported-claim rate, and the invariant that
+   the route remains `PARTIAL`. The scorer independently reproduces the final artifact from the closed plan and
+   admitted evidence. Only records supporting realized claims may enter provenance and `usedKbVersions`; every
+   rendered KB claim must have exact attribution, and no rejected record, uncited factual bridge, or presentation-only
+   confidence may acquire answer authority.
 5. **Optional downstream formulation:** a separately declared model receives only the structured bundle and visible
    question; its answer quality, citation use, unsupported claims, model configuration, latency, and cost are scored as
    an assisted generation track, never as deterministic ESLM inference.

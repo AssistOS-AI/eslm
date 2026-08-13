@@ -344,6 +344,10 @@ export function synthesizeHeuristicRequest(planResult, grounding) {
     plan, operationResults, evidence, sourceSummary, correlation, gaps, grounding,
   });
   if (!realization) return null;
+  const realizedEvidenceIdentities = new Set(realization.claims.filter((claim) =>
+    claim.sourceKind === 'kb-evidence' && claim.status === 'realized').map((claim) => claim.evidenceIdentity));
+  const contributingEvidence = evidence.selected.filter((item) =>
+    realizedEvidenceIdentities.has(entryIdentity(item.entry)));
   return Object.freeze({
     protocol: HEURISTIC_SYNTHESIS_PROTOCOL,
     status: 'PARTIAL',
@@ -357,7 +361,7 @@ export function synthesizeHeuristicRequest(planResult, grounding) {
     correlation,
     gaps: Object.freeze(gaps),
     realization,
-    contributingKbVersions: Object.freeze([...new Map(evidence.selected.flatMap((item) =>
+    contributingKbVersions: Object.freeze([...new Map(contributingEvidence.flatMap((item) =>
       item.entry.contributingKbVersions.map((identity) => [
         `${identity.kbId}\u0000${identity.version ?? ''}`, identity,
       ]))).values()].toSorted((left, right) => left.kbId.localeCompare(right.kbId)

@@ -143,9 +143,8 @@ export function assertSynthesisExtension(value, result) {
     throw new TypeError('Runtime result synthesis must preserve grounded non-entailment authority.');
   }
   record(synthesis.plan, 'Runtime result synthesis.plan');
-  const selectedIdentities = new Map();
   const aggregateEvidence = synthesisEvidence(
-    synthesis.evidence, 'Runtime result synthesis.evidence', selectedIdentities,
+    synthesis.evidence, 'Runtime result synthesis.evidence',
   );
   const groundingEntryCount = Array.isArray(result.grounding?.entries)
     ? result.grounding.entries.length : undefined;
@@ -158,12 +157,6 @@ export function assertSynthesisExtension(value, result) {
   }
   kbIdentityArray(synthesis.contributingKbVersions,
     'Runtime result synthesis.contributingKbVersions', 32, true);
-  const declaredIdentities = new Set(synthesis.contributingKbVersions.map((identity) =>
-    `${identity.kbId}\u0000${identity.version ?? ''}`));
-  if (declaredIdentities.size !== selectedIdentities.size
-    || [...selectedIdentities.keys()].some((identity) => !declaredIdentities.has(identity))) {
-    throw new TypeError('Runtime result synthesis contributing KBs must match selected evidence.');
-  }
   if (result.answer !== synthesis.answer || result.status !== 'PARTIAL') {
     throw new TypeError('heuristic request synthesis must own the matching PARTIAL answer.');
   }
@@ -193,6 +186,20 @@ export function assertSynthesisExtension(value, result) {
     throw new TypeError('Single-operation synthesis source summary must match its operation artifact.');
   }
   assertGroundedResponseRealization(synthesis.realization, synthesis);
+  const realizedEvidenceIds = new Set(synthesis.realization.claims.filter((claim) =>
+    claim.sourceKind === 'kb-evidence' && claim.status === 'realized').map((claim) => claim.evidenceIdentity));
+  const selectedIdentities = new Map(aggregateEvidence.selected.filter((selection) =>
+    realizedEvidenceIds.has(`${selection.entry.kbId}@${selection.entry.kbVersion ?? 'unversioned'}`
+      + `:${selection.entry.recordId}`)).flatMap((selection) =>
+    selection.entry.contributingKbVersions.map((identity) => [
+      `${identity.kbId}\u0000${identity.version ?? ''}`, identity,
+    ])));
+  const declaredIdentities = new Set(synthesis.contributingKbVersions.map((identity) =>
+    `${identity.kbId}\u0000${identity.version ?? ''}`));
+  if (declaredIdentities.size !== selectedIdentities.size
+    || [...selectedIdentities.keys()].some((identity) => !declaredIdentities.has(identity))) {
+    throw new TypeError('Runtime result synthesis contributing KBs must match realized evidence.');
+  }
   boundedJson(synthesis, 'Runtime result synthesis', 1_048_576);
   return synthesis;
 }

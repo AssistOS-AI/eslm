@@ -42,9 +42,11 @@ For a new programmer, the system can be read in this order:
    knowledge, or benchmark truth.
 
 At the present checkpoint, direct controlled-language parsing, deterministic confidence-bearing local approximation,
-bounded request-intent planning and extractive `PARTIAL` construction, session overlays, indexed lookup, positive
-safe-Horn deduction, several bounded finite task methods, declarative packages, selected public-source providers,
-structured results, and named work profiles are executable. The local language boundary is English-only: a bounded
+bounded request-intent planning and grounded symbolic `PARTIAL` construction, session overlays, indexed lookup,
+positive safe-Horn deduction, several bounded finite task methods, declarative packages, selected public-source
+providers, structured results, and named work profiles are executable. Grounded construction uses non-voting claim
+admission, a rhetorical plan, four typed sentence strategies, seven discourse and format strategies, and exact
+reproduction from its closed plan and admitted evidence. The local language boundary is English-only: a bounded
 heuristic assessment can identify likely non-English input for rejection, but it never translates. The separate
 Language Agent wrapper is executable only as the operator-side proposal route composed by the general CLI; its English
 candidate is untrusted, and the explicit local override omits it.
@@ -86,7 +88,7 @@ This separation is the primary architectural invariant. It prevents each dataset
 | Runtime uncertainty is explicit | The system distinguishes solved, unknown, ambiguous, inconsistent, unsupported and resource-limited outcomes. |
 | Generated runtime artifacts are rebuildable | Indexes and binary shards can be regenerated from canonical KB records and manifests. |
 | Correct answers do not excuse invalid traces | Where the task is deterministic, proof or execution validity is independently evaluated. |
-| Related evidence is not proof | Ordinary failure grounding remains outside answer values, answer provenance, and `usedKbVersions`. The separately named DS022 request-synthesis route may cite selected source claims in a `PARTIAL` artifact and account for their KB versions, but it cannot present relevance as entailment or return `SOLVED`. |
+| Related evidence is not proof | Ordinary failure grounding remains outside answer values, answer provenance, and `usedKbVersions`. The separately named DS022 request-synthesis route may admit, realize, and cite selected source claims in a `PARTIAL` artifact and account for their KB versions, but it cannot invent a factual bridge, present relevance as entailment, or return `SOLVED`. |
 | Strategy selection is statically trusted and inspectable | Runtime profiles may select only host-registered strategy identities. KBs, corpora, configuration, and agent output cannot provide executors. Votes rank typed candidates; they never replace proof or witness verification. |
 
 ### 4. System lifecycle
@@ -146,7 +148,12 @@ Every empirical report must name the evidence regime under which it was produced
 
 The same benchmark name and final percentage do not establish comparability. Reports must identify the exact source version or digest, split, adapter, answer normalization, proof policy, optional linguistic fallback, loaded KB versions, and resource budget. Source-exposed KB checks, internal generated regression suites, and public held-out benchmarks remain distinct even when they exercise similar questions.
 
-The phrase “language model” does not imply universal next-token prediction. ESLM models the supported language fragment, explicit semantic structures, registered reasoning capabilities, selected declarative knowledge, and verified realization paths. Open-ended language generation, unrestricted English understanding, broad factual coverage, and normalized language probability remain separate capabilities that require their own executable contracts and evidence.
+The phrase “language model” does not imply universal next-token prediction. ESLM models the supported language
+fragment, explicit semantic structures, registered reasoning capabilities, selected declarative knowledge, and
+verified realization paths. The current grounded construction circuit can create bounded English wording and document
+structure from admitted evidence. Unrestricted open-ended or latent next-token generation, unrestricted English
+understanding, broad factual coverage, and normalized language probability remain separate capabilities that require
+their own executable contracts and evidence.
 
 ### Falsification criteria retained from the earlier implementation
 

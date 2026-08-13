@@ -12,197 +12,83 @@
 <body>
 <div data-include="partials/header.html"></div>
 <main>
-<section aria-labelledby="project-title">
+<section class="graph-hero" aria-labelledby="project-title">
 <p class="kicker">Executable Symbolic Language Model</p>
-<h1 id="project-title">A deterministic request-processing circuit with inspectable authority</h1>
-<p class="lead">ESLM turns bounded English requests into typed tasks, evidence, method results, and validated output. Processing nodes own each transformation. Strategies offer reviewed alternatives only where candidate comparison is meaningful. Authority gates accept or reject language, safety, schema, and proof obligations without being outvoted.</p>
+<h1 id="project-title">A reviewable foundation for language-driven automation</h1>
+<p class="lead">ESLM is being built to give teams greater control and traceability in language-driven workflows. Its purpose-built symbolic language and Executable Symbolic Language Model concepts organize bounded English requests into inspectable tasks, processing circuits, strategies, evidence, and explicit authority decisions. Explore this developing vision by selecting any card or navigable connection in the interactive diagram below.</p>
 
-<h2 id="complete-processing-map">The complete processing map</h2>
-<p>The first view is the map, not a summary of it. Nested boxes reproduce the current catalog hierarchy. Every node card names its exact identity, role, implementation state, owner, typed packets, finite resources, authority boundary, outgoing conditions, and all strategies assigned to it. Use the controls to zoom or pan; expanding an exit list reveals normal, exceptional, rollback, control, resource, and authority edges.</p>
-
-<figure class="graph-explorer" data-processing-graph-explorer aria-labelledby="complete-processing-map">
-  <div class="graph-explorer__toolbar" aria-label="Processing-map controls">
-    <span class="graph-explorer__toolbar-label">View</span>
-    <button type="button" data-graph-focus="circuit:runtime:request-cycle">Runtime</button>
-    <button type="button" data-graph-focus="circuit:compiler:knowledge-build">Compiler</button>
-    <button type="button" data-graph-focus="circuit:research:graph-discovery">Research</button>
-    <span class="graph-explorer__toolbar-label">Scale</span>
-    <button type="button" data-graph-zoom="out" aria-label="Zoom out">−</button>
-    <button type="button" data-graph-zoom="reset">Reset</button>
-    <button type="button" data-graph-zoom="in" aria-label="Zoom in">+</button>
-    <output data-graph-zoom-output aria-live="polite">78%</output>
+<figure class="graph-explorer" data-processing-graph-explorer aria-label="Interactive ESLM processing graph">
+  <div class="graph-explorer__viewport" data-graph-viewport tabindex="0" aria-label="Interactive ESLM processing graph">
+    <div class="graph-explorer__loading" data-graph-host><p>Loading the catalog projection…</p></div>
   </div>
-  <div class="graph-explorer__legend" aria-label="Node and implementation-state legend">
-    <span class="graph-legend graph-legend--source">Source</span>
-    <span class="graph-legend graph-legend--process">Process</span>
-    <span class="graph-legend graph-legend--coordinator">Coordinator</span>
-    <span class="graph-legend graph-legend--authority-gate">Authority gate</span>
-    <span class="graph-legend graph-legend--sink">Sink</span>
+  <template data-graph-guide-template>
+  <section class="graph-guide-dialog" aria-labelledby="graph-guide-dialog-title">
+  <h3 id="graph-guide-dialog-title">Graph navigation and notation</h3>
+  <p class="diagram-explanation" id="processing-map-help"><strong>Navigation and notation.</strong> Select a card or the body of a boundary rail marked <code>›</code> to move to its connected catalog component; a human, software, or combined operator/client endpoint is terminal and only its <em>i</em> control is active. The breadcrumb is integrated into the selected-component header; choose any ancestor or use <kbd>Backspace</kbd> to return. Crowded connected rows initially place internal cards in safe vertical lanes. Two cards use top → bottom; exactly three use top → bottom → top; four or more use the repeating top → bottom → middle cycle. None of these positions changes horizontal track order. Drag any component with its <code>↕</code> handle to adjust that position vertically; horizontal movement is deliberately disabled and the arrows remain attached. <code>C / N / S</code> means immediate components / scoped processing nodes / scoped strategies. The five small icon counts show sources, processes, coordinators, authority gates, and sinks. The side rails name the real caller, storage, source-acquisition, dataset, or review boundary and the packets crossing it; every rail entry has its own explanation. Solid green arrows are typed catalog flows, solid blue arrows cross the selected circuit boundary, dashed orange arrows show a strategy implementation envelope, and solid purple opposed lanes distinguish aggregate paths that cross the same two groups in opposite directions. Those opposed lanes do not claim a reciprocal exact edge or execution cycle. Data, control, resource, authority, and exception are exact catalog edge kinds shown in each drawn line's hover text; they may coexist on one aggregated typed flow, so the explorer does not assign one misleading color to that mixed line. Catalog containment is navigated through cards and the breadcrumb; it is deliberately not drawn as execution flow. Disconnected sibling circuits appear as separate vertical IN → component → OUT modules, never as an invented horizontal sequence. Connected horizontal rows place IN, every internal box, and OUT on equal tracks with equal visible gaps; when a row becomes crowded, every box shrinks by the same horizontal inset to preserve a visible line segment. Every connection is one direct, monotonic cubic Bézier curve; safe lanes and vertical drag help separate incidental overlaps without bending a line into a routed loop. Large strategy families use compact pages instead of forcing horizontal or vertical graph scrolling. A leaf keeps its real component between concrete input and output interactions; its <em>i</em> control opens the complete contract inside the visualization rather than adding another block below it.</p>
+  <div class="graph-explorer__legend" aria-label="Graph level, processing-role, edge, and implementation-state legend">
+    <span class="graph-concept-key graph-concept-key--containment">Contains</span>
+    <span class="graph-link-key graph-link-key--flow" title="Solid green: a named catalog packet between visible processing components. Hover a drawn line for exact edge kinds and conditions.">Typed flow · catalog packet</span>
+    <span class="graph-link-key graph-link-key--boundary" title="Solid blue: a typed handoff across the selected circuit boundary to or from a real adjacent component or exterior system.">Circuit boundary · exterior handoff</span>
+    <span class="graph-link-key graph-link-key--implementation" title="Dashed orange: owner input fanning to an eligible strategy, or a strategy candidate returning for the owner decision.">Implementation envelope · strategy candidate</span>
+    <span class="graph-link-key graph-link-key--reciprocal" title="Solid purple opposed lanes: different exact acyclic node paths cross the same two visible circuit groups in opposite directions.">Opposed aggregate paths · no exact cycle</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--plane">▣</span>Plane</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--circuit-group">▦</span>Circuit group</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--circuit">⬡</span>Circuit</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--strategy-family">✦</span>Strategy family</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--strategy">◇</span>Strategy</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--external-actor">♙</span>Human actor</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--external-system">▤</span>Software boundary</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--external-actor-system">♙▤</span>Operator or client</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--source">↧</span>Source</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--process">⚙</span>Process</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--coordinator">⇄</span>Coordinator</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--authority-gate">◆</span>Authority gate</span>
+    <span class="graph-legend"><span class="graph-entity-icon graph-entity-icon--sink">◎</span>Sink</span>
     <span class="graph-state graph-state--coordinated">Coordinated</span>
     <span class="graph-state graph-state--instrumented-local">Instrumented local</span>
     <span class="graph-state graph-state--planned">Planned</span>
   </div>
-  <div class="graph-explorer__viewport" data-graph-viewport tabindex="0" aria-describedby="processing-map-help">
-    <div class="graph-explorer__loading" data-graph-host><p>Loading the catalog projection…</p></div>
-  </div>
-  <figcaption>Complete nested catalog: runtime, compiler, and inert research planes.</figcaption>
+  <p class="graph-guide-dialog__scope">One fitted semantic depth at a time: boundary ports → current circuit components → boundary ports.</p>
+
+<div class="graph-concept-guide" aria-labelledby="graph-concept-guide-title">
+<h3 id="graph-concept-guide-title">How to read every graph symbol</h3>
+<dl>
+  <div><dt>Contains</dt><dd>A catalog hierarchy relation. Entering a card reveals that component's immediate children; it does not mean that the parent executes before the child or sends it data.</dd></div>
+  <div><dt><span class="graph-link-key graph-link-key--flow">Typed flow · catalog packet</span></dt><dd>A solid green arrow backed by one or more catalog edges. Its direction shows which visible component emits a named packet and which component receives it. It is executable catalog flow, not hierarchy.</dd></div>
+  <div><dt><span class="graph-link-key graph-link-key--boundary">Circuit boundary · exterior handoff</span></dt><dd>A solid blue arrow carrying a declared packet between the selected circuit and a real exterior neighbor. A rail with <code>›</code> opens the exact adjacent catalog node; a human, software, or combined operator/client endpoint is terminal. The compact <code>IN</code>/<code>OUT</code> rail is the visible interface endpoint, not a hidden processing step.</dd></div>
+  <div><dt><span class="graph-link-key graph-link-key--implementation">Implementation envelope · strategy candidate</span></dt><dd>A dashed orange arrow from an owner node's typed input to an eligible strategy, or from a strategy candidate back to that owner for a decision. Vertical alternatives are concurrent options, not processing order, and the fan-in does not claim that every result is merged or accepted.</dd></div>
+  <div><dt><span class="graph-link-key graph-link-key--reciprocal">Opposed aggregate paths · no exact cycle</span></dt><dd>Two nearby solid purple arrows in opposite directions mean that different exact node paths cross the same two visible circuit groups in opposite directions. ESLM's catalog contains no reciprocal exact-node edge pair. For example, request/session gates may authorize or fund language recovery, while later parser diagnostics and the selected interpretation return to request planning. Expanding the groups reveals the acyclic node order; line hover text names the exact edges, packets, and conditions in each direction.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--plane">▣</span> Plane</dt><dd>One top-level authority-separated system: runtime request processing, knowledge build, or inert graph-discovery research. The three planes do not form one execution pipeline.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--circuit-group">▦</span> Circuit group</dt><dd>A large nested grouping of related circuits inside one plane, used to make a long processing path inspectable in stages.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--circuit">⬡</span> Circuit</dt><dd>A bounded group of processing nodes with a declared role and visible inputs, internal typed handoffs, exceptional paths, and outputs.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--strategy-family">✦</span> Strategy family</dt><dd>A real catalog grouping of exact reviewed alternatives that address one owner responsibility. Membership is not execution or answer authority.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--strategy">◇</span> Strategy</dt><dd>One exact versioned implementation option with typed inputs and outputs, preconditions, finite costs, a witness, failure classes, and bounded authority.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--external-actor">♙</span> Human actor</dt><dd>A real operator or reviewer outside the processing catalog. The endpoint explains the request, review, or promotion interaction, is terminal in this explorer, and has no continuation arrow.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--external-system">▤</span> Software boundary</dt><dd>A real client application, source-acquisition process, file store, package catalog, immutable store, or authorized dataset adapter outside the selected catalog boundary. It is terminal here and does not pretend to be a processing node.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--external-actor-system">♙▤</span> Operator or client</dt><dd>An interface that may be used by a human CLI operator or by a software library client. The information panel explains the exact submitted or returned packet; the combined icon does not invent a hidden component.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--source">↧</span> Source</dt><dd>An entry processing node that introduces bounded, validated data into a graph instance without inferring or authorizing an answer.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--process">⚙</span> Process</dt><dd>A node that performs one named deterministic transformation from typed input to typed output under finite resource limits.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--coordinator">⇄</span> Coordinator</dt><dd>A node that funds, schedules, compares, or combines eligible typed candidates. It cannot overrule an authority gate or turn confidence into truth.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--authority-gate">◆</span> Authority gate</dt><dd>A mandatory non-voting check that may permit, reject, return a gap, or request rollback. Strategy votes cannot bypass it.</dd></div>
+  <div><dt><span class="graph-entity-icon graph-entity-icon--sink">◎</span> Sink</dt><dd>The terminal handoff for a plane. It releases only an already validated runtime result, immutable package, or non-executable research proposal.</dd></div>
+  <div><dt><span class="graph-state graph-state--coordinated">Coordinated</span></dt><dd>The real executor crosses the shared registered stage coordinator and its common allowlist, budget, receipt, and arbitration envelope.</dd></div>
+  <div><dt><span class="graph-state graph-state--instrumented-local">Instrumented local</span></dt><dd>A real bounded owner and descriptor exist, but execution remains local to that owner and is not yet selectable through the common coordinator.</dd></div>
+  <div><dt><span class="graph-state graph-state--planned">Planned</span></dt><dd>The catalog records a reviewed future component or strategy contract, but no selectable executor is claimed.</dd></div>
+</dl>
+</div>
+  </section>
+  </template>
 </figure>
-<p class="diagram-explanation" id="processing-map-help"><strong>How to read the map.</strong> A circuit groups responsibilities and may contain smaller circuits. Solid cards are processing responsibilities; colored badges distinguish sources, transformations, coordinators, non-voting authority gates, and sinks. A coordinator may compare candidates, but only a separately named gate can admit evidence, verify a witness, validate a package, commit session state, or authorize promotion. Strategy confidence ranks candidates within its declared meaning; it never becomes truth merely because more work or more branches were used. On a narrow screen the map remains at a readable internal width and pans inside this frame; <kbd>Alt</kbd>+<kbd>←</kbd>/<kbd>→</kbd> also pans it.</p>
-<noscript><p class="callout">The complete interactive map needs JavaScript. The <a href="architecture/logical-processing-architecture.html">logical processing catalog</a> provides the same identities as static tables.</p></noscript>
+<noscript><p class="callout">The progressive graph needs JavaScript. The <a href="architecture/logical-processing-architecture.html">logical processing catalog</a> provides the same identities as static tables.</p></noscript>
 
-<div class="architecture-state-key" aria-label="What the three planes can produce">
-  <p><strong>Runtime plane</strong><span>A bounded request may become a validated result or an explicit typed inability.</span></p>
-  <p><strong>Compiler plane</strong><span>A frozen, rights-cleared source may become an immutable declarative package after review gates.</span></p>
-  <p><strong>Research plane</strong><span>Inert episodes may become non-executable hypotheses for manual review; they have no runtime or promotion authority.</span></p>
-</div>
-
-<h2>Successive zooms into the same map</h2>
-<p>Each view below selects a connected part of the complete map and keeps the catalog names. The diagrams simplify spatial layout only; the cards above remain the complete inventory and the <a href="architecture/logical-processing-architecture.html">logical processing chapter</a> remains the detailed human-readable reference.</p>
-
-<section class="architecture-zoom" aria-labelledby="zoom-root">
-<p class="architecture-zoom__level">Zoom 1 · root circuit</p>
-<h3 id="zoom-root">Three planes share vocabulary but not authority</h3>
-<figure class="diagram"><pre class="mermaid">flowchart LR
-  ROOT[ESLM processing graph] --> RUN[Runtime request cycle]
-  ROOT --> BUILD[Knowledge build]
-  ROOT --> RESEARCH[Graph discovery research]
-  RUN --> OUT([Validated runtime result])
-  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
-  classDef coordinate fill:#efe8f7,stroke:#674786,color:#352345,font-weight:bold
-  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
-  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
-  class ROOT source
-  class RUN,BUILD,RESEARCH process
-  class OUT gate</pre><figcaption>The root nests three one-way processing planes.</figcaption></figure>
-<p class="diagram-explanation"><code>circuit:eslm:processing-graph</code> contains the runtime, compiler, and research planes. The runtime consumes a request. The compiler consumes frozen source evidence and can emit only a validated declarative package. Research consumes authorized inert episodes and can emit only a manual-review proposal. A research hypothesis cannot jump sideways into runtime selection or compiler promotion, and catalog inclusion alone is not an execution receipt.</p>
-</section>
-
-<section class="architecture-zoom" aria-labelledby="zoom-request-cycle">
-<p class="architecture-zoom__level">Zoom 2 · runtime request cycle</p>
-<h3 id="zoom-request-cycle">A request moves through five nested responsibilities</h3>
-<figure class="diagram"><pre class="mermaid">flowchart LR
-  I[Ingress and language] --> S[Request and session]
-  S --> K[Knowledge and evidence]
-  K --> R[Reasoning and verification]
-  R --> F[Failure and result]
-  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
-  classDef coordinate fill:#efe8f7,stroke:#674786,color:#352345,font-weight:bold
-  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
-  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
-  class I source
-  class S,K,R process
-  class F gate</pre><figcaption>The runtime circuit from ingress to an honest result.</figcaption></figure>
-<p class="diagram-explanation">Ingress bounds the request and establishes English meaning. Request/session nodes freeze state, reserve work, identify request force, and create output obligations. Knowledge/evidence nodes focus the query, select exact package scope, retrieve a bounded frontier, and admit typed premises. Reasoning chooses and executes a method; independent verification checks its witness. Exceptional edges can enter the failure/result circuit earlier, but they must preserve the specific inability and cannot improvise an answer.</p>
-</section>
-
-<section class="architecture-zoom" aria-labelledby="zoom-language">
-<p class="architecture-zoom__level">Zoom 3 · direct language and recovery</p>
-<h3 id="zoom-language">Parser authority surrounds proposal work</h3>
-<figure class="diagram"><pre class="mermaid">flowchart LR
-  W[Work policy gate] --> E{{English likelihood gate}}
-  E --> P{{Direct parser gate}}
-  P --> F{{Request force gate}}
-  F --> C[Language proposal coordinator]
-  C --> A{{Interpretation arbiter}}
-  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
-  classDef coordinate fill:#efe8f7,stroke:#674786,color:#352345,font-weight:bold
-  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
-  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
-  class C coordinate
-  class W,E,P,F,A gate</pre><figcaption>Recovery proposes interpretations inside parser-owned gates.</figcaption></figure>
-<p class="diagram-explanation">The work-policy gate reserves mandatory parser and safety work first. The English-likelihood gate can reject likely non-English input but never translate it. The direct parser remains the semantic authority, and the request-force gate distinguishes an instruction from an accidentally parseable assertion. Only an eligible failure enters <code>node:runtime:language-proposal-coordinator</code>. Its candidates still pass semantic preservation and parse-only reparse before the interpretation arbiter can select one or preserve ambiguity. The disclosed external Language Agent is another untrusted proposal source outside this deployed circuit, never an answer or proof authority.</p>
-</section>
-
-<section class="architecture-zoom" aria-labelledby="zoom-evidence">
-<p class="architecture-zoom__level">Zoom 4 · evidence frontier</p>
-<h3 id="zoom-evidence">Routing establishes coverage before relevance ranks</h3>
-<figure class="diagram"><pre class="mermaid">flowchart LR
-  F[Knowledge focus coordinator] --> S{{Package scope gate}}
-  S --> R[Exact route planner]
-  R --> E[Evidence frontier retriever]
-  E --> C{{Frontier completeness gate}}
-  C --> A[Evidence assessment coordinator]
-  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
-  classDef coordinate fill:#efe8f7,stroke:#674786,color:#352345,font-weight:bold
-  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
-  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
-  class F,A coordinate
-  class R,E process
-  class S,C gate</pre><figcaption>Exact routing precedes non-authoritative relevance.</figcaption></figure>
-<p class="diagram-explanation">Focus strategies name entities, predicates, roles, phrases, and metalinguistic topics. The package-scope gate resolves only host-selected packages; the route planner then chooses exact shards and the retriever returns provenance-bearing records plus coverage receipts. The completeness gate prevents a truncated frontier or cache miss from becoming logical absence. Relevance strategies may rank the returned frontier, but the separate evidence-admission gate must still validate premises before capability planning or method execution can use them.</p>
-</section>
-
-<section class="architecture-zoom" aria-labelledby="zoom-coordinator">
-<p class="architecture-zoom__level">Zoom 5 · coordinator interior</p>
-<h3 id="zoom-coordinator">Parallel strategies share work, not authority</h3>
-<figure class="diagram"><pre class="mermaid">flowchart LR
-  I[Per-strategy resource envelopes] --> A[grammatical-spelling@1]
-  I --> B[relative-clause-extraction@1]
-  A --> V[Canonical candidates and votes]
-  B --> V
-  V --> G{{Semantic preservation gate}}
-  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
-  classDef coordinate fill:#efe8f7,stroke:#674786,color:#352345,font-weight:bold
-  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
-  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
-  class I source
-  class A,B process
-  class V coordinate
-  class G gate</pre><figcaption>Two named branches illustrate the complete strategy fan-out below.</figcaption></figure>
-<p class="diagram-explanation">The language coordinator validates one immutable input and freezes a finite envelope for every eligible strategy in canonical identity order. Its asynchronous API may start funded independent branches before awaiting them; the deployed local-language path currently uses the sequential API. Each branch returns a typed candidate, a work account, a receipt, <code>confidence:language-interpretation</code>, and its declared <code>correlation:language:…</code> group. Resource spend and concurrency add no confidence. Dependent support collapses, independent validated evidence may contribute separately, and the resulting rank still cannot bypass semantic preservation or reparse.</p>
-<div class="processing-node-detail" data-processing-node-detail="node:runtime:language-proposal-coordinator"><p>Loading the exact coordinator strategy set…</p></div>
-</section>
-
-<section class="architecture-zoom" aria-labelledby="zoom-realization">
-<p class="architecture-zoom__level">Zoom 6 · grounded response construction</p>
-<h3 id="zoom-realization">Admit claims, plan rhetoric, realize sentences, assemble a document</h3>
-<figure class="diagram"><pre class="mermaid">flowchart LR
-  C[Result construction coordinator] --> A{{Claim admission gate}}
-  A --> P[Rhetorical plan builder]
-  P --> S[Sentence realization coordinator]
-  S --> D[Document assembly coordinator]
-  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
-  classDef coordinate fill:#efe8f7,stroke:#674786,color:#352345,font-weight:bold
-  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
-  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
-  class C,S,D coordinate
-  class P process
-  class A gate</pre><figcaption>The grounded response subcircuit has five explicit responsibilities.</figcaption></figure>
-<p class="diagram-explanation"><code>node:runtime:result-construction-coordinator</code> freezes the output contract, eligible evidence, and per-strategy work order. <code>node:runtime:claim-admission-gate</code> accepts only typed, provenance-bound claims and records rejected or unsupported candidates. <code>node:runtime:rhetorical-plan-builder</code> orders obligations into sections through <code>strategy:result:rhetorical-section-planner@1</code>. <code>node:runtime:sentence-realization-coordinator</code> chooses among source-summary, lexical-definition, typed-fact, and defeasible-relation sentence strategies while preserving claim-to-evidence alignment. <code>node:runtime:document-assembly-coordinator</code> then chooses among claim fusion, comparison, coverage-gap, prose, sectioned-document, outline, and table assembly. These strategies realize admitted content; none can manufacture factual support.</p>
-<div class="processing-subcircuit-detail" aria-label="Exact grounded response construction nodes and strategies">
-  <div class="processing-node-detail" data-processing-node-detail="node:runtime:result-construction-coordinator"><p>Loading the construction work-order owner…</p></div>
-  <div class="processing-node-detail" data-processing-node-detail="node:runtime:claim-admission-gate"><p>Loading the claim authority gate…</p></div>
-  <div class="processing-node-detail" data-processing-node-detail="node:runtime:rhetorical-plan-builder"><p>Loading the rhetorical strategy…</p></div>
-  <div class="processing-node-detail" data-processing-node-detail="node:runtime:sentence-realization-coordinator"><p>Loading sentence strategies…</p></div>
-  <div class="processing-node-detail" data-processing-node-detail="node:runtime:document-assembly-coordinator"><p>Loading document assembly strategies…</p></div>
-</div>
-</section>
-
-<section class="architecture-zoom" aria-labelledby="zoom-emission">
-<p class="architecture-zoom__level">Zoom 7 · validation, commit, and emission</p>
-<h3 id="zoom-emission">A construction candidate still crosses non-voting gates</h3>
-<figure class="diagram"><pre class="mermaid">flowchart LR
-  W{{Witness verification gate}} --> C[Grounded response construction]
-  C --> S{{Result schema gate}}
-  S --> K{{Session commit gate}}
-  K --> R([Runtime result sink])
-  classDef source fill:#eaf2fb,stroke:#315a7d,color:#17324d,font-weight:bold
-  classDef coordinate fill:#efe8f7,stroke:#674786,color:#352345,font-weight:bold
-  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
-  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
-  class C process
-  class W,S,K,R gate</pre><figcaption>Grounded construction cannot bypass result authority.</figcaption></figure>
-<p class="diagram-explanation">The witness-verification gate independently replays a method witness and is the only path here with verified answer authority. The grounded response subcircuit may construct already supported content or an explicit typed inability. The schema gate validates the closed result, contributor provenance, and support boundary. The session-commit gate preserves direct acceptance or query-local rollback, and only then does the runtime-result sink emit. On the inability path, separately budgeted failure grounding may attach related evidence only with <code>answerSupported: false</code>.</p>
-</section>
-
-<p class="architecture-boundary"><strong>Descriptive boundary.</strong> This map is generated from the checked-in processing-graph and strategy catalogs and is tested for exact identity coverage. It explains declared structure and implementation state; it does not claim that every node executed in a run. Dataset-guided discovery remains a separate, non-authoritative process described on the <a href="research/processing-graph-research.html">processing-graph research page</a>. Mutable run totals and receipt identities belong to validated status artifacts, not to this architectural explanation.</p>
+<p class="architecture-boundary"><strong>Descriptive boundary.</strong> The explorer is generated from the checked-in processing-graph and strategy catalogs and is tested for identity, hierarchy, count, and edge coverage. It describes declared structure and implementation state; it is not evidence that every node executed in one request. Dataset-guided discovery remains a separate, non-authoritative process described on the <a href="research/processing-graph-research.html">processing-graph research page</a>.</p>
 </section>
 
 <section aria-labelledby="evidence-title">
 <h2 id="evidence-title">Evidence calibrated to each claim</h2>
 <p>The repository distinguishes software checks, authored fixtures, generated internal development suites, external development probes, fresh evaluations, annotation or solver tracks, and official tests. They answer different questions and must not be collapsed into one “ESLM accuracy.” A newly assembled report can also contain older receipts; its assembly timestamp is not proof that every benchmark ran again.</p>
 <div class="nav-grid">
-  <a class="nav-card" href="evaluation.html"><strong>Public benchmark evidence</strong><span>The full benchmark dashboard, with denominators, route type, evidence regime, receipt state, diagnosis, and next action.</span></a>
+  <a class="nav-card" href="evaluation.html"><strong>Development evidence</strong><span>A first-level guide to separate knowledge-base, benchmark, and RL-dataset status ledgers.</span></a>
   <a class="nav-card" href="status.html"><strong>Implementation status</strong><span>The current capability boundary. Named roadmap bands remain distinct from empirical percentages.</span></a>
   <a class="nav-card" href="results/latest-evaluation.html"><strong>Internal evaluation fixture</strong><span>Five authored regression cases. Useful for executable sanity; explicitly not benchmark-comparable.</span></a>
   <a class="nav-card" href="results/latest-benchmark.html"><strong>Authored benchmark fixture</strong><span>Five readable QA and preference contracts, kept separate from larger generated evidence.</span></a>
@@ -214,13 +100,12 @@
 <section aria-labelledby="sitemap-title">
 <h2 id="sitemap-title">Documentation sitemap</h2>
 <div class="sitemap-tree" role="navigation" aria-label="Documentation structure">
-  <a class="sitemap-root" href="index.html"><strong>ESLM Documentation</strong><span>Start here: current system, evidence, and scope</span></a>
   <div class="sitemap-branches">
     <div class="sitemap-branch"><h3>Overview</h3><a href="research/research-program.html"><strong>Research program</strong><span>Purpose, boundaries, inventory, and roadmap</span></a><a href="status.html"><strong>Current status</strong><span>Implemented capabilities and next acceptance gates</span></a><a href="research/research-horizons.html"><strong>Research horizons</strong><span>Long-term programs, experiments, and promotion gates</span></a><a href="research/research-decisions.html"><strong>Open decisions</strong><span>Questions and evidence needed to close them</span></a></div>
     <div class="sitemap-branch"><h3>Language</h3><a href="language/language.html"><strong>Direct language</strong><span>English-only gate, parsing, composition, tasks, and outcomes</span></a><a href="language/heuristic-language.html"><strong>Heuristic approximation</strong><span>Fast local English proposals before external simplification</span></a><a href="language/language-agent.html"><strong>Language Agent</strong><span>Disclosed operator proposal boundary</span></a><a href="language/grounded-failure.html"><strong>Grounded failure</strong><span>Related evidence when no answer is supported</span></a></div>
     <div class="sitemap-branch"><h3>System</h3><a href="architecture/architecture.html"><strong>Architecture</strong><span>Trust regions, runtime families, routing, and security</span></a><a href="architecture/logical-processing-architecture.html"><strong>Logical processing graph</strong><span>Nodes, typed data, authority gates, resources, and exact strategy catalog</span></a><a href="architecture/strategy-architecture.html"><strong>Processing-node strategies</strong><span>Alternative implementations, coordination, profiles, and receipts</span></a><a href="knowledge/knowledge-bases.html"><strong>Knowledge</strong><span>Records, packages, routing, trust, and sources</span></a><a href="knowledge/kb-storage-and-indexing.html"><strong>KB storage</strong><span>Indexes, shards, caches, and completeness</span></a><a href="knowledge/symbolic-document-kbs.html"><strong>Document KBs</strong><span>Books and manuals as symbolic evidence</span></a></div>
     <div class="sitemap-branch"><h3>Reasoning</h3><a href="reasoning/reasoning-methods.html"><strong>Method overview</strong><span>Semantics, algorithms, witnesses, and acceptance boundaries</span></a><a href="reasoning/reasoning-deduction-and-models.html"><strong>Deduction and models</strong><span>Horn closure, SAT, finite models, and counterexamples</span></a><a href="reasoning/reasoning-categorical-logic.html"><strong>Categorical logic</strong><span>Propositions, immediate inference, and syllogistic models</span></a><a href="reasoning/reasoning-state-time-and-relations.html"><strong>State, time, and relations</strong><span>Transitions, temporal order, relation paths, and space</span></a><a href="reasoning/reasoning-defaults-and-abduction.html"><strong>Defaults and abduction</strong><span>Qualified, inductive, and hypothetical conclusions</span></a><a href="reasoning/reasoning-narrative-and-compatibility.html"><strong>Narrative and compatibility</strong><span>Bounded event state and signed semantic evidence</span></a></div>
-    <div class="sitemap-branch"><h3>Development</h3><a href="operations/training.html"><strong>Training</strong><span>Evidence packets, candidates, and promotion</span></a><a href="research/processing-graph-research.html"><strong>Graph discovery</strong><span>Rights-cleared evidence for new nodes, gates, and strategies</span></a><a href="evaluation.html"><strong>Evaluation</strong><span>Protocols, benchmark pages, tracks, receipts, and claims</span></a><a href="operations/metamorphic-testing.html"><strong>Metamorphic tests</strong><span>Nonce controls and regression smoke</span></a><a href="operations/exceptions-issues.html"><strong>Exceptions and gaps</strong><span>Known limits and failure classes</span></a></div>
+    <div class="sitemap-branch"><h3>Development</h3><a href="evaluation.html"><strong>Evidence overview</strong><span>KB, benchmark, and RL-dataset status kept distinct</span></a><a href="development/knowledge-bases.html"><strong>Knowledge-base status</strong><span>Current packages, ingestion stages, and next sources</span></a><a href="development/benchmarks.html"><strong>Benchmark status</strong><span>Executed evidence, quality measures, and next evaluations</span></a><a href="development/rl-datasets.html"><strong>RL dataset status</strong><span>Acquisition, projection, discovery, and distance from runtime</span></a><a href="operations/training.html"><strong>Training</strong><span>Evidence packets, candidates, and promotion</span></a><a href="research/processing-graph-research.html"><strong>Graph discovery</strong><span>Rights-cleared evidence for new nodes, gates, and strategies</span></a></div>
     <div class="sitemap-branch"><h3>Reference</h3><a href="operations/cli.html"><strong>CLI</strong><span>Questions, batches, KBs, training, and reports</span></a><a href="reference/sources.html"><strong>Sources</strong><span>Citations, licenses, access, and identities</span></a><a href="reference/specification-architecture.html"><strong>DS architecture</strong><span>Ownership and change-locality rules</span></a><a href="specsLoader.html?spec=matrix.md"><strong>Specifications</strong><span>Authoritative contiguous DS contracts</span></a></div>
   </div>
 </div>

@@ -44,7 +44,10 @@ function requestTaskFrame(requestPlanning, languageRoute) {
 }
 
 function plannedSynthesisResult(primary, requestPlanning, synthesis) {
-  const selectedEntries = synthesis.evidence.selected.map((item) => item.entry);
+  const realizedEvidenceIdentities = new Set(synthesis.realization.claims.filter((claim) =>
+    claim.sourceKind === 'kb-evidence' && claim.status === 'realized').map((claim) => claim.evidenceIdentity));
+  const selectedEntries = synthesis.evidence.selected.map((item) => item.entry).filter((entry) =>
+    realizedEvidenceIdentities.has(`${entry.kbId}@${entry.kbVersion ?? 'unversioned'}:${entry.recordId}`));
   return assertRuntimeTextResultContract({
     ...primary,
     status: 'PARTIAL',

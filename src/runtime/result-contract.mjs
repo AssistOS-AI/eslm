@@ -188,11 +188,15 @@ function assertRuntimeRoutePayloadInvariants(result) {
       !== JSON.stringify(result.synthesis.contributingKbVersions)) {
       throw new TypeError('heuristic-request-synthesis KB accounting must match selected source claims.');
     }
-    if ((result.provenance?.length ?? 0) !== result.synthesis.evidence.selected.length) {
-      throw new TypeError('heuristic-request-synthesis provenance must match selected KB records.');
+    const realizedEvidenceIds = new Set(result.synthesis.realization.claims.filter((claim) =>
+      claim.sourceKind === 'kb-evidence' && claim.status === 'realized').map((claim) => claim.evidenceIdentity));
+    const realizedEntries = result.synthesis.evidence.selected.map((item) => item.entry).filter((entry) =>
+      realizedEvidenceIds.has(`${entry.kbId}@${entry.kbVersion ?? 'unversioned'}:${entry.recordId}`));
+    if ((result.provenance?.length ?? 0) !== realizedEntries.length) {
+      throw new TypeError('heuristic-request-synthesis provenance must match realized KB records.');
     }
     result.provenance.forEach((provenance, index) => {
-      const entry = result.synthesis.evidence.selected[index].entry;
+      const entry = realizedEntries[index];
       if (provenance.fact !== entry.recordId || provenance.kbId !== entry.kbId
         || provenance.kbVersion !== entry.kbVersion
         || JSON.stringify(provenance.source) !== JSON.stringify(entry.provenance)

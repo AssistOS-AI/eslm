@@ -1,6 +1,6 @@
 {
   "format": "eslm-generated-heuristic-multi-seed-audit-v1",
-  "createdAt": "2026-08-12T20:42:58.990Z",
+  "createdAt": "2026-08-13T07:30:58.808Z",
   "evidenceRegime": "internal-generated-multi-seed-development-audit",
   "benchmarkComparable": false,
   "claimScope": "same-definition-cross-seed-stability-only",
@@ -34,8 +34,8 @@
         ],
         "includedExtension": ".mjs"
       },
-      "digest": "c7006419690d621b12019e4ed7503220562499b359ceaca749f664a73a5a40d2",
-      "files": 187,
+      "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
+      "files": 244,
       "runtime": {
         "node": "v22.23.1",
         "platform": "linux",
@@ -91,7 +91,7 @@
     "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
     "catalog": {
       "format": "eslm-builtin-strategy-catalog-v1",
-      "digest": "sha256:9f44d779f0a9ada195cc511aea7d5d02c45ba27a010ebe7e5fcd273e425883f3"
+      "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
     },
     "selection": {
       "source": "eslm-work-policy-v1",
@@ -116,8 +116,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 1,
       "seed": "eslm-generated-heuristic-independent-v1-alpha",
-      "reportDigest": "sha256:6f54b51353e8d39ba80ceb804ee6524cc2942d5db85b2021cf0e0f53b070479a",
-      "reportCreatedAt": "2026-08-12T20:42:36.393Z",
+      "reportDigest": "sha256:c3941b60ff0804eaaf90b0b5cc6f85af48563996fe0d23c7d93f59b8bff58252",
+      "reportCreatedAt": "2026-08-13T07:30:32.368Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-alpha",
@@ -155,18 +155,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "c7006419690d621b12019e4ed7503220562499b359ceaca749f664a73a5a40d2",
-          "files": 187,
+          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
+          "files": 244,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 6002.720676,
-        "startRssBytes": 91398144,
-        "endRssBytes": 152309760,
-        "sampledPeakRssBytes": 148766720
+        "wallMilliseconds": 8481.24232,
+        "startRssBytes": 93130752,
+        "endRssBytes": 141049856,
+        "sampledPeakRssBytes": 138125312
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -174,7 +174,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:9f44d779f0a9ada195cc511aea7d5d02c45ba27a010ebe7e5fcd273e425883f3"
+          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -3104,7 +3104,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:e2e881bd4453aba46a2ea712f1fff9fafc8bb5c949abc622b11f9ee8d102df26"
+        "configurationDigest": "sha256:ac20d41aa789e30dc34500c9158a5104fc8cdd2f75611c00e58e9028afde2518"
       },
       "total": 1200,
       "passed": 1200,
@@ -3250,8 +3250,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 2,
       "seed": "eslm-generated-heuristic-independent-v1-beta",
-      "reportDigest": "sha256:e83634ee9fd1607e43d9f352a8adf100961f4942ede4e64a2cd49422e9e98214",
-      "reportCreatedAt": "2026-08-12T20:42:42.059Z",
+      "reportDigest": "sha256:3b0edca944fc7cf671073afab7b4b99ba40e70317170c7bec662a1a1d3a9b64d",
+      "reportCreatedAt": "2026-08-13T07:30:39.089Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-beta",
@@ -3289,18 +3289,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "c7006419690d621b12019e4ed7503220562499b359ceaca749f664a73a5a40d2",
-          "files": 187,
+          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
+          "files": 244,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 5381.897680000001,
-        "startRssBytes": 153489408,
-        "endRssBytes": 173301760,
-        "sampledPeakRssBytes": 173805568
+        "wallMilliseconds": 6390.735866000001,
+        "startRssBytes": 143147008,
+        "endRssBytes": 176615424,
+        "sampledPeakRssBytes": 170004480
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -3308,7 +3308,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:9f44d779f0a9ada195cc511aea7d5d02c45ba27a010ebe7e5fcd273e425883f3"
+          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -6228,7 +6228,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:89c1cdc1124c707b0adce9a24b437be516256c24477d16e4c81c375b15ef8afe"
+        "configurationDigest": "sha256:507b2c139bbfdbf07940c2575af60656fd8f6ec960402a0a29ff1cf89efcd59c"
       },
       "total": 1200,
       "passed": 1200,
@@ -6374,8 +6374,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 3,
       "seed": "eslm-generated-heuristic-independent-v1-gamma",
-      "reportDigest": "sha256:584162bc47253828216bc0e05a70ae120831eab466a695de3d706c7e9146b166",
-      "reportCreatedAt": "2026-08-12T20:42:47.649Z",
+      "reportDigest": "sha256:99e943e3d96020e60d717074f7c596890929de2327f506b06fbca6009edb9f1e",
+      "reportCreatedAt": "2026-08-13T07:30:45.717Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-gamma",
@@ -6413,18 +6413,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "c7006419690d621b12019e4ed7503220562499b359ceaca749f664a73a5a40d2",
-          "files": 187,
+          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
+          "files": 244,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 5324.753497999998,
-        "startRssBytes": 176971776,
-        "endRssBytes": 189964288,
-        "sampledPeakRssBytes": 181821440
+        "wallMilliseconds": 6298.452349999998,
+        "startRssBytes": 184479744,
+        "endRssBytes": 191467520,
+        "sampledPeakRssBytes": 187555840
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -6432,7 +6432,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:9f44d779f0a9ada195cc511aea7d5d02c45ba27a010ebe7e5fcd273e425883f3"
+          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -9297,7 +9297,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:e5b362d49389d036628e4e0bc931d4be624cbac166c981317051613fd833ce8e"
+        "configurationDigest": "sha256:2b8d021832a5985c514362645207fed86f24028fe4bf664bcd7609f16f6206ca"
       },
       "total": 1200,
       "passed": 1200,
@@ -9443,8 +9443,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 4,
       "seed": "eslm-generated-heuristic-independent-v1-delta",
-      "reportDigest": "sha256:b45c7ff7ebc23860a2d90da4bac54db313d885a6f62cf9fb77f70a1650f1c853",
-      "reportCreatedAt": "2026-08-12T20:42:53.190Z",
+      "reportDigest": "sha256:361ea885f3bb2b9031fa2dbdb24d89cea3191baf215b7f8199925c02a41c5e0b",
+      "reportCreatedAt": "2026-08-13T07:30:52.014Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-delta",
@@ -9482,18 +9482,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "c7006419690d621b12019e4ed7503220562499b359ceaca749f664a73a5a40d2",
-          "files": 187,
+          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
+          "files": 244,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 5274.906217,
-        "startRssBytes": 187183104,
-        "endRssBytes": 190320640,
-        "sampledPeakRssBytes": 187969536
+        "wallMilliseconds": 6034.519382000002,
+        "startRssBytes": 191598592,
+        "endRssBytes": 206045184,
+        "sampledPeakRssBytes": 203268096
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -9501,7 +9501,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:9f44d779f0a9ada195cc511aea7d5d02c45ba27a010ebe7e5fcd273e425883f3"
+          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -12391,7 +12391,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:8ca7e9b19edef80abf2723a3123b03ff4bd01b9e32736488e981f43889940680"
+        "configurationDigest": "sha256:84baf07da3f51f3c4ba4d50943fee4b38c357d68fc14aff40df84f9ede7dab27"
       },
       "total": 1200,
       "passed": 1200,
@@ -12537,8 +12537,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 5,
       "seed": "eslm-generated-heuristic-independent-v1-epsilon",
-      "reportDigest": "sha256:f5db00bb8267522d7474970ca529df9a558ee2dff9b595533219918b2166d2dd",
-      "reportCreatedAt": "2026-08-12T20:42:58.730Z",
+      "reportDigest": "sha256:2fcb270b663dbca2cc4c800e6dbf5c3f8df747a011c7d16d5c6213778b2a9334",
+      "reportCreatedAt": "2026-08-13T07:30:58.493Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-epsilon",
@@ -12576,18 +12576,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "c7006419690d621b12019e4ed7503220562499b359ceaca749f664a73a5a40d2",
-          "files": 187,
+          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
+          "files": 244,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 5299.429688,
-        "startRssBytes": 192155648,
-        "endRssBytes": 196308992,
-        "sampledPeakRssBytes": 195170304
+        "wallMilliseconds": 6180.2736479999985,
+        "startRssBytes": 206176256,
+        "endRssBytes": 209309696,
+        "sampledPeakRssBytes": 208797696
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -12595,7 +12595,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:9f44d779f0a9ada195cc511aea7d5d02c45ba27a010ebe7e5fcd273e425883f3"
+          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -15450,7 +15450,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:caaeafbf2cd032f9ad72946b74b63dd7a73f350856873d59c2fc77f28cc79bd1"
+        "configurationDigest": "sha256:e44ca74c7b159e617a184850a507d32609176b8f78d0b699efbcef097260ad24"
       },
       "total": 1200,
       "passed": 1200,
@@ -15750,5 +15750,5 @@
     "completeDenominator": true,
     "allRunsShareIntendedIdentity": true
   },
-  "receiptDigest": "sha256:43ba5d3704c98413b0ddb8c03a61c3fcf4096eb49461f6ef12c72dcbd6de9743"
+  "receiptDigest": "sha256:99f4905a9fab4b7420ff58e36f55ed002b3eeeee0070062f8131fd80b080bd25"
 }

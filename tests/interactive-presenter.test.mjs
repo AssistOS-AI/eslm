@@ -27,7 +27,9 @@ test('related KB records render below an explicit not-an-answer boundary', () =>
   const output = interactiveResultText({
     status: 'UNKNOWN', answer: 'I cannot establish the requested answer.', grounding,
   }, 'Can Qorin fly?', style);
-  assert.match(output, /^\[UNKNOWN\] I cannot establish/u);
+  assert.match(output, /^Thinking · symbolic processing/mu);
+  assert.match(output, /Route: direct-symbolic; status UNKNOWN/u);
+  assert.match(output, /\nAnswer\nI cannot establish the requested answer\./u);
   assert.match(output, /Related KB evidence — not an answer/u);
   assert.match(output, /Qorin is a tool\. \[nonce-kb@3\]/u);
   assert.match(output, /Search coverage is incomplete: lookup-budget/u);
@@ -91,7 +93,8 @@ test('accepted Language Agent simplification is shown as original, transformatio
   }, 'How are you doing?', style);
   assert.match(output, /Original: How are you doing\?/u);
   assert.match(output, /Simplification: How are you\?/u);
-  assert.match(output, /Symbolic result: \[SOLVED\] I am ready\./u);
+  assert.match(output, /symbolic status SOLVED/u);
+  assert.match(output, /\nAnswer\nI am ready\./u);
 });
 
 test('English language rejection is visible and states the untouched boundaries', () => {
@@ -102,10 +105,10 @@ test('English language rejection is visible and states the untouched boundaries'
       diagnostic: 'Bounded generic script evidence is unlikely to be English.',
     },
   }, 'Жарум кивес Нолта?', style);
-  assert.match(output, /English language check did not accept/u);
+  assert.match(output, /English language gate:/u);
   assert.match(output, /Confidence 0\.810 at threshold 0\.680/u);
   assert.match(output, /Translate the request to English/u);
-  assert.match(output, /No parser, heuristic interpretation, KB lookup, or session update ran/u);
+  assert.match(output, /no parser, heuristic interpretation, KB lookup, or session update ran/iu);
 });
 
 test('accepted local approximation shows selected CNL, confidence votes, and ephemeral effects', () => {
@@ -121,12 +124,23 @@ test('accepted local approximation shows selected CNL, confidence votes, and eph
   };
   const output = interactiveResultText(result,
     'Tarin is an zoral. All zoral gim vepa. Is Tarin gliming vepa?', style);
-  assert.match(output, /Local heuristic interpretation accepted — no Language Agent/u);
+  assert.match(output, /Language route: local heuristic interpretation; no Language Agent/u);
   assert.match(output, /Interpreted CNL: Tarin is a zoral/u);
   assert.match(output, /Confidence: 0\.810 \(medium\)/u);
   assert.match(output, /predicate-agreement, question-reduction/u);
   assert.match(output, /query-local and discarded/u);
-  assert.match(output, /Symbolic result: \[DEFEASIBLE\] Yes\./u);
+  assert.match(output, /status DEFEASIBLE/u);
+  assert.match(output, /\nAnswer\nYes\./u);
+});
+
+test('a short symbolic value is realized as an English sentence in the interactive answer', () => {
+  const output = interactiveResultText({
+    status: 'SOLVED', answer: 'northwest', languageRoute: 'direct-symbolic-task-adapter',
+    values: ['northwest'], provenance: [], usedKbVersions: [],
+    reasoning: { method: 'qualitative-spatial-relation' },
+  }, 'Where is A relative to B?', style);
+  assert.match(output, /Method: qualitative-spatial-relation/u);
+  assert.match(output, /\nAnswer\nThe symbolic result is “northwest”\./u);
 });
 
 test('request synthesis separates a symbolic processing trace from the coherent answer', () => {
@@ -151,6 +165,9 @@ test('request synthesis separates a symbolic processing trace from the coherent 
   assert.match(output, /Request plan coordinator: compose; 3 bounded subrequests/u);
   assert.match(output, /Output contract: brief report, sections/u);
   assert.match(output, /Evidence admission: 1 KB claim\(s\) realized; 2 related claim\(s\) withheld/u);
+  assert.match(output, /Result construction coordinator → Claim admission gate → Rhetorical plan builder/u);
+  assert.match(output, /Sentence realization coordinator → Document assembly coordinator → Result schema gate/u);
+  assert.match(output, /Selected strategies:/u);
   assert.match(output, /rhetorical-section-planner → lexical-definition-sentence/u);
   assert.match(output, /Authority boundary: citations support wording/u);
   assert.match(output, /\nAnswer\n# Report: zorals/u);

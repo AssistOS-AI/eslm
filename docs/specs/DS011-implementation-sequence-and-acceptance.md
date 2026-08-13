@@ -56,9 +56,11 @@ Stage E implements multi-goal task decomposition, AND/OR alternatives, query-dir
 Acceptance requires exact distinction among missing knowledge, no applicable method, underdetermination, inconsistency, and resource exhaustion; valid assignments or proofs; scaling curves; irrelevant-evidence invariance; and source cases that previously exceeded finite enumeration completing through a general scalable method rather than a larger hardcoded constant.
 
 The current DS022 request planner is a useful precursor, not Stage E acceptance. It decomposes only reviewed artifact
-patterns into a fixed dependency order and constructs cited extractive `PARTIAL` results. It does not establish
-semantic AND/OR alternatives, dynamic capability preconditions, arbitrary multi-goal execution, or proof-planner
-completeness.
+patterns into a fixed dependency order and constructs cited grounded symbolic `PARTIAL` results. The executable
+construction subcircuit has non-voting claim admission, a rhetorical plan, four typed sentence strategies, seven
+discourse and format strategies, and exact result reproduction. It still does not establish semantic AND/OR
+alternatives, dynamic capability preconditions, arbitrary multi-goal execution, proof-derived abstractive claims, or
+proof-planner completeness.
 
 ### 7. Stage F: defaults, exceptions, abduction, and commonsense
 
@@ -108,8 +110,9 @@ A release may contain explicit capability gaps and benchmark exceptions. It may 
 Release evidence exercises the default `balanced` work profile, at least one smaller and one larger profile, the
 general CLI's disclosed assisted default, the explicit local override, and a controlled stub invocation path. For results that complete under
 multiple profiles, semantic values, proof, provenance, trust, and status agree. Request-synthesis fixtures separately
-check `PARTIAL` status, citations for every selected KB statement, explicit coverage gaps, and absence of invented
-bridges.
+check `PARTIAL` status, admitted and rejected claim accounting, rhetorical-plan and sentence/assembly strategy traces,
+citations for every realized KB claim, explicit bounded-coverage gaps, exact reproduction from the selected plan and
+evidence, and absence of invented bridges.
 
 ## Decisions & Questions
 

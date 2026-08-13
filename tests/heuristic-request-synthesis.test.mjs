@@ -46,6 +46,27 @@ test('a requested report realizes coherent sentences without upgrading relevance
   ]);
 });
 
+test('retrieved but rejected relations never enter answer contributors', () => {
+  const plan = planHeuristicRequest('Write a short document about a zoral habitat.');
+  const rejected = Object.freeze({
+    kbId: 'relation-source', kbVersion: '1', recordId: 'relation:1',
+    statement: 'The source relates “habitat” to the candidate “noise”.',
+    semantic: { kind: 'defeasible-event-relation', event: 'habitat', relation: 'AtLocation', value: 'noise' },
+    epistemicStatus: 'defeasible-source-tuple',
+    relevance: { score: 8, reasons: ['nonce-topic'] },
+    provenance: ['source:relation:1'],
+    contributingKbVersions: [{ kbId: 'relation-source', version: '1' }],
+  });
+  const result = synthesizeHeuristicRequest(plan, grounding([
+    entry('lexical-source', 'zoral', 'A zoral is an organism.', 'zoral', 'is_a', 'organism', 9),
+    rejected,
+  ]));
+  assert.equal(result.realization.claims.find((claim) =>
+    claim.evidenceIdentity === 'relation-source@1:relation:1').status, 'rejected');
+  assert.doesNotMatch(result.answer, /noise|relation-source/u);
+  assert.deepEqual(result.contributingKbVersions, [{ kbId: 'lexical-source', version: '1' }]);
+});
+
 test('comparison output groups evidence and reports only explicit shared relations', () => {
   const plan = planHeuristicRequest('Compare zorals with velins in a table.');
   const result = synthesizeHeuristicRequest(plan, grounding([
