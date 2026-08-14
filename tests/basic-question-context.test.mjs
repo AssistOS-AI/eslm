@@ -213,3 +213,16 @@ test('a common noun cannot surface a Unicode-folded proper place in contextual f
     candidate.term === 'cat' && candidate.role === 'content'));
   assertRuntimeTextResultContract(result);
 });
+
+test('an explicit proper place keeps its named role and exact GeoNames context', async () => {
+  const runtime = await createCliRuntime({
+    kb: 'geonames-2026', 'memory-policy': 'lazy', 'no-external-language-agent': true,
+  });
+  const result = await runtime.ask('Where is Bucharest located?');
+  assert.equal(result.status, 'SOLVED');
+  assert.equal(result.answer, 'Romania');
+  assert.ok(result.knowledgeContext.focus.candidates.some((candidate) =>
+    candidate.term === 'bucharest' && candidate.role === 'named-entity'));
+  assert.ok(result.knowledgeContext.entries.some((entry) => entry.semantic?.name === 'Bucharest'));
+  assertRuntimeTextResultContract(result);
+});

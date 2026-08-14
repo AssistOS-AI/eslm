@@ -133,10 +133,13 @@ For one request, the default strategy performs the following finite steps:
 2. segment explicit and embedded question surfaces without executing supplied text as instructions;
 3. recognize supported families and retain unsupported interrogatives as open questions;
 4. select exact phrases, semantic roles, content terms, and bounded morphological variants through the DS022 focus
-   strategies;
+   strategies; retain the original NFKC surface beside every normalized term and distinguish proper-name-shaped
+   subjects from common, determiner-led, and possessed nominals;
 5. create and prioritize the self-question plan;
 6. allocate lookups fairly across the selected canonical index and public providers before starting retrieval;
-7. retrieve exact postings and bounded relation neighborhoods from selected packages only;
+7. retrieve exact postings and bounded relation neighborhoods from selected packages only; an accent-folded name
+   directory may identify bounded candidates, but a GeoNames context candidate is admitted only from a proper-name
+   focus whose original surface matches the record's canonical name without diacritic removal;
 8. rank topical usefulness without changing source epistemic status or premise authority; a provider may declare the
    generic question families supported by a semantic record, allowing an explicit requested family to prioritize a
    matching relation neighborhood without making that record true or sufficient;
@@ -226,6 +229,10 @@ No focus term, provider, question, or entry disappears silently. Omitted work re
 `topic-budget`, `self-question-budget`, `term-selection-budget`, `lookup-budget`, `source-budget`,
 `candidate-entry-budget`, or `output-byte-budget`. Provider errors and incomplete cache or shard work make the context
 incomplete. An empty complete search is distinct from an incomplete search that observed no record.
+Exact typed exclusions are also visible: a name-bearing provider receipt counts focus terms rejected for lacking a
+proper-name role and canonical candidates rejected because their Unicode-preserving surface differs. These safe
+semantic exclusions do not make a complete bounded search incomplete and do not assert that the excluded concept or
+place is globally absent.
 
 ### 9. Genericity, security, and falsification
 
@@ -240,7 +247,9 @@ provider order, and irrelevant distractors while preserving the typed question f
 - exact provider-order invariance and bounded eager/lazy equivalence;
 - complete absence, incomplete search, conflict, ambiguity, provider failure, and resource exhaustion;
 - strict answers that remain unchanged even when context contains distracting records;
-- contextual fallback whose realized claims exactly match provenance and `usedKbVersions`; and
+- contextual fallback whose realized claims exactly match provenance and `usedKbVersions`;
+- common-noun/proper-name collisions, Unicode-different folded lookup keys, an exact Unicode positive control, and
+  renamed nonce equivalents independent of the motivating vocabulary; and
 - a forbidden-dispatch audit over benchmark names, case IDs, source rows, hashes, expected answers, and example terms.
 
 A change fails if it improves visible helpfulness by converting relevance into proof, if common terms dominate exact
@@ -251,7 +260,8 @@ unselected KB is consulted, or if the same source facts produce different contex
 
 The initial implementation extends the generic factoid frontend with provider-independent families and canonical
 paraphrases, recognizes bounded coordinated subjects plus progressive and do-support subjects for natural location
-requests, constructs context before
+requests, retains normalized and original focus surfaces, distinguishes proper-name-shaped question subjects from
+common nominals, requires typed Unicode-exact canonical admission for GeoNames task context, constructs context before
 ordinary local symbolic execution, reuses exact grounding projections and
 their finite budgets, exposes the context result extension, and realizes a small source-bound contextual fallback.
 It does not implement unrestricted English, legal or medical advice, arbitrary procedural synthesis, general
@@ -313,6 +323,14 @@ Response: Exact spelling proves only key identity inside that source, not that a
 The question analyzer therefore supplies typed focus roles, and the source adapter declines entity and relation-cue
 focus for its event neighborhood unless the family identifies an event subject. This prevents a high lexical score from turning a coincidental one-word event into a plausible
 location claim while preserving event retrieval for causal, motive, effect, continuation, and lifecycle questions.
+
+### Question #9: Why may an accent-folded GeoNames key still be ineligible context?
+
+Response: A directory key is a bounded candidate-retrieval device, not proof that two surface forms denote the same
+entity. Diacritic removal maps distinct words such as an ordinary noun and a Unicode-different place name to one key.
+Task context therefore requires both a proper-name role and a Unicode-preserving canonical-name match before the
+record can be ranked or realized. The rejected candidate remains counted in a human-readable search receipt; direct
+source-owned alias questions retain their separate provider contract.
 
 ## Conclusion
 

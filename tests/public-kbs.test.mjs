@@ -7,9 +7,11 @@ import {
   createGroundingRequest, createKnowledgeContextRequest,
 } from '../src/reasoning/grounding-retrieval.mjs';
 
-function syntheticGeoNamesProvider() {
-  const placeId = 'nonce-place-1';
+function syntheticGeoNamesProvider({
+  placeId = 'nonce-place-1', canonicalName = 'Șora', asciiName = 'Sora', foldedName = 'sora',
+} = {}) {
   const placeRef = `places/${createHash('sha256').update(placeId).digest('hex')[0]}.json`;
+  const nameRef = `names/${foldedName[0]}.json`;
   return new GeoNamesProvider({
     manifest: {
       id: 'geonames-nonce', kbId: 'geonames-nonce', kbVersion: 'test',
@@ -21,9 +23,9 @@ function syntheticGeoNamesProvider() {
         },
         index: { tv: 'TV', torvia: 'TV' },
       },
-      'names/s.json': { sora: [placeId] },
+      [nameRef]: { [foldedName]: [placeId] },
       [placeRef]: {
-        [placeId]: ['Șora', 'Sora', 'TV', 100, '1', '2', 'Etc/UTC'],
+        [placeId]: [canonicalName, asciiName, 'TV', 100, '1', '2', 'Etc/UTC'],
       },
     },
   }, { mode: 'eager', shardsByRef: new Map() });
@@ -72,6 +74,10 @@ test('GeoNames context requires a proper-name role and Unicode-exact canonical a
   assert.deepEqual(commonNoun.entries, []);
   assert.match(commonNoun.receipt.diagnostic, /not typed as proper names/u);
 
+  const capitalizedCommonNoun = await provider.retrieveGrounding(noncePlaceContextRequest('Șora', 'entity'));
+  assert.deepEqual(capitalizedCommonNoun.entries, []);
+  assert.match(capitalizedCommonNoun.receipt.diagnostic, /not typed as proper names/u);
+
   const foldedAlias = await provider.retrieveGrounding(noncePlaceContextRequest('Sora', 'named-entity'));
   assert.deepEqual(foldedAlias.entries, []);
   assert.match(foldedAlias.receipt.diagnostic, /Unicode-different canonical name/u);
@@ -80,6 +86,18 @@ test('GeoNames context requires a proper-name role and Unicode-exact canonical a
   assert.equal(exactName.entries.length, 1);
   assert.equal(exactName.entries[0].semantic.name, 'Șora');
   assert.deepEqual(exactName.entries[0].relevance.reasons, ['typed-unicode-exact-place-name-match']);
+
+  const renamedProvider = syntheticGeoNamesProvider({
+    placeId: 'nonce-place-2', canonicalName: 'Ŕune', asciiName: 'Rune', foldedName: 'rune',
+  });
+  const renamedFoldedAlias = await renamedProvider.retrieveGrounding(
+    noncePlaceContextRequest('Rune', 'named-entity'),
+  );
+  assert.deepEqual(renamedFoldedAlias.entries, []);
+  const renamedExactName = await renamedProvider.retrieveGrounding(
+    noncePlaceContextRequest('Ŕune', 'named-entity'),
+  );
+  assert.equal(renamedExactName.entries[0].semantic.name, 'Ŕune');
 });
 
 test('ConceptNet retrieves typed relation edges without treating them as universal laws', async () => {

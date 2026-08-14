@@ -181,6 +181,10 @@ ConceptNet, and the reviewed World Relations ontology. Run `node src/cli.mjs kb 
 source coverage, never benchmark performance. Memory targets are advisory retention policies; they cannot delete valid
 facts or promise a hard RSS cap.
 
+Query-local place context requires a proper-name focus and a Unicode-preserving canonical-name match. Accent-folded
+GeoNames keys may locate candidates efficiently, but they cannot make a common noun identical to a differently
+spelled place or authorize a contextual source claim.
+
 Benchmark-guided fixes are accepted only as generic mechanisms or provenance-bearing policy data. Runtime core code may dispatch on a semantic relation, typed task operation, capability precondition, or validated policy field. It may not dispatch on a benchmark name, record ID, source row, question hash, expected answer, or entity copied from an example. The regression suite renames entities, predicates, places, objects, and values and checks negative variants so a passing public sample cannot hide a lookup table.
 
 Canonical records have allowlisted types, stable identifiers, explicit references, contexts, and provenance. The compiler rejects malformed references and unsafe rules, sorts records deterministically, writes JSON shards, and hashes the exact shard bytes into the manifest. The runtime resolves only cataloged package paths and never treats a manifest field as executable code.
