@@ -36,8 +36,8 @@ remains unchanged without an accepted structural alternative. KB or answer evide
 selection.
 
 Language Agent is not part of the deployable runtime. Logically it is one untrusted proposal strategy at the
-language-interpretation node, not a second reasoner. The general CLI composes it by default and exposes an explicit
-local override. When the gate reports likely non-English, the assisted profile may propose a translation before
+language-interpretation node, not a second reasoner. The general CLI uses the fully local path by default and composes
+this strategy only after `--external-language-agent` or `/normalize on` explicitly opts in. When the gate reports likely non-English, the assisted profile may propose a translation before
 English-only repair is attempted.
 When English or indeterminate input exhausts direct and deterministic local recovery, it may propose a conservative
 English simplification. It receives no KB evidence, proof state, answer, or result authority, and every candidate must
@@ -112,6 +112,15 @@ no KB, and exposes only the gap `translate-input-to-english / likely-non-english
 The implemented direct CNL also accepts the generic range-restricted pair `Every CLASS VERBs OBJECT` and `Does ENTITY
 VERB OBJECT?`. Nouns and predicates may be nonce symbols: this is reusable language structure, not a dictionary of the
 motivating example.
+
+Within one accepted transactional episode, the implemented direct CNL also resolves an assertion-subject pronoun
+(`he`, `she`, `it`, or `they`) only to the single current discourse antecedent, compiles `lives in` as the generic
+`located_in` relation, and resolves `his`, `her`, `their`, `its`, or an explicit possessive name only through one exact
+host-known `owns` relation. It accepts progressive and do-support location questions such as `Where is SUBJECT
+living?` and `Where does SUBJECT live?`. Exact object location is ordinary retrieval. When only one owner, one
+possessed object, and one owner location are available, the frontend constructs the finite episodic carrier task owned
+by DS015; it does not assert the object's location. Missing or non-unique structural support remains unknown or
+ambiguous instead of being guessed.
 
 The distinction is deliberate and observable. A direct accepted CNL question, a recognized factoid routed to public
 providers, and a source/host structured task use different route metadata. Solver success on the latter two does not
@@ -212,23 +221,26 @@ the model's own translation.
 
 ### Implemented factoid and narrative projections
 
-The factoid frontend recognizes a bounded set of ordinary English question constructions before falling back to an
-open-relation frame. Supported frames record the WH type, construction class, relation surface, direction when known,
-subject surface when recoverable, and a deterministic list of conservative paraphrases that existing providers may
-already understand. Examples include country and place questions, passive “used for” questions, and event-continuation
-questions. A syntactically recognized factoid with no provider evidence is not reported as `UNPARSED`; it returns an
-explicit knowledge gap containing the factoid frame and the providers considered.
+The factoid frontend recognizes bounded ordinary English question constructions before falling back to an
+open-relation frame. Supported frames record the WH type, construction class, DS035 question family, relation surface,
+direction when known, subject surface when recoverable, and a deterministic list of conservative paraphrases that
+existing providers may already understand. This includes the natural copular definition form “What is a cat?”, which
+routes as a definition of `cat` rather than as an unknown `is` relation. Examples also include country and place
+questions, passive “used for” questions, and event-continuation questions. A syntactically recognized factoid with no
+provider evidence is not reported as `UNPARSED`; it returns an explicit knowledge gap containing the factoid frame and
+the providers considered.
 
 This projection does not guess a predicate from an answer and does not make arbitrary English equivalent to a supported
 provider query. Provider results are normalized and compared as semantic value sets. Agreement merges provenance;
 disagreement returns ambiguity; no response returns an explicit `UNKNOWN` knowledge gap. The original question, generated provider
 candidate, provider identity, and route remain observable.
 
-After an `UNPARSED` or recognized-but-unanswered question, DS009 may attach a related-evidence grounding bundle. DS022
-selects topical phrases, nouns, and predicates from the original request and excludes grammatical scaffolding such as
-articles, quantifiers, auxiliaries, copulas, conjunctions, and style words while content terms exist. The bundle does
-not make the input parsed, does not become Semantic IR, and is not included in Language Agent feedback. For ordinary
-inability it cannot change the primary status, answer provenance, or answer-contributing KB versions.
+For every eligible likely-English request, DS035 also recognizes explicit and embedded information needs from its
+35-family functional taxonomy and constructs a bounded query-local KB context before ordinary execution. The context
+does not make the input parsed, does not become Semantic IR, and is never included in Language Agent feedback. A
+strict answer remains unchanged. After an eligible inability, DS009 may expose the same bounded material as ordinary
+non-answer grounding, while DS035 may separately realize cited source claims as an explicit `PARTIAL`
+`knowledge-context-fallback` that states the precise conclusion was not established.
 
 An explicit DS022 document-style request is a separate operation rather than failure-answer substitution. Its grounded
 symbolic synthesis method selects bounded user-supplied sentences and candidate KB records, then subjects every
@@ -317,6 +329,14 @@ a bounded evidence-mass factor then keeps short, neutral, or conflicting surface
 several independent English cues to cross the declared threshold. The validator recomputes the score from the receipt
 signals, and incomplete inspection remains confidence zero rather than a partial-language claim. This score controls
 only routing; the parser still decides whether any meaning is accepted.
+
+### Question #7: Why is the implemented possessive reference rule deliberately narrow?
+
+Response: Recency alone cannot prove who a pronoun denotes, and a matching noun alone cannot prove ownership. The
+implemented slice therefore requires one current discourse antecedent and one exact `owns` edge before it constructs a
+possessive query. This supports generic renamed episodes while preserving abstention when several owners, objects, or
+antecedents are possible. Any broader reference resolver must preserve those alternatives explicitly rather than hide
+a guess inside entity normalization.
 
 ## Conclusion
 

@@ -76,35 +76,46 @@ export class HeuristicLanguageRuntime {
     return this.runtime.ask(text, context, executionOptions);
   }
 
-  async attachGrounding(primary) {
+  buildKnowledgeContext(text, context = {}) {
+    return this.runtime.buildKnowledgeContext(text, context);
+  }
+
+  async attachGrounding(primary, knowledgeContextRun) {
     return constructPlannedRequest({
       primary,
       workPolicy: this.workPolicy,
-      attachGrounding: (result) => this.runtime.attachGrounding(result),
+      attachGrounding: (result) => this.runtime.attachGrounding(result, knowledgeContextRun),
     });
   }
 
   async ask(text, context = {}, executionOptions = {}) {
+    const knowledgeContextRun = executionOptions.grounding === false
+      ? undefined
+      : (executionOptions.knowledgeContextRun ?? await this.buildKnowledgeContext(text, context));
+    const attachKnowledgeContext = (result) => this.attachGrounding(result, knowledgeContextRun);
     const direct = await this.runtime.ask(text, context, { ...executionOptions, grounding: false });
     const boundedOperation = processBoundedOperation({ text, direct, model: this.model });
-    if (boundedOperation) return boundedOperation;
+    if (boundedOperation) {
+      return executionOptions.grounding === false
+        ? boundedOperation : attachKnowledgeContext(boundedOperation);
+    }
     const request = await processHeuristicRequest({
       text,
       direct,
       context,
       workPolicy: this.workPolicy,
-      attachGrounding: (result) => this.attachGrounding(result),
+      attachGrounding: attachKnowledgeContext,
     });
     if (request.status === 'TERMINAL') {
       return executionOptions.grounding === false || request.groundingHandled
-        ? request.primary : this.attachGrounding(request.primary);
+        ? request.primary : attachKnowledgeContext(request.primary);
     }
 
     // UNKNOWN can mean that a surface was parsed into the wrong, unsupported semantic frame. A successful
     // direct parse can also flatten an explicit structural cue such as a comma-bounded apposition. Local
     // approximation remains interpretation-only and a changed Semantic IR is never exposed as strict evidence.
     if (!['UNPARSED', 'UNKNOWN', 'SOLVED', 'PARTIAL'].includes(direct.status)) {
-      return executionOptions.grounding === false ? direct : this.attachGrounding(direct);
+      return executionOptions.grounding === false ? direct : attachKnowledgeContext(direct);
     }
 
     const approximation = approximateControlledEnglish(text, approximationOptions(this.workPolicy));
@@ -121,7 +132,7 @@ export class HeuristicLanguageRuntime {
     });
     const directIr = this.runtime.inspectLanguage(text, context);
     if (!alternativeInterpretationRequired(direct, directIr, accepted)) {
-      return executionOptions.grounding === false ? direct : this.attachGrounding(direct);
+      return executionOptions.grounding === false ? direct : attachKnowledgeContext(direct);
     }
     const interpretationBase = queryLocalInterpretationBase(direct, context);
     let result;
@@ -146,6 +157,6 @@ export class HeuristicLanguageRuntime {
     } else {
       result = direct;
     }
-    return executionOptions.grounding === false ? result : this.attachGrounding(result);
+    return executionOptions.grounding === false ? result : attachKnowledgeContext(result);
   }
 }

@@ -18,6 +18,17 @@ function tripleText([subject, predicate, value], model) {
 }
 
 export function realize(query, answer, model) {
+  if (query.reasoning === 'finite-episodic-possession-location') {
+    const inferred = answer.evidence.find((fact) =>
+      fact.reasoning === 'finite-episodic-possession-location');
+    if (!inferred) {
+      return 'I understand the location question, but I cannot form a supported plausible answer.';
+    }
+    const place = entityName(inferred.object, model);
+    const owner = entityName(query.owner, model);
+    return `Probably ${place} (confidence ${inferred.confidence.toFixed(2)}). This assumes the possessed entity `
+      + `shares ${owner}'s current location; its location was not stated directly.`;
+  }
   if (query.intent === 'abductive-explanation') {
     if (answer.hypotheses.length === 0) return 'I have no grounded causal rule for that observation.';
     const candidates = answer.hypotheses.map((candidate) => {

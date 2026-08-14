@@ -87,6 +87,17 @@ function continuationFamily(relation) {
   return 'event';
 }
 
+function questionFamilies(relation) {
+  const family = CONCEPTNET_RELATIONS[relation]?.family;
+  return Object.freeze({
+    taxonomy: ['taxonomy'], mereology: ['part-whole'], purpose: ['purpose'],
+    capability: ['capability'], location: ['location'], property: ['property'],
+    material: ['composition'], causal: ['effect', 'cause-origin'], intentional: ['intent', 'reason'],
+    affordance: ['affordance'], 'lexical-opposition': ['antonym'],
+    'lexical-equivalence': ['synonym'],
+  }[family] ?? []);
+}
+
 async function relationalMatches(provider, sourceTerms, targetTerms, relations) {
   const wanted = new Set(targetTerms);
   const evidence = [];
@@ -156,10 +167,15 @@ export class ConceptNetProvider {
   }
 
   async retrieveGrounding(request) {
+    const requestedFamily = request.query?.factoidFrame?.questionFamily;
     const preferredRelations = [
       'IsA', 'UsedFor', 'CapableOf', 'AtLocation', 'HasProperty', 'PartOf', 'HasA',
       'MadeOf', 'Causes', 'MotivatedByGoal', 'ReceivesAction', 'Synonym', 'Antonym', 'InstanceOf',
-    ];
+    ].toSorted((left, right) => {
+      const leftMatch = questionFamilies(left).includes(requestedFamily) ? 1 : 0;
+      const rightMatch = questionFamilies(right).includes(requestedFamily) ? 1 : 0;
+      return rightMatch - leftMatch;
+    });
     const maximumLookups = Math.min(request.limits.maximumLookups, 48);
     const maximumValues = request.limits.maximumValuesPerLookup;
     const maximumCandidateEntries = request.limits.maximumEntries * 4;
@@ -187,6 +203,7 @@ export class ConceptNetProvider {
             statement: `ConceptNet records the ${relation} relation from “${normalizeConceptTerm(term)}” to “${edge[0]}”.`,
             semantic: {
               kind: 'typed-relation-edge',
+              questionFamilies: questionFamilies(relation),
               subject: normalizeConceptTerm(term),
               relation,
               object: edge[0],

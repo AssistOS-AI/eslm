@@ -30,13 +30,16 @@ function entry(kbId, recordId, score = 1) {
   });
 }
 
-test('unknown answers remain unsupported while related QUICK records are separate grounding', async () => {
+test('unknown answers may realize explicit source context without promoting it to the missing answer', async () => {
   const result = await (await quickRuntime()).ask('Can Penguin fly?');
-  assert.equal(result.status, 'UNKNOWN');
-  assert.equal(result.answer, 'I understand the question, but I do not have evidence for a yes or no answer.');
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'knowledge-context-fallback');
+  assert.match(result.answer, /could not establish a precise answer/u);
+  assert.match(result.answer, /do not establish the missing conclusion/u);
   assert.deepEqual(result.values, []);
-  assert.deepEqual(result.provenance, []);
-  assert.deepEqual(result.usedKbVersions, []);
+  assert.ok(result.provenance.every((item) => item.sourceClaim === true
+    && item.method === 'query-local-contextual-source-realization'));
+  assert.deepEqual(result.usedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
   assert.deepEqual(result.selectedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
   assert.equal(result.grounding.answerSupported, false);
   assert.equal(result.grounding.status, 'RELATED_EVIDENCE_FOUND');
@@ -126,24 +129,28 @@ test('configured induction attributes the policy KB instead of every selected pa
   assert.deepEqual(result.usedKbVersions, [{ kbId: 'babi-v1.2-language', version: '1.0.0' }]);
 });
 
-test('unparsed input retrieves by original surface and includes previously committed session facts', async () => {
+test('unparsed input can realize previously committed session facts as explicit partial context', async () => {
   const runtime = await quickRuntime();
   const learned = await runtime.ask('Zara is a pilot.');
   const result = await runtime.ask('Write a report about Zara.', learned.context);
-  assert.equal(result.status, 'UNPARSED');
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'knowledge-context-fallback');
   assert.equal(result.context.session.facts.length, 1);
-  assert.deepEqual(result.usedKbVersions, []);
+  assert.deepEqual(result.usedKbVersions, [{ kbId: 'session', version: 'current' }]);
+  assert.equal(result.provenance[0].sourceClaim, true);
   assert.ok(result.grounding.entries.some((item) =>
     item.kbId === 'session' && item.statement === 'Zara is a pilot.'));
   assert.ok(result.grounding.search.receipts.some((item) => item.kbId === 'session'));
   assert.deepEqual(result.consultedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
 });
 
-test('QUICK grounding consultation is recorded for unparsed input without claiming answer contribution', async () => {
+test('QUICK records can be cited as partial context without claiming the requested report is complete', async () => {
   const result = await (await quickRuntime()).ask('Write a short report about Penguin.');
-  assert.equal(result.status, 'UNPARSED');
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'knowledge-context-fallback');
   assert.deepEqual(result.consultedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
-  assert.deepEqual(result.usedKbVersions, []);
+  assert.deepEqual(result.usedKbVersions, [{ kbId: 'quick', version: '1.1.0' }]);
+  assert.match(result.answer, /could not represent the full request precisely/u);
   assert.ok(result.grounding.entries.some((item) => item.statement === 'Penguin can swim.'));
 });
 
@@ -564,7 +571,8 @@ test('invalid provider entries cannot erase valid related evidence or imply comp
     },
   });
   const result = await runtime.ask('Can Penguin fly?');
-  assert.equal(result.status, 'UNKNOWN');
+  assert.equal(result.status, 'PARTIAL');
+  assert.equal(result.languageRoute, 'knowledge-context-fallback');
   assert.equal(result.grounding.status, 'RELATED_EVIDENCE_FOUND');
   assert.equal(result.grounding.search.complete, false);
   assert.deepEqual(result.grounding.entries.map((item) => item.recordId), ['valid-related']);
@@ -774,7 +782,9 @@ test('many providers share deterministic aggregate source, lookup, candidate, an
     receipt.kbId === 'grounding-aggregator');
   assert.ok(aggregate.truncationReasons.includes('aggregate-source-budget'));
   assert.ok(aggregate.truncationReasons.includes('runtime-candidate-entry-budget'));
-  assert.deepEqual(result.usedKbVersions, []);
+  assert.deepEqual(result.usedKbVersions.map((identity) => identity.kbId), [
+    'provider-00', 'provider-01', 'provider-02', 'provider-03',
+  ]);
 });
 
 test('a large merged core searches only receipt-budgeted sources and accounts only those consultations', async () => {
@@ -814,7 +824,9 @@ test('a large merged core searches only receipt-budgeted sources and accounts on
     sourceReceipts.map((receipt) => receipt.kbId));
   assert.ok(result.grounding.search.receipts.at(-1).truncationReasons
     .includes('aggregate-source-budget'));
-  assert.deepEqual(result.usedKbVersions, []);
+  assert.deepEqual(result.usedKbVersions.map((identity) => identity.kbId), [
+    'core-source-00', 'core-source-01', 'core-source-02', 'core-source-03',
+  ]);
 });
 
 test('grounding bundle rejects an unbounded candidate collection before ranking it', () => {

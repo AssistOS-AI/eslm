@@ -1,6 +1,6 @@
 {
   "format": "eslm-basic-eval-status",
-  "generatedAt": "2026-08-13T12:05:01.754Z",
+  "generatedAt": "2026-08-14T10:52:51.688Z",
   "sourceDevelopmentDisclosure": "All converted source cases are development-visible and may influence implementation.",
   "inventory": {
     "sourceCases": 1000,
@@ -56,7 +56,7 @@
     "controlManifestDigest": "sha256:c6b2266aae055bb97a6a3d134e8de91dcc0b0046101bdf38dcdc22d6805cfba1"
   },
   "checkpoint": {
-    "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+    "executableDigest": "sha256:cc7b04a45e6d119d0266ccf0de41bc2a2eb9e4b75b79f94fbc0b44e09e81690f",
     "allProfilesCurrent": true,
     "currentProfileCount": 3,
     "expectedProfileCount": 3
@@ -64,11 +64,11 @@
   "profiles": [
     {
       "profileId": "core-only",
-      "generatedAt": "2026-08-13T12:04:32.518Z",
+      "generatedAt": "2026-08-14T10:52:14.084Z",
       "current": true,
-      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+      "executableDigest": "sha256:cc7b04a45e6d119d0266ccf0de41bc2a2eb9e4b75b79f94fbc0b44e09e81690f",
       "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
-      "resultDigest": "sha256:9e35e3e886663da8c10f4106aab0c1a843fa1beea90f52f20e4fdfe35354b814",
+      "resultDigest": "sha256:b69cc773d4d2aae4c992af018150eaa790288072140f9e489ad2489a679fc6d0",
       "counts": {
         "total": 750,
         "pass": 410,
@@ -272,11 +272,11 @@
     },
     {
       "profileId": "quick-assisted",
-      "generatedAt": "2026-08-13T12:04:32.034Z",
+      "generatedAt": "2026-08-14T10:52:15.298Z",
       "current": true,
-      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+      "executableDigest": "sha256:cc7b04a45e6d119d0266ccf0de41bc2a2eb9e4b75b79f94fbc0b44e09e81690f",
       "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
-      "resultDigest": "sha256:21443476be84de69c86acefb4d47894c4ebbf96a5acd5654075cd9e3a8e2b91e",
+      "resultDigest": "sha256:87fb9cffa20bad86b994d0a47bd26df18ffd7a92b566b14f8d38fc92bb567d0c",
       "counts": {
         "total": 210,
         "pass": 0,
@@ -340,39 +340,39 @@
     },
     {
       "profileId": "real-kb",
-      "generatedAt": "2026-08-13T12:04:38.485Z",
+      "generatedAt": "2026-08-14T10:52:29.809Z",
       "current": true,
-      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+      "executableDigest": "sha256:cc7b04a45e6d119d0266ccf0de41bc2a2eb9e4b75b79f94fbc0b44e09e81690f",
       "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
-      "resultDigest": "sha256:df533202206517a2329528e051a51f0e9fd946c63dd8ae621316b57ee1174aec",
+      "resultDigest": "sha256:e06da7f71631e576101c6b10e100eb02e56768c59e753961768c7237e877e2b5",
       "counts": {
         "total": 250,
         "pass": 44,
-        "fail": 160,
-        "review": 46
+        "fail": 123,
+        "review": 83
       },
       "semanticReview": {
         "current": true,
-        "reviewed": 46,
-        "pass": 33,
-        "fail": 13
+        "reviewed": 83,
+        "pass": 35,
+        "fail": 48
       },
       "validated": {
-        "pass": 77,
-        "fail": 173,
+        "pass": 79,
+        "fail": 171,
         "pendingReview": 0
       },
-      "validatedPassPercent": 30.8,
+      "validatedPassPercent": 31.6,
       "passPercent": 17.6,
-      "reviewPercent": 18.4,
+      "reviewPercent": 33.2,
       "failureClusters": [
-        {
-          "stage": "grounding",
-          "count": 94
-        },
         {
           "stage": "parse",
           "count": 61
+        },
+        {
+          "stage": "grounding",
+          "count": 57
         },
         {
           "stage": "reasoning",
@@ -387,8 +387,8 @@
         "factual": {
           "total": 150,
           "pass": 44,
-          "fail": 106,
-          "review": 0
+          "fail": 69,
+          "review": 37
         },
         "explanation": {
           "total": 30,
@@ -423,15 +423,15 @@
       "real-kb"
     ],
     "total": 1000,
-    "pass": 637,
-    "fail": 363,
+    "pass": 639,
+    "fail": 361,
     "pendingReview": 0,
-    "passPercent": 63.7,
+    "passPercent": 63.9,
     "meaning": "Each source case is counted once through its core-only or source-derived real-KB profile; QUICK is auxiliary development evidence."
   },
   "structuralControls": {
     "current": true,
-    "generatedAt": "2026-08-13T12:04:45.356Z",
+    "generatedAt": "2026-08-14T10:52:35.959Z",
     "counts": {
       "total": 10,
       "pass": 10,

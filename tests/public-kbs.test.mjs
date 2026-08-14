@@ -1,7 +1,41 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { loadPublicKnowledgeBase } from '../src/public-kbs.mjs';
-import { createGroundingRequest } from '../src/reasoning/grounding-retrieval.mjs';
+import { GeoNamesProvider } from '../src/public-kb-providers/geonames.mjs';
+import {
+  createGroundingRequest, createKnowledgeContextRequest,
+} from '../src/reasoning/grounding-retrieval.mjs';
+
+function syntheticGeoNamesProvider() {
+  const placeId = 'nonce-place-1';
+  const placeRef = `places/${createHash('sha256').update(placeId).digest('hex')[0]}.json`;
+  return new GeoNamesProvider({
+    manifest: {
+      id: 'geonames-nonce', kbId: 'geonames-nonce', kbVersion: 'test',
+    },
+    data: {
+      'countries/all.json': {
+        countries: {
+          TV: ['Torvia', 'Toria', 'EU', 'TVC', 'Torvian credit', ['tv'], 1000, 100, 'TV', '', '', 'country-1'],
+        },
+        index: { tv: 'TV', torvia: 'TV' },
+      },
+      'names/s.json': { sora: [placeId] },
+      [placeRef]: {
+        [placeId]: ['Șora', 'Sora', 'TV', 100, '1', '2', 'Etc/UTC'],
+      },
+    },
+  }, { mode: 'eager', shardsByRef: new Map() });
+}
+
+function noncePlaceContextRequest(surface, role) {
+  return createKnowledgeContextRequest(`Where is ${surface} located?`, undefined, {
+    focus: [{ focusId: 'nonce-place-focus', term: surface, role }],
+    maximumLookups: 4,
+    maximumValuesPerLookup: 4,
+  });
+}
 
 test('WordNet declarative shards support lazy bounded taxonomy proofs', async () => {
   const provider = await loadPublicKnowledgeBase('oewn-2025', { mode: 'lazy', cacheBytes: 32 * 1024 * 1024 });
@@ -29,6 +63,23 @@ test('GeoNames uses typed source relations and preserves place-name ambiguity', 
   const renamedForm = await provider.ask('Which country has Bucharest as its capital?');
   assert.equal(renamedForm.answer, 'Romania');
   assert.equal(provider.memorySnapshot().mode, 'lazy');
+});
+
+test('GeoNames context requires a proper-name role and Unicode-exact canonical admission', async () => {
+  const provider = syntheticGeoNamesProvider();
+
+  const commonNoun = await provider.retrieveGrounding(noncePlaceContextRequest('sora', 'entity'));
+  assert.deepEqual(commonNoun.entries, []);
+  assert.match(commonNoun.receipt.diagnostic, /not typed as proper names/u);
+
+  const foldedAlias = await provider.retrieveGrounding(noncePlaceContextRequest('Sora', 'named-entity'));
+  assert.deepEqual(foldedAlias.entries, []);
+  assert.match(foldedAlias.receipt.diagnostic, /Unicode-different canonical name/u);
+
+  const exactName = await provider.retrieveGrounding(noncePlaceContextRequest('Șora', 'named-entity'));
+  assert.equal(exactName.entries.length, 1);
+  assert.equal(exactName.entries[0].semantic.name, 'Șora');
+  assert.deepEqual(exactName.entries[0].relevance.reasons, ['typed-unicode-exact-place-name-match']);
 });
 
 test('ConceptNet retrieves typed relation edges without treating them as universal laws', async () => {

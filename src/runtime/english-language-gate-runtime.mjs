@@ -84,6 +84,11 @@ export class EnglishLanguageGateRuntime {
 
   inspectLanguage(text, context = {}) { return this.runtime.inspectLanguage(text, context); }
 
+  buildKnowledgeContext(text, context = {}) {
+    return typeof this.runtime.buildKnowledgeContext === 'function'
+      ? this.runtime.buildKnowledgeContext(text, context) : undefined;
+  }
+
   askDirect(text, context = {}, executionOptions = {}) {
     return this.runtime.askDirect(text, context, executionOptions);
   }
@@ -107,7 +112,14 @@ export class EnglishLanguageGateRuntime {
     if (languageAssessment.classification === 'likely-non-english') {
       return rejectedResult(this.runtime, text, context, segments, languageAssessment);
     }
-    const result = await this.runtime.ask(text, context, executionOptions);
+    const knowledgeContextRun = executionOptions.grounding === false
+      ? undefined
+      : (executionOptions.knowledgeContextRun
+        ?? await this.buildKnowledgeContext(text, context));
+    const result = await this.runtime.ask(text, context, {
+      ...executionOptions,
+      ...(knowledgeContextRun ? { knowledgeContextRun } : {}),
+    });
     return assertRuntimeTextResultContract({ ...result, languageAssessment });
   }
 }

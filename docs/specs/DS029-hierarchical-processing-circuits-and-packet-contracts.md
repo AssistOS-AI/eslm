@@ -129,11 +129,12 @@ nodes. A distinct node is justified only when it has a different typed input/out
 failure vocabulary, or resource owner. Decorative wrappers, source-family names, benchmark-specific solvers, and nodes
 that mix interpretation, retrieval, proof, and presentation are rejected.
 
-The exact current catalog contains twelve coordinators, eleven of which may vote. Runtime voting is limited to
+The exact current catalog contains thirteen coordinators, eleven of which may vote. Runtime voting is limited to
 `language-proposal-coordinator`, `interpretation-arbiter`, `request-plan-coordinator`,
 `knowledge-focus-coordinator`, `evidence-assessment-coordinator`, `method-plan-coordinator`, and
 the separate `sentence-realization-coordinator` and `document-assembly-coordinator`.
-`result-construction-coordinator` schedules the construction boundary but does not vote. Compiler voting is limited to `knowledge-extraction-coordinator` and
+`task-context-coordinator` schedules the mandatory DS035 context strategy without voting, and
+`result-construction-coordinator` schedules the construction boundary without voting. Compiler voting is limited to `knowledge-extraction-coordinator` and
 `identity-resolution-coordinator`. Research voting is limited to `hypothesis-coordinator`. Compiler and research votes
 rank untrusted build or research candidates only; they grant no runtime, answer, proof, package, or promotion authority.
 No source, deterministic process, authority gate, method executor, or sink votes. A vote ranks a candidate according to
@@ -184,7 +185,7 @@ children but cannot rewrite a child gate's decision.
 
 ### 5. Exact runtime node inventory
 
-The current runtime catalog contains 37 nodes. The responsibility name below is stable; exact packet, edge, strategy, and
+The current runtime catalog contains 38 nodes. The responsibility name below is stable; exact packet, edge, strategy, and
 resource lists live in the closed catalog and are validated against this grouping.
 
 | Circuit | Nodes and responsibilities |
@@ -192,7 +193,7 @@ resource lists live in the closed catalog and are validated against this groupin
 | Direct language ingress | `request-ingress` bounds input; `english-likelihood-gate` routes English confidence without claiming a source language; `direct-parser-gate` accepts only a supported parsed interpretation. |
 | Language recovery | `language-proposal-coordinator` executes selected proposal strategies; `semantic-preservation-gate` prevents unlicensed meaning change; `parse-only-reparse-gate` inspects without retrieval or execution; `interpretation-arbiter` selects or reports ambiguity. |
 | Request and session | `session-snapshot` captures rollback state and makes the named snapshot packet available to both work validation and the later session-effect boundary; `work-policy-gate` validates finite work; `request-operation-framer` represents one explicit bounded operation under DS030 without executing it; `request-force-gate` distinguishes a request from incidental artifact nouns; `request-plan-coordinator` builds ordered obligations; `session-effect-gate` consumes the request plan plus the snapshot and prevents speculative interpretation from mutating the session. |
-| Knowledge routing | `knowledge-focus-coordinator` derives typed semantic focus; `package-scope-gate` admits exact packages and versions; `exact-route-planner` schedules bounded providers or shards; `evidence-frontier-retriever` returns evidence plus search receipts; `frontier-completeness-gate` controls absence claims; `grounded-knowledge-inspector` performs the DS033 loaded-fact summary or listing only over the selected declarative model. |
+| Knowledge routing | `task-context-coordinator` recognizes DS035 explicit and embedded question families and retrieves one non-authoritative query-local context frontier immediately after the English gate; `knowledge-focus-coordinator` derives typed semantic focus; `package-scope-gate` admits exact packages and versions; `exact-route-planner` schedules bounded providers or shards; `evidence-frontier-retriever` returns evidence plus search receipts; `frontier-completeness-gate` controls absence claims; `grounded-knowledge-inspector` performs the DS033 loaded-fact summary or listing only over the selected declarative model. |
 | Evidence assessment | `evidence-assessment-coordinator` ranks relevance and answer-bridge potential; `evidence-admission-gate` rejects malformed, untrusted, or out-of-scope evidence. Relevance is not truth authority. |
 | Method selection and proof | `method-plan-coordinator` selects a capability-compatible method; `method-executor` returns a result plus witness; `deterministic-value-executor` performs the DS031 finite value or order method; `supplied-text-operator` performs a DS032 classification, extraction, or constrained transformation; `witness-verification-gate` independently replays or validates the bounded witness. |
 | Failure and result | `failure-eligibility-gate` controls related-evidence fallback; `failure-grounder` emits a non-answer grounding bundle; `result-schema-gate` validates the closed public result; `session-commit-gate` commits or rolls back; `result-sink` emits the immutable result. |
@@ -231,7 +232,7 @@ available, not how a JavaScript object happens to be laid out. The separate
 contract contains the packet identity, canonical producer and consumer node lists, required and optional high-level
 semantic field names, an explicit meaning for absence, bound resource references, one validation owner, privacy and
 provenance policies, lifetime, and authority effect. The graph validator recomputes producer and consumer lists from
-node input/output declarations and requires exact 66-for-66 coverage; a packet cannot be added to the graph by changing
+node input/output declarations and requires exact 67-for-67 coverage; a packet cannot be added to the graph by changing
 only one catalog.
 
 The API exposes `processingGraphPacketContract()` for lookup,
@@ -249,11 +250,11 @@ Authority effect is `none`, `work-allocation`, `records-selection`, `records-gat
 authority already established by the producer. It cannot turn a data packet, coordinator selection, compiler
 candidate, or research proposal into an authority decision.
 
-The 66 current packets form four families:
+The 67 current packets form four families:
 
 | Packet family | Named contents |
 | --- | --- |
-| Runtime | Bounded request, language assessment, proposal batch, vote and correlation ledgers, reparse and interpretation decisions, session snapshot, direct diagnostic, bounded operation frame, separate deterministic-value, supplied-text, and knowledge-inspection results, general task frame, request plan, query focus, package scope, routing plan, evidence frontier, completeness and admission decisions, assessed evidence, method plan/result, verification decision, inability, grounding bundle, construction work order, admitted-claim ledger, rhetorical plan, grounded-sentence ledger, construction candidate, result validation, session commit, and public runtime result. |
+| Runtime | Bounded request, language assessment, proposal batch, vote and correlation ledgers, reparse and interpretation decisions, session snapshot, direct diagnostic, bounded operation frame, separate deterministic-value, supplied-text, and knowledge-inspection results, DS035 task-knowledge context, general task frame, request plan, query focus, package scope, routing plan, evidence frontier, completeness and admission decisions, assessed evidence, method plan/result, verification decision, inability, grounding bundle, construction work order, admitted-claim ledger, rhetorical plan, grounded-sentence ledger, construction candidate, result validation, session commit, and public runtime result. |
 | Compiler | Frozen and decoded source, source authorization, segments, record candidates, identity resolution, canonical records, validation decisions, promotion decision, package candidate, package validation, immutable package, and build gap. |
 | Research | Source status, episode and authorized-episode batches, projected episodes, structural features, hypotheses, neutrality and transfer decisions, scale progress, promotion proposal, and research gap. |
 | Shared coordination | `packet:shared:coordinator-receipt` records schedule and outcomes; `packet:shared:correlation-ledger` prevents copied or dependent strategies from multiplying confidence. |
@@ -272,7 +273,9 @@ a typed inability or failure. Rollback carries a previously named host snapshot 
 that may restore it. In the request circuit the request-plan edge remains data, while the separate conditioned rollback
 edge makes `packet:runtime:request-session-snapshot` available to `session-effect-gate`.
 
-The current catalog contains 87 edges. All nodes are reachable from their plane's source through normal or explicit
+The current catalog contains 90 edges. The English-likelihood gate fans eligible requests to both the direct parser and
+the DS035 task-context coordinator. The context packet then feeds knowledge focus and result construction without
+language-selection, premise, or answer authority. All nodes are reachable from their plane's source through normal or explicit
 exceptional paths. No exceptional path may skip result validation, no failure-grounding path may change the primary
 answer, and no rollback edge may erase the receipt that explains why rollback occurred. Provider results become
 admissible only after their lifecycle cleanup succeeds; a cleanup failure discards pending evidence and returns an
@@ -332,9 +335,9 @@ three catalog digests and rejects:
   or an envelope with an unknown or absent required high-level semantic field; and
 - implementation-state claims that contradict the registered strategy inventory.
 
-At the current checkpoint the validated inventory is 57 nodes, 22 circuits, 87 edges, 66 packets with 66 exact packet
-contracts, 27 resource dimensions, all 79 built-in strategy identities, and all 17 DS027 stages. The state ledger is
-one `coordinated`, 49 `instrumented-local`, and seven `planned`. These counts are a release consistency check, not a
+At the current checkpoint the validated inventory is 58 nodes, 22 circuits, 90 edges, 67 packets with 67 exact packet
+contracts, 27 resource dimensions, all 80 built-in strategy identities, and all 18 DS027 stages. The state ledger is
+one `coordinated`, 50 `instrumented-local`, and seven `planned`. These counts are a release consistency check, not a
 permanent architectural limit. A semantic graph or packet-contract change updates this specification and its stable
 identities before results are republished.
 
@@ -471,7 +474,7 @@ card when a particular aggregate view still has a crossing.
 ## Conclusion
 
 The hierarchical processing-circuit catalog makes ESLM concrete at several levels of zoom. Fifty-seven named nodes,
-66 exact packet contracts, explicit resources, guarded edges, and honest implementation states describe what happens,
+67 exact packet contracts, explicit resources, guarded edges, and honest implementation states describe what happens,
 what data moves, which alternatives may compete, and where authority resides. DS027 supplies controlled strategy
 coordination; DS028 supplies a disciplined discovery program; this specification supplies the stable graph that both
 must respect. The result is an inspectable engineering architecture that can grow through evidence without becoming

@@ -22,6 +22,41 @@ test('runtime compiles session language, plans deduction, and emits a proof-bear
   assert.deepEqual(result.model.memory, directCoreMemorySnapshot());
 });
 
+test('unique discourse possession supports a bounded defeasible location answer with explicit confidence', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  for (const [input, expectedPlace] of [
+    ['Nera is a pilot. She lives in Orwick. She has a ferret. Where is her ferret living?', 'orwick'],
+    ['Tavin is a mason. He lives in Velden. He has a badger. Where does his badger live?', 'velden'],
+  ]) {
+    const result = engine.ask(input);
+    assert.equal(result.status, 'DEFEASIBLE', input);
+    assert.deepEqual(result.values, [expectedPlace], input);
+    assert.equal(result.plan.methodId, 'method:core:finite-episodic-world', input);
+    assert.equal(result.reasoning.inference, 'possession-location-default', input);
+    assert.equal(result.reasoning.confidence, 0.62, input);
+    assert.match(result.answer, /Probably .*confidence 0\.62/u, input);
+    assert.match(result.answer, /location was not stated directly/u, input);
+    assert.deepEqual(result.episode.unsupportedStatements, [], input);
+  }
+});
+
+test('possession-location defaults abstain without an owner location and exact object locations take priority', async () => {
+  const engine = new EslmEngine(await createCoreModel());
+  const missingBridge = engine.ask(
+    "Nera is a pilot. Nera lives in Orwick. Tavin has a ferret. Where is Tavin's ferret living?",
+  );
+  assert.equal(missingBridge.status, 'UNKNOWN');
+  assert.deepEqual(missingBridge.values ?? [], []);
+
+  const exact = engine.ask(
+    "Nera is a pilot. She lives in Orwick. She has a ferret. The ferret lives in Velden. Where is Nera's ferret living?",
+  );
+  assert.equal(exact.status, 'SOLVED');
+  assert.deepEqual(exact.values, ['velden']);
+  assert.equal(exact.reasoning.method, 'retrieval');
+  assert.doesNotMatch(exact.answer, /Probably|confidence/u);
+});
+
 test('a committed session rule composes with loaded KB facts in a later turn', async () => {
   const model = mergeModels(await createCoreModel(), [await loadKnowledgeBase('quick')]);
   const engine = new EslmEngine(model);

@@ -173,6 +173,7 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
     return Object.freeze({
       focusId: boundedIdentifier(focus.focusId ?? `focus:${index + 1}`, 'Grounding focus ID'),
       term: boundedIdentifier(normalizedTerm, 'Grounding focus term'),
+      surface: boundedText(focus.surface ?? focus.term, MAX_IDENTIFIER_CHARACTERS),
       role,
     });
   }) : [];
@@ -230,8 +231,11 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
       factoidFrame: query.factoidFrame ? Object.freeze({
         wh: boundedQueryValue(query.factoidFrame.wh),
         construction: boundedQueryValue(query.factoidFrame.construction),
+        questionFamily: boundedQueryValue(query.factoidFrame.questionFamily),
         relationSurface: boundedQueryValue(query.factoidFrame.relationSurface, true),
         subjectSurface: boundedQueryValue(query.factoidFrame.subjectSurface, true),
+        topicSurfaces: Object.freeze((query.factoidFrame.topicSurfaces ?? [])
+          .slice(0, 8).map((value) => boundedQueryValue(value, true)).filter(Boolean)),
         direction: boundedQueryValue(query.factoidFrame.direction),
       }) : undefined,
     }) : undefined,
@@ -246,6 +250,16 @@ export function createGroundingRequest(text, triggerStatus, query, options = {})
       maximumCandidateEntries,
       maximumOutputBytes,
     }),
+  });
+}
+
+export function createKnowledgeContextRequest(text, query, options = {}) {
+  const groundingRequest = createGroundingRequest(text, 'UNKNOWN', query, options);
+  const { triggerStatus: _triggerStatus, ...request } = groundingRequest;
+  return Object.freeze({
+    ...request,
+    format: 'eslm-task-knowledge-context-request-v1',
+    purpose: 'query-local-task-context',
   });
 }
 
@@ -498,6 +512,63 @@ export function createGroundingBundle({
       returnedEntryBytes,
       candidatesConsidered: ranked.length,
       outputTruncated: ranked.length > selected.length,
+    }),
+  });
+}
+
+export function createTaskKnowledgeContext({
+  request,
+  entries = [],
+  searchReceipts = [],
+  maximumEntries = DEFAULT_MAX_ENTRIES,
+  questionAnalysis,
+  selfQuestionPlan,
+  selectedKbVersions = [],
+  consultedKbVersions = [],
+  contextStrategySelection,
+}) {
+  if (request?.format !== 'eslm-task-knowledge-context-request-v1') {
+    throw new Error('Task knowledge context requires its versioned context request.');
+  }
+  const evidence = createGroundingBundle({
+    request,
+    triggerStatus: 'UNKNOWN',
+    entries,
+    searchReceipts,
+    maximumEntries,
+  });
+  const strategySelection = contextStrategySelection === undefined
+    ? undefined : [...new Set(contextStrategySelection)].toSorted();
+  return Object.freeze({
+    format: 'eslm-task-knowledge-context-v1',
+    status: evidence.entries.length > 0 ? 'CONTEXT_FOUND'
+      : evidence.search.complete ? 'NO_CONTEXT_FOUND' : 'CONTEXT_INCOMPLETE',
+    answerSupported: false,
+    premiseAuthority: 'none',
+    interpretationAuthority: 'none',
+    strategy: Object.freeze({
+      stage: 'runtime.context.construct',
+      identity: 'strategy:context:question-facet-expansion@1',
+      mode: strategySelection === undefined ? 'all-registered' : 'exact-allowlist',
+      selection: Object.freeze(strategySelection ?? []),
+      implementationState: 'instrumented-local',
+    }),
+    queryText: evidence.queryText,
+    questionAnalysis,
+    selfQuestionPlan,
+    focus: evidence.focus,
+    search: evidence.search,
+    entries: evidence.entries,
+    selectedKbVersions: Object.freeze([...selectedKbVersions]),
+    consultedKbVersions: Object.freeze([...consultedKbVersions]),
+    limits: evidence.limits,
+    completeness: Object.freeze({
+      questions: questionAnalysis?.complete === true,
+      selfQuestions: selfQuestionPlan?.complete === true,
+      focus: evidence.search.termSelectionComplete,
+      retrieval: evidence.search.complete,
+      complete: questionAnalysis?.complete === true
+        && selfQuestionPlan?.complete === true && evidence.search.complete,
     }),
   });
 }

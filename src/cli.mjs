@@ -31,7 +31,7 @@ import { editDistance, parseArgs } from './util.mjs';
 import { createTerminalStyle } from './terminal-style.mjs';
 import {
   interactiveBasicEvalSmoke, interactiveCountAndSeed, interactiveExamplePage, interactiveExamples,
-  interactiveHelp, interactiveKbText, interactiveResultText, memoryText, modelText, profileText,
+  interactiveFailureText, interactiveHelp, interactiveKbText, interactiveResultText, memoryText, modelText, profileText,
   strategiesText, traceText, workText,
 } from './interface/interactive-presenter.mjs';
 import { benchmarkCommand } from './interface/benchmark-command.mjs';
@@ -46,6 +46,7 @@ import {
   createCliRuntime, selectedRuntimeKbIds,
 } from './interface/cli-runtime-composition.mjs';
 import { withLanguageAgentActivity } from './interface/language-agent-activity.mjs';
+import { writeSymbolicProcessingActivity } from './interface/processing-activity.mjs';
 const runFile = promisify(execFile);
 let writeOutput = (text) => stdout.write(text);
 let writeError = (text) => stderr.write(text);
@@ -164,7 +165,7 @@ async function chat(options) {
     if (line === '/normalize') {
       const configuration = engine.normalizationConfiguration?.();
       stdout.write(configuration
-        ? `${style.yellow('Language Agent normalization is on.')} Adapter: Codex; model: ${configuration.model}; reasoning: ${configuration.reasoningEffort}; proposal limit: ${configuration.proposalLimit}; cache: ${configuration.cacheEnabled ? 'on' : 'off'}. Only UNPARSED input is sent externally.\n`
+        ? `${style.yellow('Language Agent normalization is on.')} Adapter: Codex; model: ${configuration.model}; reasoning: ${configuration.reasoningEffort}; proposal limit: ${configuration.proposalLimit}; per-call timeout: ${Math.ceil(configuration.timeoutMs / 1_000)}s; cache: ${configuration.cacheEnabled ? 'on' : 'off'}. Only input still UNPARSED after local recovery is sent externally.\n`
         : `${style.green('Language Agent normalization is off.')} The active path is offline and direct-symbolic.\n`);
       continue;
     }
@@ -231,10 +232,16 @@ async function chat(options) {
     if (line === '/trace') { stdout.write(`${traceText(last, style)}\n`); continue; }
     if (line === '/profile') { stdout.write(`${profileText(last, style)}\n`); continue; }
     if (line.startsWith('/')) { stdout.write(`${style.red('Unknown command.')} Use ${style.blue('/help')} to see the available commands.\n`); continue; }
-    last = await engine.ask(line, context);
-    context = last.context ?? context;
-    stdout.write(`${interactiveResultText(last, line, style)}\n`);
-    if (last.input?.corrections?.length) stdout.write(`${style.magenta(`[normalized: ${last.input.normalized}]`)}\n`);
+    writeSymbolicProcessingActivity(engine, (text) => stdout.write(text), style);
+    try {
+      const result = await engine.ask(line, context);
+      last = result;
+      context = result.context ?? context;
+      stdout.write(`${interactiveResultText(result, line, style)}\n`);
+      if (result.input?.corrections?.length) stdout.write(`${style.magenta(`[normalized: ${result.input.normalized}]`)}\n`);
+    } catch (error) {
+      stdout.write(`${interactiveFailureText(error, style)}\n`);
+    }
   }
   terminal.close();
 }
@@ -244,7 +251,9 @@ async function ask(args, options) {
   if (!text) throw new Error('ask requires a question.');
   const style = createTerminalStyle(options.color, stderr);
   const runtimeOptions = withLanguageAgentActivity(options, writeError, style);
-  printJson(await (await createCliRuntime(runtimeOptions)).ask(text));
+  const engine = await createCliRuntime(runtimeOptions);
+  writeSymbolicProcessingActivity(engine, writeError, style);
+  printJson(await engine.ask(text));
 }
 
 async function runBatch(options) {
@@ -255,7 +264,10 @@ async function runBatch(options) {
   const runtimeOptions = withLanguageAgentActivity(options, writeError, style);
   const engine = await createCliRuntime(runtimeOptions);
   const outputs = [];
-  for (const record of records) outputs.push({ id: record.id, ...await engine.ask(record.text ?? record.input ?? '') });
+  for (const record of records) {
+    writeSymbolicProcessingActivity(engine, writeError, style);
+    outputs.push({ id: record.id, ...await engine.ask(record.text ?? record.input ?? '') });
+  }
   const serialized = `${outputs.map((record) => JSON.stringify(record)).join('\n')}\n`;
   if (options.output) await writeFile(resolve(options.output), serialized, 'utf8');
   else writeOutput(serialized);

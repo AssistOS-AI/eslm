@@ -56,6 +56,7 @@ The stable responsibility map is:
 | DS032 | bounded classification, extraction, correction, and transformation over supplied text |
 | DS033 | grounded conversational inspection, listing, provenance, and natural abstention over loaded KB facts |
 | DS034 | constraint-aware multi-sentence synthesis grounded in supplied material and explicit output limits |
+| DS035 | query-local basic-question recognition, bounded epistemic context construction, and explicit contextual fallback |
 
 A change updates only the DS files whose primary responsibility changes. A new benchmark normally changes the typed catalog, source receipt, adapter, tests, benchmark HTML page, and generated report, not the generic language, storage, CLI, roadmap, or documentation DS. A new reasoning method changes DS015 and the planner contract only if planner behavior also changes.
 

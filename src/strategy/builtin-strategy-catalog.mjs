@@ -63,6 +63,26 @@ const REQUEST_STRATEGIES = Object.freeze([
   }),
 ]);
 
+const CONTEXT_STRATEGIES = Object.freeze([
+  descriptor({
+    strategyId: 'strategy:context:question-facet-expansion',
+    stage: 'runtime.context.construct',
+    inputTypes: ['type:bounded-visible-request'],
+    outputTypes: ['type:task-knowledge-context'],
+    preconditions: ['precondition:likely-english-bounded-request'],
+    epistemicRole: 'retrieval-focus',
+    confidenceKind: 'confidence:context-coverage',
+    costModel: 'cost:bounded-question-facet-expansion',
+    budgetKeys: [
+      'budget:grounding-terms', 'budget:grounding-lookups',
+      'budget:grounding-candidates', 'budget:grounding-output-bytes',
+    ],
+    witnessKind: 'witness:question-facet-focus-and-search-ledger',
+    correlationGroup: 'correlation:context:question-facet-expansion',
+    implementationState: 'instrumented-local',
+  }),
+]);
+
 const KNOWLEDGE_ACQUISITION_STRATEGIES = Object.freeze([
   ['canonical-records', 'witness:canonical-record-validation'],
   ['manual-document', 'witness:document-source-span-ledger'],
@@ -311,6 +331,7 @@ export const BUILTIN_STRATEGY_CATALOG = Object.freeze({
   strategies: Object.freeze([
     ...LANGUAGE_APPROXIMATION_STRATEGIES,
     ...REQUEST_STRATEGIES,
+    ...CONTEXT_STRATEGIES,
     ...KNOWLEDGE_ACQUISITION_STRATEGIES,
     ...QUERY_FOCUS_STRATEGIES,
     ...RETRIEVAL_RANKING_STRATEGIES,

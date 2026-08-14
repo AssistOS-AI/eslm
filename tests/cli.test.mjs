@@ -64,13 +64,13 @@ test('CLI one-shot output exposes task, plan, KB, result, and exact work contrac
   assert.equal(result.workPolicy.effective.limits.maximumGroundingLookups, 31);
 });
 
-test('CLI help presents bounded work controls and the explicit offline override', async () => {
+test('CLI help presents bounded work controls and explicit Language Agent opt in', async () => {
   const output = await captureMain(['--help']);
   assert.match(output, /--work-profile balanced/u);
   assert.match(output, /--grounding-max-bytes N/u);
   assert.match(output, /--horn-max-joins N/u);
-  assert.match(output, /--external-language-agent\s+explicitly restate the default/u);
-  assert.match(output, /--no-external-language-agent\s+select the entirely local/u);
+  assert.match(output, /--external-language-agent\s+opt in to the external/u);
+  assert.match(output, /--no-external-language-agent\s+explicitly retain the default entirely local/u);
 });
 
 test('CLI offline profile rejects likely non-English input before parsing or KB search', async () => {
@@ -94,12 +94,14 @@ test('CLI ask reports one real Language Agent invocation on stderr and keeps std
   const executable = await fakeLanguageAgentExecutable(directory);
   const streams = await captureMainStreams([
     'ask', 'In the garden, is Gertrude?', '--kb', 'quick',
+    '--external-language-agent',
     '--language-agent-command', executable, '--no-normalization-cache', '--color', 'never',
   ]);
 
   assert.equal(
     streams.stderr,
-    'Thinking: interpreting with the configured Language Agent…\n',
+    'Thinking: bounded symbolic processing started — balanced; up to 24 local interpretations, 12 reparses, 0 loaded KB source(s), and 96 context lookups.\n'
+      + 'Thinking: Language Agent English simplification proposal 1/3 — external codex call, timeout 120s.\n',
   );
   assert.doesNotMatch(streams.stdout, /Thinking: interpreting/u);
   const result = JSON.parse(streams.stdout);
@@ -107,7 +109,7 @@ test('CLI ask reports one real Language Agent invocation on stderr and keeps std
   assert.equal(result.normalization.externalInvocations, 1);
 });
 
-test('CLI run reports only actual Language Agent work on stderr and keeps stdout as JSONL', async () => {
+test('CLI run reports bounded symbolic starts and only actual Language Agent calls on stderr', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'eslm-cli-batch-language-activity-'));
   const executable = await fakeLanguageAgentExecutable(directory);
   const input = join(directory, 'questions.jsonl');
@@ -117,12 +119,15 @@ test('CLI run reports only actual Language Agent work on stderr and keeps stdout
   ].join('\n') + '\n', 'utf8');
   const streams = await captureMainStreams([
     'run', '--input', input, '--kb', 'quick', '--language-agent-command', executable,
+    '--external-language-agent',
     '--no-normalization-cache', '--color', 'never',
   ]);
 
   assert.equal(
     streams.stderr,
-    'Thinking: interpreting with the configured Language Agent…\n',
+    'Thinking: bounded symbolic processing started — balanced; up to 24 local interpretations, 12 reparses, 0 loaded KB source(s), and 96 context lookups.\n'
+      + 'Thinking: bounded symbolic processing started — balanced; up to 24 local interpretations, 12 reparses, 0 loaded KB source(s), and 96 context lookups.\n'
+      + 'Thinking: Language Agent English simplification proposal 1/3 — external codex call, timeout 120s.\n',
   );
   assert.doesNotMatch(streams.stdout, /Thinking: interpreting/u);
   const records = streams.stdout.trim().split('\n').map((line) => JSON.parse(line));

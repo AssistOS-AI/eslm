@@ -80,6 +80,7 @@ export class LanguageAgentAssistedRuntime {
       const normalized = await this.normalizer.normalize(text, {
         feedback, previousCandidate, remainingAttempts, requestedOperation,
         operation: requestedOperation,
+        proposalOffset: proposalCount, proposalLimit: MAX_LANGUAGE_AGENT_PROPOSALS,
         languageAssessment: direct.languageAssessment,
       });
       externalInvocations += normalized.externalInvocations ?? 0;

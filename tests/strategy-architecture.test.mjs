@@ -327,7 +327,8 @@ test('registration and voting pass renamed, reordered, and meaning-changing cont
 
 test('the built-in inventory exposes language, request, focus, retrieval, reasoning, and construction stages', () => {
   const expectedStages = [
-    'compiler.knowledge.extract', 'runtime.evidence.assess', 'runtime.failure.ground',
+    'compiler.knowledge.extract', 'runtime.context.construct', 'runtime.evidence.assess',
+    'runtime.failure.ground',
     'runtime.knowledge.focus', 'runtime.knowledge.retrieve', 'runtime.language.interpret',
     'runtime.method.plan', 'runtime.reason.execute', 'runtime.request.plan',
     'runtime.result.construct', 'runtime.result.verify',
@@ -358,7 +359,7 @@ test('inventory views never masquerade as execution selection and planned entrie
   }));
   assert.equal(inventory.inventoryView, 'language');
   assert.ok(inventory.visible < inventory.catalogued);
-  assert.equal(inventory.executionEnabled, 66);
+  assert.equal(inventory.executionEnabled, 67);
   assert.ok(inventory.executionEnabled
     < inventory.coordinated + inventory.instrumentedLocal);
   assert.equal(inventory.strategies.some((row) => row.implementationState === 'planned'

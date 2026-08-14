@@ -9,8 +9,52 @@ const CONTINENTS = Object.freeze({ AF: 'Africa', AN: 'Antarctica', AS: 'Asia', E
   NA: 'North America', OC: 'Oceania', SA: 'South America' });
 
 function normalize(value) {
-  return value.normalize('NFKD').replace(/\p{M}+/gu, '').toLocaleLowerCase('en-US')
+  return String(value ?? '').normalize('NFKD').replace(/\p{M}+/gu, '').toLocaleLowerCase('en-US')
     .replace(/[’']/gu, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+}
+
+function unicodeCanonicalName(value) {
+  return String(value ?? '').normalize('NFKC').toLocaleLowerCase('en-US').replace(/\s+/gu, ' ').trim();
+}
+
+function contextNameLookups(request) {
+  const terms = request.terms ?? [];
+  if (request.purpose !== 'query-local-task-context') {
+    return Object.freeze({
+      lookups: Object.freeze(terms.map((term) => Object.freeze({ term }))),
+      excludedUntyped: 0,
+    });
+  }
+  const candidates = request.termSelection?.candidates ?? [];
+  const lookups = terms.flatMap((term) => {
+    const key = normalize(term);
+    const surfaces = [...new Set(candidates.filter((candidate) =>
+      candidate?.included !== false
+      && candidate?.role === 'named-entity'
+      && normalize(candidate.term) === key)
+      .map((candidate) => candidate.surface).filter((surface) => typeof surface === 'string' && surface.trim()))];
+    return surfaces.length > 0 ? [Object.freeze({ term, surfaces: Object.freeze(surfaces) })] : [];
+  });
+  return Object.freeze({
+    lookups: Object.freeze(lookups),
+    excludedUntyped: terms.length - lookups.length,
+  });
+}
+
+function matchesCanonicalContextName(record, lookup) {
+  return lookup.surfaces === undefined || lookup.surfaces.some((surface) =>
+    unicodeCanonicalName(surface) === unicodeCanonicalName(record[0]));
+}
+
+function contextLookupDiagnostic(excludedUntyped, rejectedCanonical) {
+  const messages = [];
+  if (excludedUntyped > 0) {
+    messages.push(`Ignored ${excludedUntyped} focus term(s) that were not typed as proper names`);
+  }
+  if (rejectedCanonical > 0) {
+    messages.push(`rejected ${rejectedCanonical} accent- or Unicode-different canonical name match(es)`);
+  }
+  return messages.length > 0 ? `${messages.join('; ')}.` : undefined;
 }
 
 function nameBucket(value) {
@@ -96,15 +140,18 @@ export class GeoNamesProvider {
   }
 
   async retrieveGrounding(request) {
-    const maximumLookups = Math.min(request.limits.maximumLookups, request.terms.length, 8);
+    const lookupPlan = contextNameLookups(request);
+    const maximumLookups = Math.min(request.limits.maximumLookups, lookupPlan.lookups.length, 8);
     const maximumValues = request.limits.maximumValuesPerLookup;
     const entries = [];
     const truncationReasons = [];
     let considered = 0;
-    for (const [termIndex, term] of request.terms.slice(0, maximumLookups).entries()) {
+    let rejectedCanonical = 0;
+    for (const [termIndex, lookup] of lookupPlan.lookups.slice(0, maximumLookups).entries()) {
+      const { term } = lookup;
       considered += 1;
       const country = await this.country(term);
-      if (country) {
+      if (country && matchesCanonicalContextName(country.record, lookup)) {
         const record = country.record;
         entries.push(makeGroundingEntry({
           kbId: this.manifest.kbId,
@@ -127,6 +174,8 @@ export class GeoNamesProvider {
             activeKbOccurrences: 1,
           },
         }));
+      } else if (country) {
+        rejectedCanonical += 1;
       }
       const key = normalize(term);
       const ids = (await this.load(`names/${nameBucket(key)}.json`))[key] ?? [];
@@ -134,6 +183,10 @@ export class GeoNamesProvider {
       for (const id of ids.slice(0, maximumValues)) {
         const record = (await this.load(`places/${idBucket(id)}.json`))[id];
         if (!record) continue;
+        if (!matchesCanonicalContextName(record, lookup)) {
+          rejectedCanonical += 1;
+          continue;
+        }
         const countryRecord = (await this.country(record[2]))?.record;
         entries.push(makeGroundingEntry({
           kbId: this.manifest.kbId,
@@ -154,26 +207,30 @@ export class GeoNamesProvider {
           provenance: [`GeoNames:${id}`],
           relevance: {
             score: 24 - termIndex * 0.25,
-            reasons: ['exact-place-name-match'],
+            reasons: [lookup.surfaces === undefined
+              ? 'exact-place-name-match' : 'typed-unicode-exact-place-name-match'],
             activeKbOccurrences: ids.length,
           },
         }));
       }
     }
-    if (request.terms.length > maximumLookups) truncationReasons.push('lookup-budget');
+    if (lookupPlan.lookups.length > maximumLookups) truncationReasons.push('lookup-budget');
     return {
       entries,
       receipt: {
         kbId: this.manifest.kbId,
         kbVersion: this.manifest.kbVersion,
         status: entries.length > 0 ? 'matches-found' : 'no-match',
-        coverage: 'bounded-exact-country-and-populated-place-name-lookup',
+        coverage: request.purpose === 'query-local-task-context'
+          ? 'bounded-exact-typed-unicode-country-and-populated-place-name-lookup'
+          : 'bounded-exact-country-and-populated-place-name-lookup',
         complete: truncationReasons.length === 0 && request.termSelection.complete,
         candidatesConsidered: considered,
         truncationReasons: [...new Set([
           ...truncationReasons,
           ...(!request.termSelection.complete ? ['term-selection-budget'] : []),
         ])],
+        diagnostic: contextLookupDiagnostic(lookupPlan.excludedUntyped, rejectedCanonical),
       },
     };
   }

@@ -5,10 +5,10 @@ import {
 const FUNCTION_WORDS = new Set([
   'a', 'about', 'all', 'am', 'an', 'and', 'another', 'any', 'anything', 'are', 'as', 'at', 'be', 'been',
   'being', 'both', 'but', 'by', 'can', 'could', 'did', 'do', 'does', 'each', 'either', 'enough', 'every',
-  'everything', 'few', 'for', 'from', 'had', 'has', 'have', 'how', 'i', 'if', 'in', 'into', 'is', 'it',
-  'its', 'less', 'least', 'many', 'may', 'me', 'might', 'more', 'most', 'much', 'must', 'neither', 'no',
+  'everything', 'few', 'for', 'from', 'had', 'has', 'have', 'her', 'his', 'how', 'i', 'if', 'in', 'into', 'is', 'it',
+  'its', 'less', 'least', 'many', 'may', 'me', 'might', 'more', 'most', 'much', 'must', 'my', 'neither', 'no',
   'never', 'none', 'not', 'of', 'on', 'or', 'other', 'ought', 'own', 'please', 'several', 'shall',
-  'should', 'some', 'such',
+  'our', 'should', 'some', 'such',
   'than', 'that', 'the', 'their', 'there', 'these', 'they', 'this', 'those', 'to', 'us', 'was', 'were', 'without',
   'what', 'when', 'where', 'which', 'who', 'why', 'will', 'with', 'would', 'you', 'your',
 ]);
@@ -182,7 +182,8 @@ function rankedFocusCandidates(value, { maximumWords, semanticFocus = [], select
       ? normalizedGroundingPlanTopic(focus.term, value) : normalizedSurface(focus?.term);
     if (!term || (isGroundingStructuralTerm(term) && !metalinguistic)) continue;
     candidates.push(makeCandidate({
-      term, role: focus.role ?? 'semantic', kind: 'accepted-semantic-ir', score: 130,
+      term, surface: focus.surface ?? focus.term, role: focus.role ?? 'semantic',
+      kind: 'accepted-semantic-ir', score: 130,
     }));
   }
 

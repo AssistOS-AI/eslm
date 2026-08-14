@@ -97,10 +97,12 @@ Execution monitors derived facts, unresolved references, resource use and contra
 
 The planner must not continue indefinitely. Search budgets, depth limits, time limits and memory limits are explicit inputs. Exceeding a budget produces a resource-limit result with the best partial trace rather than a fabricated answer.
 
-The current `eslm-work-policy-v1` supplies exact named bounds for DS022 approximation and request analysis, Horn
-closure, provider search, and failure grounding. Its `quick`, `balanced`, `deep`, and `exhaustive-bounded` profiles are
-physical work choices, not new inference regimes. A larger profile may finish an otherwise bounded frontier, but
-completed executions with the same semantics must agree on values, proof, and provenance. The broader task-frame
+The current `eslm-work-policy-v1` supplies exact named bounds for DS022 approximation and request analysis, DS035
+query-local context construction, Horn closure, provider search, and failure grounding. Its `quick`, `balanced`,
+`deep`, and `exhaustive-bounded` profiles are physical work choices, not new inference regimes. A larger profile may
+finish an otherwise bounded frontier, but completed executions with the same semantics must agree on values, proof,
+and provenance. Task planning may use the DS035 question-family and focus ledger to identify work, but no context rank
+becomes a premise until evidence admission and no KB result may revise language interpretation. The broader task-frame
 time, memory, and search model shown below remains a target wherever the selected executor does not enforce it.
 
 ### 6. Declarative domain plans
@@ -163,6 +165,12 @@ The current implementation has three distinct bounded coordination paths:
    construction. These three nodes are real `instrumented-local`, non-selectable seams. Planning still does not inspect
    all descriptor preconditions or costs, construct alternatives, invoke the registry callback, or delegate through
    the shared DS027 coordinator.
+
+   The same ordinary envelopes now admit the existing `method:core:finite-episodic-world` descriptor for the narrow
+   possession-location carrier task defined in DS015. Its executor may return internal `DEFAULTED`; verification
+   independently checks the exact episodic operation witness and the two host-owned supports, and public construction
+   maps it to `DEFEASIBLE` with `truthAuthorized: false`. This extends an existing method family rather than adding a
+   new planner or processing node.
 2. **Typed-task path.** `EslmEngine.executeTask` uses an allowlisted operation-to-descriptor-and-executor table. Each
    selected trusted executor validates and runs its own typed task, and the result records the method identifier. This
    path does not call `createPlan` and does not construct a general AND/OR graph.
@@ -351,6 +359,17 @@ primary source-claim contributions, so those records and their versions appear i
 `usedKbVersions`. Related but rejected records do not. The sentences remain non-entailing evidence and cannot support
 `SOLVED` merely because the presentation is fluent.
 
+DS035 adds optional `knowledgeContext` using `eslm-task-knowledge-context-v1`. Its selected and consulted identities
+record early bounded context work, while its entries remain non-answer evidence. A strict result does not copy those
+entries into top-level provenance or `usedKbVersions`. On the separate `knowledge-context-fallback` route, only entries
+actually realized as cited source claims enter both fields; the result is `PARTIAL`, values are empty, and its
+realization ledger says that no precise answer was established.
+
+The implemented possession-location default is a current exception to the earlier statement that the ordinary result
+does not expose answer confidence. Its `reasoning.confidence` is the fixed v1 heuristic grade `0.62`, accompanied by
+the exact carrier assumption and a `DEFEASIBLE` public status. It is not an empirical probability, calibration claim,
+or proof weight. Exact object location remains `SOLVED` retrieval and therefore does not use that grade.
+
 ### 16. Capability-gap record
 
 ```json
@@ -388,8 +407,8 @@ The implemented route vocabulary is:
 A changed local interpretation that would otherwise be strict is exposed as `DEFEASIBLE`, and its episode-derived
 premises are query-local. A rejected Language Agent candidate uses status `UNVERIFIED_NORMALIZATION`; a subprocess
 failure preserves the direct `UNPARSED` status and distinguishes the attempted route in the normalization diagnostic.
-The general CLI composes the Language Agent strategy by default, while the deployed/library runtime and explicit local
-override omit it. Likely non-English input may reach translation proposals directly from the gate; English
+The general CLI and deployed/library runtime omit the Language Agent strategy by default. The general CLI composes it
+only after explicit `--external-language-agent` or `/normalize on` opt-in. Likely non-English input may then reach translation proposals directly from the gate; English
 simplification remains reachable only after exhaustion of DS022 local recovery. Future
 recovery methods must add a named route and tests rather than reuse one of these values ambiguously.
 
@@ -435,6 +454,14 @@ negative answer vote.
 The term is retained only for method-planning preference. Once a reasoning executor runs, its output is a typed method
 result plus witness. The result is merged under epistemic rules only after independent verification; it is not a
 confidence ballot over answer truth.
+
+### Question #6: Why expose a confidence grade for the possession-location answer?
+
+Response: The two stated facts support a useful carrier hypothesis but do not entail the object's location. A modest
+fixed grade lets the human and machine views rank that answer below strict retrieval while the status, assumption,
+support IDs, and independently checked episodic witness disclose why it was offered. Version 1 deliberately calls the
+number heuristic rather than calibrated; changing it requires evidence, controls, and a versioned policy rather than a
+presentation-only tweak.
 
 ## Conclusion
 

@@ -121,6 +121,7 @@ The runtime v1 stage catalog is ordered as follows:
 | Stage ID | Typed input | Typed output and boundary |
 |---|---|---|
 | `runtime.language.interpret` | bounded text, prior session snapshot, English-only language policy | bounded English-likelihood assessment plus direct or proposed Semantic IR alternatives with source-span alignments; likely non-English input is rejected locally rather than repaired as English; the direct English parser remains a non-voting authority barrier, while local alternatives may be inspected after eligible statuses and selected without answer evidence; a direct success is superseded only by different accepted Semantic IR |
+| `runtime.context.construct` | bounded likely-English visible request, selected immutable KB scope, and work policy | DS035 explicit and embedded basic-question analysis, prioritized self-question plan, typed focus, bounded provenance-bearing context frontier, per-source receipts, and completeness; the mandatory default strategy is `strategy:context:question-facet-expansion@1`; context has no interpretation, premise, proof, or answer authority and KB success cannot select language meaning |
 | `runtime.request.plan` | bounded instruction/material map plus the direct diagnostic | task frame, ordered obligation alternatives, and output contracts; explicit request force may preempt an accidental direct assertion parse and restores the incoming session snapshot |
 | `runtime.knowledge.focus` | task frame or obligation plan | typed entity, predicate, role, phrase, and metalinguistic focus candidates |
 | `runtime.knowledge.retrieve` | focus, exact package scope, routing and work policy | bounded evidence frontier plus per-source search receipts |
@@ -138,7 +139,7 @@ likely non-English input; conservative English simplification is requested only 
 `UNPARSED`. Both identities name the proposal's role and receipt rather than two answer-capable executors. The external
 executor remains outside the deployable deterministic registry and runtime closure because it is an operator
 subprocess, but it does not form an unnamed stage between nodes. The general CLI composes this operator route by
-default and the explicit local override removes it; library and deployed profiles remain agent-free. Every candidate
+explicit opt-in only; the default general CLI, library, and deployed profiles remain agent-free. Every candidate
 returns through the same non-voting English parser and semantic gate. Neither identity receives the stage ledger nor
 retrieval, reasoning, KB, proof, answer, or desired-value evidence, and neither has a vote or answer authority.
 Model-declared alignments cannot verify their own open-class translation; acceptance requires an independent reviewed
@@ -673,6 +674,12 @@ contribution. Causal promotion evidence requires a frozen ablation with equal ca
 identity, followed by the protected and external evaluation layers appropriate to the claimed capability.
 Candidate-selection success inside that report proves only the declared structural selection contract; it does not
 prove that a full relational Semantic IR or answer was produced.
+
+### Question #9: Is the external Language Agent part of the default strategy profile?
+
+Response: No. Its identities describe the optional proposal route and receipt at the language node, but its executor
+remains outside the deployable registry and the local default profile. Only explicit operator opt-in composes that
+wrapper. A gray recommendation after local `UNPARSED` is presentation metadata, not strategy selection or execution.
 
 ## Conclusion
 

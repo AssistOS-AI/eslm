@@ -37,7 +37,7 @@ function sorted(values) {
   return [...new Set(values)].toSorted();
 }
 
-test('the hierarchical processing graph catalogs 57 concrete nodes across three authority planes', () => {
+test('the hierarchical processing graph catalogs 58 concrete nodes across three authority planes', () => {
   const receipt = processingGraphValidationReceipt();
   assert.equal(receipt.valid, true);
   assert.equal(receipt.checks.authorityEdgesFromGates, true);
@@ -48,17 +48,17 @@ test('the hierarchical processing graph catalogs 57 concrete nodes across three 
   assert.equal(receipt.checks.ownerPathsExcludedFromCatalogIdentity, true);
   assert.deepEqual(receipt.counts, {
     circuits: 22,
-    nodes: 57,
-    edges: 87,
-    packetTypes: 66,
-    packetContracts: 66,
+    nodes: 58,
+    edges: 90,
+    packetTypes: 67,
+    packetContracts: 67,
     resourceDimensions: 27,
-    strategiesMapped: 79,
-    runtime: 37,
+    strategiesMapped: 80,
+    runtime: 38,
     compiler: 12,
     research: 8,
   });
-  assert.equal(new Set(receipt.canonicalNodeOrder).size, 57);
+  assert.equal(new Set(receipt.canonicalNodeOrder).size, 58);
   assert.deepEqual(PROCESSING_GRAPH_CATALOG.nodes.filter((item) => item.kind === 'source')
     .map((item) => item.nodeId).toSorted(), [
     'node:compiler:frozen-source-ingress',
@@ -78,19 +78,19 @@ test('inventory exposes deterministic zoom levels, states, kinds, stages, and ci
   assert.equal(inventory.format, 'eslm-processing-graph-inventory');
   assert.deepEqual(inventory.implementationStates, {
     coordinated: 1,
-    'instrumented-local': 49,
+    'instrumented-local': 50,
     planned: 7,
   });
   assert.deepEqual(inventory.nodeKinds, {
     source: 3,
     process: 17,
-    coordinator: 12,
+    coordinator: 13,
     'authority-gate': 22,
     sink: 3,
   });
   assert.deepEqual(inventory.zoomLevels.map((item) => item.depth), [0, 1, 2, 3]);
   assert.equal(inventory.circuits.find((item) =>
-    item.circuitId === 'circuit:runtime:request-cycle').nestedNodeCount, 37);
+    item.circuitId === 'circuit:runtime:request-cycle').nestedNodeCount, 38);
   assert.equal(inventory.circuits.find((item) =>
     item.circuitId === 'circuit:runtime:grounded-response-construction').nestedNodeCount, 6);
   assert.equal(inventory.circuits.find((item) =>
@@ -99,7 +99,7 @@ test('inventory exposes deterministic zoom levels, states, kinds, stages, and ci
     item.circuitId === 'circuit:research:graph-discovery').nestedNodeCount, 8);
   assert.equal(inventory.stages.length, STRATEGY_STAGES.length);
   assert.ok(inventory.stages.every((item) => item.nodeIds.length > 0));
-  assert.equal(inventory.nodes.length, 57);
+  assert.equal(inventory.nodes.length, 58);
   assert.deepEqual(inventory.nodes.map((item) => item.nodeId), inventory.canonicalNodeOrder);
 });
 
@@ -198,7 +198,7 @@ test('the packet-contract catalog exactly covers live packet identities and grap
   assertProcessingGraphPacketContractCatalog();
   const receipt = processingGraphValidationReceipt();
   const inventory = processingGraphInventory();
-  assert.equal(PROCESSING_GRAPH_PACKET_CONTRACT_CATALOG.contracts.length, 66);
+  assert.equal(PROCESSING_GRAPH_PACKET_CONTRACT_CATALOG.contracts.length, 67);
   assert.deepEqual(PROCESSING_GRAPH_PACKET_CONTRACT_CATALOG.contracts
     .map((item) => item.packetType), PROCESSING_GRAPH_CATALOG.packetTypes);
   assert.equal(receipt.packetContractFormat,

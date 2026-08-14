@@ -18,10 +18,11 @@ export const ORDINARY_METHOD_BY_CAPABILITY = Object.freeze({
   induction: 'method:core:configured-induction',
   abduction: 'method:core:guarded-abduction',
   'temporal-predecessor': 'method:core:temporal-state-predecessor',
+  'finite-episode-orchestration': 'method:core:finite-episodic-world',
 });
 
 const EXECUTION_STATUSES = new Set([
-  'ANSWERED', 'INDUCTIVE', 'ABDUCTIVE', 'UNKNOWN', 'RESOURCE_LIMIT',
+  'ANSWERED', 'INDUCTIVE', 'ABDUCTIVE', 'DEFAULTED', 'UNKNOWN', 'RESOURCE_LIMIT',
 ]);
 
 const TASK_FRAME_FIELDS = new Set([
@@ -81,6 +82,7 @@ function capabilityForQuery(query) {
   if (query.reasoning === 'temporal-predecessor') return 'temporal-predecessor';
   if (query.reasoning === 'induction') return 'induction';
   if (query.reasoning === 'abduction') return 'abduction';
+  if (query.reasoning === 'finite-episodic-possession-location') return 'finite-episode-orchestration';
   return 'deduction';
 }
 

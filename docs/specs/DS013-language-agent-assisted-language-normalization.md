@@ -21,9 +21,9 @@ requested reasoning, or add knowledge. Its output returns through the unchanged 
 “Language Agent” is the product-neutral contract. The implementation currently supported by this repository is Codex through its local CLI. Product and model details belong to the adapter configuration and execution receipt; they do not change the generic trigger, authority, validation, or evidence contract.
 
 This profile changes the execution regime and must be named honestly. The deployed ESLM runtime remains deterministic,
-dependency-free, offline, English-only, and free of language-agent calls. The general CLI composes the assisted
-operator wrapper by default and discloses that fact; `--no-external-language-agent` or `/normalize off` selects the
-fully local profile. A result produced by the wrapper is not evidence for the pure deployed-runtime track, even when
+dependency-free, offline, English-only, and free of language-agent calls. The general CLI uses that fully local profile
+by default. `--external-language-agent` or `/normalize on` explicitly composes and discloses the assisted operator
+wrapper; `--no-external-language-agent` or `/normalize off` explicitly retains the local default. A result produced by the wrapper is not evidence for the pure deployed-runtime track, even when
 the final reasoning and proof are symbolic.
 
 ## Core Content
@@ -33,16 +33,16 @@ the final reasoning and proof are symbolic.
 The deployable runtime and direct library profile are `direct-symbolic`. They normalize Unicode and declared lexical
 variants, parse supported language, construct the task frame, select capabilities, load declarative KB data, reason,
 and realize a result without a network or agent process. The general CLI composes that runtime with the deterministic
-DS022 heuristic language and request-planning wrapper. This complete local profile is always available through the
-explicit CLI override and is the canonical benchmark profile: original English text runs first; bounded explicit
+DS022 heuristic language and request-planning wrapper. This complete local profile is the general CLI and canonical
+benchmark default: original English text runs first; bounded explicit
 request force may preempt an accidental assertion parse; otherwise direct `UNPARSED` and
 `UNKNOWN` enter parse-only-selected local approximation. A structurally licensed candidate may also challenge direct
 `SOLVED` or `PARTIAL` when its Semantic IR differs from the direct interpretation; equal IR preserves the direct route.
 Eligible inability results may then receive role-focused grounding. A normal knowledge gap remains unchanged without
 an accepted structural alternative. None of these local stages calls a model or starts a child process.
 
-The operator profile is `language-agent-assisted-normalization`. The general CLI composes it by default, while the
-deployable runtime, library runtime, canonical local benchmarks, and explicit local CLI profile never do. A likely
+The operator profile is `language-agent-assisted-normalization`. The general CLI composes it only after explicit
+opt-in, while the default general CLI, deployable runtime, library runtime, and canonical local benchmarks never do. A likely
 non-English gate rejection may trigger one bounded translation-proposal episode without running English repair. For
 likely-English or indeterminate input, the complete direct and deterministic local attempts still run first, and only
 a terminal `UNPARSED` may trigger simplification. A locally synthesized `PARTIAL` document request, an accepted
@@ -56,18 +56,18 @@ value, or benchmark label as feedback. A successfully accepted sentence records
 declared operation, proposed English, validation evidence, adapter and model identity, prompt-policy version, input
 digest, cache state, and invocation count remain attached.
 
-`--external-language-agent` and interactive `/normalize on` explicitly restate the general CLI's assisted default.
-`--no-external-language-agent` and `/normalize off` select the entirely local profile. Product-specific option names
+`--external-language-agent` and interactive `/normalize on` explicitly opt into the assisted profile.
+`--no-external-language-agent` and `/normalize off` explicitly retain the entirely local default. Product-specific option names
 are not accepted: the interface names the role and remains unchanged when a different adapter replaces Codex. Loading
 a KB, selecting a larger DS022 work profile, or encountering difficult text never changes this setting. The public
 catalog probe, canonical local evaluation, canonical benchmark suite, unit tests that do not target the wrapper, and
 4,096-case smoke regression explicitly keep the wrapper disabled so service availability, authentication, and cache
 state cannot alter published or required local evidence.
 
-The assisted default does not make external disclosure invisible. Interactive startup and `/normalize` state whether
+Explicit opt-in does not make external disclosure invisible. Interactive startup and `/normalize` state whether
 assistance is enabled and, when enabled, the active model, cache policy, and the fact that source text may leave the
-offline boundary. Confidential, restricted, or otherwise non-disclosable input must use
-`--no-external-language-agent` or `/normalize off`. Missing authentication, model unavailability, or process failure
+offline boundary. Confidential, restricted, or otherwise non-disclosable input remains on the local default and must
+not enable assistance. Missing authentication, model unavailability, or process failure
 preserves the local result and records the failed assisted route.
 
 ### 2. Currently supported Language Agent implementation
@@ -137,6 +137,12 @@ attempt occurred, non-negative proposal and external-invocation counts, cache st
 receipts, accepted or failed status, and diagnostic text. It is distinct from the untrusted proposal object described
 below and is validated as part of `eslm-runtime-result-v1` before publication.
 
+The assisted wrapper also records `attempted: false` when a local route reaches a semantic status without an external
+proposal. `triggerStatus` then means the local pre-context status, not necessarily the final public status. If DS035
+later realizes a contextual fallback, its `realization.originalStatus` is the comparison anchor and the final status
+may truthfully be `PARTIAL`. This receipt is machine provenance; human output says that external language assistance
+was not needed and never exposes the implementation label “unattempted normalization” as an error.
+
 Each proposal response is one JSON object with protocol `eslm-language-agent-normalization-v2`, operation `translation` or `simplification`, a declared source-language tag, `normalizedEnglish`, and an array of source-to-target anchor alignments. `normalizedEnglish` must be non-empty plain text within the configured limit. Markdown fences, NUL bytes, executable payload fields, tool requests, answers, explanations, confidence scores, retrieved facts, and additional properties are rejected.
 
 An alignment names an allowlisted anchor kind and identifies exact source and proposed-English substrings. Anchor kinds
@@ -184,9 +190,9 @@ Caching minimizes repeated external work but does not change evidence attributio
 
 ### 8. CLI behavior
 
-`ask`, `run`, and ordinary interactive execution compose the assisted operator profile by default.
-`--no-external-language-agent` and interactive `/normalize off` select the deterministic local profile;
-`--external-language-agent` and `/normalize on` explicitly restate the default. `--language-agent-model` selects a
+`ask`, `run`, and ordinary interactive execution use the deterministic local profile by default.
+`--external-language-agent` and `/normalize on` explicitly compose the assisted operator profile;
+`--no-external-language-agent` and interactive `/normalize off` explicitly retain the local default. `--language-agent-model` selects a
 deliberate adapter model override only for the assisted profile. `--no-normalization-cache` disables both cache reads
 and writes for that invocation. Timeout and maximum-input options remain bounded and validated. Canonical evaluation
 and public benchmark probes keep assistance off explicitly; an assisted evaluation is a separately named experiment.
@@ -195,9 +201,18 @@ The public `benchmark probe` command constructs external-agent-free engines inte
 
 Interactive mode provides `/normalize`, `/normalize on`, and `/normalize off`. The status view states whether assistance is enabled and, when it is enabled, which model is configured, whether caching is enabled, and that otherwise-unparsed input may be sent to an external Language Agent process. Toggling the setting rebuilds only the operator wrapper; it does not mutate the core model, selected KBs, DS022 work profile, or session facts. `/work` displays the exact local policy and `/work quick|balanced|deep|exhaustive-bounded` changes bounded local heuristic, reasoning, provider, and grounding work. It never enables Language Agent or changes the three-proposal assisted ceiling.
 
-Immediately before a real external subprocess invocation, human output must show restrained activity text such as `Thinking: interpreting with the configured Language Agent…`. The message is emitted for an actual invocation, not merely because assistance is enabled and not for a cache hit. One-shot or batch commands place activity on standard error when needed so JSON and JSONL standard output remain valid.
+When the local default ends `UNPARSED`, the human Thinking summary may recommend `/normalize on` or
+`--external-language-agent` as optional language-form help. The recommendation is a presentation-only diagnostic: it
+does not rebuild the wrapper, send text, create a normalization receipt, or imply that the external strategy can
+answer. No recommendation is shown for a parsed semantic inability such as `UNKNOWN`.
 
-Every assisted result remains valid structured JSON. Human interactive output displays an accepted route as four distinct facts: Language Agent translation or simplification, original input, transformed English, and the final symbolic status and answer. It must not compress these facts into a bracket that can be mistaken for a direct answer, hide the original route, or omit the structured receipts. A rejected route displays the original, any proposed English, and the host rejection reason. An agent failure does not terminate an interactive session; it returns the local failure plus an assisted-normalization diagnostic.
+Immediately before a real external subprocess invocation, human output must show restrained, attempt-aware activity
+text identifying translation or simplification, the proposal slot, adapter, and enforceable per-process timeout. The
+message is emitted for an actual invocation, not merely because assistance is enabled and not for a cache hit.
+One-shot or batch commands place activity on standard error so JSON and JSONL standard output remain valid. `/normalize`
+shows the three-proposal limit and the configured per-call timeout in ordinary units.
+
+Every assisted result remains valid structured JSON. Human interactive output displays an accepted route as four distinct facts: Language Agent translation or simplification, original input, transformed English, and the final symbolic status and answer. It must not compress these facts into a bracket that can be mistaken for a direct answer, hide the original route, or omit the structured receipts. A rejected route displays the original, any proposed English, and the host rejection reason. An agent failure does not terminate an interactive session; it returns the local failure plus an assisted-normalization diagnostic. A later context-construction or result-validation failure is caught at the interactive request boundary, leaves the prior session and last valid result unchanged, and returns a human-readable safety diagnostic instead of terminating the prompt.
 
 ### 9. Benchmark accounting
 
@@ -225,7 +240,7 @@ The benchmark answer and correctness label remain outside the normalization pack
 
 ### 11. Acceptance tests
 
-The implementation requires tests for the CLI-assisted-by-default policy, the explicit local override,
+The implementation requires tests for the CLI-local-by-default policy, explicit assisted opt-in and local restatement,
 deployable-runtime independence, bounded English-likelihood classification, likely-non-English rejection without
 English repair, translation-proposal routing, direct-and-heuristic exhaustion before English simplification,
 canonical-command local selection, restrained notification immediately before a real invocation, no notification for
@@ -254,7 +269,7 @@ the stable orchestration facade and owns prompts, proposal execution, receipts, 
 `codex-normalizer-io.mjs` owns the exact invocation, bounded process lifecycle, bounded JSON reads, and atomic cache
 writes. This separation keeps every normalizer module below DS001's 500-line review threshold and does not introduce
 the operator subprocess into the deployable runtime closure. `src/runtime/language-agent-assisted-runtime.mjs`
-wraps `src/runtime/heuristic-language-runtime.mjs` in the general CLI profile and implements the product-neutral
+wraps `src/runtime/heuristic-language-runtime.mjs` in the explicitly selected assisted CLI profile and implements the product-neutral
 language-gate trigger, local-first English simplification, three-proposal episode budget, direct reparse, bounded parser-form feedback, accepted route,
 rejection route, and failure route. `src/cli.mjs` supplies one-shot, batch, and interactive controls while canonical
 evaluation and public probing explicitly disable assistance. Offline stub tests verify exact arguments,
@@ -290,8 +305,8 @@ explicit contrastive tests before its accepted-route evidence can support a clai
 ### Question #1: Does assisted `ask` alter the offline runtime boundary?
 
 Response: No. The core and deployed/library profiles remain offline and deterministic. The general CLI composes the
-external operator wrapper by default, labels every assisted attempt, and exposes
-`--no-external-language-agent` plus `/normalize off` for the complete local path. Documentation and benchmark tables
+external operator wrapper only after explicit opt-in, labels every assisted attempt, and uses the complete local path
+by default. Documentation and benchmark tables
 must never report an assisted result as a local-only runtime result; canonical published commands explicitly keep
 assistance disabled.
 
@@ -327,6 +342,20 @@ self-attestation. Language-neutral anchors and a successful English reparse prot
 observe. An independent reviewed language profile must establish open-class and source-operator correspondences.
 Without one, the system returns an auditable inability. Coverage may expand only through licensed reviewed evidence
 and positive, negative, idiomatic, and direction-changing tests.
+
+### Question #8: What does a skipped normalization receipt mean to an operator?
+
+Response: It means the local English route already produced a semantic result, so no external Language Agent process
+ran. It does not mean that normalization failed, and it is not shown with the internal adjective “unattempted”. If a
+later KB-context stage changes the public status to `PARTIAL`, the receipt continues to name the earlier status through
+DS035's explicit `originalStatus` bridge.
+
+### Question #9: Why is Language Agent disabled by default even though it can propose useful simplifications?
+
+Response: Ordinary execution must remain deterministic, private, low-latency, and independent of credentials or a
+mutable service. A local `UNPARSED` diagnostic can still make the available assistance discoverable. Requiring one
+explicit opt-in preserves informed disclosure and prevents a difficult-looking but locally tractable sentence from
+silently starting three external calls.
 
 ## Conclusion
 

@@ -46,30 +46,35 @@ For ordinary text, recovery follows this order:
 1. Assess English likelihood through a bounded deterministic gate. `likely-non-english` does not enter the English
    repair ensemble. `likely-english` and `indeterminate` continue; unfamiliar names and nonce predicates alone do not
    establish likely non-English text.
-2. For continuing input, execute the original text through the direct symbolic route with ordinary inability grounding
-   deferred.
-3. Independently run the bounded request-force planner. An explicit supported artifact request preempts an accidental
+2. For continuing input, invoke the mandatory DS035 task-context strategy over the bounded visible request. It records
+   explicit and embedded basic-question families, prioritized self-questions, focus, selected and consulted KBs,
+   provenance-bearing context entries, omissions, and search completeness. The resulting context has no
+   interpretation, premise, proof, or answer authority and is hidden from all language-candidate selection.
+3. Execute the original text through the direct symbolic route with ordinary inability grounding deferred.
+4. Independently run the bounded request-force planner. An explicit supported artifact request preempts an accidental
    direct assertion parse, discards tentative direct episode changes, and continues query-locally through its planned
    retrieval and construction route.
-4. When no request plan applies and the direct status is `UNPARSED`, `UNKNOWN`, `SOLVED`, or `PARTIAL`, generate bounded
+5. When no request plan applies and the direct status is `UNPARSED`, `UNKNOWN`, `SOLVED`, or `PARTIAL`, generate bounded
    local heuristic candidates. Candidate generation still requires visible structural evidence.
-5. Inspect the direct input and eligible candidates through parse-only Semantic IR. For direct `SOLVED` or `PARTIAL`,
+6. Inspect the direct input and eligible candidates through parse-only Semantic IR. For direct `SOLVED` or `PARTIAL`,
    proceed only when at least one accepted candidate has a different semantic signature; equal IR preserves the direct
    result. A normal missing-knowledge `UNKNOWN` with no accepted structural alternative also remains unchanged.
-6. Execute at most one selected candidate from the caller's incoming session snapshot through the same symbolic
+7. Execute at most one selected candidate from the caller's incoming session snapshot through the same symbolic
    runtime without granting it persistent session effects. Any changed interpretation is explicitly attributed and
    query-local for every eligible direct status.
-7. At the operator CLI boundary, DS013 may request one external language proposal. A likely-non-English rejection may
+8. At the operator CLI boundary, DS013 may request one external language proposal. A likely-non-English rejection may
    request translation without attempting English repair. A final unsupported English or indeterminate input may
-   request simplification. The general CLI enables this wrapper by default; `--no-external-language-agent` or
-   `/normalize off` selects the fully local profile. An unrepaired `UNKNOWN` does not authorize an external proposal.
-8. After the final answer or inability status is known, attach DS009 ordinary related-KB grounding when that status
-   permits it.
+   request simplification. The general CLI enables this wrapper only after explicit `--external-language-agent` or
+   `/normalize on` opt-in; its default is fully local. An unrepaired `UNKNOWN` does not authorize an external proposal.
+9. After the final answer or inability status is known, attach the validated DS035 context extension. When status
+   permits, derive DS009 ordinary non-answer grounding from its bounded retrieval receipts; an eligible precise gap
+   may instead cross DS035 claim admission as an explicitly cited `PARTIAL` contextual fallback.
 
-Ordinary inability grounding is deliberately last. Planned retrieval for an explicit artifact request is a typed
-request obligation rather than failure grounding; it may supply cited source material under section 11. Neither kind
-of KB evidence can influence how a sentence is rewritten. Candidate selection sees parser/session compilation only,
-not answer success, provider results, proof state, or desired values. `AMBIGUOUS`, `RESOURCE_LIMIT`, and method gaps are
+Grounding exposure and contextual realization are deliberately last even though DS035 builds the reusable bounded
+context frontier early. Planned retrieval for an explicit artifact request is a typed request obligation rather than
+failure grounding; it may supply cited source material under section 11. No kind of KB evidence can influence how a
+sentence is rewritten. Candidate selection sees parser/session compilation only, not context entries, answer success,
+provider results, proof state, or desired values. `AMBIGUOUS`, `RESOURCE_LIMIT`, and method gaps are
 not language-recovery triggers. `UNKNOWN` is eligible because a permissive direct parse can construct a wrong
 unsupported frame. `SOLVED` and `PARTIAL` are inspectable because a permissive parse can also flatten an apposition,
 coordination, or another explicit structural cue while still returning a positive status. Semantic-IR comparison and
@@ -273,11 +278,18 @@ confidence gate and reparses, safe Horn deduction can answer the interpreted que
 defeasible because the lexical repair may not reflect the user's intended invented verb. No statement from the
 candidate persists into the next turn.
 
-### 10. Topic focus for related-KB grounding
+### 10. Topic focus for task context and related-KB grounding
 
-Failure grounding uses role-weighted query focus rather than a flat bag of words. It prefers, in order, accepted entity
-or predicate identities, exact multiword content phrases, content nouns and verbs, their conservative morphological
-variants, and then lower-information modifiers when budget remains.
+DS035 task context and failure grounding use role-weighted query focus rather than a flat bag of words. The early
+context path begins from visible request topics and question-family subjects; after a supported parse or request plan,
+typed roles and obligations can refine downstream focus without changing the already selected interpretation. Both
+prefer, in order, accepted entity or predicate identities when available, exact multiword content phrases, content
+nouns and verbs, their conservative morphological variants, and then lower-information modifiers when budget remains.
+Question-family focus also distinguishes a bounded proper-name-shaped subject from a common nominal, possessed
+nominal, or determiner-led phrase. Every typed focus candidate retains both its normalized lookup term and its original
+NFKC surface. A source adapter may use the normalized term to find a bounded posting, but a name-bearing source must
+apply its own typed identity and canonical-surface gate before returning that record as task context. Accent folding,
+case folding, or punctuation removal used by a physical index cannot alone establish entity identity.
 
 After bounded posting lookup has produced a candidate frontier, a separate symbolic relevance estimator combines five
 inspectable signals: capped occurrence evidence from the active KB posting, exact phrase and term coverage,
@@ -393,6 +405,14 @@ PROFILE` rebuilds the runtime without changing selected KB identities or session
 or above-maximum values are rejected. Time limits are scheduling policies unless an executor has an enforceable timer;
 the result must not describe them as hard elapsed-time guarantees.
 
+Every ordinary question begins with one restrained operational activity line naming the effective profile and a small
+set of decisive caps, including interpretation, reparse, loaded-source, and context-lookup breadth. Interactive output
+places it in the muted presentation channel; `ask` and `run` place it on standard error so JSON and JSONL remain clean.
+Every completed interactive result then includes the muted `Thinking · symbolic processing` panel, including short
+human descriptions of route, outcome, method, cited support, context construction, and effective resource limits.
+This panel is an auditable stage-and-budget summary, not hidden chain-of-thought, model deliberation, or new result
+authority. Detailed machine receipts remain in the structured result and `/trace`.
+
 A larger profile may convert `RESOURCE_LIMIT` or incomplete grounding into a completed search. Given the same semantic
 inputs and enough budget to complete, profiles must agree on status, values, proof, and provenance. A profile may not
 change trust, logic, tie-breaking, epistemic status, benchmark denominator, or the meaning of `UNKNOWN`.
@@ -406,14 +426,19 @@ merely because it has a different name.
 
 ### 13. Language Agent proposal boundary and disclosure
 
-The deployable runtime and direct library remain agent-free. The general operator CLI composes the DS013 wrapper by
-default and discloses that policy at startup; `--no-external-language-agent` or interactive `/normalize off` selects
-the fully local profile. `--external-language-agent` and `/normalize on` explicitly restate the assisted policy. The
+The deployable runtime, direct library, and general operator CLI remain agent-free by default. The CLI composes the
+DS013 wrapper only after explicit `--external-language-agent` or interactive `/normalize on` opt-in and discloses that
+policy at startup; `--no-external-language-agent` or `/normalize off` explicitly retains the fully local default. The
 English-likelihood gate remains local in either mode and never translates. When it reports likely non-English, the
 assisted wrapper may request a translation proposal before the English-only repair ensemble. For likely-English or
 indeterminate input, the local heuristic route always runs before an external simplification proposal after direct
 `UNPARSED`. The local route may also inspect direct `UNKNOWN` for a structurally licensed alternative, but an
 `UNKNOWN` that remains after that attempt never triggers the Language Agent.
+
+A local terminal `UNPARSED` may cause the gray Thinking summary to recommend explicit assisted opt-in. This is not a
+language proposal, vote, strategy execution, or external invocation and it creates no candidate or normalization
+receipt. Parsed `UNKNOWN`, ambiguity, resource exhaustion, and every completed local answer do not receive that
+recommendation.
 
 The Language Agent is one proposal strategy attached logically to `runtime.language.interpret`; its external executor
 remains outside the deployable registry and has no vote, KB access, proof access, answer context, or answer authority.
@@ -423,11 +448,11 @@ English-target likelihood, reparsing, and model-declared alignments are necessar
 verify a novel cross-language equivalence; without that independent profile the route returns
 `UNVERIFIED_NORMALIZATION`.
 
-Immediately before a real external invocation, interactive output displays a restrained progress message such as
-`Thinking: interpreting with the configured Language Agent…`. One-shot structured commands may place that progress on
-standard error so JSON or JSONL standard output remains valid. The final machine result records adapter, model,
-proposal count, cache state, and actual external invocation count. A cache hit is still an assisted route but is not
-described as a live invocation.
+Immediately before a real external invocation, interactive output displays a restrained attempt-aware progress message
+with operation, proposal slot, adapter, and enforceable per-call timeout. One-shot structured commands place that
+progress on standard error so JSON or JSONL standard output remains valid. The final machine result records adapter,
+model, proposal count, cache state, and actual external invocation count. A cache hit is still an assisted route but
+is not described as a live invocation.
 
 ### 14. Resource, security, and determinism requirements
 
@@ -452,10 +477,14 @@ argument order, modality, or predicate identity.
 
 Tests verify deterministic replay, vote accounting, confidence monotonicity, candidate and receipt limits, session
 rollback, no Language Agent access from the deployable runtime, likely-non-English rejection without local repair,
-the CLI's disclosed assisted default and explicit local override, notification before a real external call, grounding
+the CLI's local default, explicit assisted opt-in and local restatement, notification before a real external call, grounding
 exclusion of function words, explicit metalinguistic inclusion, work-profile expansion, and equal
 answers across profiles that complete. The core guardian's forbidden-dispatch audit must find no benchmark, record,
 hash, expected answer, or motivating-example constant in executable conditions.
+
+Grounding controls additionally include renamed collisions between a common noun and a proper name that share an
+accent-folded lookup key. A common nominal and an ASCII-only surface must not admit a Unicode-different canonical
+place, while the exact Unicode proper name must remain retrievable under the same work policy.
 
 Morphology tests cover exact finite/lemma round trips for sibilants, consonant-`y`, short `-ie`, nonce predicates, and
 the contrasting `tie`, `vie`, and `cries` surfaces. Fully renamed entity, class, and object frames exercise the same
@@ -518,8 +547,14 @@ coordination in `src/runtime/heuristic-language-runtime.mjs`, grounded symbolic 
 `heuristic-request-synthesis.mjs` and `grounded-response-realization.mjs`, exact reproduction in
 `result-realization-contract.mjs`, and exact profiles in `work-policy.mjs`. `EslmRuntime.ask(...,
 { grounding: false })` defers grounding and `attachGrounding(result)` attaches it once the final language route is
-known. The general CLI composes the DS013 wrapper around the heuristic runtime by default; the explicit local override
-omits it. Canonical local evaluation and benchmark commands construct the agent-free profile explicitly.
+known. The general CLI omits the DS013 wrapper by default and composes it only for explicit assisted opt-in. Canonical
+local evaluation and benchmark commands construct the same agent-free profile explicitly.
+
+The CLI emits bounded symbolic activity through `src/interface/processing-activity.mjs`, emits attempt-aware external
+activity through `language-agent-activity.mjs`, and renders the completed operational panel and expanded context trace
+through `interactive-result-presenter.mjs`, re-exported by `interactive-presenter.mjs`. Per-request exceptions are
+contained inside the interactive loop so a rejected
+intermediate result cannot close the session or commit its context.
 
 The implemented English gate wraps the heuristic runtime rather than entering its 24-family vote. Its closed
 `eslm-english-likelihood-v1` receipt inspects at most 64 KiB of encoded UTF-8 and 1,024 tokens and records one of three
@@ -658,6 +693,20 @@ occurrences from the observed character multiset is supported by more of the vis
 deterministic preference after role alignment and finite-form checks. This is weaker than lexical knowledge and cannot
 break an equal-coverage tie. Keeping that last tie unresolved prevents alphabetical order or registration order from
 silently becoming a morphological decision.
+
+### Question #12: Why is the gray processing panel not a chain-of-thought display?
+
+Response: It exposes reviewable operational facts already present in contracts: selected route, public outcome,
+method identity, evidence counts, context receipts, and finite work limits. It does not reveal free-form private
+deliberation or add evidence. The same facts are reproducible from the structured result, while `/trace` provides the
+more detailed machine-oriented view.
+
+### Question #13: Why can the local runtime recommend Language Agent without running it?
+
+Response: The runtime has enough typed information to distinguish a language-construction failure from a knowledge
+gap. Showing an optional operator action after `UNPARSED` makes that distinction useful without crossing the external
+boundary. Invocation still requires a separate explicit configuration change, so recommendation cannot become hidden
+service use or an answer-seeking fallback.
 
 ## Conclusion
 

@@ -1,11 +1,11 @@
 {
   "format": "eslm-basic-everyday-eval-summary",
-  "generatedAt": "2026-08-13T12:04:45.356Z",
+  "generatedAt": "2026-08-14T10:52:35.959Z",
   "sourceDevelopmentDisclosure": "These independently authored controls are development-visible regression evidence over declared packages.",
   "cases": "eval/basic-everyday/structural-controls.jsonl",
   "output": "eval/basic-everyday/results/structural-controls.current.jsonl",
-  "resultDigest": "sha256:9c7d170d0ecc590fecec06221c33ff39f92c325ea39f92c1a5659e6aa9925658",
-  "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+  "resultDigest": "sha256:3df68b7e1ee7b9e30ab8baee7d2a0ca2d53d18097d1aed4f5f0a9ba9581cb748",
+  "executableDigest": "sha256:cc7b04a45e6d119d0266ccf0de41bc2a2eb9e4b75b79f94fbc0b44e09e81690f",
   "caseManifestDigest": "sha256:c6b2266aae055bb97a6a3d134e8de91dcc0b0046101bdf38dcdc22d6805cfba1",
   "profiles": {
     "quick-assisted": {

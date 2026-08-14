@@ -31,6 +31,7 @@ export function normalizeRuntimeStatus(status) {
     LEARNED: 'SOLVED',
     INDUCTIVE: 'DEFEASIBLE',
     ABDUCTIVE: 'DEFEASIBLE',
+    DEFAULTED: 'DEFEASIBLE',
     UNSUPPORTED: 'UNPARSED',
   })[status] ?? status;
 }
@@ -114,6 +115,7 @@ function assertRuntimeRoutePayloadInvariants(result) {
       || (result.usedKbVersions?.length ?? 0) > 0 || (result.consultedKbVersions?.length ?? 0) > 0
       || result.approximation !== undefined || result.requestPlanning !== undefined
       || result.synthesis !== undefined || result.grounding !== undefined
+      || result.knowledgeContext !== undefined
       || !result.unresolvedSubgoals.some((item) =>
         item.operation === 'translate-input-to-english'))) {
     throw new TypeError('english-language-gate-rejected requires non-English assessment and a clean translation gap.');
@@ -129,7 +131,7 @@ function assertRuntimeRoutePayloadInvariants(result) {
       .includes(result.languageRoute)
     && ((result.values?.length ?? 0) > 0 || (result.provenance?.length ?? 0) > 0
       || (result.usedKbVersions?.length ?? 0) > 0 || (result.consultedKbVersions?.length ?? 0) > 0
-      || result.grounding !== undefined)) {
+      || result.grounding !== undefined || result.knowledgeContext !== undefined)) {
     throw new TypeError('Rejected non-English normalization cannot consult KBs or expose answer evidence.');
   }
   if (['heuristic-cnl-approximated', 'heuristic-cnl-ambiguous'].includes(result.languageRoute)
@@ -177,7 +179,8 @@ function assertRuntimeRoutePayloadInvariants(result) {
     throw new TypeError('language-agent-normalization-rejected requires matching rejected evidence and status.');
   }
   if (result.normalization?.attempted
-    && !result.languageRoute.startsWith('language-agent-')) {
+    && !result.languageRoute.startsWith('language-agent-')
+    && result.languageRoute !== 'knowledge-context-fallback') {
     throw new TypeError('Attempted normalization requires a Language Agent language route.');
   }
   if (result.languageRoute === 'heuristic-request-synthesis') {
@@ -204,6 +207,29 @@ function assertRuntimeRoutePayloadInvariants(result) {
         throw new TypeError('heuristic-request-synthesis provenance must identify its ordered source claims.');
       }
     });
+  }
+  if (result.languageRoute === 'knowledge-context-fallback') {
+    const realization = result.knowledgeContext?.realization;
+    if (result.status !== 'PARTIAL' || realization?.status !== 'contextual-fallback'
+      || result.values.length !== 0 || realization.preciseAnswerEstablished !== false
+      || realization.answerAuthority !== 'source-claim-only') {
+      throw new TypeError('knowledge-context-fallback requires a non-precise PARTIAL source-claim realization.');
+    }
+    if (result.provenance.length !== realization.realizedEntryIds.length
+      || result.provenance.some((item) => item.sourceClaim !== true
+        || item.method !== 'query-local-contextual-source-realization')) {
+      throw new TypeError('knowledge-context-fallback provenance must match contextual source claims.');
+    }
+    if (result.normalization?.attempted) {
+      const priorStatus = realization.originalStatus;
+      const normalizationStatus = result.normalization.status;
+      const priorLanguageRouteIsValid = normalizationStatus === 'accepted'
+        ? result.normalization.reparseStatus === priorStatus
+        : normalizationStatus === 'failed' && priorStatus === 'UNPARSED';
+      if (!priorLanguageRouteIsValid) {
+        throw new TypeError('Context fallback normalization must identify a valid prior Language Agent outcome.');
+      }
+    }
   }
 }
 

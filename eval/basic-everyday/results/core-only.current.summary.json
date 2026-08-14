@@ -1,11 +1,11 @@
 {
   "format": "eslm-basic-everyday-eval-summary",
-  "generatedAt": "2026-08-13T12:04:32.518Z",
+  "generatedAt": "2026-08-14T10:52:14.084Z",
   "sourceDevelopmentDisclosure": "Every source case is development-visible and may influence implementation.",
   "cases": "eval/basic-everyday/cases.jsonl",
   "output": "eval/basic-everyday/results/core-only.current.jsonl",
-  "resultDigest": "sha256:9e35e3e886663da8c10f4106aab0c1a843fa1beea90f52f20e4fdfe35354b814",
-  "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+  "resultDigest": "sha256:b69cc773d4d2aae4c992af018150eaa790288072140f9e489ad2489a679fc6d0",
+  "executableDigest": "sha256:cc7b04a45e6d119d0266ccf0de41bc2a2eb9e4b75b79f94fbc0b44e09e81690f",
   "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
   "profiles": {
     "core-only": {

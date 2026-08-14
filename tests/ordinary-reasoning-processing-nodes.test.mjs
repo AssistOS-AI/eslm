@@ -174,6 +174,71 @@ test('the result verifier rejects altered values and Horn witnesses before grant
   ), /rejected/u);
 });
 
+test('the result verifier independently checks possession-location defaults and their confidence', async () => {
+  const core = await createCoreModel();
+  const facts = [
+    {
+      id: 'fact:nonce:owner-location', subject: 'vekan', predicate: 'located_in', object: 'orun',
+      provenance: ['source:nonce:owner-location'],
+    },
+    {
+      id: 'fact:nonce:possession', subject: 'vekan', predicate: 'owns', object: 'mirel',
+      provenance: ['source:nonce:possession'],
+    },
+  ];
+  const activeModel = { ...core, facts, rules: [] };
+  const activeClosure = deriveClosure(activeModel);
+  const query = {
+    intent: 'location', subject: 'mirel', predicate: 'located_in', target: 'object',
+    reasoning: 'finite-episodic-possession-location', owner: 'vekan', confidence: 0.62,
+    assumption: 'The possessed entity normally shares the current location of its owner.',
+    episodicTask: {
+      schema: 'finite-episodic-world-task-v1',
+      operations: [
+        {
+          id: facts[0].id, sequence: 0, kind: 'state', predicate: 'located_in',
+          subject: 'vekan', values: ['orun'],
+        },
+        {
+          id: facts[1].id, sequence: 1, kind: 'relation-add', relation: 'owns',
+          subject: 'vekan', object: 'mirel',
+        },
+      ],
+      query: {
+        kind: 'state-values', predicate: 'located_in', subject: 'mirel', carrierRelation: 'owns',
+      },
+      policy: {},
+    },
+  };
+  const planning = planningFor(query, registryFor(CORE_METHOD_DESCRIPTORS.finiteEpisodicWorld));
+  const executionInput = {
+    format: ORDINARY_REASONING_PROTOCOLS.executionInput,
+    planning,
+    activeModel,
+    activeClosure,
+    baseIndex: indexFacts(activeClosure.facts),
+    hasSessionOverlay: false,
+    sessionHistory: [],
+  };
+  const execution = executeOrdinaryMethod(executionInput);
+  const verified = verifyOrdinaryMethodResult(verificationInput(executionInput, execution));
+  assert.equal(verified.status, 'DEFAULTED');
+  assert.equal(verified.accepted, true);
+  assert.equal(verified.truthAuthorized, false);
+  assert.deepEqual(verified.result.values, ['orun']);
+
+  const alteredConfidence = {
+    ...execution,
+    result: {
+      ...execution.result,
+      evidence: execution.result.evidence.map((item) => ({ ...item, confidence: 0.99 })),
+    },
+  };
+  assert.throws(() => verifyOrdinaryMethodResult(
+    verificationInput(executionInput, alteredConfidence),
+  ), /rejected mismatched possession-location evidence/u);
+});
+
 test('witness verification performs no hidden second retrieval or profiled method execution', async () => {
   const { executionInput } = await deductionCase();
   let indexLookups = 0;

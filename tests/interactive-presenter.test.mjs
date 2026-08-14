@@ -8,7 +8,7 @@ import { REGRESSION_SMOKE_SEED } from '../src/conversation-smoke.mjs';
 import { BASIC_EVAL_SMOKE_SEED, loadBasicEvalCases } from '../src/evaluation/basic-eval-catalog.mjs';
 import {
   interactiveBasicEvalSmoke, interactiveCountAndSeed, interactiveExamplePage, interactiveExamples,
-  interactiveResultText, interactiveSmoke, traceText,
+  interactiveFailureText, interactiveResultText, interactiveSmoke, traceText,
 } from '../src/interface/interactive-presenter.mjs';
 
 const style = Object.freeze({
@@ -28,7 +28,9 @@ test('related KB records stay in trace and do not overwhelm the conversational a
   const output = interactiveResultText({
     status: 'UNKNOWN', answer: 'I cannot establish the requested answer.', grounding,
   }, 'Can Qorin fly?', style);
-  assert.equal(output, 'I cannot establish the requested answer.');
+  assert.match(output, /^Thinking · symbolic processing/mu);
+  assert.match(output, /request was understood, but no answer was established/u);
+  assert.match(output, /\nAnswer\nI cannot establish the requested answer\./u);
   assert.doesNotMatch(output, /Qorin is a tool|nonce-kb|lookup-budget/u);
 
   const trace = traceText({
@@ -144,23 +146,77 @@ test('accepted local approximation shows selected CNL, confidence votes, and eph
   assert.match(output, /\nAnswer\nYes\./u);
 });
 
-test('a short symbolic value is presented naturally without an internal processing dump', () => {
+test('a short symbolic value retains the standard operational processing panel', () => {
   const output = interactiveResultText({
     status: 'SOLVED', answer: 'northwest', languageRoute: 'direct-symbolic-task-adapter',
     values: ['northwest'], provenance: [], usedKbVersions: [],
     reasoning: { method: 'qualitative-spatial-relation' },
   }, 'Where is A relative to B?', style);
-  assert.equal(output, 'Northwest.');
+  assert.match(output, /^Thinking · symbolic processing/mu);
+  assert.match(output, /direct local task adapter/u);
+  assert.match(output, /qualitative-spatial-relation/u);
+  assert.match(output, /\nAnswer\nNorthwest\./u);
 });
 
-test('a bounded operation result is presented as the answer while its method remains available to trace', () => {
+test('a bounded operation result exposes its method in both the standard panel and trace', () => {
   const result = {
     status: 'SOLVED', answer: '51', languageRoute: 'bounded-operation-executed',
     values: [51], provenance: [{ method: 'verified-scalar-operation' }], usedKbVersions: [],
     reasoning: { method: 'verified-scalar-operation', witness: { result: 51 } },
   };
-  assert.equal(interactiveResultText(result, 'What is 17% of 300?', style), '51');
+  const output = interactiveResultText(result, 'What is 17% of 300?', style);
+  assert.match(output, /^Thinking · symbolic processing/mu);
+  assert.match(output, /verified bounded operation/u);
+  assert.match(output, /\nAnswer\n51$/u);
   assert.match(traceText(result, style), /verified-scalar-operation/u);
+});
+
+test('interactive validation failures are humanized and keep the session usable', () => {
+  const output = interactiveFailureText(
+    new TypeError('Unattempted normalization triggerStatus must match the direct result status.'), style,
+  );
+  assert.match(output, /^Thinking · symbolic processing/mu);
+  assert.match(output, /language-route receipt disagreed/u);
+  assert.match(output, /Session state: unchanged/u);
+  assert.match(output, /session is still active/u);
+  assert.doesNotMatch(output, /Unattempted normalization triggerStatus/u);
+});
+
+test('local UNPARSED results recommend Language Agent help without invoking it', () => {
+  const text = interactiveResultText({
+    status: 'UNPARSED', languageRoute: 'direct-symbolic',
+    answer: 'I could not represent the request.', provenance: [], usedKbVersions: [],
+  }, 'Please untangle this construction.', style);
+  assert.match(text, /Optional language help/u);
+  assert.match(text, /\/normalize on/u);
+  assert.match(text, /external disclosure is acceptable/u);
+  assert.doesNotMatch(text, /Language Agent .*proposal/u);
+});
+
+test('defeasible answers show their confidence grade and assumption in the processing panel', () => {
+  const text = interactiveResultText({
+    status: 'DEFEASIBLE', languageRoute: 'direct-symbolic',
+    answer: 'Probably Orun (confidence 0.62).', values: ['orun'], provenance: [], usedKbVersions: [],
+    reasoning: {
+      method: 'finite-episodic-world', confidence: 0.62,
+      assumption: 'The possessed entity normally shares the current location of its owner.',
+    },
+  }, 'Where is the possessed object living?', style);
+  assert.match(text, /Confidence: 0\.620/u);
+  assert.match(text, /Assumption: The possessed entity normally shares/u);
+  assert.match(text, /\nAnswer\nProbably Orun \(confidence 0\.62\)\./u);
+});
+
+test('skipped language assistance is described as unnecessary rather than unattempted', () => {
+  const output = interactiveResultText({
+    status: 'UNKNOWN', languageRoute: 'direct-symbolic',
+    answer: 'The local knowledge bases do not establish an answer.',
+    normalization: { attempted: false, triggerStatus: 'UNKNOWN' },
+    provenance: [], usedKbVersions: [],
+  }, 'Where do zorals live?', style);
+  assert.match(output, /External language assistance: not needed/u);
+  assert.match(output, /reached UNKNOWN before optional context construction/u);
+  assert.doesNotMatch(output, /unattempted/iu);
 });
 
 test('request synthesis separates a symbolic processing trace from the coherent answer', () => {

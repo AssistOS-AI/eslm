@@ -1,6 +1,6 @@
 {
   "format": "eslm-generated-heuristic-benchmark-report-v1",
-  "createdAt": "2026-08-13T07:30:22.947Z",
+  "createdAt": "2026-08-14T09:39:06.859Z",
   "evidenceRegime": "internal-generated-development",
   "benchmarkComparable": false,
   "claimScope": "heuristic-strategy-development-and-regression-only",
@@ -24,7 +24,7 @@
     "externalLanguageAgent": false,
     "replayCommand": "node src/cli.mjs benchmark generated --cases 1200 --seed 'eslm-generated-heuristic-development-v1' --kb 'quick' --no-external-language-agent",
     "runtimeIdentity": {
-      "modelId": "quick@1.0.0",
+      "modelId": "quick@1.1.0",
       "knowledgeBases": [
         "quick"
       ]
@@ -41,18 +41,18 @@
         ],
         "includedExtension": ".mjs"
       },
-      "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
-      "files": 244,
+      "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+      "files": 259,
       "runtime": {
         "node": "v22.23.1",
         "platform": "linux",
         "architecture": "x64"
       }
     },
-    "wallMilliseconds": 6571.781186,
-    "startRssBytes": 93237248,
-    "endRssBytes": 152154112,
-    "sampledPeakRssBytes": 146468864
+    "wallMilliseconds": 6454.461217,
+    "startRssBytes": 94502912,
+    "endRssBytes": 150990848,
+    "sampledPeakRssBytes": 142077952
   },
   "workPolicy": {
     "format": "eslm-work-policy-v1",
@@ -99,7 +99,7 @@
     "mode": "runtime-work-policy",
     "catalog": {
       "format": "eslm-builtin-strategy-catalog-v1",
-      "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
+      "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
     },
     "selection": {
       "source": "eslm-work-policy-v1",
@@ -2979,7 +2979,7 @@
       }
     ],
     "adapterLocal": null,
-    "configurationDigest": "sha256:b67a9726719cf17bb41957cee45114e98b05a2c8c879636daeb182142e658dea"
+    "configurationDigest": "sha256:89a11327f2014bb69b2828232eb2ca6df086da5471e54ea1affb48f187120b32"
   },
   "total": 1200,
   "passed": 1200,

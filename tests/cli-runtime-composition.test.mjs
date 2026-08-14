@@ -15,15 +15,25 @@ import { HeuristicLanguageRuntime } from '../src/runtime/heuristic-language-runt
 import { LanguageAgentAssistedRuntime } from '../src/runtime/language-agent-assisted-runtime.mjs';
 import { EslmRuntime } from '../src/runtime/runtime.mjs';
 
-test('default CLI composition places the untrusted assisted boundary outside every local authority', async () => {
+test('explicit assisted CLI composition places the untrusted boundary outside every local authority', async () => {
   const runtime = await createCliRuntime({ kb: 'quick', 'no-normalization-cache': true });
-  assert.ok(runtime instanceof LanguageAgentAssistedRuntime);
-  assert.ok(runtime.runtime instanceof EnglishLanguageGateRuntime);
-  assert.ok(runtime.runtime.runtime instanceof HeuristicLanguageRuntime);
-  assert.ok(runtime.runtime.runtime.runtime instanceof EslmRuntime);
-  assert.ok(runtime.runtime.runtime.runtime.core instanceof EslmEngine);
+  assert.ok(runtime instanceof EnglishLanguageGateRuntime);
+  assert.ok(!(runtime instanceof LanguageAgentAssistedRuntime));
 
-  const receipt = inspectCliRuntimeComposition(runtime);
+  const localReceipt = inspectCliRuntimeComposition(runtime);
+  assert.equal(localReceipt.profile, 'deterministic-local');
+  assert.equal(localReceipt.externalLanguageAgent, false);
+
+  const assisted = await createCliRuntime({
+    kb: 'quick', 'no-normalization-cache': true, 'external-language-agent': true,
+  });
+  assert.ok(assisted instanceof LanguageAgentAssistedRuntime);
+  assert.ok(assisted.runtime instanceof EnglishLanguageGateRuntime);
+  assert.ok(assisted.runtime.runtime instanceof HeuristicLanguageRuntime);
+  assert.ok(assisted.runtime.runtime.runtime instanceof EslmRuntime);
+  assert.ok(assisted.runtime.runtime.runtime.core instanceof EslmEngine);
+
+  const receipt = inspectCliRuntimeComposition(assisted);
   assert.equal(receipt.profile, 'language-agent-assisted-normalization');
   assert.equal(receipt.externalLanguageAgent, true);
   assert.deepEqual(receipt.wrapperOrderOuterToInner, [
@@ -93,7 +103,9 @@ test('assisted construction validates its external timeout while offline constru
   assert.match(cliHelpText('fixture-model'),
     /--language-agent-timeout-ms N external proposal timeout; 1000 through 600000, default 120000/u);
   await assert.rejects(
-    createCliRuntime({ kb: 'quick', 'language-agent-timeout-ms': 999 }),
+    createCliRuntime({
+      kb: 'quick', 'external-language-agent': true, 'language-agent-timeout-ms': 999,
+    }),
     /between 1000 and 600000/u,
   );
   const offline = await createCliRuntime(withLanguageAgentNormalization({

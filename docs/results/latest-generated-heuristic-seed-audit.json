@@ -1,6 +1,6 @@
 {
   "format": "eslm-generated-heuristic-multi-seed-audit-v1",
-  "createdAt": "2026-08-13T07:30:58.808Z",
+  "createdAt": "2026-08-14T09:39:41.480Z",
   "evidenceRegime": "internal-generated-multi-seed-development-audit",
   "benchmarkComparable": false,
   "claimScope": "same-definition-cross-seed-stability-only",
@@ -34,8 +34,8 @@
         ],
         "includedExtension": ".mjs"
       },
-      "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
-      "files": 244,
+      "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+      "files": 259,
       "runtime": {
         "node": "v22.23.1",
         "platform": "linux",
@@ -43,7 +43,7 @@
       }
     },
     "runtimeIdentity": {
-      "modelId": "quick@1.0.0",
+      "modelId": "quick@1.1.0",
       "knowledgeBases": [
         "quick"
       ]
@@ -91,7 +91,7 @@
     "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
     "catalog": {
       "format": "eslm-builtin-strategy-catalog-v1",
-      "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
+      "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
     },
     "selection": {
       "source": "eslm-work-policy-v1",
@@ -116,8 +116,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 1,
       "seed": "eslm-generated-heuristic-independent-v1-alpha",
-      "reportDigest": "sha256:c3941b60ff0804eaaf90b0b5cc6f85af48563996fe0d23c7d93f59b8bff58252",
-      "reportCreatedAt": "2026-08-13T07:30:32.368Z",
+      "reportDigest": "sha256:92742ec7e61a0b7dcd8d93da8088f7a05c9dc0a6996aecc5bdf893f279b5b4fc",
+      "reportCreatedAt": "2026-08-14T09:39:16.958Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-alpha",
@@ -138,7 +138,7 @@
         "externalLanguageAgent": false,
         "replayCommand": "node src/cli.mjs benchmark generated --cases 1200 --seed 'eslm-generated-heuristic-independent-v1-alpha' --kb 'quick' --no-external-language-agent",
         "runtimeIdentity": {
-          "modelId": "quick@1.0.0",
+          "modelId": "quick@1.1.0",
           "knowledgeBases": [
             "quick"
           ]
@@ -155,18 +155,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
-          "files": 244,
+          "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+          "files": 259,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 8481.24232,
-        "startRssBytes": 93130752,
-        "endRssBytes": 141049856,
-        "sampledPeakRssBytes": 138125312
+        "wallMilliseconds": 6217.413539,
+        "startRssBytes": 94609408,
+        "endRssBytes": 147685376,
+        "sampledPeakRssBytes": 144396288
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -174,7 +174,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
+          "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -3104,7 +3104,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:ac20d41aa789e30dc34500c9158a5104fc8cdd2f75611c00e58e9028afde2518"
+        "configurationDigest": "sha256:f79e548709e44a3103e7b8d143cec3941c956fa9c740dbe291478651313dd646"
       },
       "total": 1200,
       "passed": 1200,
@@ -3250,8 +3250,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 2,
       "seed": "eslm-generated-heuristic-independent-v1-beta",
-      "reportDigest": "sha256:3b0edca944fc7cf671073afab7b4b99ba40e70317170c7bec662a1a1d3a9b64d",
-      "reportCreatedAt": "2026-08-13T07:30:39.089Z",
+      "reportDigest": "sha256:f053abaafe6df420fa9da14dcfd01a06cbe2ce196b7cb95dbc4f26415f333090",
+      "reportCreatedAt": "2026-08-14T09:39:23.094Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-beta",
@@ -3272,7 +3272,7 @@
         "externalLanguageAgent": false,
         "replayCommand": "node src/cli.mjs benchmark generated --cases 1200 --seed 'eslm-generated-heuristic-independent-v1-beta' --kb 'quick' --no-external-language-agent",
         "runtimeIdentity": {
-          "modelId": "quick@1.0.0",
+          "modelId": "quick@1.1.0",
           "knowledgeBases": [
             "quick"
           ]
@@ -3289,18 +3289,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
-          "files": 244,
+          "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+          "files": 259,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 6390.735866000001,
-        "startRssBytes": 143147008,
-        "endRssBytes": 176615424,
-        "sampledPeakRssBytes": 170004480
+        "wallMilliseconds": 5842.8479609999995,
+        "startRssBytes": 148865024,
+        "endRssBytes": 178196480,
+        "sampledPeakRssBytes": 172146688
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -3308,7 +3308,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
+          "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -6228,7 +6228,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:507b2c139bbfdbf07940c2575af60656fd8f6ec960402a0a29ff1cf89efcd59c"
+        "configurationDigest": "sha256:bb0022923c1512c1ed41c4cc9587a501b21355df370ded5daac6e96c4d8e422d"
       },
       "total": 1200,
       "passed": 1200,
@@ -6374,8 +6374,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 3,
       "seed": "eslm-generated-heuristic-independent-v1-gamma",
-      "reportDigest": "sha256:99e943e3d96020e60d717074f7c596890929de2327f506b06fbca6009edb9f1e",
-      "reportCreatedAt": "2026-08-13T07:30:45.717Z",
+      "reportDigest": "sha256:dd908eead45662055ebf46250fe7cca044453545986abecc86206b3ee68e5e6d",
+      "reportCreatedAt": "2026-08-14T09:39:29.096Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-gamma",
@@ -6396,7 +6396,7 @@
         "externalLanguageAgent": false,
         "replayCommand": "node src/cli.mjs benchmark generated --cases 1200 --seed 'eslm-generated-heuristic-independent-v1-gamma' --kb 'quick' --no-external-language-agent",
         "runtimeIdentity": {
-          "modelId": "quick@1.0.0",
+          "modelId": "quick@1.1.0",
           "knowledgeBases": [
             "quick"
           ]
@@ -6413,18 +6413,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
-          "files": 244,
+          "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+          "files": 259,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 6298.452349999998,
-        "startRssBytes": 184479744,
-        "endRssBytes": 191467520,
-        "sampledPeakRssBytes": 187555840
+        "wallMilliseconds": 5740.170506999999,
+        "startRssBytes": 182521856,
+        "endRssBytes": 193470464,
+        "sampledPeakRssBytes": 191827968
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -6432,7 +6432,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
+          "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -9297,7 +9297,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:2b8d021832a5985c514362645207fed86f24028fe4bf664bcd7609f16f6206ca"
+        "configurationDigest": "sha256:c31f156181a52b83610bb0762071d8d266a34a9848aa5c03198bf155a417b4e1"
       },
       "total": 1200,
       "passed": 1200,
@@ -9443,8 +9443,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 4,
       "seed": "eslm-generated-heuristic-independent-v1-delta",
-      "reportDigest": "sha256:361ea885f3bb2b9031fa2dbdb24d89cea3191baf215b7f8199925c02a41c5e0b",
-      "reportCreatedAt": "2026-08-13T07:30:52.014Z",
+      "reportDigest": "sha256:2e765f021ed285d3f67b23d557ee9d853e1de0f634dfd8632790891c8d87fbb6",
+      "reportCreatedAt": "2026-08-14T09:39:35.156Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-delta",
@@ -9465,7 +9465,7 @@
         "externalLanguageAgent": false,
         "replayCommand": "node src/cli.mjs benchmark generated --cases 1200 --seed 'eslm-generated-heuristic-independent-v1-delta' --kb 'quick' --no-external-language-agent",
         "runtimeIdentity": {
-          "modelId": "quick@1.0.0",
+          "modelId": "quick@1.1.0",
           "knowledgeBases": [
             "quick"
           ]
@@ -9482,18 +9482,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
-          "files": 244,
+          "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+          "files": 259,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 6034.519382000002,
-        "startRssBytes": 191598592,
-        "endRssBytes": 206045184,
-        "sampledPeakRssBytes": 203268096
+        "wallMilliseconds": 5785.185674,
+        "startRssBytes": 197009408,
+        "endRssBytes": 201465856,
+        "sampledPeakRssBytes": 198422528
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -9501,7 +9501,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
+          "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -12391,7 +12391,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:84baf07da3f51f3c4ba4d50943fee4b38c357d68fc14aff40df84f9ede7dab27"
+        "configurationDigest": "sha256:b6bde97be97c418bc8f186cc89d3f880874579d8f5e11c7a0ee0ebb009e2ebfd"
       },
       "total": 1200,
       "passed": 1200,
@@ -12537,8 +12537,8 @@
       "format": "eslm-generated-heuristic-seed-run-v1",
       "ordinal": 5,
       "seed": "eslm-generated-heuristic-independent-v1-epsilon",
-      "reportDigest": "sha256:2fcb270b663dbca2cc4c800e6dbf5c3f8df747a011c7d16d5c6213778b2a9334",
-      "reportCreatedAt": "2026-08-13T07:30:58.493Z",
+      "reportDigest": "sha256:12ef255b61185918d7cd34eebe37adf60c77321bef1f6bc6f27f6cafbda01f20",
+      "reportCreatedAt": "2026-08-14T09:39:41.222Z",
       "generator": {
         "format": "eslm-generated-heuristic-benchmark-suite-v1",
         "seed": "eslm-generated-heuristic-independent-v1-epsilon",
@@ -12559,7 +12559,7 @@
         "externalLanguageAgent": false,
         "replayCommand": "node src/cli.mjs benchmark generated --cases 1200 --seed 'eslm-generated-heuristic-independent-v1-epsilon' --kb 'quick' --no-external-language-agent",
         "runtimeIdentity": {
-          "modelId": "quick@1.0.0",
+          "modelId": "quick@1.1.0",
           "knowledgeBases": [
             "quick"
           ]
@@ -12576,18 +12576,18 @@
             ],
             "includedExtension": ".mjs"
           },
-          "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
-          "files": 244,
+          "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+          "files": 259,
           "runtime": {
             "node": "v22.23.1",
             "platform": "linux",
             "architecture": "x64"
           }
         },
-        "wallMilliseconds": 6180.2736479999985,
-        "startRssBytes": 206176256,
-        "endRssBytes": 209309696,
-        "sampledPeakRssBytes": 208797696
+        "wallMilliseconds": 5792.842220000002,
+        "startRssBytes": 201465856,
+        "endRssBytes": 203952128,
+        "sampledPeakRssBytes": 205004800
       },
       "workPolicyDigest": "sha256:69b920d6e0fdc2e9ddf1279a9746d2a9f0cd446ef7fe01315d9317f2c3182376",
       "strategyConfiguration": {
@@ -12595,7 +12595,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:dc38520992ad10a99643db4a39c53b31c727b3ec0c785473b34d7f795213ad3b"
+          "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -15450,7 +15450,7 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:e44ca74c7b159e617a184850a507d32609176b8f78d0b699efbcef097260ad24"
+        "configurationDigest": "sha256:03fb379c9b771a6158545769cb9cc17f5e3337d9c266ab3e7d9af72255fa7e93"
       },
       "total": 1200,
       "passed": 1200,
@@ -15750,5 +15750,5 @@
     "completeDenominator": true,
     "allRunsShareIntendedIdentity": true
   },
-  "receiptDigest": "sha256:99f4905a9fab4b7420ff58e36f55ed002b3eeeee0070062f8131fd80b080bd25"
+  "receiptDigest": "sha256:4b10e2c82f025511e5d13418c623374644f3b4978e8f0395c3ee886af1ed22de"
 }

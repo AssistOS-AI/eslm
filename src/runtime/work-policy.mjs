@@ -12,7 +12,8 @@ const STRATEGY_SELECTION_PRESETS = Object.freeze({
   }),
   retrieval: Object.freeze({
     includeStages: Object.freeze([
-      'runtime.knowledge.focus', 'runtime.knowledge.retrieve', 'runtime.evidence.assess',
+      'runtime.context.construct', 'runtime.knowledge.focus', 'runtime.knowledge.retrieve',
+      'runtime.evidence.assess',
       'runtime.failure.ground',
     ]),
   }),
@@ -28,6 +29,7 @@ const STRATEGY_SELECTION_PRESETS = Object.freeze({
 
 const MANDATORY_STRATEGY_IDENTITIES = Object.freeze({
   'runtime.language.interpret': 'strategy:language:direct-controlled-parser@1',
+  'runtime.context.construct': 'strategy:context:question-facet-expansion@1',
   'runtime.knowledge.focus': 'strategy:focus:function-word-exclusion@1',
 });
 

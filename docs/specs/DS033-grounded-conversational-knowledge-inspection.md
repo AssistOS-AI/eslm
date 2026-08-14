@@ -40,6 +40,13 @@ If no unique entity matches, the result is `UNKNOWN` and says directly that the 
 
 Structured diagnostics, consulted KB identities, and optional related grounding may remain available to machine clients or explicit trace views. The default conversational answer is the natural inability sentence, not an internal route/status/version dump. KB and external-source versions remain real provenance metadata but are not repeated through every visible sentence.
 
+DS035 does not weaken this entity-inspection boundary. Its default task context may retrieve lexical or relational
+records for the same surface before inspection, but those records cannot become an exact entity summary merely because
+they are relevant. If inspection fails and DS035 admits a contextual fallback, the result is separately
+`PARTIAL`, begins with the precise inability, cites every realized source claim, keeps semantic values empty, and says
+that the context does not establish the missing entity claim. A DS033 `SOLVED` summary still contains only facts
+selected by this inspector and its witness.
+
 ### 5. Bounds, provenance, and coverage
 
 Resolution, fact selection, listing, and output are governed by explicit entity, fact, comparison, sentence, and byte limits. A bound never proves absence. When the inspected model frontier is incomplete, the witness records the omission and the answer avoids “all” or complete-coverage language. A `SOLVED` summary may state the admitted facts it found; it may not imply that no further facts exist.

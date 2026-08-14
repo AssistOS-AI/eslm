@@ -9,6 +9,7 @@ import {
   MAX_RESULT_ARRAY_BYTES, MAX_RESULT_ARRAY_ITEMS, objectArray, record, string, stringArray, text,
 } from './result-payload-shapes.mjs';
 import { assertGroundingExtension } from './result-grounding-contract.mjs';
+import { assertKnowledgeContextExtension } from './result-knowledge-context-contract.mjs';
 import { assertRequestPlanningExtension } from './result-request-planning-contract.mjs';
 import { assertSynthesisExtension } from './result-synthesis-contract.mjs';
 import {
@@ -269,6 +270,9 @@ function normalizationReceipt(value, path) {
 
 function normalizationExtension(value, result) {
   const normalization = record(value, 'Runtime result normalization');
+  const preContextStatus = result.languageRoute === 'knowledge-context-fallback'
+    ? result.knowledgeContext?.realization?.originalStatus
+    : result.status;
   if (normalization.protocol !== NORMALIZATION_RESULT_PROTOCOL) {
     throw new TypeError(`Runtime result normalization protocol must be ${NORMALIZATION_RESULT_PROTOCOL}.`);
   }
@@ -278,8 +282,8 @@ function normalizationExtension(value, result) {
     if (result.languageRoute.startsWith('language-agent-')) {
       throw new TypeError('A Language Agent route requires an attempted normalization.');
     }
-    if (normalization.triggerStatus !== result.status) {
-      throw new TypeError('Unattempted normalization triggerStatus must match the direct result status.');
+    if (normalization.triggerStatus !== preContextStatus) {
+      throw new TypeError('A skipped normalization receipt must match the pre-context symbolic status.');
     }
     boundedJson(normalization, 'Runtime result normalization', 4_096);
     return;
@@ -333,8 +337,8 @@ function normalizationExtension(value, result) {
     if (normalization.validation?.accepted !== true || !normalization.reparseStatus) {
       throw new TypeError('Accepted normalization requires accepted validation and a reparse status.');
     }
-    if (normalization.reparseStatus !== result.status) {
-      throw new TypeError('Accepted normalization reparseStatus must match the public result status.');
+    if (normalization.reparseStatus !== preContextStatus) {
+      throw new TypeError('Accepted normalization reparseStatus must match the pre-context symbolic status.');
     }
     if (['UNPARSED', 'AMBIGUOUS', 'UNVERIFIED_NORMALIZATION'].includes(normalization.reparseStatus)) {
       throw new TypeError('Accepted normalization requires a supported symbolic reparse status.');
@@ -418,5 +422,8 @@ export function assertRuntimePayloadContracts(result) {
   if (result.synthesis !== undefined) assertSynthesisExtension(result.synthesis, result);
   if (result.normalization !== undefined) normalizationExtension(result.normalization, result);
   if (result.grounding !== undefined) assertGroundingExtension(result.grounding, result);
+  if (result.knowledgeContext !== undefined) {
+    assertKnowledgeContextExtension(result.knowledgeContext, result);
+  }
   return result;
 }

@@ -1,7 +1,7 @@
 {
   "format": "eslm-benchmark-report-v3",
   "protocol": "eslm-internal-regression-v2",
-  "createdAt": "2026-08-13T07:30:15.936Z",
+  "createdAt": "2026-08-14T09:38:55.126Z",
   "evidenceRegime": "internal-authored-smoke-fixture",
   "claimScope": "implementation-regression-only",
   "behaviorIdentity": {
@@ -16,8 +16,8 @@
       ],
       "includedExtension": ".mjs"
     },
-    "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
-    "files": 244,
+    "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+    "files": 259,
     "runtime": {
       "node": "v22.23.1",
       "platform": "linux",
@@ -29,7 +29,7 @@
     "sha256": "4a2a7550718ef09315e83b1ac31eafdc7dea854378f8bbb803f1dfd177a38cb5"
   },
   "model": {
-    "id": "quick@1.0.0",
+    "id": "quick@1.1.0",
     "knowledgeBases": [
       "quick"
     ],

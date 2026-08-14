@@ -3,6 +3,7 @@ import {
 } from '../reasoning/datalog.mjs';
 import { createPlan } from '../reasoning/planner.mjs';
 import { answerTemporalPredecessor } from '../reasoning/temporal-state.mjs';
+import { executeEpisodicWorldTask } from '../reasoning/episodic-world.mjs';
 import {
   assertOrdinaryMethodExecutionInput,
   assertOrdinaryMethodExecutionOutput,
@@ -146,11 +147,85 @@ function executeRetrievalOrInduction(input, services, query, activeFacts) {
   };
 }
 
+function mergedKbSources(facts) {
+  const values = facts.flatMap((fact) => fact.kbSources
+    ?? (fact.kbId ? [{ kbId: fact.kbId, ...(fact.kbVersion ? { version: fact.kbVersion } : {}) }] : []));
+  return [...new Map(values.map((item) => [
+    `${item.kbId}\u0000${item.version ?? ''}`, item,
+  ])).values()].toSorted((left, right) => left.kbId.localeCompare(right.kbId)
+    || String(left.version ?? '').localeCompare(String(right.version ?? '')));
+}
+
+function executePossessionLocationDefault(input, services, query) {
+  const { plan } = input.planning;
+  const episodic = services.measureSync('reasoning.finite-episodic-world', () =>
+    executeEpisodicWorldTask(query.episodicTask), {
+    operations: query.episodicTask?.operations?.length ?? 0,
+  });
+  if (episodic.status !== 'SOLVED' || episodic.values.length !== 1) {
+    return {
+      format: ORDINARY_REASONING_PROTOCOLS.executionOutput,
+      stage: ORDINARY_REASONING_STAGES.execution,
+      methodId: plan.methodId,
+      requiredCapability: plan.requiredCapability,
+      status: episodic.status === 'RESOURCE_LIMIT' ? 'RESOURCE_LIMIT' : 'UNKNOWN',
+      result: { values: [], evidence: [] },
+      reasoning: { method: 'finite-episodic-world', confidence: query.confidence,
+        assumption: query.assumption, witness: episodic.witness },
+      resourceLimit: episodic.status === 'RESOURCE_LIMIT'
+        ? { diagnostic: episodic.diagnostic ?? 'The finite episode exhausted its declared work.' } : null,
+      truthAuthorized: false,
+    };
+  }
+  const supportIds = episodic.witness.operationIds;
+  const supports = supportIds.map((id) => input.activeClosure.facts.find((fact) => fact.id === id));
+  if (supports.some((fact) => !fact)) {
+    throw new TypeError('Finite episodic possession-location support is outside the host closure.');
+  }
+  const value = episodic.values[0];
+  const evidence = {
+    id: `default:possession-location:${supportIds.join(':')}`,
+    subject: query.subject,
+    predicate: query.predicate,
+    object: value,
+    derived: true,
+    reasoning: 'finite-episodic-possession-location',
+    confidence: query.confidence,
+    support: [...supportIds],
+    provenance: [...new Set(supports.flatMap((fact) => fact.provenance ?? []))],
+    kbSources: mergedKbSources(supports),
+    defaultInference: {
+      owner: query.owner,
+      assumption: query.assumption,
+      strictConclusion: false,
+    },
+    episodicWitness: episodic.witness,
+  };
+  return {
+    format: ORDINARY_REASONING_PROTOCOLS.executionOutput,
+    stage: ORDINARY_REASONING_STAGES.execution,
+    methodId: plan.methodId,
+    requiredCapability: plan.requiredCapability,
+    status: 'DEFAULTED',
+    result: { values: [value], evidence: [evidence] },
+    reasoning: {
+      method: 'finite-episodic-world', inference: 'possession-location-default',
+      confidence: query.confidence, assumption: query.assumption,
+      witness: episodic.witness,
+    },
+    resourceLimit: null,
+    truthAuthorized: false,
+  };
+}
+
 function computeOrdinaryExecution(input, services) {
   const [query] = input.planning.taskFrame.goals;
   const activeFacts = input.activeClosure.facts;
   if (query.reasoning === 'abduction') return executeAbduction(input, services, query, activeFacts);
   if (query.reasoning === 'temporal-predecessor') return executeTemporal(input, services, query);
+  if (query.reasoning === 'finite-episodic-possession-location') {
+    return executePossessionLocationDefault(input, services, query);
+  }
   return executeRetrievalOrInduction(input, services, query, activeFacts);
 }
 

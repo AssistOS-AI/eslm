@@ -2,4 +2,4 @@
 {"id":"quick-classification","text":"Is Penguin a bird?","values":[true]}
 {"id":"session-assertion","text":"Socrate is a man. Is Socrate a man?","values":[true]}
 {"id":"safe-horn-depth-three","text":"Jhon is a man. Is Jhon going to die?","values":[true]}
-{"id":"unsupported-language","text":"Compose a poem about Penguin","status":"UNPARSED"}
+{"id":"unsupported-request-context","text":"Compose a poem about Penguin","status":"PARTIAL"}

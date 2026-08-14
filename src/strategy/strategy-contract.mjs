@@ -4,6 +4,7 @@ export const STRATEGY_RUN_PROTOCOL = 'eslm-strategy-result-v1';
 
 export const STRATEGY_STAGES = Object.freeze([
   'runtime.language.interpret',
+  'runtime.context.construct',
   'runtime.request.plan',
   'runtime.knowledge.focus',
   'runtime.knowledge.retrieve',
@@ -28,6 +29,7 @@ export const STRATEGY_STAGES = Object.freeze([
 export const STRATEGY_EXACT_SELECTION_STAGES = Object.freeze([
   'runtime.language.interpret',
   'runtime.request.plan',
+  'runtime.context.construct',
   'runtime.knowledge.focus',
   'runtime.evidence.assess',
   'runtime.reason.execute',

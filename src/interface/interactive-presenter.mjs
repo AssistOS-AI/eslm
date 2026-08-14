@@ -18,6 +18,8 @@ import {
 import { scoreBasicEvalCase } from '../evaluation/basic-eval-scoring.mjs';
 import { strategyInventory } from '../strategy/strategy-inventory.mjs';
 
+export { interactiveFailureText, interactiveResultText } from './interactive-result-presenter.mjs';
+
 export function interactiveHelp(style) {
   const command = (value) => style.blue(value.padEnd(28));
   return `${style.bold('Interactive commands')}
@@ -234,123 +236,6 @@ export async function interactiveSmoke(engine, selected, style, seed, count = RE
   return lines.join('\n');
 }
 
-function coherentInteractiveAnswer(value) {
-  const surface = String(value ?? '').trim();
-  if (!surface) return 'No answer was produced.';
-  if (surface.includes('\n') || /^(?:#|[-*]\s|\|)/u.test(surface) || /[.!?][”’"']?$/u.test(surface)) {
-    return surface;
-  }
-  if (/^[+-]?\d+(?:\.\d+)?(?:\s+[A-Z]{3}|\s+\p{L}+s?)?$|^\d{2}:\d{2}$/u.test(surface)) {
-    return surface;
-  }
-  const sentence = `${surface[0].toLocaleUpperCase('en-US')}${surface.slice(1)}`;
-  return `${sentence}.`;
-}
-
-function processingAnswer(style, details, answer) {
-  const muted = style.gray ?? style.dim;
-  const thinking = [style.bold(muted('Thinking · symbolic processing')),
-    ...details.map((detail) => muted(`  ${detail}`))].join('\n');
-  return `${thinking}\n\n${style.bold('Answer')}\n${coherentInteractiveAnswer(answer)}`;
-}
-
-export function interactiveResultText(result, original, style) {
-  // Related grounding is diagnostic context, not an answer. It remains available through /trace rather than
-  // overwhelming the normal conversational response with unrelated records and package revisions.
-  const appendGrounding = (primary) => primary;
-  if (result.languageRoute === 'english-language-gate-rejected') {
-    const assessment = result.languageAssessment;
-    const confidence = Number.isFinite(assessment?.confidence)
-      ? ` Confidence ${assessment.confidence.toFixed(3)} at threshold ${assessment.threshold.toFixed(3)}.`
-      : '';
-    return processingAnswer(style, [
-      `English language gate: ${assessment?.diagnostic ?? 'The input is likely not English.'}${confidence}`,
-      'Execution boundary: no parser, heuristic interpretation, KB lookup, or session update ran.',
-      `Status: ${result.status}.`,
-    ], result.answer
-      ?? 'Translate the request to English, or leave the Language Agent enabled to request an auditable translation proposal.');
-  }
-  if (result.languageRoute === 'heuristic-request-synthesis') {
-    const plan = result.requestPlanning.selectedPlan;
-    const operations = plan.operations.join(' → ');
-    const realization = result.synthesis?.realization;
-    const realized = realization?.coverage?.evidenceRealized ?? 0;
-    const rejected = realization?.coverage?.evidenceRejected ?? 0;
-    const strategyNames = (realization?.strategyTrace ?? []).map((identity) =>
-      identity.replace(/^strategy:result:/u, '').replace(/@\d+$/u, '')).join(' → ');
-    return processingAnswer(style, [
-      `Request plan coordinator: ${operations}; ${plan.subrequests.length} bounded subrequests; confidence ${plan.confidence.toFixed(3)} (${plan.confidenceBand}).`,
-      `Output contract: ${plan.outputContract.length} ${plan.outputContract.artifact}, ${plan.outputContract.format}.`,
-      `Evidence admission: ${realized} KB claim(s) realized; ${rejected} related claim(s) withheld from the answer.`,
-      'Processing nodes: Result construction coordinator → Claim admission gate → Rhetorical plan builder → Sentence realization coordinator → Document assembly coordinator → Result schema gate.',
-      `Selected strategies: ${strategyNames || 'no realization strategy receipt'}.`,
-      `Construction confidence: ${Number(realization?.confidence ?? 0).toFixed(3)}; status ${result.status}.`,
-      'Authority boundary: citations support wording; relevance alone does not become proof.',
-    ], result.answer);
-  }
-  if (result.languageRoute === 'heuristic-cnl-approximated') {
-    const candidate = result.approximation.selectedCandidate;
-    const families = candidate.supportingFamilies.join(', ');
-    return appendGrounding(processingAnswer(style, [
-      'Language route: local heuristic interpretation; no Language Agent.',
-      `Original: ${original}`,
-      `Interpreted CNL: ${candidate.text}`,
-      `Confidence: ${candidate.confidence.toFixed(3)} (${candidate.confidenceBand}); votes: ${families}.`,
-      `Session effects: query-local and discarded after this result; status ${result.status}.`,
-    ], result.answer));
-  }
-  if (result.languageRoute === 'heuristic-cnl-ambiguous') {
-    const reparses = result.approximation.reparses.filter((item) => item.acceptedSemanticIr);
-    return appendGrounding(processingAnswer(style, [
-      'Language route: local heuristic interpretations remain ambiguous.',
-      `Original: ${original}`,
-      ...reparses.slice(0, 4).map((item) =>
-        `${item.rank}. ${item.text} — ${item.status}; confidence ${item.confidence.toFixed(3)}.`),
-      'No candidate was committed; /trace exposes votes and reparse outcomes.',
-    ], result.answer ?? 'I found several plausible interpretations and need the request clarified.'));
-  }
-  if (result.languageRoute === 'language-agent-normalized') {
-    const operation = result.normalization.candidate.operation === 'translation' ? 'Translation' : 'Simplification';
-    const cache = result.normalization.cacheHit ? ' (validated cache hit)' : '';
-    const activity = `${result.normalization.proposalCount ?? 1}/${result.normalization.proposalLimit ?? 3} proposal slots; ${result.normalization.externalInvocations ?? 0} external invocation(s)`;
-    return appendGrounding(processingAnswer(style, [
-      `Language Agent ${operation.toLocaleLowerCase('en-US')} accepted${cache}.`,
-      `Original: ${original}`,
-      `${operation}: ${result.normalization.candidate.normalizedEnglish}`,
-      `Agent activity: ${activity}; symbolic status ${result.status}.`,
-    ], result.answer));
-  }
-  if (result.languageRoute === 'bounded-operation-executed') {
-    return coherentInteractiveAnswer(result.answer);
-  }
-  const details = [
-    `Route: ${result.languageRoute ?? 'direct-symbolic'}; status ${result.status}.`,
-    `Method: ${result.reasoning?.method ?? result.plan?.methodId ?? 'bounded symbolic execution'}.`,
-    `Evidence: ${(result.provenance ?? []).length} answer premise(s); ${(result.usedKbVersions ?? []).length} contributing KB version(s).`,
-    'Authority boundary: the displayed wording does not change the machine result status.',
-  ];
-  if (result.approximation && result.approximation.status !== 'accepted-reparse') {
-    const reparses = result.approximation.reparses ?? [];
-    details.push(`Local heuristics: ${result.approximation.status}; ${result.approximation.candidates?.length ?? 0} candidate(s), ${reparses.length} symbolic reparse(s).`);
-  }
-  if (result.normalization?.attempted && result.normalization.status !== 'accepted') {
-    const operation = result.normalization.candidate?.operation ?? result.normalization.requestedOperation ?? 'normalization';
-    details.push(`Language Agent ${operation} ${result.normalization.status}.`);
-    details.push(`Original: ${original}`);
-    if (result.normalization.candidate?.normalizedEnglish) {
-      details.push(`Proposed English: ${result.normalization.candidate.normalizedEnglish}`);
-    }
-    if (Number.isInteger(result.normalization.proposalCount)) {
-      details.push(`Agent activity: ${result.normalization.proposalCount}/${result.normalization.proposalLimit ?? 3} proposal slots; ${result.normalization.externalInvocations ?? 0} external invocation(s).`);
-    }
-    details.push(`Reason: ${result.normalization.diagnostic
-      ?? result.normalization.validation?.errors?.join('; ')
-      ?? `the second symbolic parse returned ${result.normalization.reparseStatus ?? 'an unsupported result'}`}`);
-  }
-  if (!result.normalization?.attempted) return coherentInteractiveAnswer(result.answer);
-  return appendGrounding(processingAnswer(style, details, result.answer));
-}
-
 function formatBytes(bytes) {
   if (!Number.isFinite(bytes)) return 'not measured';
   if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(1)} MiB`;
@@ -448,6 +333,29 @@ export function traceText(last, style) {
       lines.push(`  ${item.subrequestId}: ${item.operation}; depends on ${(item.dependsOn ?? []).join(', ') || 'nothing'}.`);
     }
     lines.push(`  Output: ${plan.outputContract.length} ${plan.outputContract.artifact}; ${plan.outputContract.format}; gaps remain explicit.`);
+  }
+  if (last.knowledgeContext) {
+    const knowledgeContext = last.knowledgeContext;
+    const questions = knowledgeContext.questionAnalysis?.questions ?? [];
+    lines.push('', style.bold('Query-local knowledge context'));
+    lines.push(`  Questions: ${questions.map((question) =>
+      `${question.family}(${(question.topicSurfaces ?? [question.subjectSurface]).filter(Boolean).join(', ') || 'unresolved'})`).join('; ') || 'none recognized'}.`);
+    lines.push(`  Topics: ${knowledgeContext.selfQuestionPlan?.topics?.join(', ') || 'none selected'}.`);
+    lines.push(`  Retrieval: ${(knowledgeContext.entries ?? []).length} record(s); complete: ${knowledgeContext.search?.complete ? 'yes' : 'no'}; answer authority: none.`);
+    for (const receipt of knowledgeContext.search?.receipts ?? []) {
+      lines.push(`  Searched ${receipt.kbId}${receipt.kbVersion ? `@${receipt.kbVersion}` : ''}: ${receipt.status}; ${receipt.coverage}.`);
+    }
+    if (knowledgeContext.realization?.status === 'contextual-fallback') {
+      lines.push(`  Fallback: ${knowledgeContext.realization.realizedEntryIds.length} source claim(s) were shown after the precise route ended as ${knowledgeContext.realization.originalStatus}; they are not a proved conclusion.`);
+    }
+  }
+  if (last.normalization) {
+    lines.push('', style.bold('External language assistance'));
+    if (!last.normalization.attempted) {
+      lines.push(`  Not needed: local symbolic processing produced ${last.normalization.triggerStatus} before optional context construction.`);
+    } else {
+      lines.push(`  ${last.normalization.proposalCount}/${last.normalization.proposalLimit} proposal slot(s) used; ${last.normalization.externalInvocations} external call(s); status ${last.normalization.status}.`);
+    }
   }
   if (last.grounding) {
     lines.push('', style.bold('Separate related-evidence search'));

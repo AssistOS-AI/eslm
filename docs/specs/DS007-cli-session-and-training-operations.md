@@ -59,7 +59,7 @@ parse-only Semantic IR; an identical candidate IR preserves the direct result. S
 rewording later finds an answer. A changed accepted interpretation is labeled `heuristic-cnl-approximated`, exposes
 its votes and confidence, returns a strict proof only as top-level `DEFEASIBLE`, and discards every fact or rule learned
 only from that interpreted episode. A well-formed knowledge gap with no structurally licensed alternative remains the
-original `UNKNOWN`. In the general CLI's disclosed assisted profile, likely non-English input is eligible for a DS013 translation proposal rather
+original `UNKNOWN`. In the general CLI's explicitly selected assisted profile, likely non-English input is eligible for a DS013 translation proposal rather
 than English repair, while final unsupported English is eligible for a DS013 simplification proposal. Both return to
 the same non-voting English parser and semantic gate.
 
@@ -252,6 +252,12 @@ coherent user-facing response. A bare symbolic value such as `northwest` is pres
 result is ‘northwest’.” Machine JSON preserves the original typed answer and values. The thinking region is an
 inspectable execution summary, not private chain-of-thought and not additional evidence.
 
+When local symbolic processing ends `UNPARSED`, the Thinking region may state that explicit Language Agent opt-in
+could help with language form and show `/normalize on` or `--external-language-agent`. That diagnostic does not invoke
+an external process, does not imply an answer exists, and is absent when assistance was attempted or the request
+already reached a semantic knowledge gap. A verified defeasible result may show its heuristic confidence and exact
+assumption there; the same qualification remains present in the answer wording.
+
 When the runtime cannot answer but returns ordinary related KB records, one-shot JSON keeps the primary `answer`
 unchanged and serializes `grounding` separately. Interactive output prints the primary status and answer first, then a
 visibly separated “Related KB evidence — not an answer” section. `/trace` distinguishes answer premises from grounding
@@ -285,10 +291,10 @@ The canonical executable is `node src/cli.mjs` or the package bin `eslm`. With n
 Dataset acquisition, source probing, compilation, evaluation, benchmark execution, external prediction export/import,
 and documentation publication remain explicit operations. No direct or deployed-runtime inference path downloads data
 or calls an agent. The DS013 operator-side proposal wrapper is the only agent-call exception exposed beside inference
-commands. The general CLI composes it by default and discloses the external boundary; `--external-language-agent` or
-interactive `/normalize on` explicitly restates that policy. Likely non-English input may request translation before
-English-only repair; English or indeterminate input still runs through direct execution and DS022 local recovery before
-it may request simplification. `--no-external-language-agent` or `/normalize off` selects the entirely local profile.
+commands. The general CLI omits it by default. `--external-language-agent` or interactive `/normalize on` explicitly
+composes and discloses the external boundary. Likely non-English input may then request translation before English-only
+repair; English or indeterminate input still runs through direct execution and DS022 local recovery before it may
+request simplification. `--no-external-language-agent` or `/normalize off` explicitly retains the entirely local default.
 Network acquisition is never an implicit effect
 of asking a question, and no dataset credential is inferred from the normalization profile.
 
@@ -365,9 +371,8 @@ the command compared expectations without invoking the runtime.
 The CLI exposes the DS013 operator profile through the canonical flags `--external-language-agent`,
 `--no-external-language-agent`, `--language-agent-model`, `--language-agent-timeout-ms`, and
 `--no-normalization-cache`, plus interactive `/normalize`, `/normalize on`, and `/normalize off`. The assisted profile
-is enabled by default for general CLI interaction and disclosed at startup. An operator uses the explicit local
-override for sensitive input and deployed-style reproduction; canonical verification and public probe publication
-construct the local profile. Product-specific normalization
+requires explicit opt-in and is disclosed at startup. General interaction, sensitive input, deployed-style
+reproduction, canonical verification, and public probe publication use the local profile by default. Product-specific normalization
 flags, including the former `--no-codex-normalize`, are rejected rather than retained as aliases; scripts must use the
 role-based interface.
 
@@ -466,6 +471,13 @@ still admissible now. Reporting only the historical copy would let a tombstoned 
 projection, or stale preflight continue to look current. Re-running analysis inside a status command would hide the
 same distinction and create an expensive mutation boundary. The v3 result therefore preserves both evidence classes
 and marks drift as `blocked`, `withdrawn`, or `superseded` without pretending that the old execution never occurred.
+
+### Question #8: Why may Thinking recommend external language help without enabling it?
+
+Response: `UNPARSED` establishes only that local language construction stopped, not that an external proposal is safe,
+desired, or capable of answering. A human-readable recommendation preserves operator agency and the offline default.
+Only the explicit command changes the wrapper composition; the recommendation itself has no execution, evidence, or
+answer authority.
 
 ## Conclusion
 

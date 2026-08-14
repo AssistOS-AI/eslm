@@ -5,8 +5,8 @@ import {
   withLanguageAgentNormalization, workPolicyFromCliOptions,
 } from '../src/interface/cli-runtime-policy.mjs';
 
-test('CLI assistance is enabled by default and retains an explicit offline override', () => {
-  assert.equal(languageAgentNormalizationEnabled({}), true);
+test('CLI assistance is disabled by default and requires an explicit opt in', () => {
+  assert.equal(languageAgentNormalizationEnabled({}), false);
   assert.equal(languageAgentNormalizationEnabled({ 'external-language-agent': true }), true);
   assert.equal(languageAgentNormalizationEnabled({ 'external-language-agent': false }), false);
   assert.equal(languageAgentNormalizationEnabled({ 'external-language-agent': 'false' }), false);

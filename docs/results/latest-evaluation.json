@@ -1,7 +1,7 @@
 {
   "format": "eslm-evaluation-report-v3",
   "protocol": "eslm-internal-regression-v2",
-  "createdAt": "2026-08-13T07:30:15.215Z",
+  "createdAt": "2026-08-14T09:38:50.715Z",
   "evidenceRegime": "internal-authored-smoke-fixture",
   "claimScope": "implementation-regression-only",
   "behaviorIdentity": {
@@ -16,8 +16,8 @@
       ],
       "includedExtension": ".mjs"
     },
-    "digest": "2210e57dc352dc66f7bd1c0b3b37b92cd26208811e428dac9a19c3901a7d8d3d",
-    "files": 244,
+    "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+    "files": 259,
     "runtime": {
       "node": "v22.23.1",
       "platform": "linux",
@@ -26,11 +26,11 @@
   },
   "dataset": {
     "path": "tests/fixtures/evaluation.jsonl",
-    "sha256": "9c3dbee72d2d861c1f728abae793d932aed94f333aace76663828d8895c98d5d",
+    "sha256": "5e77434fac134d6843096f3da5f537cdd1c2fd1a721331338faf1ff826b4cf6d",
     "authoredFixture": true
   },
   "model": {
-    "id": "quick@1.0.0",
+    "id": "quick@1.1.0",
     "knowledgeBases": [
       "quick"
     ],
@@ -39,7 +39,7 @@
   "total": 5,
   "passed": 5,
   "accuracy": 1,
-  "durationMs": 103.61641099999997,
+  "durationMs": 122.16850800000003,
   "outcomes": [
     {
       "id": "quick-capability",
@@ -86,11 +86,11 @@
       "answer": "Yes."
     },
     {
-      "id": "unsupported-language",
+      "id": "unsupported-request-context",
       "pass": true,
-      "expected": "UNPARSED",
-      "actual": "UNPARSED",
-      "answer": "I rejected the mixed episode because at least one statement was unsupported; no session changes were committed."
+      "expected": "PARTIAL",
+      "actual": [],
+      "answer": "I could not represent the full request precisely.\nRelevant source-backed context:\n- Penguin is a bird. [1]\n- Penguin can swim. [2]\nThese source claims provide context; they do not establish the missing conclusion."
     }
   ]
 }

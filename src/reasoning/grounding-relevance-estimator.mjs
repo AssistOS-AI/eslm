@@ -68,6 +68,15 @@ function queryBridge(entry, request) {
     score += 6;
     reasons.push('answer-bridge-frame');
   }
+  const questionFamily = normalizedGroundingSurface(
+    query.factoidFrame?.questionFamily ?? query.factoidFrame?.construction,
+  );
+  const supportedFamilies = (semantic.questionFamilies ?? [])
+    .map(normalizedGroundingSurface).filter(Boolean);
+  if (questionFamily && supportedFamilies.includes(questionFamily)) {
+    score += 8;
+    reasons.push('answer-bridge-question-family');
+  }
   return Object.freeze({ score, reasons: Object.freeze(reasons) });
 }
 

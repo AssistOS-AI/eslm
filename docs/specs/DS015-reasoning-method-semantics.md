@@ -111,6 +111,21 @@ Every result contains the complete semantic value set and the operation identifi
 
 The method is sound and complete for accepted finite operations within the declared bounds and policies. It does not claim unrestricted discourse understanding, interval logic, metric geometry, causal discovery, probabilistic inference, or open-ended planning. Its breadth comes from composing small typed operations under one finite episode, not from treating raw text or benchmark metadata as executable semantics.
 
+The ordinary English adapter exposes one narrow defeasible use of this method. When a location question identifies
+exactly one possessed object, one owner, one `owns` fact, and one current owner `located_in` fact, but contains no
+direct object location, it constructs a two-operation episode whose `carrierRelation` is `owns`. The ordinary planner
+selects this existing method, the executor returns internal `DEFAULTED`, and the independent result-verification gate
+recomputes the episodic witness and matches both operation identifiers to the host-owned closure. Public construction
+returns `DEFEASIBLE`, never `SOLVED`, because ownership does not logically entail co-location. Exact object location
+takes priority as strict retrieval; absent or non-unique support abstains.
+
+The v1 adapter attaches heuristic confidence `0.62` and the assumption “The possessed entity normally shares the
+current location of its owner.” This number is a fixed, modest ordering and presentation grade, not a calibrated
+probability, source statistic, proof weight, or license to commit the derived location into session state. The answer
+and Thinking summary expose both the grade and assumption. Any future calibration or context-sensitive confidence
+policy requires provenance-bearing evidence, counterexamples, a versioned policy, and renamed, negative, and
+metamorphic evaluation rather than changing this literal silently.
+
 ### Guarded abduction
 
 `method:core:guarded-abduction` proposes premises that would explain an observed atom through rules explicitly authorized for abductive reversal. It unifies the observation with a rule conclusion, constructs the missing premise candidates, rejects candidates that violate declared types or conflict constraints, and ranks the bounded surviving hypotheses under an explicit policy.
@@ -278,6 +293,14 @@ Response: No. It schedules and compares methods under typed applicability, cost,
 Each method still computes exactly the semantics specified here. Strict conclusions merge only after witness
 validation, defeasible conclusions retain their regime, and disagreement is handled by DS009 rather than averaged into
 a new truth value.
+
+### Question #6: Why use the finite episodic method for the possession-location default?
+
+Response: The useful computation is already a bounded carrier-state projection with a replayable operation witness.
+Reusing that typed method avoids a sentence-specific solver and lets the independent gate check exact possession and
+location supports. The adapter, not the method, owns the uncertain real-world bridge and therefore downgrades the
+otherwise computed carrier value to `DEFEASIBLE` with its assumption visible. This separation preserves both useful
+behavior and the fact that pets, tools, or other possessions need not share their owner's location.
 
 ## Conclusion
 

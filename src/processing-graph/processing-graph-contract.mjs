@@ -29,7 +29,7 @@ export const PROCESSING_GRAPH_AUTHORITIES = Object.freeze([
   'package-validation', 'research-visibility', 'hypothesis-review',
 ]);
 
-const EXPECTED_COUNTS = Object.freeze({ circuits: 22, nodes: 57, edges: 87 });
+const EXPECTED_COUNTS = Object.freeze({ circuits: 22, nodes: 58, edges: 90 });
 const ROOTS = Object.freeze({
   runtime: 'node:runtime:request-ingress',
   compiler: 'node:compiler:frozen-source-ingress',
@@ -261,8 +261,8 @@ export function assertProcessingGraphCatalog(catalog) {
     circuitRelations.map(([from, to]) => ({ from, to })));
   if (reachedCircuits.size !== circuits.size) throw new TypeError('Every circuit must descend from the root circuit.');
 
-  if (!Array.isArray(catalog.strategyFamilies) || catalog.strategyFamilies.length !== 6) {
-    throw new TypeError('Processing graph must contain exactly six closed strategy families.');
+  if (!Array.isArray(catalog.strategyFamilies) || catalog.strategyFamilies.length !== 7) {
+    throw new TypeError('Processing graph must contain exactly seven closed strategy families.');
   }
   const currentDescriptors = builtinStrategyDescriptors();
   const currentStrategies = new Map(currentDescriptors.map((item) => [strategyIdentity(item), item]));

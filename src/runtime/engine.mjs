@@ -156,7 +156,9 @@ export class EslmEngine {
     const compiled = compileSessionEpisode(text, this.model, context);
     const activeModel = modelWithSession(this.model, compiled.session);
     const normalized = normalizeInput(episode.question, activeModel);
-    const query = parseQuestion(normalized, activeModel, context);
+    const query = parseQuestion(normalized, activeModel, {
+      ...context, lastEntity: compiled.lastEntity ?? context.lastEntity,
+    });
     return {
       ...episode,
       normalizedQuestion: normalized.normalized,
@@ -227,7 +229,9 @@ export class EslmEngine {
       'language.normalize', () => normalizeInput(episode.question, activeModel),
     );
     const query = profiler.measureSync(
-      'language.parse-question', () => parseQuestion(normalized, activeModel, context),
+      'language.parse-question', () => parseQuestion(normalized, activeModel, {
+        ...context, lastEntity: episode.lastEntity ?? context.lastEntity,
+      }),
     );
     if (query.status) {
       const rejectedQuestion = query.status === 'UNSUPPORTED';

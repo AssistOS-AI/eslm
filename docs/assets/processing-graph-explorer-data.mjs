@@ -115,7 +115,8 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
         "node:runtime:frontier-completeness-gate",
         "node:runtime:grounded-knowledge-inspector",
         "node:runtime:knowledge-focus-coordinator",
-        "node:runtime:package-scope-gate"
+        "node:runtime:package-scope-gate",
+        "node:runtime:task-context-coordinator"
       ]
     },
     {
@@ -1166,7 +1167,8 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       ],
       "outgoingEdgeIds": [
         "edge:runtime:language-direct",
-        "edge:runtime:language-rejected"
+        "edge:runtime:language-rejected",
+        "edge:runtime:language-task-context"
       ]
     },
     {
@@ -1511,7 +1513,8 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "implementationState": "instrumented-local",
       "ownerModule": "src/reasoning/grounding-query-focus.mjs",
       "inputPacketTypes": [
-        "packet:runtime:task-frame"
+        "packet:runtime:task-frame",
+        "packet:runtime:task-knowledge-context"
       ],
       "outputPacketTypes": [
         "packet:runtime:query-focus",
@@ -1535,6 +1538,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
         "strategy:focus:surface-content-token@1"
       ],
       "incomingEdgeIds": [
+        "edge:runtime:context-focus",
         "edge:runtime:session-focus"
       ],
       "outgoingEdgeIds": [
@@ -1916,6 +1920,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "inputPacketTypes": [
         "packet:runtime:failure-eligibility",
         "packet:runtime:grounding-bundle",
+        "packet:runtime:task-knowledge-context",
         "packet:runtime:verification-decision"
       ],
       "outputPacketTypes": [
@@ -1931,6 +1936,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "directStrategyIdentities": [],
       "strategyIdentities": [],
       "incomingEdgeIds": [
+        "edge:runtime:context-construct",
         "edge:runtime:failure-construct",
         "edge:runtime:grounding-construct",
         "edge:runtime:verified-construct"
@@ -2250,6 +2256,49 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       ],
       "outgoingEdgeIds": [
         "edge:runtime:supplied-text-operation-result"
+      ]
+    },
+    {
+      "nodeId": "node:runtime:task-context-coordinator",
+      "label": "Task context coordinator",
+      "circuitId": "circuit:runtime:knowledge-routing",
+      "kind": "coordinator",
+      "stageRef": "runtime.context.construct",
+      "role": "Recognizes explicit and embedded basic questions, expands bounded self-questions over request topics, and retrieves a query-local non-authoritative context frontier.",
+      "authority": "none",
+      "answerAuthority": "none",
+      "canVote": false,
+      "implementationState": "instrumented-local",
+      "ownerModule": "src/runtime/task-context-construction.mjs",
+      "inputPacketTypes": [
+        "packet:runtime:language-assessment"
+      ],
+      "outputPacketTypes": [
+        "packet:runtime:task-knowledge-context",
+        "packet:shared:coordinator-receipt"
+      ],
+      "resourceDimensions": [
+        "resource:candidates",
+        "resource:evidence-items",
+        "resource:lookups",
+        "resource:output-bytes",
+        "resource:tokens"
+      ],
+      "strategyFamilyIds": [
+        "family:strategy:task-context"
+      ],
+      "directStrategyIdentities": [
+        "strategy:context:question-facet-expansion@1"
+      ],
+      "strategyIdentities": [
+        "strategy:context:question-facet-expansion@1"
+      ],
+      "incomingEdgeIds": [
+        "edge:runtime:language-task-context"
+      ],
+      "outgoingEdgeIds": [
+        "edge:runtime:context-construct",
+        "edge:runtime:context-focus"
       ]
     },
     {
@@ -2704,6 +2753,22 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "condition": "candidate-constructed"
     },
     {
+      "edgeId": "edge:runtime:context-construct",
+      "from": "node:runtime:task-context-coordinator",
+      "to": "node:runtime:result-construction-coordinator",
+      "kind": "data",
+      "packetType": "packet:runtime:task-knowledge-context",
+      "condition": "context-available-for-answer-or-explicit-gap"
+    },
+    {
+      "edgeId": "edge:runtime:context-focus",
+      "from": "node:runtime:task-context-coordinator",
+      "to": "node:runtime:knowledge-focus-coordinator",
+      "kind": "data",
+      "packetType": "packet:runtime:task-knowledge-context",
+      "condition": "context-focus-available"
+    },
+    {
       "edgeId": "edge:runtime:deterministic-operation-result",
       "from": "node:runtime:deterministic-value-executor",
       "to": "node:runtime:typed-operation-result-assembler",
@@ -2790,6 +2855,14 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "kind": "exception",
       "packetType": "packet:runtime:inability",
       "condition": "likely-non-english"
+    },
+    {
+      "edgeId": "edge:runtime:language-task-context",
+      "from": "node:runtime:english-likelihood-gate",
+      "to": "node:runtime:task-context-coordinator",
+      "kind": "data",
+      "packetType": "packet:runtime:language-assessment",
+      "condition": "likely-english-or-indeterminate"
     },
     {
       "edgeId": "edge:runtime:operation-frame-bypass",
@@ -3088,6 +3161,16 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       ],
       "nodeIds": [
         "node:runtime:language-proposal-coordinator"
+      ]
+    },
+    {
+      "familyId": "family:strategy:task-context",
+      "label": "task context",
+      "memberIdentities": [
+        "strategy:context:question-facet-expansion@1"
+      ],
+      "nodeIds": [
+        "node:runtime:task-context-coordinator"
       ]
     },
     {
@@ -4032,6 +4115,42 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
       "implementationState": "instrumented-local",
       "nodeIds": [
         "node:runtime:request-plan-coordinator"
+      ]
+    },
+    {
+      "identity": "strategy:context:question-facet-expansion@1",
+      "strategyId": "strategy:context:question-facet-expansion",
+      "version": "1",
+      "stage": "runtime.context.construct",
+      "epistemicRole": "retrieval-focus",
+      "confidenceKind": "confidence:context-coverage",
+      "costModel": "cost:bounded-question-facet-expansion",
+      "budgetKeys": [
+        "budget:grounding-terms",
+        "budget:grounding-lookups",
+        "budget:grounding-candidates",
+        "budget:grounding-output-bytes"
+      ],
+      "inputTypes": [
+        "type:bounded-visible-request"
+      ],
+      "outputTypes": [
+        "type:task-knowledge-context"
+      ],
+      "preconditions": [
+        "precondition:likely-english-bounded-request"
+      ],
+      "failureClasses": [
+        "failure:ineligible",
+        "failure:resource-limit",
+        "failure:invalid-output"
+      ],
+      "witnessKind": "witness:question-facet-focus-and-search-ledger",
+      "correlationGroup": "correlation:context:question-facet-expansion",
+      "answerAuthority": "none",
+      "implementationState": "instrumented-local",
+      "nodeIds": [
+        "node:runtime:task-context-coordinator"
       ]
     },
     {
@@ -6004,6 +6123,7 @@ export const HOMEPAGE_PROCESSING_GRAPH_PROJECTION = Object.freeze({
     "packet:runtime:session-commit-decision",
     "packet:runtime:supplied-text-result",
     "packet:runtime:task-frame",
+    "packet:runtime:task-knowledge-context",
     "packet:runtime:verification-decision",
     "packet:shared:coordinator-receipt",
     "packet:shared:correlation-ledger"

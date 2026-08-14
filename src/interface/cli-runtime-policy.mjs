@@ -13,7 +13,7 @@ export function languageAgentNormalizationEnabled(options = {}) {
   if (Object.hasOwn(options, 'external-language-agent')) {
     return enabledFlag(options['external-language-agent']);
   }
-  return true;
+  return false;
 }
 
 export function withLanguageAgentNormalization(options, enabled) {

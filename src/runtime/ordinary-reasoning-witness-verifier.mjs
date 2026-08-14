@@ -1,4 +1,5 @@
 import { stableStringify } from '../util.mjs';
+import { verifyEpisodicWorldResult } from '../reasoning/episodic-world.mjs';
 import {
   assertOrdinaryResultVerificationInput,
   assertOrdinaryResultVerificationOutput,
@@ -365,6 +366,65 @@ function verifyTemporal(input, work) {
   consume(work, 'supportReferencesInspected', 2);
 }
 
+function expectedKbSourcesFromFacts(facts) {
+  const values = facts.flatMap((fact) => fact.kbSources
+    ?? (fact.kbId ? [{ kbId: fact.kbId, ...(fact.kbVersion ? { version: fact.kbVersion } : {}) }] : []));
+  return [...new Map(values.map((item) => [
+    `${item.kbId}\u0000${item.version ?? ''}`, item,
+  ])).values()].toSorted((left, right) => compareText(left.kbId, right.kbId)
+    || compareText(String(left.version ?? ''), String(right.version ?? '')));
+}
+
+function verifyPossessionLocationDefault(input, work) {
+  const { execution } = input;
+  const [query] = input.planning.taskFrame.goals;
+  if (execution.status !== 'DEFAULTED' || execution.result.values.length !== 1
+    || execution.result.evidence.length !== 1) {
+    throw new TypeError('Ordinary result verification rejected an invalid possession-location default.');
+  }
+  const evidence = requirePlainRecord(execution.result.evidence[0],
+    'Possession-location default evidence');
+  consume(work, 'evidenceItemsInspected', 1);
+  const episodic = {
+    status: 'SOLVED', values: execution.result.values,
+    witness: evidence.episodicWitness,
+  };
+  if (!verifyEpisodicWorldResult(query.episodicTask, episodic)) {
+    throw new TypeError('Ordinary result verification rejected the episodic possession-location witness.');
+  }
+  const factsById = factMaps(input, work);
+  const supportIds = episodic.witness.operationIds;
+  consume(work, 'supportReferencesInspected', supportIds.length);
+  const supports = supportIds.map((id) => factsById.get(id));
+  if (supports.some((fact) => !fact)) {
+    throw new TypeError('Ordinary result verification rejected possession-location support outside the closure.');
+  }
+  const value = execution.result.values[0];
+  requireSame(evidence, {
+    id: `default:possession-location:${supportIds.join(':')}`,
+    subject: query.subject,
+    predicate: query.predicate,
+    object: value,
+    derived: true,
+    reasoning: 'finite-episodic-possession-location',
+    confidence: query.confidence,
+    support: [...supportIds],
+    provenance: [...new Set(supports.flatMap((fact) => fact.provenance ?? []))],
+    kbSources: expectedKbSourcesFromFacts(supports),
+    defaultInference: {
+      owner: query.owner,
+      assumption: query.assumption,
+      strictConclusion: false,
+    },
+    episodicWitness: episodic.witness,
+  }, 'possession-location evidence');
+  requireSame(execution.reasoning, {
+    method: 'finite-episodic-world', inference: 'possession-location-default',
+    confidence: query.confidence, assumption: query.assumption,
+    witness: episodic.witness,
+  }, 'possession-location reasoning');
+}
+
 function verifyResourceLimit(input) {
   const { execution, activeClosure } = input;
   if (activeClosure.complete || execution.status !== 'RESOURCE_LIMIT') {
@@ -385,6 +445,8 @@ function verifyExecutionWitness(input, work) {
     verifyAbduction(input, work);
   } else if (input.execution.requiredCapability === 'temporal-predecessor') {
     verifyTemporal(input, work);
+  } else if (input.execution.requiredCapability === 'finite-episode-orchestration') {
+    verifyPossessionLocationDefault(input, work);
   } else {
     verifyRetrievalOrInduction(input, work);
   }

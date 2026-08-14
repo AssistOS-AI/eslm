@@ -68,6 +68,11 @@ Stage F adds explicit default and exception semantics, conflict priority, skepti
 
 Acceptance requires strict and defeasible conclusions to remain distinguishable, counterevidence and alternatives to remain visible, provider order invariance, source provenance for every contribution, fresh transfer across domains, and no conversion of plausible continuation or explanation into strict truth.
 
+The implemented DS015 possession-location carrier slice is Stage F evidence, not Stage F completion. Its renamed and
+metamorphic controls require `DEFEASIBLE`, a visible non-calibrated confidence grade, an explicit assumption, a verified
+finite-episode witness, exact-location priority, and abstention when owner, object, possession, or owner location is not
+unique.
+
 ### 8. Stage G: broader English and external-proposal minimization
 
 Stage G expands English relative and embedded clauses, coordination, quantifier scope, modality, reference, and
@@ -77,7 +82,8 @@ DS022 supplies the deterministic English recovery layer after direct `UNPARSED` 
 parse-only Semantic IR. Its mechanisms include confidence-voted spelling and morphology repairs, bounded
 decomposition proposals, query-local reparse, role-focused grounding terms, and explicit request planning that can
 preempt an accidental assertion parse without retaining its episode state. DS013 remains a separate operator proposal
-strategy: the general CLI composes it by default and the explicit local override omits it. It may translate input
+strategy: the general CLI omits it by default and explicit `--external-language-agent` or `/normalize on` opt-in
+composes it. It may translate input
 rejected as likely non-English or simplify English after the local
 result remains `UNPARSED`, and it never performs reasoning. Its candidate remains untrusted and must pass the ordinary
 English parser and independent preservation gates.
@@ -108,7 +114,7 @@ unqualified end-to-end product score.
 A release may contain explicit capability gaps and benchmark exceptions. It may not claim completion merely because a visible development sample is perfect, because unsupported cases were dropped, because a Language Agent answered them, or because a benchmark-specific branch reproduces labels.
 
 Release evidence exercises the default `balanced` work profile, at least one smaller and one larger profile, the
-general CLI's disclosed assisted default, the explicit local override, and a controlled stub invocation path. For results that complete under
+general CLI's local default, the explicitly selected assisted profile, and a controlled stub invocation path. For results that complete under
 multiple profiles, semantic values, proof, provenance, trust, and status agree. Request-synthesis fixtures separately
 check `PARTIAL` status, admitted and rejected claim accounting, rhetorical-plan and sentence/assembly strategy traces,
 citations for every realized KB claim, explicit bounded-coverage gaps, exact reproduction from the selected plan and
@@ -123,6 +129,13 @@ Response: Only when every acceptance obligation for that stage has executable ev
 ### Question #2: Why do the benchmark queue and architecture stages remain separate?
 
 Response: Source acquisition and adapter validation can proceed before a general solver exists, and one benchmark can exercise several stages. Keeping the queue in the typed catalog prevents cached data or an adapter from being mistaken for an accepted architectural capability.
+
+### Question #3: Why is external language assistance an opt-in acceptance track?
+
+Response: A default external call would make ordinary behavior depend on disclosure, process availability, latency,
+and mutable model behavior. The local default is the reproducible product baseline. A separately exercised assisted
+track remains necessary to verify proposal validation, visible activity, failure recovery, and the absence of answer
+authority without turning that optional boundary into a prerequisite for simple English.
 
 ## Conclusion
 

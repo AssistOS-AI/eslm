@@ -48,8 +48,8 @@ providers, structured results, and named work profiles are executable. Grounded 
 admission, a rhetorical plan, four typed sentence strategies, seven discourse and format strategies, and exact
 reproduction from its closed plan and admitted evidence. The local language boundary is English-only: a bounded
 heuristic assessment can identify likely non-English input for rejection, but it never translates. The separate
-Language Agent wrapper is executable only as the operator-side proposal route composed by the general CLI; its English
-candidate is untrusted, and the explicit local override omits it.
+Language Agent wrapper is executable only as an explicitly selected operator-side proposal route; the general CLI
+omits it by default, and every English candidate remains untrusted.
 Capability-aware dispatch, broader English, trust and conflict
 policy, large-corpus routing, document ingestion, and general multi-step planning cover only documented subsets or
 remain target contracts. The existence of a DS section does not prove its implementation.
@@ -99,7 +99,7 @@ This separation is the primary architectural invariant. It prevents each dataset
 | Every LLM output is untrusted | Translation or simplification is only a proposal. The target must pass the same non-voting English parser and semantic gates, and translation is not accepted on model-declared equivalence alone. |
 | Local language acceptance is English-only | A bounded heuristic English-likelihood assessment may reject or flag likely non-English input. It does not identify meaning, translate text, or make a language-support claim; indeterminate input may continue to the English parser under the ordinary fail-closed contract. |
 | Direct symbolic parsing is the semantic authority | Likely-English or indeterminate input is offered to the English parser; complex English is not sent externally merely because it appears difficult. |
-| English approximation precedes external English simplification | Deterministic DS022 candidates are voted, safety-checked, and selected through parse-only Semantic IR after direct `UNPARSED` or `UNKNOWN`. A structurally licensed candidate may also challenge direct `SOLVED` or `PARTIAL` only when its Semantic IR differs from the direct interpretation; equal IR preserves the direct route. Likely non-English input is not repaired as if it were misspelled English. The general CLI's disclosed external strategy may instead propose translation; terminal unsupported English may receive a simplification proposal. The explicit local override disables both. |
+| English approximation precedes external English simplification | Deterministic DS022 candidates are voted, safety-checked, and selected through parse-only Semantic IR after direct `UNPARSED` or `UNKNOWN`. A structurally licensed candidate may also challenge direct `SOLVED` or `PARTIAL` only when its Semantic IR differs from the direct interpretation; equal IR preserves the direct route. Likely non-English input is not repaired as if it were misspelled English. The general CLI's disclosed external strategy may propose translation or terminal simplification only after explicit opt-in; the default local profile invokes neither. |
 | Explicit requests outrank accidental assertion parses | A bounded request-force plan may preempt an ordinary direct parse, but it restores the incoming session snapshot and cannot retain tentative assertions parsed from the instruction text. |
 | Guessed episode premises do not persist | Facts and rules accepted only through a changed heuristic interpretation are query-local and cannot enter the returned session. |
 | No routing decision may create silent false negatives | Approximate relevance signals may rank shards, but safe exclusion requires exact or conservative evidence. |

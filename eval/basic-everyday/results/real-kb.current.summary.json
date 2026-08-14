@@ -1,11 +1,11 @@
 {
   "format": "eslm-basic-everyday-eval-summary",
-  "generatedAt": "2026-08-13T12:04:38.485Z",
+  "generatedAt": "2026-08-14T10:52:29.809Z",
   "sourceDevelopmentDisclosure": "Every source case is development-visible and may influence implementation.",
   "cases": "eval/basic-everyday/cases.jsonl",
   "output": "eval/basic-everyday/results/real-kb.current.jsonl",
-  "resultDigest": "sha256:df533202206517a2329528e051a51f0e9fd946c63dd8ae621316b57ee1174aec",
-  "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+  "resultDigest": "sha256:e06da7f71631e576101c6b10e100eb02e56768c59e753961768c7237e877e2b5",
+  "executableDigest": "sha256:cc7b04a45e6d119d0266ccf0de41bc2a2eb9e4b75b79f94fbc0b44e09e81690f",
   "caseManifestDigest": "sha256:da35b8d53c7f4850b6f3cddfe3057e1be521f94306d01e47d66aae13c4a38ba5",
   "profiles": {
     "real-kb": {
@@ -15,22 +15,22 @@
   "counts": {
     "total": 250,
     "pass": 44,
-    "fail": 160,
-    "review": 46,
+    "fail": 123,
+    "review": 83,
     "byProfile": {
       "real-kb": {
         "total": 250,
         "pass": 44,
-        "fail": 160,
-        "review": 46
+        "fail": 123,
+        "review": 83
       }
     },
     "byCategory": {
       "factual": {
         "total": 150,
         "pass": 44,
-        "fail": 106,
-        "review": 0
+        "fail": 69,
+        "review": 37
       },
       "explanation": {
         "total": 30,
@@ -58,7 +58,7 @@
       }
     },
     "byStage": {
-      "grounding": 94,
+      "grounding": 57,
       "reasoning": 4,
       "parse": 61,
       "task-frame": 1

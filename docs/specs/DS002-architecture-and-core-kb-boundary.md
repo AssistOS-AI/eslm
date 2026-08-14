@@ -105,7 +105,7 @@ The distinction is important during document ingestion. If the sentence fails be
 A new CNL form must not be added merely because one source document uses an unusual sentence. DS022 first permits a
 bounded deterministic English interpretation proposal. A bounded ingress diagnostic may first reject likely
 non-English text rather than treating it as damaged English. The general CLI composes the DS013 Language Agent
-proposal strategy for translation or English simplification and exposes an explicit local override; without the
+proposal strategy for translation or English simplification only after explicit operator opt-in; without the
 external proposal route, the form remains unsupported. Promotion
 into the direct grammar or the reviewed
 heuristic catalog requires evidence across independent examples, renamed and meaning-changing controls, confidence
@@ -202,6 +202,12 @@ Response: No. Candidate-producing nodes may have several strategies, but only an
 stage-specific arbitration policy. Direct parsers, schema validators, safety checks, reasoning executors, proof
 verifiers, and package compilers have authority from their declared contracts rather than popularity. A gate failure
 cannot be outvoted, and agreeing unverified method outputs cannot authorize an answer.
+
+### Question #6: Does making Language Agent opt-in change the core boundary?
+
+Response: No. It changes only which already separate operator wrapper the CLI composes. The deployed and library
+closure, parser authority, KB inertness, proposal validation, and result authority remain unchanged. The local default
+simply makes the offline boundary the ordinary product configuration as well as the architectural invariant.
 
 ## Conclusion
 

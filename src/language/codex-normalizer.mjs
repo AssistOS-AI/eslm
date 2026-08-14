@@ -128,6 +128,7 @@ export class CodexLanguageNormalizer {
       policy: CODEX_NORMALIZATION_POLICY,
       validator: CODEX_NORMALIZATION_VALIDATOR,
       proposalLimit: 3,
+      timeoutMs: this.timeoutMs,
     });
   }
 
@@ -227,8 +228,10 @@ export class CodexLanguageNormalizer {
           phase: 'language-agent-interpretation',
           adapter: 'codex',
           model: this.model,
-          attempt: attempt + 1,
-          maximumAttempts: remainingAttempts,
+          operation: requestedOperation,
+          attempt: (episode.proposalOffset ?? 0) + attempt + 1,
+          maximumAttempts: episode.proposalLimit ?? 3,
+          timeoutMs: this.timeoutMs,
         }));
         const execution = await spawnBoundedNormalizer(invocation.command, invocation.args, {
           cwd: workspace,

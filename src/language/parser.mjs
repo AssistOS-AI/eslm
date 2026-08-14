@@ -24,6 +24,102 @@ function resolveEntityPhrase(words, model, context) {
   return { missing: phrase };
 }
 
+const POSSESSION_LOCATION_CONFIDENCE = 0.62;
+
+function matchingEntityIds(surface, model) {
+  const target = boundedNominalSurface(surface)?.replace(/^(?:the|a|an) /u, '');
+  if (!target) return [];
+  const aliases = model.entities.filter((entity) => entity.names.some((name) =>
+    boundedNominalSurface(name)?.replace(/^(?:the|a|an) /u, '') === target)).map((entity) => entity.id);
+  const typed = model.facts.filter((fact) => fact.predicate === 'is_a'
+    && (fact.object ?? fact.value) === target).map((fact) => fact.subject);
+  return [...new Set([...aliases, ...typed])];
+}
+
+function possessedEntity(owner, headSurface, model) {
+  if (!owner) return { missing: cleanPossessiveSurface(headSurface) };
+  const candidates = new Set(matchingEntityIds(headSurface, model));
+  const possessions = model.facts.filter((fact) => fact.subject === owner
+    && fact.predicate === 'owns' && candidates.has(fact.object));
+  const objectIds = [...new Set(possessions.map((fact) => fact.object))];
+  if (objectIds.length === 1) {
+    return {
+      id: objectIds[0], confidence: 0.9, source: 'unique-possessive-relation',
+      possession: possessions.find((fact) => fact.object === objectIds[0]), owner,
+    };
+  }
+  if (objectIds.length > 1) return { ambiguous: objectIds };
+  return { missing: cleanPossessiveSurface(headSurface) };
+}
+
+function cleanPossessiveSurface(value) {
+  return String(value ?? '').trim().replace(/^(?:the|a|an) /u, '');
+}
+
+function resolvePossessiveEntityPhrase(surface, model, context) {
+  const normalized = surface.trim();
+  let match = normalized.match(/^(?:his|her|their|its) (.+)$/u);
+  if (match) return possessedEntity(context.lastEntity, match[1], model);
+  match = normalized.match(/^(.+?)(?:'s|’s) (.+)$/u);
+  if (!match) {
+    const ownerMatches = model.entities.flatMap((entity) => entity.names.flatMap((name) => {
+      const alias = boundedNominalSurface(name);
+      const prefix = alias ? `${alias}s ` : undefined;
+      return prefix && normalized.startsWith(prefix)
+        ? [{ owner: entity.id, head: normalized.slice(prefix.length) }] : [];
+    }));
+    const owners = [...new Set(ownerMatches.map((item) => item.owner))];
+    if (owners.length === 1) {
+      return possessedEntity(owners[0], ownerMatches.find((item) => item.owner === owners[0]).head, model);
+    }
+    return owners.length > 1
+      ? { ambiguous: owners }
+      : resolveEntityPhrase(normalized.split(' '), model, context);
+  }
+  const owner = resolveEntityPhrase(match[1].split(' '), model, context);
+  if (!owner.id) return owner;
+  return possessedEntity(owner.id, match[2], model);
+}
+
+function possessionLocationQuery(resolved, model) {
+  const exact = model.facts.some((fact) => fact.subject === resolved.id
+    && fact.predicate === 'located_in');
+  if (exact || !resolved.possession || !resolved.owner) {
+    return predicateQuery('location', resolved.id, 'located_in', undefined, 'object');
+  }
+  const ownerLocations = model.facts.filter((fact) => fact.subject === resolved.owner
+    && fact.predicate === 'located_in');
+  const locations = [...new Set(ownerLocations.map((fact) => fact.object))];
+  if (locations.length !== 1) {
+    return predicateQuery('location', resolved.id, 'located_in', undefined, 'object');
+  }
+  const locationFact = ownerLocations.find((fact) => fact.object === locations[0]);
+  return {
+    ...predicateQuery('location', resolved.id, 'located_in', undefined, 'object'),
+    reasoning: 'finite-episodic-possession-location',
+    confidence: POSSESSION_LOCATION_CONFIDENCE,
+    assumption: 'The possessed entity normally shares the current location of its owner.',
+    owner: resolved.owner,
+    episodicTask: {
+      schema: 'finite-episodic-world-task-v1',
+      operations: [
+        {
+          id: locationFact.id, sequence: 0, kind: 'state', predicate: 'located_in',
+          subject: resolved.owner, values: [locationFact.object],
+        },
+        {
+          id: resolved.possession.id, sequence: 1, kind: 'relation-add', relation: 'owns',
+          subject: resolved.owner, object: resolved.id,
+        },
+      ],
+      query: {
+        kind: 'state-values', predicate: 'located_in', subject: resolved.id, carrierRelation: 'owns',
+      },
+      policy: {},
+    },
+  };
+}
+
 function predicateQuery(intent, subject, predicate, object, target = 'object') {
   return { intent, subject, predicate, object, target };
 }
@@ -96,6 +192,11 @@ export function parseQuestion(normalized, model, context = {}) {
     }));
   }
 
+  if ((match = joined.match(/^where (?:is|are) (.+?) living$/u))
+    || (match = joined.match(/^where (?:do|does) (.+?) live$/u))) {
+    const resolved = resolvePossessiveEntityPhrase(match[1], model, context);
+    return resolvedEntityQuery(resolved, () => possessionLocationQuery(resolved, model));
+  }
   if ((match = joined.match(/^(?:where is|where can i find|in which place is) (.+?)(?: located)?$/u))) {
     return resolvedEntityQuery(resolveEntityPhrase(match[1].split(' '), model, context), (id) =>
       predicateQuery('location', id, 'located_in', undefined, 'object'));

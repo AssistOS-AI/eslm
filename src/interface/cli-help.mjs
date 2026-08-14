@@ -1,8 +1,8 @@
 export function cliHelpText(defaultLanguageAgentModel) {
   return `ESLM — executable symbolic language model
 
-The deployed symbolic runtime is offline and English-only. The general operator CLI adds a disclosed
-Language Agent proposal strategy by default; use --no-external-language-agent for the entirely local profile.
+The deployed symbolic runtime and the general operator CLI are offline and English-only by default.
+Use --external-language-agent explicitly to permit untrusted language-form proposals for otherwise-unparsed input.
 
 Usage:
   eslm                         interactive conversation
@@ -71,8 +71,8 @@ Global options:
   --horn-max-joins N            exact Horn join-attempt override
   --color auto                  auto, always, or never; structured output is never colored
   --profile                     include per-stage timing, CPU, memory deltas, and work counts
-  --external-language-agent     explicitly restate the default Language Agent profile
-  --no-external-language-agent  select the entirely local execution profile
+  --external-language-agent     opt in to the external Language Agent proposal profile
+  --no-external-language-agent  explicitly retain the default entirely local profile
   --language-agent-model MODEL  adapter model; default ${defaultLanguageAgentModel}
   --language-agent-timeout-ms N external proposal timeout; 1000 through 600000, default 120000
   --no-normalization-cache      do not read or write the ignored operator normalization cache
@@ -86,5 +86,5 @@ export function cliStartupText(style, selectedKbIds, workPolicy, languageAgentEn
 Use ${style.blue('/help')} for an explanation, ${style.blue('/examples')} for varied examples, or \
 ${style.blue('/smoke')} to execute a regression check. Press Tab to complete commands and KB names.
 Work profile: ${style.green(workPolicy.effective.profile)}. Language Agent normalization is \
-${normalization}; use --no-external-language-agent or /normalize off for entirely local execution.`;
+${normalization}; local symbolic execution is the default. Use --external-language-agent or /normalize on to opt in.`;
 }

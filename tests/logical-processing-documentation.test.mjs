@@ -98,25 +98,25 @@ test('logical architecture stays synchronized with the validated processing-grap
   assert.equal(validation.valid, true);
   assert.deepEqual(validation.counts, {
     circuits: 22,
-    nodes: 57,
-    edges: 87,
-    packetTypes: 66,
-    packetContracts: 66,
+    nodes: 58,
+    edges: 90,
+    packetTypes: 67,
+    packetContracts: 67,
     resourceDimensions: 27,
-    strategiesMapped: 79,
-    runtime: 37,
+    strategiesMapped: 80,
+    runtime: 38,
     compiler: 12,
     research: 8,
   });
   assert.deepEqual(inventory.implementationStates, {
     coordinated: 1,
-    'instrumented-local': 49,
+    'instrumented-local': 50,
     planned: 7,
   });
   assert.deepEqual(inventory.nodeKinds, {
     source: 3,
     process: 17,
-    coordinator: 12,
+    coordinator: 13,
     'authority-gate': 22,
     sink: 3,
   });
@@ -179,7 +179,7 @@ test('logical architecture publishes every exact built-in strategy identity and 
     );
   }
   for (const [state, count] of [
-    ['coordinated', 24], ['instrumented-local', 46], ['planned', 9],
+    ['coordinated', 24], ['instrumented-local', 47], ['planned', 9],
   ]) {
     assert.equal(
       BUILTIN_STRATEGY_CATALOG.strategies.filter((item) => item.implementationState === state).length,
@@ -215,7 +215,7 @@ test('homepage processing graph exposes one catalog-derived semantic depth at a 
     kindCounts: {
       source: 3,
       process: 17,
-      coordinator: 12,
+      coordinator: 13,
       'authority-gate': 22,
       sink: 3,
     },

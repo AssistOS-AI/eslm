@@ -4,12 +4,17 @@ import {
   sessionContextSnapshot, splitEpisode, validateSessionRequest,
 } from '../language/session.mjs';
 import {
+  analyzeBasicQuestions, buildSelfQuestionPlan,
+} from '../language/basic-question-taxonomy.mjs';
+import { parseFactoidQuestion } from '../language/factoid-question.mjs';
+import {
   routeDirectProviderQuestion, routeFactoidQuestion,
 } from '../reasoning/factoid-provider-router.mjs';
 import { CORE_METHOD_DESCRIPTORS } from '../reasoning/capability-registry.mjs';
 import {
-  createGroundingBundle, createGroundingRequest, limitGroundingRequestLookups,
-  selectGroundingRequestSources, shouldRetrieveGrounding,
+  createGroundingBundle, createGroundingRequest, createKnowledgeContextRequest,
+  createTaskKnowledgeContext, limitGroundingRequestLookups, selectGroundingRequestSources,
+  shouldRetrieveGrounding,
 } from '../reasoning/grounding-retrieval.mjs';
 import {
   allocateGroundingLookupBudgets, appendGroundingResult, createGroundingAccumulator,
@@ -28,6 +33,9 @@ import {
   groundingLimitsFromWorkPolicy, reasoningMethodSelected, resolveWorkPolicy,
   selectedStrategyIdentities,
 } from './work-policy.mjs';
+import {
+  realizeTaskContextFallback,
+} from './task-context-construction.mjs';
 
 function contextSnapshot(context) {
   return sessionContextSnapshot(context);
@@ -60,6 +68,45 @@ function factoidGapAnswer(frame) {
   return `I could not find admitted knowledge that answers “${question}” in the loaded knowledge bases.`;
 }
 
+const EVENT_QUESTION_FAMILIES = new Set([
+  'cause-origin', 'reason', 'intent', 'effect', 'continuation', 'change-lifecycle',
+]);
+
+const COMMON_NOMINAL_PREFIXES = new Set([
+  'a', 'an', 'any', 'every', 'few', 'her', 'his', 'its', 'many', 'my', 'no', 'our',
+  'several', 'some', 'that', 'the', 'their', 'these', 'this', 'those', 'your',
+]);
+
+function isProperNameSurface(value) {
+  const surface = String(value ?? '').normalize('NFKC').trim();
+  const words = surface.match(/[\p{L}\p{M}\p{N}][\p{L}\p{M}\p{N}\p{Pd}'’]*/gu) ?? [];
+  if (words.length === 0 || COMMON_NOMINAL_PREFIXES.has(words[0].toLocaleLowerCase('en-US'))) return false;
+  if (/['’]s\b/iu.test(surface)) return false;
+  return /^\p{Lu}/u.test(words[0]);
+}
+
+function questionFocusFromAnalysis(analysis) {
+  const focus = [];
+  const seen = new Set();
+  const add = (term, role) => {
+    if (!term || focus.length >= 32) return;
+    const key = `${role}\u0000${term.toLocaleLowerCase('en-US')}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    focus.push({ focusId: `question-focus:${focus.length + 1}`, term, role });
+  };
+  for (const question of analysis.questions) {
+    for (const subject of question.topicSurfaces ?? [question.subjectSurface]) {
+      const subjectRole = EVENT_QUESTION_FAMILIES.has(question.family)
+        ? 'event' : isProperNameSurface(subject) ? 'named-entity' : 'entity';
+      add(subject, subjectRole);
+    }
+    add(question.objectSurface, 'object');
+    add(question.relationSurface, 'predicate');
+  }
+  return focus;
+}
+
 export class EslmRuntime {
   constructor(core, providers = [], selected = [], memoryPlan, workPolicy) {
     this.core = core;
@@ -80,6 +127,132 @@ export class EslmRuntime {
 
   inspectLanguage(text, context = {}) {
     return this.core.inspectLanguage(text, context);
+  }
+
+  async buildKnowledgeContext(text, context = {}) {
+    validateSessionRequest(text, context);
+    const limits = groundingLimitsFromWorkPolicy(this.workPolicy);
+    const questionAnalysis = analyzeBasicQuestions(text);
+    const factoidFrame = parseFactoidQuestion(text);
+    const contextStrategySelection = selectedStrategyIdentities(
+      this.workPolicy, 'runtime.context.construct',
+    );
+    const questionFocus = questionFocusFromAnalysis(questionAnalysis);
+    const request = createKnowledgeContextRequest(text,
+      factoidFrame ? { factoidFrame } : undefined, {
+      ...limits,
+      ...(questionFocus.length > 0 ? { focus: questionFocus } : {}),
+      relevanceStrategySelection: selectedStrategyIdentities(
+        this.workPolicy, 'runtime.evidence.assess',
+      ),
+      focusStrategySelection: selectedStrategyIdentities(
+        this.workPolicy, 'runtime.knowledge.focus',
+      ),
+    });
+    const selfQuestionPlan = buildSelfQuestionPlan(questionAnalysis, request.terms);
+    const selectedKbVersions = this.#selectedKbVersions();
+    const probe = {
+      protocol: 'eslm-runtime-result-v1',
+      status: 'UNKNOWN',
+      answer: 'Task context construction has not attempted the primary answer.',
+      languageRoute: 'task-context-construction',
+      values: [],
+      provenance: [],
+      usedKbVersions: [],
+      selectedKbVersions,
+      consultedKbVersions: [],
+      unresolvedSubgoals: [{ operation: 'construct-query-local-task-context' }],
+      context: contextSnapshot(context),
+      episode: { original: text, segments: splitEpisode(text), unsupportedStatements: [] },
+      model: {
+        id: `${this.core.model.manifest.modelId}+${this.providers.map((item) => item.manifest.id).join('+')}`,
+        knowledgeBases: this.selected,
+        benchmarkComparable: false,
+        memory: this.memorySnapshot(),
+      },
+      workPolicy: this.workPolicy,
+    };
+    const retrieved = await this.#withGrounding(probe, text, context, request);
+    const evidence = retrieved.grounding;
+    const knowledgeContext = createTaskKnowledgeContext({
+      request,
+      entries: evidence?.entries ?? [],
+      searchReceipts: evidence?.search?.receipts ?? [],
+      maximumEntries: limits.maximumEntries,
+      questionAnalysis,
+      selfQuestionPlan,
+      selectedKbVersions,
+      consultedKbVersions: retrieved.consultedKbVersions,
+      contextStrategySelection,
+    });
+    return Object.freeze({ request, context: knowledgeContext });
+  }
+
+  applyKnowledgeContext(primary, contextRun) {
+    const annotated = assertRuntimeTextResultContract({
+      ...primary,
+      workPolicy: primary?.workPolicy ?? this.workPolicy,
+    });
+    if (!contextRun?.context || !contextRun?.request) return annotated;
+    const fallback = realizeTaskContextFallback(annotated, contextRun.context);
+    const status = fallback?.status ?? annotated.status;
+    const knowledgeContext = Object.freeze({
+      ...contextRun.context,
+      realization: fallback?.realization ?? Object.freeze({
+        status: 'context-only',
+        originalStatus: annotated.status,
+        realizedEntryIds: Object.freeze([]),
+        answerAuthority: 'none',
+        preciseAnswerEstablished: ['SOLVED', 'DEFEASIBLE'].includes(annotated.status),
+      }),
+    });
+    let grounding = annotated.grounding;
+    if (shouldRetrieveGrounding(status) && contextRun.context.search.receipts.length > 0) {
+      const plannedFocus = annotated.requestPlanning?.status === 'PLANNED'
+        ? (annotated.requestPlanning.selectedPlan?.topics ?? []).map((topic) => ({
+          focusId: topic.topicId, term: topic.surface, role: 'request-topic',
+        })) : [];
+      const groundingRequest = plannedFocus.length > 0
+        ? createGroundingRequest(
+          annotated.episode.original, status, annotated.query, {
+            ...contextRun.request.limits,
+            relevanceStrategySelection: contextRun.request.relevanceStrategySelection,
+            focusStrategySelection: contextRun.request.termSelection?.strategyMode === 'exact-allowlist'
+              ? contextRun.request.termSelection.strategySelection : undefined,
+            focus: plannedFocus,
+          },
+        )
+        : contextRun.request;
+      grounding = createGroundingBundle({
+        request: groundingRequest,
+        triggerStatus: status,
+        entries: contextRun.context.entries,
+        searchReceipts: contextRun.context.search.receipts,
+        maximumEntries: contextRun.context.limits.maximumEntries,
+      });
+    }
+    return assertRuntimeTextResultContract({
+      ...annotated,
+      ...(fallback ?? {}),
+      status,
+      knowledgeContext,
+      consultedKbVersions: uniqueKbVersions([
+        ...(annotated.consultedKbVersions ?? []),
+        ...contextRun.context.consultedKbVersions,
+      ]),
+      ...(grounding ? { grounding } : {}),
+      ...(fallback ? {
+        reasoning: {
+          method: 'query-local-epistemic-context-construction',
+          claimMode: 'contextual-source-claims-not-precise-answer',
+          originalReasoning: annotated.reasoning,
+        },
+        unresolvedSubgoals: [
+          ...(annotated.unresolvedSubgoals ?? []),
+          { operation: 'establish-precise-answer', priorStatus: annotated.status },
+        ],
+      } : {}),
+    });
   }
 
   async ask(text, context = {}, executionOptions = {}) {
@@ -104,6 +277,9 @@ export class EslmRuntime {
       }
       throw error;
     }
+    const knowledgeContextRun = executionOptions?.grounding === false
+      ? undefined
+      : (executionOptions?.knowledgeContextRun ?? await this.buildKnowledgeContext(text, context));
     const started = performance.now();
     const before = this.core.profileEnabled ? process.memoryUsage() : undefined;
     const providerLimits = {
@@ -167,7 +343,7 @@ export class EslmRuntime {
           },
         } } : {}),
       };
-      return this.#finishPrimary(primary, executionOptions);
+      return this.#finishPrimary(primary, executionOptions, knowledgeContextRun);
     }
     const result = this.core.ask(text, context);
     const metaIntent = String(result.query?.intent ?? '').startsWith('system-')
@@ -252,16 +428,16 @@ export class EslmRuntime {
         memory: this.memorySnapshot(),
       },
     };
-    return this.#finishPrimary(primary, executionOptions);
+    return this.#finishPrimary(primary, executionOptions, knowledgeContextRun);
   }
 
-  #finishPrimary(primary, executionOptions) {
+  #finishPrimary(primary, executionOptions, knowledgeContextRun) {
     const annotated = { ...primary, workPolicy: this.workPolicy };
     if (executionOptions?.grounding === false) return assertRuntimeTextResultContract(annotated);
-    return this.attachGrounding(annotated);
+    return this.attachGrounding(annotated, knowledgeContextRun);
   }
 
-  async attachGrounding(primary) {
+  async attachGrounding(primary, suppliedKnowledgeContextRun) {
     const annotated = assertRuntimeTextResultContract({
       ...primary,
       workPolicy: primary?.workPolicy ?? this.workPolicy,
@@ -269,8 +445,10 @@ export class EslmRuntime {
     if (JSON.stringify(annotated.workPolicy) !== JSON.stringify(this.workPolicy)) {
       throw new Error('Cannot attach grounding under a different work policy.');
     }
-    if (annotated.grounding || !shouldRetrieveGrounding(annotated.status)) return annotated;
-    return this.#withGrounding(annotated, annotated.episode.original, annotated.context);
+    if (annotated.knowledgeContext) return annotated;
+    const knowledgeContextRun = suppliedKnowledgeContextRun
+      ?? await this.buildKnowledgeContext(annotated.episode.original, annotated.context);
+    return this.applyKnowledgeContext(annotated, knowledgeContextRun);
   }
 
   #selectedKbVersions() {
@@ -280,7 +458,7 @@ export class EslmRuntime {
     ]);
   }
 
-  async #withGrounding(primary, text, context) {
+  async #withGrounding(primary, text, context, preparedRequest) {
     if (!shouldRetrieveGrounding(primary.status)) return assertRuntimeTextResultContract(primary);
     const groundingLimits = groundingLimitsFromWorkPolicy(this.workPolicy);
     const maximumEntries = groundingLimits.maximumEntries;
@@ -288,7 +466,7 @@ export class EslmRuntime {
       ? (primary.requestPlanning.selectedPlan?.topics ?? []).map((topic) => ({
         focusId: topic.topicId, term: topic.surface, role: 'request-topic',
       })) : [];
-    const request = createGroundingRequest(text, primary.status, primary.query, {
+    const request = preparedRequest ?? createGroundingRequest(text, primary.status, primary.query, {
       ...groundingLimits,
       relevanceStrategySelection: selectedStrategyIdentities(
         this.workPolicy, 'runtime.evidence.assess',

@@ -62,6 +62,23 @@ Routing tests include negative queries, ambiguous names, multi-hop rule dependen
 
 ### Failure-time related-evidence routing
 
+DS035 invokes the same conservative exact access paths for the mandatory query-local task context. Its
+`eslm-task-knowledge-context-request-v1` is built after the English-likelihood gate from explicit and embedded
+question families plus bounded visible focus terms. The context coordinator may fan out only across the already
+selected immutable package scope and must preserve the same per-source lookup, candidate, completion, and truncation
+receipts described below. The broader facet inventory changes which typed needs are recorded; it never authorizes a
+full-package scan, fuzzy global event index, unselected source, or relevance-only exclusion from an exact answer route.
+Context routing is a parallel non-authoritative retrieval obligation and cannot choose the language interpretation or
+replace the exact task route.
+
+An exact physical directory key is not by itself a semantic identity. Query-local GeoNames context distinguishes a
+common nominal focus from a proper-name focus before opening its name posting. Its accent-folded directory may locate
+bounded candidates, but admission additionally requires the original proper-name surface to equal the record's
+canonical name under case-insensitive NFKC comparison without removing diacritics. Thus a common noun and a place
+whose spelling differs by a Unicode letter may share a physical key without sharing semantic identity. Typed and
+Unicode-different exclusions are counted in the provider receipt; they do not become factual absence or affect an
+explicit source-owned alias route outside contextual fallback.
+
 When DS009 permits grounding after an inability result, the runtime creates one bounded
 `eslm-grounding-request-v1`. DS022 constructs its query focus by role, preferring accepted entity and predicate
 identities, exact multiword content phrases, nouns and verbs, then conservative morphological variants. Articles,

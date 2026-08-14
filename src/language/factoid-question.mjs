@@ -1,3 +1,5 @@
+import { recognizeBasicQuestion } from './basic-question-taxonomy.mjs';
+
 const MAX_FACTOID_CHARACTERS = 4096;
 
 function cleanSurface(value) {
@@ -42,7 +44,8 @@ export function parseFactoidQuestion(text) {
   const clean = cleanSurface(text);
   if (clean.length === 0 || clean.length > MAX_FACTOID_CHARACTERS) return undefined;
 
-  let match = clean.match(/^(?:what is the meaning of|what does) (.+?)(?: mean)?$/iu)
+  let match = clean.match(/^what is the meaning of (.+)$/iu)
+    ?? clean.match(/^what does (.+?) mean$/iu)
     ?? clean.match(/^define (.+)$/iu);
   if (match) {
     const subjectSurface = cleanSurface(match[1]);
@@ -115,6 +118,22 @@ export function parseFactoidQuestion(text) {
       wh: 'what', construction: 'event-continuation', direction: 'forward',
       relationSurface: 'possible effect', subjectSurface,
     }, [[`What might happen after ${subjectSurface}`, 'event-continuation-paraphrase']]);
+  }
+
+  const basicQuestion = recognizeBasicQuestion(clean);
+  if (basicQuestion?.subjectSurface) {
+    return genericFrame(clean, {
+      wh: basicQuestion.wh,
+      construction: basicQuestion.construction,
+      direction: basicQuestion.direction,
+      relationSurface: basicQuestion.relationSurface,
+      subjectSurface: basicQuestion.subjectSurface,
+      ...(basicQuestion.objectSurface ? { objectSurface: basicQuestion.objectSurface } : {}),
+      ...(basicQuestion.topicSurfaces ? { topicSurfaces: basicQuestion.topicSurfaces } : {}),
+      questionFamily: basicQuestion.family,
+    }, basicQuestion.canonicalCandidates.map((candidate) => [
+      candidate, `basic-${basicQuestion.family}-paraphrase`,
+    ]));
   }
 
   match = clean.match(/^(who|what|which|where|when|how many|how much)\b(.+)$/iu);

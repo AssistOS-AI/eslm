@@ -85,7 +85,12 @@ A system that returns UNKNOWN because retrieval failed is incorrect if the fact 
 
 ### 6. Human-facing explanation
 
-The default explanation should state what was understood, what evidence was found, which method was attempted and why the result is incomplete. It should avoid internal implementation noise unless diagnostic output is requested.
+The default explanation states what was understood, what evidence was found, which method was attempted, which bounded
+work profile applied, and why the result is incomplete. Interactive output uses a muted operational panel for these
+facts on every question. It reports stages, budgets, statuses, provenance, and receipts rather than private
+chain-of-thought. Internal assertion wording such as a raw field-name mismatch is not a user-facing answer; it is
+mapped to a stable explanation of the failed boundary while the exact developer diagnostic remains available to tests
+and machine logs.
 
 ### 7. Failure-time related evidence
 
@@ -121,6 +126,15 @@ remain bundle-only. The route returns no entailed semantic values, labels lexica
 coverage gaps, and cannot return `SOLVED`. Thus a statement can be authoritative as a citation for what the draft
 copied without becoming proof of the larger requested conclusion.
 
+DS035 defines a second explicit boundary: the default task-context node retrieves a non-authoritative query-local
+frontier for every eligible likely-English or indeterminate request before ordinary execution. Its
+`eslm-task-knowledge-context-v1` extension always declares `answerSupported: false`, `premiseAuthority: none`, and
+`interpretationAuthority: none`. A strict answer cannot absorb contextual prose. If a precise route ends in an
+eligible knowledge or representation gap, `knowledge-context-fallback` may return `PARTIAL`, cite at most the bounded
+selected source claims, keep semantic values empty, and state both the inability and missing conclusion. Every cited
+record then appears in top-level provenance as a source claim and in `usedKbVersions`; relevance alone still proves
+nothing. Ambiguity, inconsistency, resource refusal, and likely-non-English rejection are ineligible for this fallback.
+
 Automatic ordinary grounding is permitted after interpretation, knowledge, method, ambiguity, underdetermination,
 partial, or unsupported-output failures. It must not run after `RESOURCE_LIMIT` unless the task reserved an independent
 grounding budget before execution. The English-only ingress gate, DS022 direct execution, eligible local candidate
@@ -130,7 +144,9 @@ the original normalized surface, not a rejected spelling correction. It selects 
 verbs, entities, and predicates; grammatical scaffolding such as articles, quantifiers, auxiliaries, copulas, request
 directives, artifact nouns, and style words is excluded while content terms exist, except when an accepted
 metalinguistic frame makes such a word the topic. The DS013 Language Agent receives only its language request and
-bounded parser feedback; grounding entries, KB search results, and proof state never enter its proposal prompt.
+bounded parser feedback; task context, grounding entries, KB search results, and proof state never enter its proposal
+prompt. The DS035 context search may already have run before direct execution, but ordinary grounding exposure and any
+cited contextual realization occur only after the final symbolic route is known.
 
 The current bundle protocol is `eslm-grounding-bundle-v1`. It contains:
 
@@ -234,6 +250,13 @@ DS022 additionally supplies one immutable named work-policy snapshot per result.
 and grounding bounds control how much finite work is attempted without changing status meanings, trust, logical
 semantics, tie-breaking, or the authority of a premise.
 
+The interactive request boundary contains unexpected parser, provider, normalization, context, construction, or
+result-schema exceptions. A contained failure commits neither the candidate result nor its session context, preserves
+the prior valid `last` result, explains that the request was discarded safely, and returns to the prompt. This is
+failure isolation, not a claim that every local operation has a wall-clock deadline: deterministic local work remains
+bounded by counted resources, while external Language Agent processes additionally have enforceable per-call timers
+and termination escalation.
+
 The ordinary reasoning path also reserves a bounded, method-specific witness replay before result construction. Its
 gate receives only the selected plan, method candidate, and bounded host-owned facts, rules, closure, index, policy,
 or history required by that method. It cannot call the executor again or use answer success as evidence. Every fact,
@@ -326,6 +349,13 @@ records entail the requested document's broader explanation, comparison, or conc
 Response: No. Trusted means the code is admitted to execute, not that every output is true. Safety validation and
 method-specific witness verification are authority gates. Invalid or unverified outputs have no answer vote, and
 verified conflict remains visible regardless of confidence magnitude or the number of agreeing strategies.
+
+### Question #8: Why should an internal result-contract error not close an interactive session?
+
+Response: The failing candidate has not crossed the result gate and therefore has no authority to mutate session
+state. Containing that one request preserves the prior valid state, gives the operator an intelligible safety message,
+and permits a later independent request. Tests still receive the exact exception at the contract boundary, so human
+wording does not hide the defect from engineering review.
 
 ## Conclusion
 

@@ -1,0 +1,82 @@
+<!doctype html><html lang="en"><head>
+  <base href="../"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Basic questions and task context — ESLM Documentation</title><link rel="stylesheet" href="assets/site.css"><script src="partials-loader.js" defer></script><script type="module" src="assets/mermaid-loader.mjs"></script></head><body><div data-include="partials/header.html"></div><main>
+<p class="breadcrumb"><a href="index.html">ESLM Documentation</a> / Language / Basic questions and task context</p>
+<h1>Natural basic questions and query-local KB context</h1>
+<p class="lead">ESLM now creates a fast, bounded knowledge context for every eligible English request. The context recognizes ordinary standalone or embedded questions, asks a finite set of generic follow-up questions internally, and retrieves relevant records from the selected KBs. It helps later planning and wording while remaining explicitly separate from proof.</p>
+
+<h2>What changed</h2>
+<p>The direct factoid frontend now understands natural copular definitions. <code>What is a cat?</code> is represented as a definition request for <code>cat</code> and reaches the same provider route as <code>What does cat mean?</code>. This is a generic structural rule: nonce-renamed requests such as <code>What is a zoral?</code> behave the same way, while progressive and arithmetic neighbors such as <code>What is Alice doing?</code> and <code>What is 36 plus 12?</code> are not reclassified as definitions.</p>
+<p>A new <code>task-context-coordinator</code> runs after the English-likelihood gate and before ordinary direct execution. It detects explicit questions and questions embedded in a larger instruction, resolves only safe local references, identifies request topics, creates a prioritized self-question plan, and consults the already selected KB scope. Its public extension is <code>eslm-task-knowledge-context-v1</code>.</p>
+
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  E[English likelihood gate] --> C[Task context coordinator]
+  E --> D[Direct symbolic route]
+  C --> R[Result construction]
+  D --> R
+  classDef gate fill:#e8f4ec,stroke:#39704a,color:#1f422b,font-weight:bold
+  classDef process fill:#f4efe3,stroke:#76632f,color:#3f3519,font-weight:bold
+  class E gate
+  class C,D,R process</pre><figcaption>Early context branch.</figcaption></figure>
+<p class="diagram-explanation">The context branch cannot choose what the English means and cannot authorize a premise. It supplies a bounded topic and evidence frontier to later processing. The direct branch remains responsible for exact parsing, methods, witnesses, and strict answers. Both meet again only at validated result construction.</p>
+
+<h2>The 35 reusable information needs</h2>
+<p>The taxonomy describes what information is requested, not one fixed wording. A provider may support only some families. Recognition without a matching KB record creates a typed gap rather than a fabricated answer.</p>
+<div class="table-wrap"><table><thead><tr><th>Family</th><th>Natural forms and context sought</th></tr></thead><tbody>
+<tr><td>Definition</td><td>What is X? What does X mean? Source-backed meaning.</td></tr>
+<tr><td>Identity</td><td>Who is X? What is X known as? Entity identity and aliases.</td></tr>
+<tr><td>Lexical sense</td><td>Which meaning of X applies? Sense-qualified meaning.</td></tr>
+<tr><td>Synonym</td><td>What is another word for X? Declared lexical equivalents.</td></tr>
+<tr><td>Antonym</td><td>What is the opposite of X? Declared lexical opposition.</td></tr>
+<tr><td>Taxonomy</td><td>What kind of thing is X? Types, classes, and instances.</td></tr>
+<tr><td>Example</td><td>What is an example of X? Provenance-bearing members.</td></tr>
+<tr><td>Property</td><td>What is X like? What properties does it have? Typed qualities and state.</td></tr>
+<tr><td>Composition</td><td>What is X made of? Materials and composition.</td></tr>
+<tr><td>Part and whole</td><td>What parts does X have? What is it part of? Mereological relations.</td></tr>
+<tr><td>Purpose</td><td>What is X for? What purpose does it serve? Declared functions and uses.</td></tr>
+<tr><td>Capability</td><td>What can X do? Supported capabilities.</td></tr>
+<tr><td>Affordance</td><td>What can be done to X? Actions X can receive or enable.</td></tr>
+<tr><td>Method</td><td>How do I use X? How does X work? Procedures, mechanisms, or a gap.</td></tr>
+<tr><td>Location</td><td>Where is X found, available, or used? Place, container, or availability.</td></tr>
+<tr><td>Permission</td><td>Where is X allowed, restricted, or forbidden? Normative scope and exceptions.</td></tr>
+<tr><td>Requirement</td><td>What does X require? What must happen first? Inputs, dependencies, and prerequisites.</td></tr>
+<tr><td>Cause or origin</td><td>What causes X? Where did X come from? Explicit causes and origins.</td></tr>
+<tr><td>Reason</td><td>Why does X exist or happen? Source-backed explanations.</td></tr>
+<tr><td>Intent</td><td>What motivates X? Explicit or defeasible goals.</td></tr>
+<tr><td>Effect</td><td>What does X cause? Strict or defeasible consequences.</td></tr>
+<tr><td>Continuation</td><td>What follows X? What happens next? Temporal or narrative successors.</td></tr>
+<tr><td>Risk</td><td>What can go wrong? What hazards exist? Failure and adverse conditions.</td></tr>
+<tr><td>Benefit</td><td>What does X help with? Positive effects and utility claims.</td></tr>
+<tr><td>Limitation</td><td>When does X not apply? What are its limits? Bounds, exceptions, and gaps.</td></tr>
+<tr><td>Agent or responsibility</td><td>Who owns, performs, or controls X? Participant and responsibility roles.</td></tr>
+<tr><td>Time or history</td><td>When did X occur? How long is it valid? Time, duration, order, and supersession.</td></tr>
+<tr><td>Quantity</td><td>How many, how much, how large, how often? Values, units, counts, and ranges.</td></tr>
+<tr><td>Comparison</td><td>How do X and Y differ? Aligned relations, values, and missing axes.</td></tr>
+<tr><td>Alternative</td><td>What can replace X? Substitutes and constraints.</td></tr>
+<tr><td>Evidence</td><td>What supports X? Which source says it? Proof leaves, claims, versions, and citations.</td></tr>
+<tr><td>Confidence or conflict</td><td>Is X certain or disputed? Epistemic status and disagreement.</td></tr>
+<tr><td>Relation</td><td>How are X and Y connected? Typed paths or a missing-link frontier.</td></tr>
+<tr><td>Change or lifecycle</td><td>What changed, started, or superseded X? Transitions and lifecycle stages.</td></tr>
+<tr><td>Stakeholder</td><td>Who uses, needs, receives, or is affected by X? Explicit participant roles.</td></tr>
+</tbody></table></div>
+
+<h2>How the default strategy creates context</h2>
+<p><code>strategy:context:question-facet-expansion@1</code> is the mandatory baseline. Explicit requested families receive highest priority. For each bounded topic it then considers definition, identity, taxonomy, properties, purpose, capabilities, requirements, method, location, effects, risks, limitations, provenance, conflict, relations, examples, history, alternatives, and stakeholders. It deduplicates topic-family pairs and records omitted work instead of pretending every possible facet ran.</p>
+<p>Natural coordinated subjects are split only through a bounded nominal construction. For example, <code>Where do zorals and velins live?</code> remains one location question but creates independent <code>zorals/location</code> and <code>velins/location</code> information needs. Providers can annotate records with generic question-family support, allowing requested location relations to outrank unrelated definitions or taxonomy edges. The annotation changes relevance only; it cannot grant premise or answer authority.</p>
+<p>The initial bounds are 16 question surfaces, eight topics, and 64 self-questions. The selected work profile imposes stricter limits on focus terms, provider sources, lookups, values, candidate entries, returned entries, and output bytes. Each consulted source returns a completion or truncation receipt. A complete empty search is therefore distinct from an incomplete search that happened to return nothing.</p>
+
+<h2>Precise answer versus useful partial context</h2>
+<div class="table-wrap"><table><thead><tr><th>Outcome</th><th>Visible behavior and authority</th></tr></thead><tbody>
+<tr><td>Precise route succeeds</td><td>The original <code>SOLVED</code> or <code>DEFEASIBLE</code> answer remains unchanged; machine clients may inspect the context extension. The existing method and witness own the answer.</td></tr>
+<tr><td>Precise route lacks the requested bridge</td><td><code>knowledge-context-fallback</code> may return <code>PARTIAL</code>, state that the full answer was not established, cite a few relevant source claims, and name the remaining gap. Citations authorize only what each source states; values stay empty.</td></tr>
+<tr><td>Ambiguity, inconsistency, non-English rejection, or resource refusal</td><td>No contextual fallback is used to conceal the blocking condition. The existing gate retains authority.</td></tr>
+</tbody></table></div>
+<p>The fallback ledger records the exact pre-context status as <code>originalStatus</code>. Thus a local route may truthfully record that no Language Agent proposal was needed at <code>UNKNOWN</code>, then publish a final <code>PARTIAL</code> contextual artifact. Validation compares those two explicit phases instead of requiring their statuses to be identical.</p>
+<p>For progressive and do-support location questions, the analyzer keeps the complete possessive nominal as the topic and treats <em>living</em> or <em>live</em> as the relation cue. It therefore retrieves context for <em>his cat</em>, not for the accidental phrase <em>his cat living</em>. This improves focus only; ownership resolution and any defeasible carrier answer still require their separate language and witness contracts.</p>
+<p>Focus roles also protect source boundaries. When a recognized family supplies typed focus, an entity subject or relation cue is not submitted to an event-only neighborhood merely because an event corpus has an exact one-token key with the same spelling. Only a subject typed as an event is eligible there; ordinary content terms remain available for open questions that have no typed family focus. Exact source lookup therefore cannot erase the entity-versus-event distinction.</p>
+<p>For example, if WordNet defines both <em>cat</em> and <em>blue</em> but the KB does not establish that a cat is blue, ESLM may show those definitions only after saying it cannot establish the requested property. It may not infer the property from lexical relevance. Realized source claims enter top-level provenance and <code>usedKbVersions</code>; unused context remains only in the context packet.</p>
+<p>A constituent match is also insufficient. A fact about <code>Penguin</code> may remain useful internal context for an unknown surface such as <code>fake Penguin</code>, but it cannot be realized as a claim about that compound entity. Parser-rejected nominal surfaces receive the same protection.</p>
+
+<h2>Machine contract and review checklist</h2>
+<p>The extension exposes question analysis, self-question plan, focus candidates, exact selected and consulted KB versions, ranked entries, per-source receipts, limits, completeness, strategy selection, and an optional realization ledger. It always declares <code>answerSupported: false</code>, <code>premiseAuthority: none</code>, and <code>interpretationAuthority: none</code>.</p>
+<p>Reviewers should verify that a renamed nonce topic follows the same route, provider order cannot change the context, strict answers do not gain distracting prose, every cited fallback sentence maps to an exact context record, and likely non-English requests consult no KB. The authoritative contract is <a href="specsLoader.html?spec=DS035-query-local-epistemic-context-construction.md">DS035</a>.</p>
+</main><div data-include="partials/footer.html"></div></body></html>

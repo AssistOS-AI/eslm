@@ -268,8 +268,10 @@ process.stdout.write('{"type":"turn.completed"}\\n');
     phase: 'language-agent-interpretation',
     adapter: 'codex',
     model: DEFAULT_CODEX_NORMALIZATION_MODEL,
+    operation: 'simplification',
     attempt: 1,
     maximumAttempts: 3,
+    timeoutMs: 30_000,
   });
 });
 

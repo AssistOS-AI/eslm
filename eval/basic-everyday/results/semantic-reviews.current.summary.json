@@ -1,24 +1,24 @@
 {
   "format": "eslm-basic-eval-semantic-review-summary",
-  "generatedAt": "2026-08-13T12:04:45.676Z",
+  "generatedAt": "2026-08-14T10:52:41.580Z",
   "policy": "eval/basic-everyday/semantic-review-policy.json",
-  "policyDigest": "sha256:845ec330477203dce5d2a6c98654292af6cd040b4a0b44a73f0c8cc41b573876",
+  "policyDigest": "sha256:e0fd3ffac9752183b92932e98c71405d6f7fbcdc7d3644e41015c93fa559f1c4",
   "output": "eval/basic-everyday/results/semantic-reviews.current.jsonl",
-  "outputDigest": "sha256:1a4ecefe260f6a9a0e552ec08aa318c37f1ee415660e854d56aa227b490d49a5",
+  "outputDigest": "sha256:51b6ef018e55c9f5e0c847c243a2fc38bd4e1cc5c6639e36161fee865cfb9784",
   "profiles": {
     "core-only": {
-      "resultDigest": "sha256:9e35e3e886663da8c10f4106aab0c1a843fa1beea90f52f20e4fdfe35354b814",
-      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
+      "resultDigest": "sha256:b69cc773d4d2aae4c992af018150eaa790288072140f9e489ad2489a679fc6d0",
+      "executableDigest": "sha256:cc7b04a45e6d119d0266ccf0de41bc2a2eb9e4b75b79f94fbc0b44e09e81690f",
       "reviewed": 150,
       "pass": 150,
       "fail": 0
     },
     "real-kb": {
-      "resultDigest": "sha256:df533202206517a2329528e051a51f0e9fd946c63dd8ae621316b57ee1174aec",
-      "executableDigest": "sha256:2f3256ab8c2398a0371d3d473b4f570fd04a9175e86cc48f1d3f8e6cc629f531",
-      "reviewed": 46,
-      "pass": 33,
-      "fail": 13
+      "resultDigest": "sha256:e06da7f71631e576101c6b10e100eb02e56768c59e753961768c7237e877e2b5",
+      "executableDigest": "sha256:cc7b04a45e6d119d0266ccf0de41bc2a2eb9e4b75b79f94fbc0b44e09e81690f",
+      "reviewed": 83,
+      "pass": 35,
+      "fail": 48
     }
   }
 }

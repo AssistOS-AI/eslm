@@ -20,7 +20,8 @@ function sha256(value) {
 function presetStages(preset) {
   if (preset === 'language') return ['runtime.language.interpret', 'runtime.request.plan'];
   if (preset === 'retrieval') return [
-    'runtime.knowledge.focus', 'runtime.knowledge.retrieve', 'runtime.evidence.assess',
+    'runtime.context.construct', 'runtime.knowledge.focus', 'runtime.knowledge.retrieve',
+    'runtime.evidence.assess',
     'runtime.failure.ground',
   ];
   if (preset === 'reasoning') return [

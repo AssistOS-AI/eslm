@@ -1,9 +1,10 @@
 # Executable Symbolic Language Model
 
 ESLM is a deterministic symbolic runtime with declarative knowledge packages. For supported input it builds an explicit
-task, runs a bounded method, and returns semantic values plus a reviewable witness. When it cannot establish an answer,
-it abstains explicitly. If a selected knowledge base contains possibly useful material, the result may also include a
-separate related-evidence bundle. Related evidence is never presented as proof.
+task, runs a bounded method, and returns semantic values plus a reviewable witness. For every eligible English request,
+it also builds a bounded query-local context from explicit and embedded basic questions and the selected KBs. When it
+cannot establish an answer, it abstains explicitly; it may then cite a small set of source claims in a clearly
+`PARTIAL` contextual fallback. Context and related evidence are never presented as proof.
 
 The research repository maintains one current internal system revision. Nodes, packets, strategies, schemas, and
 results migrate together and are identified by their role plus content-addressed executable checkpoint, not by
@@ -16,18 +17,21 @@ There are three deliberately separate boundaries:
   executable KB payload.
 - **Operator CLI:** a bounded English-likelihood gate rejects likely non-English input without translating it. English
   direct execution runs before deterministic request planning and local CNL approximation; structurally licensed
-  alternatives are compared through parse-only Semantic IR. The general CLI composes a disclosed Language Agent
-  proposal strategy by default. It may propose translation for a likely-non-English rejection or simplification after
-  unsupported English exhausts local recovery. Its candidate has no answer authority and must pass the unchanged
-  English parser and semantic gates. `--no-external-language-agent` or `/normalize off` selects the fully local
-  profile. Related-KB grounding is attached only after the final route is known.
+  alternatives are compared through parse-only Semantic IR. The general CLI uses that fully local symbolic profile by
+  default. `--external-language-agent` or `/normalize on` explicitly opts into a disclosed Language Agent proposal
+  strategy. It may propose translation for a likely-non-English rejection or simplification after unsupported English
+  exhausts local recovery. Its candidate has no answer authority and must pass the unchanged English parser and
+  semantic gates. After the English gate, the mandatory DS035 context strategy retrieves a bounded non-authoritative KB
+  frontier before direct execution; context is hidden from language selection. Grounding exposure or cited contextual
+  fallback occurs only after the final route is known.
 - **Training:** an isolated Coding Agent may analyze an authorized, train-visible packet and propose untrusted records
   or changes. Validation and explicit promotion remain host operations.
 
 What works now: a documented controlled-English subset; session facts; exact retrieval and safe positive Horn
 deduction; several bounded finite state, relation, categorical, Boolean, spatial, countermodel, induction, abduction,
-and continuation methods; versioned declarative packages; query-directed public providers; structured failures; and
-failure-time grounding with provenance and search receipts. The local language contract is English-only, including a
+and continuation methods; versioned declarative packages; query-directed public providers; a 35-family basic-question
+taxonomy; mandatory query-local context with provenance and search receipts; structured failures; and failure-time
+grounding. The local language contract is English-only, including a
 bounded likelihood diagnostic that can refuse likely non-English text but never translate it. The CLI also provides confidence-bearing local
 spelling, morphology, auxiliary, clause-decomposition, and request-intent heuristics; work profiles bound their search.
 Recognized summary, explanation, comparison, outline, essay, report, article, document, table, list, and paragraph
@@ -121,8 +125,9 @@ completion or truncation. Ordinary inability grounding never rewrites the machin
 The explicit `heuristic-request-synthesis` route is the narrow exception: it returns a cited grounded-symbolic
 `PARTIAL` artifact, promotes only records admitted and realized into sentences into `provenance` and
 `usedKbVersions`, and does not claim that relevance or fluent wording is deductive proof. In the interactive CLI a
-dimmed `Thinking · symbolic processing` block reports the plan, evidence admission, construction strategies,
-confidence, and authority boundary; a separate `Answer` block contains the clean user-facing prose. If the artifact intent is understood but neither supplied material nor a
+dimmed `Thinking · symbolic processing` block reports route, human-readable outcome, method, cited support, KB
+context, effective resource bounds, and any construction strategy; a separate `Answer` block contains the clean
+user-facing prose. If the artifact intent is understood but neither supplied material nor a
 related KB record is available, `heuristic-request-planned` returns an explicit `MISSING_KNOWLEDGE` result.
 
 Local heuristic interpretation is visible as `heuristic-cnl-approximated` or `heuristic-cnl-ambiguous`; receipts show
@@ -146,11 +151,13 @@ failure grounding remain local owners. Ordinary method planning and witness veri
 processing-node envelopes, but all four stages remain non-selectable until their executors genuinely cross the shared
 coordinator boundary.
 
-The general CLI discloses its assisted default. Every interactive result uses a muted
+The general CLI discloses its local default and any explicit assisted opt-in. Every interactive result uses a muted
 `Thinking · symbolic processing` summary followed by a clean `Answer`; this local presentation is distinct from
-external-agent activity. Immediately before a real external invocation, interactive, one-shot `ask`, and batch `run`
-modes emit exactly one `Thinking: interpreting with the configured Language Agent…` line. One-shot and batch modes
-write that activity line to standard error, so JSON and JSONL standard output remain valid. The explicit local profile
+external-agent activity. Every question first emits a short bounded-processing line with the active profile and key
+caps. Immediately before a real external invocation, interactive, one-shot `ask`, and batch `run` modes additionally
+emit an attempt-aware line naming translation or simplification, proposal slot, adapter, and per-process timeout.
+One-shot and batch modes write both kinds of activity to standard error, so JSON and JSONL standard output remain
+valid. The explicit local profile
 and cache hits emit no external-invocation line; a cached result stays attributed to the assisted route without
 claiming a new external call. Translation is only an untrusted proposal: without an independent reviewed
 source-language preservation profile, open-class

@@ -45,7 +45,7 @@ test('shared navigation is balanced by reader role and covers every substantive 
       'research/research-horizons.html', 'research/research-decisions.html',
     ]),
     Language: Object.freeze([
-      'language/language.html', 'language/heuristic-language.html',
+      'language/language.html', 'language/task-context.html', 'language/heuristic-language.html',
       'language/language-agent.html', 'language/grounded-failure.html',
     ]),
     System: Object.freeze([
@@ -392,7 +392,7 @@ test('specification viewer preserves document structure and orientation aids', a
 test('GitHub Pages publication preserves every loader-addressable DS source', async () => {
   const publication = await validatePublishedSpecificationSources();
   assert.equal(publication.noJekyll, true);
-  assert.equal(publication.sources, 35);
+  assert.equal(publication.sources, 36);
   for (const target of publication.targets) {
     const rawUrl = new URL(
       `specs/${encodeURIComponent(target)}`,
@@ -531,8 +531,8 @@ test('heuristic-language chapter explains the local-first recovery contract', as
   assert.match(page, /Decomposition techniques and their safety gates/u);
   assert.match(page, /Request-intent planning for larger outputs/u);
   assert.match(page, /summarize, expand, explain, compare, draft an essay, or assemble a document/u);
-  assert.match(page, /general CLI composes the external Language Agent proposal wrapper by default/u);
-  assert.match(page, /--no-external-language-agent/u);
+  assert.match(page, /general CLI uses them without the external wrapper by default/u);
+  assert.match(page, /--external-language-agent.*explicitly opts into/u);
   assert.match(page, /English-likelihood gate rejects likely non-English input without translating it/u);
   assert.match(page, /content nouns and verbs/u);
   assert.match(page, /<code>all<\/code> is a protected quantifier/u);

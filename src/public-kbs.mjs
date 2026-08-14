@@ -58,6 +58,16 @@ function eventTokens(value) {
   return atomicEventTokens(value);
 }
 
+function atomicQuestionFamilies(relation) {
+  return Object.freeze({
+    AtLocation: ['location'], ObjectUse: ['purpose'], xNeed: ['requirement'], isBefore: ['requirement'],
+    xIntent: ['intent'], xReason: ['reason'], xEffect: ['effect'], oEffect: ['effect'],
+    Causes: ['effect', 'cause-origin'], isAfter: ['continuation'], xReact: ['continuation'],
+    xWant: ['continuation', 'intent'], oWant: ['continuation', 'intent'],
+    HinderedBy: ['risk', 'limitation'],
+  }[relation] ?? []);
+}
+
 function conversationalQuestion(text) {
   return text.trim()
     .replace(/^(?:please tell me|could you tell me|can you tell me|please|could you|can you|using the loaded (?:knowledge|lexical knowledge),|based on the loaded (?:source|event source),)\s+/iu, '')
@@ -243,6 +253,7 @@ class WordNetProvider {
           statement: `${term}: ${definition}`,
           semantic: {
             kind: 'lexical-sense',
+            questionFamilies: ['definition', 'lexical-sense', 'synonym'],
             lemma: term,
             synsetId: sense.id,
             partOfSpeech: sense.p,
@@ -433,8 +444,24 @@ class AtomicProvider {
     const maximumValues = request.limits.maximumValuesPerLookup;
     const entries = [];
     const truncationReasons = [];
+    const includedFocus = request.termSelection.candidates.filter((candidate) => candidate.included);
+    const typedQuestionFocus = includedFocus.filter((candidate) =>
+      candidate.kind === 'accepted-semantic-ir' && ['entity', 'event', 'predicate'].includes(candidate.role));
+    const eventTerms = new Set(typedQuestionFocus.filter((candidate) => candidate.role === 'event')
+      .map((candidate) => candidate.term));
     let considered = 0;
     for (const [termIndex, term] of request.terms.slice(0, maximumLookups).entries()) {
+      const contextRoles = new Set(includedFocus.filter((candidate) =>
+        candidate.term === term).map((candidate) => candidate.role));
+      const eventDerived = eventTerms.has(term)
+        || [...eventTerms].some((event) => event.split(' ').includes(term))
+        || includedFocus.some((candidate) => candidate.term === term && eventTerms.has(candidate.variantOf));
+      const eligibleContextTerm = typedQuestionFocus.length > 0
+        ? eventDerived : ['content', 'event', 'predicate'].some((role) => contextRoles.has(role));
+      if (request.purpose === 'query-local-task-context' && !eligibleContextTerm) {
+        considered += 1;
+        continue;
+      }
       const exact = normalizedEvent(term);
       const source = this.mode === 'eager' ? this.events : await this.eventData(sha256(exact)[0]);
       const event = source[exact];
@@ -452,6 +479,7 @@ class AtomicProvider {
           statement: `ATOMIC relates “${match.event.h}” to the defeasible ${tuple.relation} candidate “${tuple.tail}”.`,
           semantic: {
             kind: 'defeasible-event-relation',
+            questionFamilies: atomicQuestionFamilies(tuple.relation),
             event: match.event.h,
             relation: tuple.relation,
             value: tuple.tail,

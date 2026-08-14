@@ -1,6 +1,6 @@
 {
   "format": "eslm-public-benchmark-probe-report-v2",
-  "assembledAt": "2026-08-12T18:40:56.469Z",
+  "assembledAt": "2026-08-14T09:43:51.766Z",
   "assembly": {
     "mode": "mixed-current-execution-and-stored-receipts",
     "requestedBenchmarkIds": [
@@ -559,12 +559,12 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 275.0302949999998,
-        "cpuUserMicroseconds": 350082,
-        "cpuSystemMicroseconds": 8896,
-        "startRssBytes": 369713152,
-        "endRssBytes": 375283712,
-        "sampledPeakRssBytes": 375283712,
+        "wallMilliseconds": 247.08327299999996,
+        "cpuUserMicroseconds": 308496,
+        "cpuSystemMicroseconds": 8477,
+        "startRssBytes": 380899328,
+        "endRssBytes": 386273280,
+        "sampledPeakRssBytes": 386273280,
         "rssSamples": 9
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark clutrr --memory-mb 256 --no-external-language-agent",
@@ -580,8 +580,8 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
-        "files": 172,
+        "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+        "files": 259,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
@@ -593,7 +593,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:3dfc28863e78ce2a6f7586199d037c5cfe4bdc804d9796dd6c876851893548e4"
+          "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -612,12 +612,12 @@
         ],
         "stageReceipts": [],
         "adapterLocal": null,
-        "configurationDigest": "sha256:67f7056f89508dfc1cdb1d7ff6e6b45ea907bf6de69c97de06d5b4d4a66fcfc4"
+        "configurationDigest": "sha256:85743e01c9079d80da2c71e46debac3c40789dc5431707546f262e31ac4264ff"
       },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T18:36:44.797Z"
+        "executedAt": "2026-08-14T09:39:49.808Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "development-probe-executed",
@@ -867,7 +867,7 @@
             {
               "path": "src/runtime/runtime.mjs",
               "expectedSha256": "f3c4d3fbde2a81954a45ee4509f7cd2cef2e6fd360b9321946346702709bb3b8",
-              "actualSha256": "f59a33941c56ea554d5bbdacdb2732f714345ed30de7afe1d8a4b80a4fc61f69",
+              "actualSha256": "7707281f699542e3d2dad0162e77707f46851bed34cb33def41c7ad95f0f3e9f",
               "state": "changed"
             },
             {
@@ -909,15 +909,32 @@
       "total": 100,
       "correct": 0,
       "attempted": 0,
-      "normalizationCandidates": 36,
+      "normalizationCandidates": 0,
       "statusCounts": {
-        "UNPARSED": 36,
-        "UNKNOWN": 64
+        "PARTIAL": 84,
+        "UNKNOWN": 16
       },
       "selectedMethods": [
         "method:core:indexed-lookup"
       ],
-      "usedKbVersions": [],
+      "usedKbVersions": [
+        {
+          "kbId": "atomic-2020",
+          "version": "2020.2"
+        },
+        {
+          "kbId": "conceptnet-5.7.0-en",
+          "version": "5.7.0"
+        },
+        {
+          "kbId": "geonames-2026",
+          "version": "2026-08-11"
+        },
+        {
+          "kbId": "oewn-2025",
+          "version": "2025"
+        }
+      ],
       "selectedKbVersions": [
         {
           "kbId": "atomic-2020",
@@ -937,7 +954,7 @@
         },
         {
           "kbId": "quick",
-          "version": "1.0.0"
+          "version": "1.1.0"
         }
       ],
       "sourceEvidence": [
@@ -973,8 +990,8 @@
       "selectiveAccuracy": null,
       "accuracy": 0,
       "accuracySemantics": "end-to-end-over-declared-denominator",
-      "directSymbolicRate": 0.64,
-      "normalizationCandidateRate": 0.36,
+      "directSymbolicRate": 1,
+      "normalizationCandidateRate": 0,
       "agentInvocations": 0,
       "agentInvocationRate": 0,
       "evaluationIdentities": {
@@ -993,13 +1010,13 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 38661.783226,
-        "cpuUserMicroseconds": 60862511,
-        "cpuSystemMicroseconds": 2974022,
-        "startRssBytes": 979312640,
-        "endRssBytes": 1008787456,
-        "sampledPeakRssBytes": 1129111552,
-        "rssSamples": 686
+        "wallMilliseconds": 44203.563589,
+        "cpuUserMicroseconds": 68999887,
+        "cpuSystemMicroseconds": 3177278,
+        "startRssBytes": 964628480,
+        "endRssBytes": 1164541952,
+        "sampledPeakRssBytes": 1201741824,
+        "rssSamples": 838
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark simpleqa --memory-mb 256 --no-external-language-agent",
       "behaviorDependency": {
@@ -1014,8 +1031,8 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
-        "files": 172,
+        "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+        "files": 259,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
@@ -1027,7 +1044,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:3dfc28863e78ce2a6f7586199d037c5cfe4bdc804d9796dd6c876851893548e4"
+          "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -1112,12 +1129,12 @@
           }
         ],
         "adapterLocal": null,
-        "configurationDigest": "sha256:7c1fb5b77704fa794f08e04b646e80d7ed66e58077aab204c045f68852eb7a82"
+        "configurationDigest": "sha256:498c7374f72e20a176ae2c0f91f1f3cb0c1ed1da7be38374bdef7a2497577864"
       },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T18:40:56.424Z"
+        "executedAt": "2026-08-14T09:43:51.707Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "diagnostic-probe-executed",
@@ -1193,12 +1210,12 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 1859.8237240000003,
-        "cpuUserMicroseconds": 2048807,
-        "cpuSystemMicroseconds": 52133,
-        "startRssBytes": 375283712,
-        "endRssBytes": 501665792,
-        "sampledPeakRssBytes": 501665792,
+        "wallMilliseconds": 1833.146509,
+        "cpuUserMicroseconds": 2007004,
+        "cpuSystemMicroseconds": 54488,
+        "startRssBytes": 385814528,
+        "endRssBytes": 509050880,
+        "sampledPeakRssBytes": 509050880,
         "rssSamples": 3
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark entity-tracking --memory-mb 256 --no-external-language-agent",
@@ -1214,8 +1231,8 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
-        "files": 172,
+        "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+        "files": 259,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
@@ -1227,7 +1244,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:3dfc28863e78ce2a6f7586199d037c5cfe4bdc804d9796dd6c876851893548e4"
+          "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -1246,12 +1263,12 @@
         ],
         "stageReceipts": [],
         "adapterLocal": null,
-        "configurationDigest": "sha256:67f7056f89508dfc1cdb1d7ff6e6b45ea907bf6de69c97de06d5b4d4a66fcfc4"
+        "configurationDigest": "sha256:85743e01c9079d80da2c71e46debac3c40789dc5431707546f262e31ac4264ff"
       },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T18:36:46.658Z"
+        "executedAt": "2026-08-14T09:39:51.644Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "development-probe-executed",
@@ -1351,13 +1368,13 @@
       },
       "resourceEvidence": {
         "measurement": "in-process-25ms-rss-sampling",
-        "wallMilliseconds": 211112.343422,
-        "cpuUserMicroseconds": 352154203,
-        "cpuSystemMicroseconds": 16373366,
-        "startRssBytes": 501796864,
-        "endRssBytes": 979312640,
-        "sampledPeakRssBytes": 1037205504,
-        "rssSamples": 6207
+        "wallMilliseconds": 195866.563981,
+        "cpuUserMicroseconds": 322984742,
+        "cpuSystemMicroseconds": 15133000,
+        "startRssBytes": 509050880,
+        "endRssBytes": 964628480,
+        "sampledPeakRssBytes": 1044951040,
+        "rssSamples": 5897
       },
       "replayCommand": "node src/cli.mjs benchmark probe --benchmark story-cloze --memory-mb 256 --no-external-language-agent",
       "behaviorDependency": {
@@ -1372,8 +1389,8 @@
           ],
           "includedExtension": ".mjs"
         },
-        "digest": "427bc627d69459406b1c8d05dd558b24cc2e552bb84bc38554a032f4c81d722b",
-        "files": 172,
+        "digest": "16dbd09f2e62ef04586e3d9b1d2707059d8b79e132bf4c86e8900dd7b7458559",
+        "files": 259,
         "runtime": {
           "node": "v22.23.1",
           "platform": "linux",
@@ -1385,7 +1402,7 @@
         "mode": "runtime-work-policy",
         "catalog": {
           "format": "eslm-builtin-strategy-catalog-v1",
-          "digest": "sha256:3dfc28863e78ce2a6f7586199d037c5cfe4bdc804d9796dd6c876851893548e4"
+          "digest": "sha256:ce4d375be9b1dbdf748c19f34397ac9e091f2ab5433e1ce9dbb08f5053a5219e"
         },
         "selection": {
           "source": "eslm-work-policy-v1",
@@ -1404,12 +1421,12 @@
         ],
         "stageReceipts": [],
         "adapterLocal": null,
-        "configurationDigest": "sha256:67f7056f89508dfc1cdb1d7ff6e6b45ea907bf6de69c97de06d5b4d4a66fcfc4"
+        "configurationDigest": "sha256:85743e01c9079d80da2c71e46debac3c40789dc5431707546f262e31ac4264ff"
       },
       "resultOrigin": "current-execution",
       "executionEvidence": {
         "origin": "current-execution",
-        "executedAt": "2026-08-12T18:40:17.755Z"
+        "executedAt": "2026-08-14T09:43:07.496Z"
       },
       "adapterState": "implemented-development",
       "evaluationState": "development-probe-executed",
@@ -1672,7 +1689,7 @@
             {
               "path": "src/runtime/engine.mjs",
               "expectedSha256": "4081dfeb82530b9dd59cbeca06949df984b08f26e16b9c6e394c8bff2fe88dda",
-              "actualSha256": "fc41d381b3d2e70edc4897c3d3b2519c391e168bf394fa037d53f143f0c47787",
+              "actualSha256": "889627bce7068ef76bd17b316b0c7ea70d5c5869c758585e2dcdfceaaf6aba4f",
               "state": "changed"
             },
             {
@@ -1684,7 +1701,7 @@
             {
               "path": "docs/specs/DS015-reasoning-method-semantics.md",
               "expectedSha256": "25940bfb78dfe79e987610d504ac00c9bb925b879d7a622657f10813628ed7a4",
-              "actualSha256": "7be50619c41605954f645f97fa7108836258e25fba4541346914fbe17a8a2562",
+              "actualSha256": "c75fdc6f5a733a375fccb7370e488d7de5f22286aa3cd84cac6c913933409c1f",
               "state": "changed"
             }
           ]
@@ -1948,7 +1965,7 @@
             {
               "path": "src/runtime/engine.mjs",
               "expectedSha256": "436bed8af06d314a40ae3f39777451d5beed868465d16c69c6e83e0101116eb1",
-              "actualSha256": "fc41d381b3d2e70edc4897c3d3b2519c391e168bf394fa037d53f143f0c47787",
+              "actualSha256": "889627bce7068ef76bd17b316b0c7ea70d5c5869c758585e2dcdfceaaf6aba4f",
               "state": "changed"
             }
           ]
@@ -2365,7 +2382,7 @@
                 {
                   "path": "src/runtime/engine.mjs",
                   "expectedSha256": "e813a570adf186d093651ff41b600f4f59ebeca7fdad0d692e7108b6a5a47d01",
-                  "actualSha256": "fc41d381b3d2e70edc4897c3d3b2519c391e168bf394fa037d53f143f0c47787",
+                  "actualSha256": "889627bce7068ef76bd17b316b0c7ea70d5c5869c758585e2dcdfceaaf6aba4f",
                   "state": "changed"
                 },
                 {
